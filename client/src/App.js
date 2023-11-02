@@ -1,18 +1,53 @@
-import { useEffect, useState } from "react";
+// client/src/App.js
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [inputValue, setInputValue] = useState('');
+  const [items, setItems] = useState([]);
 
-  // Fetching message from backend on mount
   useEffect(() => {
-    fetch("https://explore-x-server.onrender.com")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message));
+    // Fetch items from the backend when the component mounts
+    axios.get(process.env.REACT_APP_SERVER_URL + '/api/items')
+      .then((response) => {
+        setItems(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
   }, []);
 
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleAddItem = () => {
+    // Send a PUT request to add a new item
+    axios.put(process.env.REACT_APP_SERVER_URL + '/api/items', { name: inputValue })
+      .then((response) => {
+        setItems([...items, response.data]);
+        setInputValue('');
+      })
+      .catch((error) => {
+        console.error('Error adding item:', error);
+      });
+  };
+
   return (
-    <div className="App">
-      <h1>{message}</h1>
+    <div>
+      <h1>ExploreX</h1>
+      <input
+        type="text"
+        placeholder="Enter an item"
+        value={inputValue}
+        onChange={handleInputChange}
+      />
+      <button onClick={handleAddItem}>Add</button>
+      <ul>
+        {items.map((item) => (
+          <li key={item._id}>{item.name}</li>
+        ))}
+      </ul>
     </div>
   );
 }
