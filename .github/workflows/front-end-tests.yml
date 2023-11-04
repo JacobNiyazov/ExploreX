@@ -12,6 +12,7 @@ jobs:
      - name: Start Backend
        run: |
         cd ./server
+        npm ci
         node app.js
 
       # Here we run all the tests
