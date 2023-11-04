@@ -7,10 +7,12 @@ jobs:
      - name: Checkout GitCode
        uses: actions/checkout@v4
  
-     - name: Run Cypress Test
+     - name: Cypress Setup
        uses: cypress-io/github-action@v6
-       with:       
-         working-directory: ./client
-         run: npm install cypress
-         build: npm run build
-         start: npm start
+
+     - name: Run Cypress Tests
+       run: |
+         cd ./client
+         npm install cypress
+         npm run build
+         npm start
