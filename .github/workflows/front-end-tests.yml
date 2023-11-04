@@ -9,6 +9,11 @@ jobs:
      - name: Checkout GitCode
        uses: actions/checkout@v4
 
+     - name: Start Backend
+       run: |
+        cd ./server
+        node app.js
+
       # Here we run all the tests
      - name: Run Cypress Test
        uses: cypress-io/github-action@v6
