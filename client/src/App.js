@@ -8,6 +8,7 @@ function App() {
 
   useEffect(() => {
     // Fetch items from the backend when the component mounts
+    console.log(process.env.REACT_APP_SERVER_URL)
     axios.get(process.env.REACT_APP_SERVER_URL + '/api/items')
       .then((response) => {
         setItems(response.data);
@@ -41,8 +42,9 @@ function App() {
         placeholder="Enter an item"
         value={inputValue}
         onChange={handleInputChange}
+        name = "textField"
       />
-      <button onClick={handleAddItem}>Add</button>
+      <button type = "submit" onClick={handleAddItem}>Add</button>
       <ul>
         {items.map((item) => (
           <li key={item._id}>{item.name}</li>
