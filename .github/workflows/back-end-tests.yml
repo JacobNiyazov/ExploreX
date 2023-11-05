@@ -1,0 +1,35 @@
+name: Back End Tests
+run-name: ${{ github.actor }} is running Back End Test Cases
+on: [push]
+jobs:
+  Back-End-Tests:
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout GitCode
+    uses: actions/checkout@v4
+
+    - name: create env file server
+       run: |
+        cd ./server
+        touch .env
+        echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
+        echo PORT=${{ secrets.PORT }} >> .env
+        echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+
+     - name: create env file client
+       run: |
+        cd ./client
+        touch .env
+        echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+
+     - name: Start Backend
+       run: |
+        cd ./server
+        npm ci
+        node app.js &
+
+    - name: Run Tests
+      run: |
+        cd ./server
+        npm ci
+        npm test
