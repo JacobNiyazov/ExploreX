@@ -16,6 +16,7 @@ jobs:
         echo MONGODB_URI=${{ secrets.MONGODB_URI }} >> .env
         echo PORT=${{ secrets.PORT }} >> .env
         echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+        echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
 
      - name: Start Backend
        run: |
