@@ -21,13 +21,7 @@ jobs:
           cd ./client
           touch .env
           echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
-
-      - name: Start Backend
-        run: |
-          cd ./server
-          npm ci
-          node app.js &
-
+          
       - name: Run Tests
         run: |
           cd ./server
