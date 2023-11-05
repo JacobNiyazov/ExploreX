@@ -9,18 +9,19 @@ jobs:
      - name: Checkout GitCode
        uses: actions/checkout@v4
 
-     - name: create env file
+     - name: create env file client
        run: |
-        cd ./server
+        cd ./client
         touch .env
-        echo MONGODB_URI=${{ secrets.MONGODB_URI }} >> .env
-        echo PORT=${{ secrets.PORT }} >> .env
-        echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
         echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
 
      - name: Start Backend
        run: |
         cd ./server
+        touch .env
+        echo MONGODB_URI=${{ secrets.MONGODB_URI }} >> .env
+        echo PORT=${{ secrets.PORT }} >> .env
+        echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .envb
         npm ci
         node app.js
 
