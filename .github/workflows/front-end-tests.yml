@@ -27,7 +27,8 @@ jobs:
        run: |
         cd ./server
         npm ci
-        node app.js
+        node app.js &
+
 
       # Here we run all the tests
      - name: Run Cypress Test
