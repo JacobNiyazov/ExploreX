@@ -1,27 +1,41 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require('body-parser');
+// const bodyParser = require('body-parser');
 const cors = require("cors");
+const cookieParser = require('cookie-parser')
+
 require("dotenv").config();
 
 const app = express();
+// app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+const corsOptions = {
+  origin: process.env.CLIENT_URL, // frontend URI (ReactJS)
+  credentials: true
+}
+app.use(cors(corsOptions));
+app.use(cookieParser())
 
 // connect MongoDB
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-  const PORT = process.env.PORT || 8000
-  app.listen(PORT, () => {
-      console.log(`App is Listening on PORT ${PORT}`);
-  })
-}).catch(err => {
-  console.log(err);
-});
+// mongoose.connect(process.env.MONGODB_URI).then(() => {
+//   const PORT = process.env.PORT || 8000
+//   app.listen(PORT, () => {
+//       console.log(`App is Listening on PORT ${PORT}`);
+//   })
+// }).catch(err => {
+//   console.log(err);
+// });
 
-app.use(bodyParser.json());
-const corsOptions = {
-  origin: process.env.CLIENT_URL // frontend URI (ReactJS)
-}
-app.use(express.json());
-app.use(cors(corsOptions));
+const PORT = process.env.PORT || 8000
+
+// INITIALIZE OUR DATABASE OBJECT
+const db = require('./db')
+db.on('error', console.error.bind(console, 'MongoDB connection error:'))
+
+// PUT THE SERVER IN LISTENING MODE
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 
 const Item = mongoose.model('Item', { name: String });
 
