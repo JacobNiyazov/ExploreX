@@ -4,50 +4,52 @@ const bodyParser = require('body-parser');
 const cors = require("cors");
 require("dotenv").config();
 
-const app = express();
+const initializeApp = async () => {
+  const app = express();
 
-// connect MongoDB
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-  const PORT = process.env.PORT || 8000
-  app.listen(PORT, () => {
-      console.log(`App is Listening on PORT ${PORT}`);
-  })
-}).catch(err => {
-  console.log(err);
-});
+  // connect MongoDB
+  await mongoose.connect(process.env.MONGODB_URI);
 
-app.use(bodyParser.json());
-const corsOptions = {
-  origin: process.env.CLIENT_URL // frontend URI (ReactJS)
-}
-app.use(express.json());
-app.use(cors(corsOptions));
+  const PORT = process.env.PORT || 8000;
+  const server = app.listen(PORT, () => {
+    console.log(`App is Listening on PORT ${PORT}`);
+  });
 
-const Item = mongoose.model('Item', { name: String });
+  app.use(bodyParser.json());
+  const corsOptions = {
+    origin: process.env.CLIENT_URL // frontend URI (ReactJS)
+  };
+  app.use(express.json());
+  app.use(cors(corsOptions));
 
-app.put('/api/items', async (req, res) => {
-  try {
-    const { name } = req.body;
-    const item = new Item({ name });
-    await item.save();
-    res.status(201).json(item);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+  const Item = mongoose.model('Item', { name: String });
 
-app.get('/api/items', async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.status(200).json(items);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
+  app.put('/api/items', async (req, res) => {
+    try {
+      const { name } = req.body;
+      const item = new Item({ name });
+      await item.save();
+      res.status(201).json(item);
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
-// route
-app.get("/", (req, res) => {
-    res.status(201).json({message: "Connected to Backend!"});
-});
+  app.get('/api/items', async (req, res) => {
+    try {
+      const items = await Item.find();
+      res.status(200).json(items);
+    } catch (error) {
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
 
-module.exports = app
+  // route
+  app.get("/", (req, res) => {
+    res.status(201).json({ message: "Connected to Backend!" });
+  });
+
+  return { app, server };
+};
+
+module.exports = initializeApp;
