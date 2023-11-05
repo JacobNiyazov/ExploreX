@@ -13,7 +13,9 @@ jobs:
        run: |
         cd ./server
         touch .env
-        echo MONGODB_URI=mongodb+srv://juanospina:Juanes29@explorex.dumzqum.mongodb.net/?retryWrites=true&w=majority >> .env
+        echo MONGODB_URI='mongodb+srv://juanospina:Juanes29@explorex.dumzqum.mongodb.net/?retryWrites=true&w=majority' >> .env
+        echo PORT=${{ secrets.PORT }} >> .envß
+        echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .envß
 
      - name: create env file client
        run: |
