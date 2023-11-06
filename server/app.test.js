@@ -1,17 +1,24 @@
+const {app, server} = require('./app.js'); 
+const mongoose = require("mongoose");
 const request = require('supertest');
-const app = require('./app.js'); 
 
 describe('Backend API Tests', function(){
-  it('should test GET /api/items', function(done) {
-    request(app)
+
+  it('should test GET /api/items', async() =>{
+    await request(app)
       .get('/api/items')
-      .expect(200,done);
+      .expect(200);
   });
 
-  it('should test PUT /api/items', function(done) {
-    request(app)
+  it('should test PUT /api/items', async()=> {
+    await request(app)
       .put('/api/items')
       .send({ name: 'test' })
-      .expect(201, done);
+      .expect(201);
+  });
+  afterAll(async ()=>{
+    await server.close();
+    await mongoose.disconnect();
   });
 });
+
