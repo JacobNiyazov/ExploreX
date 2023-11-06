@@ -61,7 +61,7 @@ app.get('/api/items', async (req, res) => {
 
 // route
 app.get("/", (req, res) => {
-    res.status(201).json({message: "Welcome* to Backend!"});
+    res.status(201).json({message: "Welcome& to Backend!"});
 });
 
 module.exports = {server,app}
