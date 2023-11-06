@@ -6,7 +6,7 @@ describe('Backend API Tests', function(){
 
   it('should test GET /api/items', async() =>{
     await request(app)
-      .get('/api/item ')
+      .get('/api/items')
       .expect(200);
   });
 
