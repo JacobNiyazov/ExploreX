@@ -1,6 +1,8 @@
 // client/src/App.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import AppBanner from './components/AppBanner';
+import Footer from './components/Footer';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -36,6 +38,7 @@ function App() {
 
   return (
     <div>
+      <AppBanner />
       <h1>ExploreX</h1>
       <input
         type="text"
@@ -44,12 +47,13 @@ function App() {
         onChange={handleInputChange}
         name = "textField"
       />
-      <button type = "submit" onClick={handleAddItem}>Add</button>
+      <button name = "backend" type = "submit" onClick={handleAddItem}>Add</button>
       <ul>
         {items.map((item) => (
           <li key={item._id}>{item.name}</li>
         ))}
       </ul>
+      <Footer />
     </div>
   );
 }

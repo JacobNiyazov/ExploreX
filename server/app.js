@@ -34,7 +34,7 @@ const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
 // PUT THE SERVER IN LISTENING MODE
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
 const Item = mongoose.model('Item', { name: String });
@@ -63,3 +63,5 @@ app.get('/api/items', async (req, res) => {
 app.get("/", (req, res) => {
     res.status(201).json({message: "Connected to Backend!"});
 });
+
+module.exports = {server,app}
