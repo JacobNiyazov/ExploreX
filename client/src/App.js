@@ -39,7 +39,7 @@ function App() {
   return (
     <div>
       <AppBanner />
-      <h1>ExploreX</h1>
+      <h1>CSE416</h1>
       <input
         type="text"
         placeholder="Enter an item"
