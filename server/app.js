@@ -63,3 +63,5 @@ app.get('/api/items', async (req, res) => {
 app.get("/", (req, res) => {
     res.status(201).json({message: "Connected to Backend!"});
 });
+
+module.exports = app
