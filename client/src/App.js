@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AppBanner from './components/AppBanner';
 import Footer from './components/Footer';
+import Navigator from './components/Navigator.js';
+import { GlobalStoreContextProvider } from './components/store'
+
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -37,24 +40,13 @@ function App() {
   };
 
   return (
-    <div>
-      <AppBanner />
-      <h1>CSE416</h1>
-      <input
-        type="text"
-        placeholder="Enter an item"
-        value={inputValue}
-        onChange={handleInputChange}
-        name = "textField"
-      />
-      <button name = "backend" type = "submit" onClick={handleAddItem}>Add</button>
-      <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
-        ))}
-      </ul>
-      <Footer />
-    </div>
+    <GlobalStoreContextProvider>
+      <div>
+        <AppBanner />
+        <Navigator />
+        <Footer />
+      </div>
+    </GlobalStoreContextProvider>
   );
 }
 
