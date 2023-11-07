@@ -1,59 +1,55 @@
 // client/src/App.js
 import React, { useState, useEffect } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import theme from './theme';
 import axios from 'axios';
 import AppBanner from './components/AppBanner';
 import Footer from './components/Footer';
+import MapFeed from './components/MapFeed';
+import { Container } from '@mui/material';
 
 function App() {
-  const [inputValue, setInputValue] = useState('');
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    // Fetch items from the backend when the component mounts
-    console.log(process.env.REACT_APP_SERVER_URL)
-    axios.get(process.env.REACT_APP_SERVER_URL + '/api/items')
-      .then((response) => {
-        setItems(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
-
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleAddItem = () => {
-    // Send a PUT request to add a new item
-    axios.put(process.env.REACT_APP_SERVER_URL + '/api/items', { name: inputValue })
-      .then((response) => {
-        setItems([...items, response.data]);
-        setInputValue('');
-      })
-      .catch((error) => {
-        console.error('Error adding item:', error);
-      });
-  };
+  const maps = [
+    {
+      title: 'Map 1',
+      author: 'Author 1',
+      likes: 10,
+      dislikes: 2,
+      imageUrl: 'https://via.placeholder.com/150',
+    },
+    {
+      title: 'Map 2',
+      author: 'Author 2',
+      likes: 20,
+      dislikes: 8,
+      imageUrl: 'https://via.placeholder.com/150',
+    },
+    {
+      title: 'Map 2',
+      author: 'Author 2',
+      likes: 20,
+      dislikes: 8,
+      imageUrl: 'https://via.placeholder.com/150',
+    },
+    {
+      title: 'Map 2',
+      author: 'Author 2',
+      likes: 20,
+      dislikes: 8,
+      imageUrl: 'https://via.placeholder.com/150',
+    },
+  ];
 
   return (
     <div>
-      <AppBanner />
-      <h1>CSE416</h1>
-      <input
-        type="text"
-        placeholder="Enter an item"
-        value={inputValue}
-        onChange={handleInputChange}
-        name = "textField"
-      />
-      <button name = "backend" type = "submit" onClick={handleAddItem}>Add</button>
-      <ul>
-        {items.map((item) => (
-          <li key={item._id}>{item.name}</li>
-        ))}
-      </ul>
-      <Footer />
+      <ThemeProvider theme={theme}>
+        <AppBanner />
+        <Container>
+          <MapFeed maps={maps} />
+        </Container>
+        <Footer />
+      </ThemeProvider>
+      
     </div>
   );
 }
