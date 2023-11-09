@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     // Fetch items from the backend when the component mounts
     console.log(process.env.REACT_APP_SERVER_URL)
-    axios.get(process.env.REACT_APP_SERVER_URL + '/api/items')
+    axios.get('/api/items')
       .then((response) => {
         setItems(response.data);
       })
