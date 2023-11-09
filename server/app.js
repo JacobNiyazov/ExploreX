@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 // const bodyParser = require('body-parser');
 const cors = require("cors");
 const cookieParser = require('cookie-parser')
+const path = require('path')
 
 require("dotenv").config();
 
@@ -33,6 +34,11 @@ const PORT = process.env.PORT || 8000
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
+app.use(express.static(path.join(__dirname, '../client/build')))
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build'))
+})
+
 // PUT THE SERVER IN LISTENING MODE
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
@@ -60,7 +66,7 @@ app.get('/api/items', async (req, res) => {
 });
 
 // route
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.status(201).json({message: "Welcome& to Backend!"});
 });
 
