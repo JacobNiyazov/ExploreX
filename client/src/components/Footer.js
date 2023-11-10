@@ -1,5 +1,5 @@
 import React from 'react';
-import { FooterContainer, FooterText } from './FooterStyles';
+import { FooterContainer, FooterText } from './StyleSheets/FooterStyles';
 import CopyrightIcon from '@mui/icons-material/Copyright';
 
 function Footer() {

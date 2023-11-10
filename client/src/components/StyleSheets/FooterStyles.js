@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 
 export const FooterContainer = styled(Container)(({ theme }) => ({
   backgroundColor: 'black',
-  borderTop: '1px solid white',
+  borderTop: '1px solid #FF76D6',
   color: '#ff24bd',
   display: 'flex',
   justifyContent: 'center',

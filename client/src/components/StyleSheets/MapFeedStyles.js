@@ -2,11 +2,29 @@ import { styled } from '@mui/material/styles';
 
 export const StyledMapFeed = styled('div')({
   backgroundColor: '#505050',
-  overflowY: 'auto',
   padding: '20px',
-  width: '65%',  // Adjust width as needed
+  width: '55%',  // Adjust width as needed
   margin: 'auto',
   height: '100vh',  // Full view height
+  overflowY: 'auto',
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#FF76D6',
+    borderRadius: '10px',
+    '&:hover': {
+      backgroundColor: '#FF76D6',
+    },
+  },
+  // Styles for Firefox
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
+  maxHeight: '80vh'
 });
 
 export const StyledCard = styled('div')({

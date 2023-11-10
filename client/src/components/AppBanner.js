@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
-import Typography from '@mui/material/Typography';
+import React, { useState, useContext } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 import Menu from '@mui/material/Menu';
 
-import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, UserIconButton, dropdownStyle, StyledMenu } from './AppBannerStyles';
+import { GlobalStoreContext } from './store'
+
+import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, UserIconButton, dropdownStyle, StyledMenu, StyledTypography, LogoButton } from './StyleSheets/AppBannerStyles';
 
 function AppBanner() {
   const [searchType, setSearchType] = React.useState('user'); // Default to 'user'
+
+  const { store } = useContext(GlobalStoreContext);
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
@@ -27,14 +30,18 @@ function AppBanner() {
     setAnchorEl(null);
   };
 
+  const handleLogoClick = () => {
+    store.updateCurrentPage(store.currentPageType.mapFeed);
+  };
+
   return (
     <StyledAppBar position="static">
       <StyledToolbar>
         {/* Logo and AppName */}
-        {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
-        <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+        <LogoButton onClick={handleLogoClick}/>
+        <StyledTypography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
           ExploreX
-        </Typography>
+        </StyledTypography>
         {/* Search Bar with Dropdown */}
         <Search>
         <SearchSelect

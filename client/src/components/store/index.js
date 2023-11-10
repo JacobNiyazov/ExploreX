@@ -8,10 +8,23 @@ export const GlobalStoreActionType = {
    CREATE_NEW_MAP: "CREATE_NEW_MAP",
 }
 
+
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "Login",
+       currentPage: "PublicMapView",
    });
+
+   store.currentPageType = {
+        login: "Login",
+        mapFeed: "MapFeed",
+        publicMapView: "PublicMapView"
+    }
+
+   store.updateCurrentPage = function (page) {
+    setStore({
+        currentPage: page,
+    });
+  };
    
    return (
     <GlobalStoreContext.Provider value={{
