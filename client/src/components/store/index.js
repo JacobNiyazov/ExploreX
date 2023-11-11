@@ -8,9 +8,21 @@ export const GlobalStoreActionType = {
    CREATE_NEW_MAP: "CREATE_NEW_MAP",
 }
 
+const CurrentPage = {
+    LOGIN: "LOGIN",
+    HOME_FEED: "HOME_FEED",
+    EDIT_MAP: "EDIT_MAP",
+    REGISTER: "REGISTER",
+    ACCOUNT_MANAGEMENT: "ACCOUNT_MANAGEMENT",
+    PROFILE_SCREEN: "PROFILE_SCREEN",
+    PUBLIC_FEED: "PUBLIC_FEED",
+    FORGOTTEN_PASSWORD: "FORGOTTEN_PASSWORD",
+    FAQ: "FAQ"
+}
+
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "Login",
+       currentPage: CurrentPage.EDIT_MAP,
    });
    
    return (

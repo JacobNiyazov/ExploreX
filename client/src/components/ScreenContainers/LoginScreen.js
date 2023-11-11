@@ -36,7 +36,7 @@ const LoginPage = () => {
             <input
               type="password"
               id="password"
-              style = {rounded_input}
+              style = {launchStyle.rounded_input}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
