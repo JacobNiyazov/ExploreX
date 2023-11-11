@@ -6,6 +6,8 @@ import { NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, 
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
+import PublishMapModal from './PublishMapModal.js'
+import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 
 const EditSidePanel = () => {  
     const [colors, setColors] = React.useState({
@@ -51,6 +53,7 @@ const EditSidePanel = () => {
     }
 
     const [title, setTitle] = React.useState("")
+    
 
     const handleTitle= (event) => {
         setTitle(event.target.value)
@@ -106,6 +109,16 @@ const EditSidePanel = () => {
 
     const handleHideLegend= () => {
         setHideLegend(!hideLegend)
+    }
+
+    const [publishModal, setPublishModal] = React.useState(false)
+    const handleOpenPublish= () => {
+        setPublishModal(true)
+    }
+
+    const [saveModal, setSaveModal] = React.useState(false)
+    const handleOpenSave= () => {
+        setSaveModal(true)
     }
 
     const commonFonts = [
@@ -429,13 +442,13 @@ const EditSidePanel = () => {
                 <Grid container columns={17} alignItems="center" sx={{height:"100%"}}>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons>
+                        <Buttons onClick={handleOpenSave}>
                             <Typography variant='inherit'>Submit</Typography>
                         </Buttons>
                     </Grid>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons>
+                        <Buttons onClick={handleOpenPublish}>
                             <Typography variant='inherit'>Publish</Typography>
                         </Buttons>
                     </Grid>
@@ -444,6 +457,8 @@ const EditSidePanel = () => {
 
             </ButtonContainer>
             
+            <PublishMapModal open={publishModal} setOpen={setPublishModal} />
+            <FinishedEditingMapModal open={saveModal} setOpen={setSaveModal} />
         </SidePanelGrid>
     );
 }

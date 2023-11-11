@@ -50,7 +50,8 @@ export const Buttons = styled(Button)({
   height: "50px",
   color: "#ff24bd",
   fontSize: "25px",
-  textTransform: 'none'
+  textTransform: 'none',
+  fontStyle: 'inherit'
 });
 
 export const ExpandMore = styled(ExpandMoreIcon)({
