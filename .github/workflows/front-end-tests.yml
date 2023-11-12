@@ -35,5 +35,5 @@ jobs:
        uses: cypress-io/github-action@v6
        with:       
          working-directory: ./client  # Actions start at root, our front end is in client
-         build: npm run build
+         build: CI=false npm run build
          start: npm start
