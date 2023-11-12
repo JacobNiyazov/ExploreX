@@ -1,26 +1,37 @@
 // src/components/MapFeedCard.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Card, CardContent, CardMedia, Typography } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './MapFeedStyles';
+import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
+import { StyledBox } from './StyleSheets/PublicMapStyles';
+import { GlobalStoreContext } from './store'
+
 
 const MapFeedCard = ({ map }) => {
+  const { store } = useContext(GlobalStoreContext);
+
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleLike = () => {
+  const handleLike = (event) => {
+    event.stopPropagation();
     setLiked(prevLiked => !prevLiked);
     setDisliked(false);  // Reset disliked state
   };
 
-  const handleDislike = () => {
+  const handleDislike = (event) => {
+    event.stopPropagation();
     setDisliked(prevDisliked => !prevDisliked);
     setLiked(false);  // Reset liked state
   };
 
+  const handleOpenMap = () => {
+    store.setCurrentPage(store.currentPageType.publicMapView);
+  };
+
   return (
-    <StyledCard as={Card}>
+    <StyledCard as={Card} onClick={handleOpenMap}>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}
@@ -36,16 +47,16 @@ const MapFeedCard = ({ map }) => {
               by {map.author}
             </AuthorTypography>
             </TextContainer>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <StyledBox>
             <ReactionButton selected={liked} onClick={handleLike}>
               <ThumbUpIcon />
+              <ReactionCount>{map.likes}</ReactionCount>
             </ReactionButton>
-            <ReactionCount>{map.likes}</ReactionCount>
             <ReactionButton selected={disliked} onClick={handleDislike}>
               <ThumbDownIcon />
+              <ReactionCount>{map.dislikes}</ReactionCount>
             </ReactionButton>
-            <ReactionCount>{map.dislikes}</ReactionCount>
-          </div>
+          </StyledBox>
         </ContentContainer>
       </StyledCardContent>
     </StyledCard>

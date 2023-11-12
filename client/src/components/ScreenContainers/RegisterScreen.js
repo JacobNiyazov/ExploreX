@@ -9,26 +9,31 @@ import {
   Grid,
   Link,
 } from '@mui/material';
-const LoginScreen = () => {
+const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const { store } = useContext(GlobalStoreContext);
 
-  const handleLogin = (e) => {
+  
+  const handleRegister = (e) => {
     e.preventDefault();
+    if(password != confirmPassword){
+      store.displayModal("Passwords do not match, try again");
+    }
+    else{
+      store.setModal("Welcome to ExploreX! Verify your email and then log in here.","Login");
+    }
 
-  };
+  }
 
-  const handleForgot = (e) => {
-    store.setCurrentPage(store.currentPageType.forgotPassScreen);
-  };
   
   return (
     <div style = {launchStyle.container}>
       <div style = {launchStyle.leftSide}>
         <Container>
-        <form onSubmit={handleLogin}>
-          <Typography style={launchStyle.header_text} variant="h5">Welcome, Map Lovers</Typography>
+        <form onSubmit={handleRegister}>
+          <Typography style={launchStyle.header_text}>Let's Get Started</Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography>Username or email:</Typography>
@@ -40,8 +45,8 @@ const LoginScreen = () => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
             </Grid>
-            <Grid style={launchStyle.password_container} item xs={12}>
-              <Typography style={launchStyle.password}>Password:</Typography>
+            <Grid style={launchStyle.password_container} item xs={129}>
+              <Typography>Password:</Typography>
               <input
                   type="password"
                   id="password"
@@ -50,14 +55,20 @@ const LoginScreen = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
             </Grid>
+            <Grid style={launchStyle.password_container} item xs={12}>
+              <Typography style={launchStyle.confirmPassword}>Confirm Password:</Typography>
+              <input
+                  type="password"
+                  id="password"
+                  style = {launchStyle.rounded_input}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+            </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
-              <Button style={launchStyle.button} variant="contained" color="primary" type="submit">
-                Sign in
+              <Button style={launchStyle.button} variant="contained" type="submit">
+                Create Account
               </Button>
-              <Button style={launchStyle.button} variant="contained" color="secondary">
-                Log in as guest
-              </Button>
-              <Link style={launchStyle.forgot} onClick={handleForgot}>Forgot your password?</Link>
 
             </Grid>
           </Grid>
@@ -72,4 +83,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default RegisterScreen;

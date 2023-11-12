@@ -1,7 +1,7 @@
 import React from 'react';
-import MapFeedCard from './MapFeedCard';
+import MapFeedCard from '../MapFeedCard';
 import { Grid } from '@mui/material';
-import { StyledMapFeed } from './MapFeedStyles';
+import { StyledMapFeed } from '../StyleSheets/MapFeedStyles';
 
 const MapFeed = ({ maps }) => {
   return (
