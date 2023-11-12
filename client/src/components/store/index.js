@@ -53,7 +53,7 @@ const exampleMaps = {
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: CurrentPage.EDIT_MAP,
+       currentPage: CurrentPage.LOGIN,
        currentMap: exampleMaps.Map1
    });
    
