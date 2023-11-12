@@ -10,45 +10,27 @@ import PublishMapModal from './PublishMapModal.js'
 import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from './store';
 
-const EditSidePanel = () => {  
+const EditSidePanel = ({
+    colors,
+    setColors,
+    colorPicker,
+    setColorPicker,
+    anchors,
+    setAnchors,
+    font,
+    setFont,
+    size,
+    setSize,
+    range,
+    setRange,
+    borderWidth,
+    setBorderWidth,
+    selectAll,
+    setSelectAll,
+    hideLegend,
+    setHideLegend,
+  }) => {  
     const { store } = React.useContext(GlobalStoreContext);
-    const [colors, setColors] = React.useState({
-        Text: '#FFFFFF',
-        HeatMap: '#FFFFFF',
-        LegendFill: '#FFFFFF',
-        LegendBorder: '#FFFFFF',
-        RegionFill: '#FFFFFF',
-        RegionBorder: '#FFFFFF',
-        DotMap: '#FFFFFF',
-        SpikeMap: '#FFFFFF',
-        VoronoiMap: '#FFFFFF'
-    })
-
-    const [colorPicker, setColorPicker] = React.useState({
-        Text: false,
-        HeatMap: false,
-        LegendFill: false,
-        LegendBorder: false,
-        RegionFill: false,
-        RegionBorder: false,
-        DotMap: false,
-        SpikeMap: false,
-        VoronoiMap: false
-    })
-
-    const [anchors, setAnchors] = React.useState({
-        Text: null,
-        HeatMap: null,
-        LegendFill: null,
-        LegendBorder: null,
-        RegionFill: null,
-        RegionBorder: null,
-        DotMap: null,
-        SpikeMap: null,
-        VoronoiMap: null
-    })
-
-    const [font, setFont] = React.useState("Nova Square")
 
     const handleFont= (event, label) => {
         setFont(event.target.value)
@@ -61,13 +43,7 @@ const EditSidePanel = () => {
         setTitle(event.target.value)
     }
 
-    const [size, setSize] = React.useState({
-        Text: 12,
-        Region: 12,
-        DotMap: 12,
-        SpikeMap: 12,
-        VoronoiMap: 12
-    })
+    
 
     const handleSize= (event, label) => {
         setSize({
@@ -76,16 +52,9 @@ const EditSidePanel = () => {
         })
     }
 
-    const [range, setRange] = React.useState(5)
-
     const handleRange= (event) => {
         setRange(event.target.value)
     }
-
-    const [borderWidth, setBorderWidth] = React.useState({
-        Region: 1,
-        Legend: 1,
-    })
 
     const handleBorderWidth= (event, label) => {
         setBorderWidth({
@@ -94,20 +63,12 @@ const EditSidePanel = () => {
         })
     }
 
-    const [selectAll, setSelectAll] = React.useState({
-        DotMap: false,
-        SpikeMap: false,
-        VoronoiMap: false
-    })
-    
     const handleSelectAll= (label) => {
         setSelectAll({
             ...selectAll,
             [label]: !selectAll[label]
         })
     }
-
-    const [hideLegend, setHideLegend] = React.useState(false)
 
     const handleHideLegend= () => {
         setHideLegend(!hideLegend)
