@@ -36,12 +36,12 @@ const PublicMapView = ({ map }) => {
   };
 
   return (
-    <Box sx={{ 
+    <Box data-testid='public-map-view' sx={{ 
       display: 'flex', 
       justifyContent: 'center', 
       alignItems: 'start', 
       position: 'relative', // Added to position the button relative to this box
-      mt: 2 
+      mt: 2
   }}>
       <StyledCard>
         <StyledTypography variant="h4" component="div">
@@ -60,11 +60,11 @@ const PublicMapView = ({ map }) => {
             {map.description}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLike}>
+            <ReactionButton selected={liked} onClick={handleLike} data-testid={'like-button'}>
               <ThumbUpIcon />
               <ReactionCount>{map.likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislike}>
+            <ReactionButton selected={disliked} onClick={handleDislike} data-testid={'dislike-button'}>
               <ThumbDownIcon />
               <ReactionCount>{map.dislikes}</ReactionCount>
             </ReactionButton>

@@ -22,6 +22,10 @@ const LoginScreen = () => {
   const handleForgot = (e) => {
     store.setCurrentPage(store.currentPageType.forgotPassScreen);
   };
+
+  const handleEnterGuest = (event) => {
+    store.setCurrentPage(store.currentPageType.mapFeed);
+  };
   
   return (
     <div style = {launchStyle.container}>
@@ -54,7 +58,7 @@ const LoginScreen = () => {
               <Button style={launchStyle.button} variant="contained" color="primary" type="submit">
                 Sign in
               </Button>
-              <Button style={launchStyle.button} variant="contained" color="secondary">
+              <Button style={launchStyle.button} onClick={ handleEnterGuest } variant="contained" color="secondary" data-testid="guest-button">
                 Log in as guest
               </Button>
               <Link style={launchStyle.forgot} onClick={handleForgot}>Forgot your password?</Link>

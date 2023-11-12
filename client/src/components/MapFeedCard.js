@@ -31,7 +31,7 @@ const MapFeedCard = ({ map }) => {
   };
 
   return (
-    <StyledCard as={Card} onClick={handleOpenMap}>
+    <StyledCard as={Card} onClick={handleOpenMap} data-testid='map-feed-card'>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}
