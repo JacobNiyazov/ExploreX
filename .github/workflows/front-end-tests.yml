@@ -22,6 +22,7 @@ jobs:
         cd ./client
         touch .env
         echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+        echo CI=false >>.env
 
      - name: Start Backend
        run: |
@@ -33,8 +34,6 @@ jobs:
       # Here we run all the tests
      - name: Run Cypress Test
        uses: cypress-io/github-action@v6
-       env:
-         CI: ""
        with:       
          working-directory: ./client  # Actions start at root, our front end is in client
          build: npm run build
