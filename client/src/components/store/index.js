@@ -58,7 +58,9 @@ function GlobalStoreContextProvider(props) {
         faqScreen: "FAQScreen",
         forgotPassScreen: "ForgotPasswordScreen",
         registerScreen: "RegisterScreen",
-        editMapScreen: "EditMapScreen"
+        editMapScreen: "EditMapScreen",
+        editAccScreen: "EditAccountScreen",
+        profileScreen: "ProfileScreen"
     }
 
    const storeReducer = (action) => {
