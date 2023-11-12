@@ -251,7 +251,7 @@ const EditSidePanel = ({
 
                 {/* Edit Region Options */}
                 {
-                    store.currentMap.type != "Heat Map" ?
+                    store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Region</Typography>
