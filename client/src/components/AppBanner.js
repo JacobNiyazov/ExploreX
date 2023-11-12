@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
+import { GlobalStoreContext } from '../components/store';
+
 import Menu from '@mui/material/Menu';
 
 import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, UserIconButton, dropdownStyle, StyledMenu } from './AppBannerStyles';
 
 function AppBanner() {
   const [searchType, setSearchType] = React.useState('user'); // Default to 'user'
+  const { store } = useContext(GlobalStoreContext);
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
@@ -27,6 +31,96 @@ function AppBanner() {
     setAnchorEl(null);
   };
 
+  const handleRegister = (e) => {
+    store.setCurrentPage("Register");
+  };
+
+  const handleLogin = (e) => {
+    store.setCurrentPage("Login");
+  };
+
+  const handleFAQ = () => {
+    store.setCurrentPage("FAQScreen");
+  }
+
+  if (store.currentPage == "Login"){
+    return (
+      <StyledAppBar position="static">
+        <StyledToolbar>
+          {/* Logo and AppName */}
+          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+            ExploreX
+          </Typography>
+          <Link style = {{color: "#FF76D6"}} onClick={handleRegister}>Don't have an account?</Link>
+
+        </StyledToolbar>
+      </StyledAppBar>
+    )
+  }
+  if (store.currentPage == "Register" || store.currentPage == "Forgot"){
+    return (
+      <StyledAppBar position="static">
+        <StyledToolbar>
+          {/* Logo and AppName */}
+          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+            ExploreX
+          </Typography>
+          <Link style = {{color: "#FF76D6"}} onClick={handleLogin}>Return to Login</Link>
+
+        </StyledToolbar>
+      </StyledAppBar>
+    )
+  }
+  console.log(store.currentPage)
+  if (store.currentPage == "FAQScreen"){
+    return (
+      <StyledAppBar position="static">
+        <StyledToolbar>
+          {/* Logo and AppName */}
+          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+            ExploreX
+          </Typography>
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+            Frequently Asked Questions
+          </Typography>
+          
+          {/* User Icon */}
+          <UserIconButton
+            edge="end"
+            aria-label="account of current user"
+            aria-controls={isMenuOpen ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            onClick={handleAccountMenuOpen}
+          >
+            <AccountCircle />
+          </UserIconButton>
+          <StyledMenu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'bottom', // Changed to 'bottom' to position the menu below the AppBar
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top', // Changed to 'top' to align the top of the menu with the bottom of the AppBar
+              horizontal: 'right',
+            }}
+            open={isMenuOpen}
+            onClose={handleAccountMenuClose}
+          >
+            <MenuItem onClick={handleAccountMenuClose}>My Profile</MenuItem>
+            <MenuItem onClick={handleAccountMenuClose}>Edit Account</MenuItem>
+            <MenuItem onClick={handleAccountMenuClose}>FAQ</MenuItem>
+            <MenuItem onClick={handleAccountMenuClose}>Logout</MenuItem>
+          </StyledMenu>
+        </StyledToolbar>
+      </StyledAppBar>
+    )
+  }
   return (
     <StyledAppBar position="static">
       <StyledToolbar>

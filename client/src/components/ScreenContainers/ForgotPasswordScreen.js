@@ -9,26 +9,27 @@ import {
   Grid,
   Link,
 } from '@mui/material';
-const LoginScreen = () => {
+
+const ForgotPasswordScreen = () => {
   const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const { store } = useContext(GlobalStoreContext);
 
+  const handleRecover = (e) => {
+    store.setModal("Password recovery email sent","Login");
+  };
+
   const handleLogin = (e) => {
-    e.preventDefault();
-
-  };
-
-  const handleForgot = (e) => {
-    store.setCurrentPage("Forgot");
-  };
+    store.setCurrentPage("Login");  
+    };
   
   return (
     <div style = {launchStyle.container}>
       <div style = {launchStyle.leftSide}>
         <Container>
         <form onSubmit={handleLogin}>
-          <Typography style={launchStyle.header_text} variant="h5">Welcome, Map Lovers</Typography>
+          <Typography style={launchStyle.header_text}>Forgot your password?</Typography>
+          <Typography style={launchStyle.sub_header_text} >No worries, it isn’t the end of the world.</Typography>
+
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography>Username or email:</Typography>
@@ -40,24 +41,12 @@ const LoginScreen = () => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
             </Grid>
-            <Grid style={launchStyle.password_container} item xs={12}>
-              <Typography style={launchStyle.password}>Password:</Typography>
-              <input
-                  type="password"
-                  id="password"
-                  style = {launchStyle.rounded_input}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-            </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
-              <Button style={launchStyle.button} variant="contained" color="primary" type="submit">
-                Sign in
+
+              <Button style={launchStyle.button} onClick = {handleRecover} variant="contained">
+                Recover
               </Button>
-              <Button style={launchStyle.button} variant="contained" color="secondary">
-                Log in as guest
-              </Button>
-              <Link style={launchStyle.forgot} onClick={handleForgot}>Forgot your password?</Link>
+              <Link style={launchStyle.forgot} onClick={handleLogin}>Return to Login</Link>
 
             </Grid>
           </Grid>
@@ -72,4 +61,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default ForgotPasswordScreen;
