@@ -7,10 +7,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: black;
   color: #FF76D6;
-  font-family: 'Nova Square',
+  font-family: 'Nova Square';
+  height: 100%;
+}
+
+html{
+  height: 100vh;
+}
+
+#root{
+  height: 100%;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+#AppContainer {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

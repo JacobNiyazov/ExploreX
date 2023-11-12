@@ -45,7 +45,7 @@ function App() {
 
   return (
     <GlobalStoreContextProvider>
-      <div>
+      <div id="AppContainer">
         <AppBanner />
         <Navigator />
         <Footer />
