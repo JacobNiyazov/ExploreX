@@ -1,8 +1,6 @@
 import React from 'react';
-import Modal from '@mui/material/Modal';
 import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title, SubTitle} from './StyleSheets/PublishMapModalStyles.js';
-import { Grid, Typography } from '@mui/material';
-import { Button } from '@mui/base';
+import { Grid } from '@mui/material';
 
 const PublishMapModal = ({open, setOpen}) =>{
     const handleClose = () => setOpen(false);

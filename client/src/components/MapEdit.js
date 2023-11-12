@@ -1,10 +1,9 @@
-import { useRef, useState, useEffect, React} from "react";
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, ZoomControl, useMap} from "react-leaflet";
+import { useState, React} from "react";
+import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import geojson from '../ExampleData/poland.geojson.json'
-import Switch from '@mui/material/Switch';
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';

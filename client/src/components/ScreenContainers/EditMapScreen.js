@@ -1,7 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
@@ -13,6 +12,7 @@ const Item = styled(Paper)(({ theme }) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   }));
+console.log(Item)
 
 
 const EditScreen = () => {

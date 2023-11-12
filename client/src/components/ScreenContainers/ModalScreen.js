@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Button, Modal, Box, Typography } from '@mui/material';
 import { GlobalStoreContext } from '../store';
 

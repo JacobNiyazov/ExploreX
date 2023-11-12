@@ -67,7 +67,7 @@ const sampleComments = [
 
 const CommentList = ({ mapId }) => {
   const [comments, setComments] = useState([]);
-
+  console.log(comments)
   useEffect(() => {
     // Replace with your actual API endpoint
     fetch(`/api/maps/${mapId}/comments`)

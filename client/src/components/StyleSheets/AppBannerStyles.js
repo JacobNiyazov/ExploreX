@@ -6,7 +6,6 @@ import Select from '@mui/material/Select';
 import ExploreOffIcon from '@mui/icons-material/ExploreOff';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 export const StyledAppBar = styled(AppBar)({
