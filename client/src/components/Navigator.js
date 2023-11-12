@@ -2,6 +2,10 @@ import React from 'react';
 import { useContext } from 'react';
 import { GlobalStoreContext } from './store';
 import LoginScreen from './ScreenContainers/LoginScreen.js';
+import RegisterScreen from './ScreenContainers/RegisterScreen.js';
+import ForgotPasswordScreen from './ScreenContainers/ForgotPasswordScreen.js';
+import FAQScreen from './ScreenContainers/FAQScreen.js';
+
 import MapFeed from './ScreenContainers/MapFeed.js';
 import PublicMapView from './ScreenContainers/PublicMapView.js';
 
@@ -54,6 +58,12 @@ export default function Navigator() {
             return (<MapFeed maps={maps}/>)
         case store.currentPageType.publicMapView:
             return (<PublicMapView map={mapData}/>)
+        case store.currentPageType.forgotPassScreen:
+            return (<ForgotPasswordScreen/>)
+        case store.currentPageType.registerScreen:
+            return (<RegisterScreen/>)
+        case store.currentPageType.faqScreen:
+            return (<FAQScreen/>)
         default:
             return (<LoginScreen />)
     }

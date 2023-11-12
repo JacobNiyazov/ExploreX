@@ -27,7 +27,7 @@ const MapFeedCard = ({ map }) => {
   };
 
   const handleOpenMap = () => {
-    store.updateCurrentPage(store.currentPageType.publicMapView);
+    store.setCurrentPage(store.currentPageType.publicMapView);
   };
 
   return (

@@ -6,6 +6,8 @@ import axios from 'axios';
 import AppBanner from './components/AppBanner';
 import Footer from './components/Footer';
 import Navigator from './components/Navigator.js';
+import ModalScreen from './components/ScreenContainers/ModalScreen.js';
+
 import { GlobalStoreContextProvider } from './components/store'
 
 import MapFeed from './components/ScreenContainers/MapFeed.js';
@@ -17,6 +19,7 @@ function App() {
       <div>
         <ThemeProvider theme={theme}>
           <AppBanner />
+          <ModalScreen/>
           <Navigator />
           <Footer />
         </ThemeProvider>
