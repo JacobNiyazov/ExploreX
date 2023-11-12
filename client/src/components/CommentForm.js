@@ -30,8 +30,9 @@ const CommentForm = ({ mapId, onCommentSubmit }) => {
         onChange={(e) => setCommentText(e.target.value)}
         placeholder="Write a comment..."
         required
+        data-testid= 'comment-input'
       />
-      <button type="submit">Post Comment</button>
+      <button type="submit" data-testid='submit-comment'>Post Comment</button>
     </StyledCommentForm>
   );
 };
