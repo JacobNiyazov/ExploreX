@@ -3,11 +3,15 @@ import InputBase from '@mui/material/InputBase';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Select from '@mui/material/Select';
+import ExploreOffIcon from '@mui/icons-material/ExploreOff';
 import IconButton from '@mui/material/IconButton';
-//import Menu from '@mui/material/Menu';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
 
 export const StyledAppBar = styled(AppBar)({
   backgroundColor: 'black', // Set the AppBar color to black
+  borderBottom: '1px solid #FF76D6',
 });
 
 export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
@@ -18,7 +22,7 @@ export const StyledToolbar = styled(Toolbar)(({ theme }) => ({
 export const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius * 4, // More rounded corners
-  backgroundColor: theme.palette.grey[600], // Grey background
+  backgroundColor: '#505050', // Grey background
   display: 'flex',
   alignItems: 'center',
   width: '60%', // Set width to 60%
@@ -33,17 +37,17 @@ export const SearchSelect = styled(Select)(({ theme }) => ({
     padding: theme.spacing(1), // Consistent padding
     paddingRight: theme.spacing(3), // Make room for the dropdown icon
     borderRadius: theme.shape.borderRadius * 4, // More rounded corners
-    backgroundColor: theme.palette.grey[600], // Grey background
+    backgroundColor: '#505050', // Grey background
     '&:focus': {
       borderRadius: theme.shape.borderRadius * 4, // More rounded corners
-      backgroundColor: theme.palette.grey[600], // Maintain the background on focus
+      backgroundColor: '#505050', // Maintain the background on focus
     },
   },
   '& .MuiOutlinedInput-notchedOutline': {
     border: 'none', // Remove border
   },
   '&:hover .MuiOutlinedInput-notchedOutline': {
-    border: 'none', // Remove border on hover
+    color: 'none', // Remove border on hover
   },
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
     border: 'none', // Remove border on focus
@@ -51,26 +55,44 @@ export const SearchSelect = styled(Select)(({ theme }) => ({
 }));
 
 export const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: theme.palette.text.primary,
+  color: 'white',
   '& .MuiInputBase-input': {
     borderRadius: theme.shape.borderRadius * 4, // More rounded corners
-    backgroundColor: theme.palette.grey[600], // Grey background
+    backgroundColor: '#505050', // Grey background
     padding: theme.spacing(1, 1, 1, 1), // Adjust padding to not overlap with the dropdown
     width: '100%',
     [theme.breakpoints.up('md')]: {
-      width: '100%',
+      width: '75%',
     },
   },
 }));
 
+export const StyledTypography = styled(Typography)(({ theme }) => ({
+  cursor: 'pointer',
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+}));
+
 export const UserIconButton = styled(IconButton)(({ theme }) => ({
-  color: '#ff24bd', // Set the icon color to pink
+  color: '#ff24bd',
   marginLeft: theme.spacing(2),
   '&:hover': {
-    color: 'black', // Change color to black on hover
+    color: '#FF76D6',
   },
-  '& .MuiSvgIcon-root': { // Target the icon itself within the button
-    fontSize: '2rem', // Increase the size of the icon
+  '& .MuiSvgIcon-root': { 
+    fontSize: '2rem',
+  },
+}));
+
+export const LogoButton = styled(ExploreOffIcon)(({ theme }) => ({
+  color: '#ff24bd',
+  margin: '0px 3px',
+  '&:hover': {
+    color: '#FF76D6',
+  },
+  '& .MuiSvgIcon-root': {
+    fontSize: '2rem', 
   },
 }));
 
@@ -78,6 +100,7 @@ export const dropdownStyle = {
   '& .MuiPaper-root': {
     backgroundColor: 'black',
     borderRadius: 10,
+    border: '1px solid #FF76D6',
     color: '#ff24bd',
     '& .MuiMenuItem-root': {
       // Styles for each dropdown item
@@ -88,3 +111,5 @@ export const dropdownStyle = {
     },
   },
 };
+
+export const StyledMenu = styled(Menu)(({ theme }) => dropdownStyle);

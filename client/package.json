@@ -6,15 +6,21 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.0",
     "cypress": "^13.4.0",
     "dotenv": "^16.3.1",
+    "install": "^0.13.0",
+    "npm": "^10.2.3",
+    "leaflet": "^1.9.4",
     "react": "^18.2.0",
+    "react-color": "^2.19.3",
     "react-dom": "^18.2.0",
+    "react-native": "^0.72.6",
+    "react-native-web": "^0.19.9",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -47,6 +53,5 @@
   },
   "devDependencies": {
     "cypress": "^13.4.0"
-  },
-  "proxy": "http://localhost:8000"
+  }
 }

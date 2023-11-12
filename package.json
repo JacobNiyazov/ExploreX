@@ -1,17 +1,6 @@
 {
-  "name": "ExploreX",
-  "version": "1.0.0",
-  "description": "",
-  "engines": {
-    "node": "20.9.0"
-  },
-  "scripts": {
-    "test": "jest",
-    "install-server": "npm install",
-    "start-server": "node app.js",
-    "start": "node server/app.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
-  },
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3"
+  }
 }
