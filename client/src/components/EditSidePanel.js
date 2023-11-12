@@ -8,8 +8,10 @@ import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
 import PublishMapModal from './PublishMapModal.js'
 import FinishedEditingMapModal from './FinishedEditingMapModal.js'
+import GlobalStoreContext from './store';
 
 const EditSidePanel = () => {  
+    const { store } = React.useContext(GlobalStoreContext);
     const [colors, setColors] = React.useState({
         Text: '#FFFFFF',
         HeatMap: '#FFFFFF',
@@ -215,33 +217,37 @@ const EditSidePanel = () => {
                 </EditAccordion>
 
                 {/* Edit Heat Map options */}
-                <EditAccordion disableGutters>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Heat Map Options</Typography>
-                    </EditAccordionSummary>
-                    <AccordionDetails sx={{padding:0}}>
-                    <CustomList>
-                            <CustomListItem>
-                                <Typography>Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Range</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={range}
-                                    onChange={(event)=>{handleRange(event)}}
-                                    error={range == ""}
-                                />
-                            </CustomListItem>
-                        </CustomList>
-                    </AccordionDetails>
-                </EditAccordion>
+                {
+                    store.currentMap.type == "Heat Map" ?
+                    <EditAccordion disableGutters>
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Heat Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                        <CustomList>
+                                <CustomListItem>
+                                    <Typography>Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Range</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={range}
+                                        onChange={(event)=>{handleRange(event)}}
+                                        error={range == ""}
+                                    />
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
                 {/* Edit Legend Options */}
                 <EditAccordion disableGutters>
@@ -283,157 +289,172 @@ const EditSidePanel = () => {
                 </EditAccordion>
 
                 {/* Edit Region Options */}
-                <EditAccordion disableGutters>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Region</Typography>
-                    </EditAccordionSummary>
-                    <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                            <CustomListItem>
-                                <Typography>Fill Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionFill"/>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Size</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={size.Region}
-                                    onChange={(event)=>{handleSize(event, "Region")}}
-                                    error={size.Region == ""}
-                                />
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Border Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionBorder"/>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Border Width</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={borderWidth.Region}
-                                    onChange={(event)=>{handleBorderWidth(event, "Region")}}
-                                    error={borderWidth.Region == ""}
-                                />
-                            </CustomListItem>
-                        </CustomList>
-                    </AccordionDetails>
-                </EditAccordion>
+                {
+                    store.currentMap.type != "Heat Map" ?
+                    <EditAccordion disableGutters>
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Region</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
+                                <CustomListItem>
+                                    <Typography>Fill Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionFill"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Size</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={size.Region}
+                                        onChange={(event)=>{handleSize(event, "Region")}}
+                                        error={size.Region == ""}
+                                    />
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Border Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionBorder"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Border Width</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={borderWidth.Region}
+                                        onChange={(event)=>{handleBorderWidth(event, "Region")}}
+                                        error={borderWidth.Region == ""}
+                                    />
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
 
                 {/* Edit Dot Map Options */}
-                <EditAccordion disableGutters>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Dot Map Options</Typography>
-                    </EditAccordionSummary>
-                    <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                            <CustomListItem>
-                                <Typography>Select All</Typography>
-                                <SelectAllCheck onChange={()=> {handleSelectAll("DotMap")}}></SelectAllCheck>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Size</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={size.DotMap}
-                                    onChange={(event)=>{handleSize(event, "DotMap")}}
-                                    error={size.DotMap == ""}
-                                />
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Dot Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
-                            </CustomListItem>
-                        </CustomList>
-                    </AccordionDetails>
-                </EditAccordion>
+                {
+                    store.currentMap.type == "Dot Map" ?
+                    <EditAccordion disableGutters>
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Dot Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
+                                <CustomListItem>
+                                    <Typography>Select All</Typography>
+                                    <SelectAllCheck onChange={()=> {handleSelectAll("DotMap")}}></SelectAllCheck>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Size</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={size.DotMap}
+                                        onChange={(event)=>{handleSize(event, "DotMap")}}
+                                        error={size.DotMap == ""}
+                                    />
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Dot Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
-
-                {/* Edit Dot Map Options */}
-                <EditAccordion disableGutters>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Spike Map Options</Typography>
-                    </EditAccordionSummary>
-                    <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                            <CustomListItem>
-                                <Typography>Select All</Typography>
-                                <SelectAllCheck onChange={()=> {handleSelectAll("SpikeMap")}}></SelectAllCheck>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Size</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={size.SpikeMap}
-                                    onChange={(event)=>{handleSize(event, "SpikeMap")}}
-                                    error={size.SpikeMap == ""}
-                                />
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Spike Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
-                            </CustomListItem>
-                        </CustomList>
-                    </AccordionDetails>
-                </EditAccordion>
+                {/* Edit Spike Map Options */}
+                {
+                    store.currentMap.type == "Spike Map" ?
+                    <EditAccordion disableGutters>
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Spike Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
+                                <CustomListItem>
+                                    <Typography>Select All</Typography>
+                                    <SelectAllCheck onChange={()=> {handleSelectAll("SpikeMap")}}></SelectAllCheck>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Size</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={size.SpikeMap}
+                                        onChange={(event)=>{handleSize(event, "SpikeMap")}}
+                                        error={size.SpikeMap == ""}
+                                    />
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Spike Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
                 
 
                 {/* Edit Voronoi Map Options */}
-                <EditAccordion disableGutters>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Voronoi Map Options</Typography>
-                    </EditAccordionSummary>
-                    <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                            <CustomListItem>
-                                <Typography>Select All</Typography>
-                                <SelectAllCheck onChange={()=> {handleSelectAll("VoronoiMap")}}></SelectAllCheck>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Size</Typography>
-                                <NumberSelector
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={size.VoronoiMap}
-                                    onChange={(event)=>{handleSize(event, "VoronoiMap")}}
-                                    error={size.VoronoiMap == ""}
-                                />
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Dot Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
-                            </CustomListItem>
-                        </CustomList>
-                    </AccordionDetails>
-                </EditAccordion>
+                {
+                    store.currentMap.type == "Voronoi Map" ?
+                    <EditAccordion disableGutters>
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Voronoi Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
+                                <CustomListItem>
+                                    <Typography>Select All</Typography>
+                                    <SelectAllCheck onChange={()=> {handleSelectAll("VoronoiMap")}}></SelectAllCheck>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Size</Typography>
+                                    <NumberSelector
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={size.VoronoiMap}
+                                        onChange={(event)=>{handleSize(event, "VoronoiMap")}}
+                                        error={size.VoronoiMap == ""}
+                                    />
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Dot Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
             </AccordianContainer>
 

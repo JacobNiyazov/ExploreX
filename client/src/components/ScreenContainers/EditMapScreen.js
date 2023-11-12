@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import EditSidePanel from '../EditSidePanel.js';
+import MapEdit from '../MapEdit.js';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -18,9 +19,7 @@ const EditScreen = () => {
     return (
         <Grid container sx={{height:"100%"}}>
             <EditSidePanel />
-            <Grid item xs={8}>
-                <Item>xs=4</Item>
-            </Grid>
+            <MapEdit />
         </Grid>
     );
 }

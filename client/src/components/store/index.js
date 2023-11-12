@@ -20,9 +20,41 @@ const CurrentPage = {
     FAQ: "FAQ"
 }
 
+const exampleMaps = {
+    Map1: {
+        title: 'Map 1',
+        author: 'Author 1',
+        likes: 10,
+        dislikes: 2,
+        type: "Voronoi Map"
+      },
+    Map2: {
+        title: 'Map 2',
+        author: 'Author 2',
+        likes: 20,
+        dislikes: 8,
+        type: "Heat Map"
+      },
+    Map3: {
+        title: 'Map 2',
+        author: 'Author 2',
+        likes: 20,
+        dislikes: 8,
+        type: "Dot Map"
+      },
+    Map4: {
+        title: 'Map 2',
+        author: 'Author 2',
+        likes: 20,
+        dislikes: 8,
+        type: "Spike Map"
+      },
+}
+
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
        currentPage: CurrentPage.EDIT_MAP,
+       currentMap: exampleMaps.Map1
    });
    
    return (
