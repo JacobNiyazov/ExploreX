@@ -57,7 +57,7 @@ const exampleMaps = {
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "LoginScreen",
+       currentPage: "Login",
        modalMessage: "Blah",
        modalOpen: false,
        currentMap: exampleMaps.Map1
