@@ -6,7 +6,8 @@ import RegisterScreen from './ScreenContainers/RegisterScreen.js';
 import ForgotPasswordScreen from './ScreenContainers/ForgotPasswordScreen.js';
 import FAQScreen from './ScreenContainers/FAQScreen.js';
 import EditScreen from './ScreenContainers/EditMapScreen.js';
-
+import ProfileScreen from './ScreenContainers/ProfileScreen.js'
+import EditAccountScreen from './ScreenContainers/EditAccountScreen.js'
 import MapFeed from './ScreenContainers/MapFeed.js';
 import PublicMapView from './ScreenContainers/PublicMapView.js';
 
@@ -67,6 +68,10 @@ export default function Navigator() {
             return (<FAQScreen/>)
         case store.currentPageType.editMapScreen:
             return (<EditScreen/>)
+        case store.currentPageType.editAccScreen:
+            return (<EditAccountScreen/>)
+          case store.currentPageType.profileScreen:
+            return (<ProfileScreen/>)
         default:
             return (<LoginScreen />)
     }

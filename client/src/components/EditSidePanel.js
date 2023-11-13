@@ -31,7 +31,8 @@ const EditSidePanel = ({
     setHideLegend,
   }) => {  
     const { store } = React.useContext(GlobalStoreContext);
-
+    
+    console.log(store.currentPage)
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
@@ -250,7 +251,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Region Options */}
-                {
+                {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>

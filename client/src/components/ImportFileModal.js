@@ -1,15 +1,11 @@
-import { Typography } from '@mui/material';
 import {Modal} from '@mui/material';
 import {Box} from '@mui/material';
-import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { Button } from '@mui/material';
 import {Grid} from '@mui/material';
-import { StyledButton, StyledCloud, StyledBox, DescriptionText, StyledFormLabel, StyledRadio} from './ImportFileModalStyles';
+import { StyledButton, StyledCloud, DescriptionText, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
 
 function ImportFileModal({open,onClose}){
     const style = {
@@ -18,7 +14,7 @@ function ImportFileModal({open,onClose}){
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 600,
-        bgcolor: 'black',
+        bgcolor: '#242526',
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,

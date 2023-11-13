@@ -1,9 +1,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import {DescriptionText, StyledCloud, StyledButton} from './UploadFileStyles';
+import {DescriptionText, StyledCloud, StyledButton} from './StyleSheets/UploadFileStyles';
 import { Grid } from '@mui/material';
 
 
@@ -15,7 +14,7 @@ function UploadFileModal({open,onClose}){
         transform: 'translate(-50%, -50%)',
         width: 450,
         height:90,
-        bgcolor: 'black',
+        bgcolor: '#242526',
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,

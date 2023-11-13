@@ -1,3 +1,4 @@
+import { stepperClasses } from '@mui/material';
 import { createContext, useState } from 'react'
 import React from 'react';
 
@@ -9,7 +10,8 @@ export const GlobalStoreActionType = {
    SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
    DISPLAY_MODAL: "DISPLAY_MODAL",
    SET_MODAL: "SET_MODAL",
-   CLOSE_MODAL: "CLOSE_MODAL"
+   CLOSE_MODAL: "CLOSE_MODAL",
+   SET_CURRENT_MAP:"SET_CURRENT_MAP"
 }
 
 const exampleMaps = {
@@ -41,6 +43,13 @@ const exampleMaps = {
         dislikes: 8,
         type: "Spike Map"
       },
+    Map5:{
+        title: 'Map 2',
+        author: 'Author 2',
+        likes: 20,
+        dislikes: 8,
+        type: "Choropleth Map"
+    }
 }
 
 function GlobalStoreContextProvider(props) {
@@ -72,15 +81,23 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
+            }
+            case GlobalStoreActionType.SET_CURRENT_MAP:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: false,
+                    currentMap: payload.currentMap
+                });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
                 return setStore({
                     currentPage: store.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-
+                    currentMap: store.currentMap
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -88,7 +105,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-
+                    currentMap: store.currentMap
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -96,7 +113,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
             }
             default: {
@@ -104,7 +121,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
             }
 
@@ -122,6 +139,15 @@ function GlobalStoreContextProvider(props) {
         );
     }
 
+    store.setCurrentMap = (currentMap) =>{
+        console.log(currentMap)
+        storeReducer({
+            type: GlobalStoreActionType.SET_CURRENT_MAP,
+            payload: {
+                currentMap: exampleMaps.currentMap,
+            }
+        });
+    }
 
     store.displayModal = (modalMessage) => {
         storeReducer({
