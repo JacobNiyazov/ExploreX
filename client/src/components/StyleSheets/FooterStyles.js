@@ -10,8 +10,7 @@ export const FooterContainer = styled(Container)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   padding: theme.spacing(2),
-  position: 'absolute',
-  bottom: '0',
+  position:'relative'
 }));
 
 export const FooterText = styled(Typography)({

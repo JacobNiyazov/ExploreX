@@ -3,12 +3,18 @@ import Modal from '@mui/material/Modal';
 import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title, SubTitle} from './StyleSheets/PublishMapModalStyles.js';
 import { Grid, Typography } from '@mui/material';
 import { Button } from '@mui/base';
+import GlobalStoreContext from './store';
+
 
 const PublishMapModal = ({open, setOpen}) =>{
+    const { store } = React.useContext(GlobalStoreContext);
     const handleClose = () => setOpen(false);
 
     // Here we should reroute to home feed and publishing the map
-    const handlePublish = () => setOpen(false);
+    const handlePublish = () =>{
+        setOpen(false);
+        store.setCurrentPage("PublicMapView")
+    } 
     return(
         <ModalStyled
             open={open}

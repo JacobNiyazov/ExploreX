@@ -9,6 +9,7 @@ import EditScreen from './ScreenContainers/EditMapScreen.js';
 
 import MapFeed from './ScreenContainers/MapFeed.js';
 import PublicMapView from './ScreenContainers/PublicMapView.js';
+import UserProfile from './UserProfile';
 
 const maps = [
     {

@@ -18,34 +18,46 @@ const exampleMaps = {
         author: 'Author 1',
         likes: 10,
         dislikes: 2,
-        type: "Voronoi Map"
+        type: "Voronoi Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map2: {
-        title: 'Map 2',
+        title: 'Map 556',
         author: 'Author 2',
-        likes: 20,
-        dislikes: 8,
-        type: "Heat Map"
+        likes: 34,
+        dislikes: 55,
+        type: "Heat Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map3: {
-        title: 'Map 2',
+        title: 'Map 6',
         author: 'Author 2',
-        likes: 20,
+        likes: 0,
         dislikes: 8,
-        type: "Dot Map"
+        type: "Dot Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map4: {
-        title: 'Map 2',
+        title: 'Map 7',
         author: 'Author 2',
-        likes: 20,
-        dislikes: 8,
-        type: "Spike Map"
+        likes: 2,
+        dislikes: 100,
+        type: "Spike Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
+    Map5:{
+        title: 'Map 8',
+        author: 'Author 2',
+        likes: 2,
+        dislikes: 100,
+        type: "Chorolopleth Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+    }
 }
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "Login",
+       currentPage: "EditMapScreen",
        modalMessage: "Blah",
        modalOpen: false,
        currentMap: exampleMaps.Map1
@@ -58,7 +70,8 @@ function GlobalStoreContextProvider(props) {
         faqScreen: "FAQScreen",
         forgotPassScreen: "ForgotPasswordScreen",
         registerScreen: "RegisterScreen",
-        editMapScreen: "EditMapScreen"
+        editMapScreen: "EditMapScreen",
+        userProfileScreen: "UserProfileScreen"
     }
 
    const storeReducer = (action) => {
