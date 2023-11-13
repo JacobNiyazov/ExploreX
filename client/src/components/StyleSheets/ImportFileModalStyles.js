@@ -5,7 +5,7 @@ import {FormLabel, Typography } from '@mui/material';
 import Radio from '@mui/material/Radio';
 
 export const StyledButton = styled(Button)({
-    backgroundColor: "#ffb7ce",
+    backgroundColor: "#FF76D6",
     color: "black",
     fontSize: "2vh",
     marginTop: "3vh",
@@ -15,7 +15,7 @@ export const StyledButton = styled(Button)({
 });
 export const StyledCloud = styled(CloudUploadIcon)({
     fontSize:"5vh",  
-    color:"#ffb7ce",
+    color:"#FF76D6",
     marginTop:"2.5vh"
 })
 export const DescriptionText = styled(Typography)({
@@ -27,5 +27,5 @@ export const StyledFormLabel = styled(FormLabel)({
 })
 export const StyledRadio = styled(Radio)({
     color: "white",
-    '&.Mui-checked': {color: "pink",}
+    '&.Mui-checked': {color: "#FF76D6",}
 })

@@ -1,12 +1,18 @@
 import React from 'react';
+import { useContext } from 'react';
+import { GlobalStoreContext } from './store';
 import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title} from './StyleSheets/PublishMapModalStyles.js';
 import { Grid } from '@mui/material';
 
 const FinshedEditingMapModal = ({open, setOpen}) =>{
+    const { store } = useContext(GlobalStoreContext);
     const handleClose = () => setOpen(false);
 
     // Here we should reroute to home feed and save the map
-    const handleSave = () => setOpen(false);
+    const handleSave = () => {
+        setOpen(false);
+        store.setCurrentPage("ProfileScreen")
+    }
     return(
         <ModalStyled
             open={open}

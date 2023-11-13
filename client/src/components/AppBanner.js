@@ -65,15 +65,15 @@ function AppBanner() {
     store.setCurrentPage(store.currentPageType.mapFeed);
   };
 
-  let menuOptions = {'My Profile':handleProfileOption, 'Edit Account':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+  let menuOptions = {'MyProfile':handleProfileOption, 'EditAccount':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
   if(store.currentPage === store.currentPageType.faqScreen){
-    menuOptions = {'My Profile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'Edit Account':handleEditAccOption, 'Logout':handleLogin}
+    menuOptions = {'MyProfile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'EditAccount':handleEditAccOption, 'Logout':handleLogin}
   }
   else if(store.currentPage === store.currentPageType.profileScreen){
-    menuOptions = {'Map Feed':handleMapFeedOption, 'Edit Account':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+    menuOptions = {'Map Feed':handleMapFeedOption, 'EditAccount':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
   }
   else if(store.currentPage === store.currentPageType.editAccScreen){
-    menuOptions = {'My Profile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+    menuOptions = {'MyProfile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
   }
 
 

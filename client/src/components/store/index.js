@@ -1,3 +1,4 @@
+import { stepperClasses } from '@mui/material';
 import { createContext, useState } from 'react'
 import React from 'react';
 
@@ -9,12 +10,13 @@ export const GlobalStoreActionType = {
    SET_CURRENT_PAGE: "SET_CURRENT_PAGE",
    DISPLAY_MODAL: "DISPLAY_MODAL",
    SET_MODAL: "SET_MODAL",
-   CLOSE_MODAL: "CLOSE_MODAL"
+   CLOSE_MODAL: "CLOSE_MODAL",
+   SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP"
 }
 
 const exampleMaps = {
     Map1: {
-        title: 'Map 1',
+        title: 'Voronoi Map Example',
         author: 'Author 1',
         likes: 10,
         dislikes: 2,
@@ -22,7 +24,7 @@ const exampleMaps = {
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map2: {
-        title: 'Map 556',
+        title: 'Heat Map Example',
         author: 'Author 2',
         likes: 34,
         dislikes: 55,
@@ -30,7 +32,7 @@ const exampleMaps = {
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map3: {
-        title: 'Map 6',
+        title: 'Dot Map Example',
         author: 'Author 2',
         likes: 0,
         dislikes: 8,
@@ -38,7 +40,7 @@ const exampleMaps = {
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map4: {
-        title: 'Map 7',
+        title: 'Spike Map Example',
         author: 'Author 2',
         likes: 2,
         dislikes: 100,
@@ -46,18 +48,17 @@ const exampleMaps = {
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map5:{
-        title: 'Map 8',
+        title: 'Choropleth Map Example',
         author: 'Author 2',
-        likes: 2,
-        dislikes: 100,
-        type: "Chorolopleth Map",
-        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+        likes: 20,
+        dislikes: 8,
+        type: "Choropleth Map"
     }
 }
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "EditMapScreen",
+       currentPage: "LoginScreen",
        modalMessage: "Blah",
        modalOpen: false,
        currentMap: exampleMaps.Map1
@@ -84,15 +85,23 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
+            }
+            case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: false,
+                    currentMap: payload.currentMap
+                });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
                 return setStore({
                     currentPage: store.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-
+                    currentMap: store.currentMap
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -100,7 +109,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-
+                    currentMap: store.currentMap
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -108,7 +117,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
             }
             default: {
@@ -116,7 +125,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-
+                    currentMap: store.currentMap
                 });
             }
 
@@ -134,6 +143,16 @@ function GlobalStoreContextProvider(props) {
         );
     }
 
+    store.setCurrentEditMap = (currentMap, currentPage) =>{
+        console.log(currentMap, exampleMaps[currentMap])
+        storeReducer({
+            type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+            payload: {
+                currentMap: exampleMaps[currentMap],
+                currentPage: currentPage,
+            }
+        });
+    }
 
     store.displayModal = (modalMessage) => {
         storeReducer({

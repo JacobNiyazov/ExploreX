@@ -1,4 +1,5 @@
 import React from 'react';
+import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -30,13 +31,14 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
   }) => {  
-    const { store } = React.useContext(GlobalStoreContext);
-
+    const { store } = useContext(GlobalStoreContext);
+    
+    console.log(store.currentPage)
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
 
-    const [title, setTitle] = React.useState(store.currentMap.title)
+    const [title, setTitle] = useState(store.currentMap.title)
     
 
     const handleTitle= (event) => {
@@ -74,12 +76,12 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
 
-    const [publishModal, setPublishModal] = React.useState(false)
+    const [publishModal, setPublishModal] = useState(false)
     const handleOpenPublish= () => {
         setPublishModal(true)
     }
 
-    const [saveModal, setSaveModal] = React.useState(false)
+    const [saveModal, setSaveModal] = useState(false)
     const handleOpenSave= () => {
         setSaveModal(true)
     }
@@ -293,7 +295,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Region Options */}
-                {
+                {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
