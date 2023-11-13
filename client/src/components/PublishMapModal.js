@@ -28,7 +28,7 @@ const PublishMapModal = ({open, setOpen}) =>{
                     </Grid>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons onClick={handlePublish}>Publish</Buttons> 
+                        <Buttons onClick={handlePublish} data-testid="map-publish">Publish</Buttons> 
                     </Grid>
                     <Grid item xs={1}></Grid>
                 </ButtonContainer>

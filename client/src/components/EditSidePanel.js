@@ -169,10 +169,10 @@ const EditSidePanel = ({
             
             <AccordianContainer item xs>
                 <TitleContainer item>  
-                    <TitleTextField label="Title" value={title} onChange={handleTitle}/>
+                    <TitleTextField label="Title" value={title} onChange={handleTitle} data-testid="title-input"/>
                 </TitleContainer>
                 {/* Edit Text Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Text</Typography>
                     </EditAccordionSummary>
@@ -475,7 +475,7 @@ const EditSidePanel = ({
                     </Grid>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons onClick={handleOpenPublish}>
+                        <Buttons onClick={handleOpenPublish} data-testid="map-publish-button">
                             <Typography variant='inherit'>Publish</Typography>
                         </Buttons>
                     </Grid>
