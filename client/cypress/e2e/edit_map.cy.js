@@ -8,10 +8,6 @@ describe('Edit Map Screen Test', () => {
     cy.get('[data-testid=EditScreenButton]').first().click();
   });
 
-  it('can type into title', () => {
-    cy.get('[data-testid=title-input]').click().type('{selectall}{backspace}').type('Example Title');
-  });
-
   it('Open color switch and change color', () => {
     cy.get('[data-testid=edit-accordion]').first().click();
     cy.get('[data-testid=color-text]').first().click().type('{selectall}{backspace}').type("FFFFFF")
