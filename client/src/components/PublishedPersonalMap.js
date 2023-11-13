@@ -1,17 +1,22 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {Grid} from '@mui/material';
 import {Typography} from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { Button } from '@mui/material';
 import { useState } from 'react';
+import { GlobalStoreContext } from './store';
 
 function PublishedPersonalMap(){
+    const { store } = useContext(GlobalStoreContext);
     const [activeButton, setActiveButton] = useState(null);
 
     const handleButtonClick = (buttonName) => {
       setActiveButton(buttonName);
     };
+    const handlePostClick = (event) => {
+        store.setCurrentPage(store.currentPageType.publicMapView);
+      };
     // I want this one to have the thumbs up and thumbs down and a map image, thats it
     return(
         <Grid container spacing = {2}>
@@ -20,7 +25,7 @@ function PublishedPersonalMap(){
                     This is a sample published map
                 </Typography>
             </Grid>
-            <Grid item xs = {12}>
+            <Grid item xs = {12} onClick = {handlePostClick}>
                 <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/girls-nursery-room-watercolor-painting-world-map-silhouette-baby-pink-wall-decor-joanna-szmerdt.jpg" // Replace with your image URL
                 alt = "Published Map" style={{height: "30vh", width: "30vh",  borderRadius:"17px"}} />
             </Grid>
