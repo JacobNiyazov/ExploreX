@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useState } from 'react'
 import React from 'react';
 
 export const GlobalStoreContext = createContext({});
@@ -71,7 +71,8 @@ function GlobalStoreContextProvider(props) {
         forgotPassScreen: "ForgotPasswordScreen",
         registerScreen: "RegisterScreen",
         editMapScreen: "EditMapScreen",
-        userProfileScreen: "UserProfileScreen"
+        editAccScreen: "EditAccountScreen",
+        profileScreen: "ProfileScreen"
     }
 
    const storeReducer = (action) => {
@@ -103,6 +104,14 @@ function GlobalStoreContextProvider(props) {
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: false,
+
+                });
+            }
+            default: {
                 return setStore({
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,

@@ -9,7 +9,7 @@ const MapFeed = ({ maps }) => {
       <Grid container spacing={4} direction="column">
         {maps.map((map, index) => (
           <Grid item key={index} xs={12}>
-            <MapFeedCard map={map} />
+            <MapFeedCard map={map}/>
           </Grid>
         ))}
       </Grid>

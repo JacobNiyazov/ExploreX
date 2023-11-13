@@ -1,6 +1,6 @@
 // src/components/MapFeedCard.js
 import React, { useState, useContext } from 'react';
-import { Card, CardContent, CardMedia, Typography } from '@mui/material';
+import { Card, CardContent, CardMedia } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
@@ -31,7 +31,7 @@ const MapFeedCard = ({ map }) => {
   };
 
   return (
-    <StyledCard as={Card} onClick={handleOpenMap}>
+    <StyledCard as={Card} onClick={handleOpenMap} data-testid='map-feed-card'>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}

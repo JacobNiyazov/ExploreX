@@ -32,7 +32,7 @@ export const StyledCard = styled('div')({
   color: '#FF76D6',
   marginBottom: '20px',
   padding: '10px',
-  height: '275px'
+  height: '275px',
 });
 
 export const TitleTypography = styled('div')({

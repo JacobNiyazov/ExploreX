@@ -213,7 +213,7 @@ const EditSidePanel = ({
                                     variant="standard"
                                     value={size.Text}
                                     onChange={(event)=>{handleSize(event, "Text")}}
-                                    error={size.Text == ""}
+                                    error={size.Text === ""}
                                 />
                             </CustomListItem>
                         </CustomList>
@@ -222,7 +222,7 @@ const EditSidePanel = ({
 
                 {/* Edit Heat Map options */}
                 {
-                    store.currentMap.type == "Heat Map" ?
+                    store.currentMap.type === "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Heat Map Options</Typography>
@@ -244,7 +244,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={range}
                                         onChange={(event)=>{handleRange(event)}}
-                                        error={range == ""}
+                                        error={range === ""}
                                     />
                                 </CustomListItem>
                             </CustomList>
@@ -285,7 +285,7 @@ const EditSidePanel = ({
                                     variant="standard"
                                     value={borderWidth.Legend}
                                     onChange={(event)=>{handleBorderWidth(event, "Legend")}}
-                                    error={borderWidth.Legend == ""}
+                                    error={borderWidth.Legend === ""}
                                 />
                             </CustomListItem>
                         </CustomList>
@@ -294,7 +294,7 @@ const EditSidePanel = ({
 
                 {/* Edit Region Options */}
                 {
-                    store.currentMap.type != "Heat Map" ?
+                    store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Region</Typography>
@@ -316,7 +316,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={size.Region}
                                         onChange={(event)=>{handleSize(event, "Region")}}
-                                        error={size.Region == ""}
+                                        error={size.Region === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
@@ -335,7 +335,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={borderWidth.Region}
                                         onChange={(event)=>{handleBorderWidth(event, "Region")}}
-                                        error={borderWidth.Region == ""}
+                                        error={borderWidth.Region === ""}
                                     />
                                 </CustomListItem>
                             </CustomList>
@@ -347,7 +347,7 @@ const EditSidePanel = ({
 
                 {/* Edit Dot Map Options */}
                 {
-                    store.currentMap.type == "Dot Map" ?
+                    store.currentMap.type === "Dot Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>
@@ -369,7 +369,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={size.DotMap}
                                         onChange={(event)=>{handleSize(event, "DotMap")}}
-                                        error={size.DotMap == ""}
+                                        error={size.DotMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
@@ -385,7 +385,7 @@ const EditSidePanel = ({
 
                 {/* Edit Spike Map Options */}
                 {
-                    store.currentMap.type == "Spike Map" ?
+                    store.currentMap.type === "Spike Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Spike Map Options</Typography>
@@ -407,7 +407,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={size.SpikeMap}
                                         onChange={(event)=>{handleSize(event, "SpikeMap")}}
-                                        error={size.SpikeMap == ""}
+                                        error={size.SpikeMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
@@ -424,7 +424,7 @@ const EditSidePanel = ({
 
                 {/* Edit Voronoi Map Options */}
                 {
-                    store.currentMap.type == "Voronoi Map" ?
+                    store.currentMap.type === "Voronoi Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Voronoi Map Options</Typography>
@@ -446,7 +446,7 @@ const EditSidePanel = ({
                                         variant="standard"
                                         value={size.VoronoiMap}
                                         onChange={(event)=>{handleSize(event, "VoronoiMap")}}
-                                        error={size.VoronoiMap == ""}
+                                        error={size.VoronoiMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />

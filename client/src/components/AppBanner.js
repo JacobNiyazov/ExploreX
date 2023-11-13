@@ -6,7 +6,6 @@ import Link from '@mui/material/Link';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 
-import Menu from '@mui/material/Menu';
 
 import { GlobalStoreContext } from './store'
 
@@ -43,19 +42,48 @@ function AppBanner() {
 
   const handleLogin = (e) => {
     store.setCurrentPage(store.currentPageType.login);
+    handleAccountMenuClose();
   };
 
-  const handleFAQ = () => {
+  const handleFAQOption = () => {
+    handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.faqScreen);
+  };
+
+  const handleProfileOption = () => {
+    handleAccountMenuClose();
+    store.setCurrentPage(store.currentPageType.profileScreen);
+  };
+
+  const handleEditAccOption = () => {
+    handleAccountMenuClose();
+    store.setCurrentPage(store.currentPageType.editAccScreen);
+  };
+
+  const handleMapFeedOption = () => {
+    handleAccountMenuClose();
+    store.setCurrentPage(store.currentPageType.mapFeed);
+  };
+
+  let menuOptions = {'My Profile':handleProfileOption, 'Edit Account':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+  if(store.currentPage === store.currentPageType.faqScreen){
+    menuOptions = {'My Profile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'Edit Account':handleEditAccOption, 'Logout':handleLogin}
+  }
+  else if(store.currentPage === store.currentPageType.profileScreen){
+    menuOptions = {'Map Feed':handleMapFeedOption, 'Edit Account':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+  }
+  else if(store.currentPage === store.currentPageType.editAccScreen){
+    menuOptions = {'My Profile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
   }
 
-  if (store.currentPage == store.currentPageType.login){
+
+  if (store.currentPage === store.currentPageType.login){
     return (
-      <StyledAppBar position="static">
+      <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
           {/* Logo and AppName */}
-          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+          <LogoButton data-testid='logo'/>
+          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
             ExploreX
           </Typography>
           <Link style = {{color: "#FF76D6"}} onClick={handleRegister}>Don't have an account?</Link>
@@ -64,13 +92,13 @@ function AppBanner() {
       </StyledAppBar>
     )
   }
-  if (store.currentPage == store.currentPageType.registerScreen || store.currentPage == store.currentPageType.forgotPassScreen){
+  if (store.currentPage === store.currentPageType.registerScreen || store.currentPage === store.currentPageType.forgotPassScreen){
     return (
-      <StyledAppBar position="static">
+      <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
           {/* Logo and AppName */}
-          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+          <LogoButton data-testid='logo'/>
+          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
             ExploreX
           </Typography>
           <Link style = {{color: "#FF76D6"}} onClick={handleLogin}>Return to Login</Link>
@@ -80,13 +108,13 @@ function AppBanner() {
     )
   }
   console.log(store.currentPage)
-  if (store.currentPage == store.currentPageType.faqScreen){
+  if (store.currentPage === store.currentPageType.faqScreen){
     return (
-      <StyledAppBar position="static">
+      <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
           {/* Logo and AppName */}
-          {/* <img src="/path-to-your-logo.png" alt="Logo" style={{ marginRight: 8 }} /> */}
-          <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+          <LogoButton data-testid='logo'/>
+          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
             ExploreX
           </Typography>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
@@ -118,26 +146,26 @@ function AppBanner() {
             open={isMenuOpen}
             onClose={handleAccountMenuClose}
           >
-            <MenuItem onClick={handleAccountMenuClose}>My Profile</MenuItem>
-            <MenuItem onClick={handleAccountMenuClose}>Edit Account</MenuItem>
-            <MenuItem onClick={handleAccountMenuClose}>FAQ</MenuItem>
-            <MenuItem onClick={handleAccountMenuClose}>Logout</MenuItem>
+            {Object.entries(menuOptions).map(([option, handler]) => (
+            <MenuItem onClick={handler}>{option}</MenuItem>
+          ))}
           </StyledMenu>
         </StyledToolbar>
       </StyledAppBar>
     )
   }
   return (
-    <StyledAppBar position="static">
+    <StyledAppBar data-testid='app-banner' position="static">
       <StyledToolbar>
         {/* Logo and AppName */}
-        <LogoButton onClick={handleLogoClick}/>
-        <StyledTypography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
+        <LogoButton data-testid='logo' onClick={handleLogoClick}/>
+        <StyledTypography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
           ExploreX
         </StyledTypography>
         {/* Search Bar with Dropdown */}
         <Search>
         <SearchSelect
+            data-testid='search-type'
             value={searchType}
             onChange={handleSearchTypeChange}
             displayEmpty
@@ -150,10 +178,11 @@ function AppBanner() {
             }}
             sx={{ color: '#ff24bd', zIndex: 1 }}
           >
-            <MenuItem value="user">User</MenuItem>
-            <MenuItem value="map">Map Name</MenuItem>
+            <MenuItem data-testid='search-type-option' value="user">User</MenuItem>
+            <MenuItem data-testid='search-type-option' value="map">Map Name</MenuItem>
           </SearchSelect>
           <StyledInputBase
+            data-testid='search-bar'
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
           />
@@ -163,6 +192,7 @@ function AppBanner() {
         </Search>
         {/* User Icon */}
         <UserIconButton
+          data-testid='user-icon'
           edge="end"
           aria-label="account of current user"
           aria-controls={isMenuOpen ? 'account-menu' : undefined}
@@ -172,6 +202,7 @@ function AppBanner() {
           <AccountCircle />
         </UserIconButton>
         <StyledMenu
+          data-testid='user-menu'
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
@@ -186,10 +217,9 @@ function AppBanner() {
           open={isMenuOpen}
           onClose={handleAccountMenuClose}
         >
-          <MenuItem onClick={handleAccountMenuClose}>My Profile</MenuItem>
-          <MenuItem onClick={handleAccountMenuClose}>Edit Account</MenuItem>
-          <MenuItem onClick={handleAccountMenuClose}>FAQ</MenuItem>
-          <MenuItem onClick={handleAccountMenuClose}>Logout</MenuItem>
+          {Object.entries(menuOptions).map(([option, handler]) => (
+            <MenuItem data-testid={option} onClick={handler}>{option}</MenuItem>
+          ))}
         </StyledMenu>
       </StyledToolbar>
     </StyledAppBar>

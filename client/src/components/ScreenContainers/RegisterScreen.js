@@ -7,7 +7,6 @@ import {
   Button,
   Container,
   Grid,
-  Link,
 } from '@mui/material';
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
@@ -18,7 +17,7 @@ const RegisterScreen = () => {
   
   const handleRegister = (e) => {
     e.preventDefault();
-    if(password != confirmPassword){
+    if(password !== confirmPassword){
       store.displayModal("Passwords do not match, try again");
     }
     else{

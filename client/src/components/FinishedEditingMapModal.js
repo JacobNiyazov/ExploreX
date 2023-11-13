@@ -1,5 +1,5 @@
 import React from 'react';
-import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title, SubTitle} from './StyleSheets/PublishMapModalStyles.js';
+import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title} from './StyleSheets/PublishMapModalStyles.js';
 import { Grid } from '@mui/material';
 
 const FinshedEditingMapModal = ({open, setOpen}) =>{
