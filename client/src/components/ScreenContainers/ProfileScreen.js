@@ -59,7 +59,7 @@ function ProfileScreen(){
             >
             Drafts
                 </StyledButton2>
-            </Grid>
+            </Grid> 
             <Grid item xs = {12} sx = {{marginLeft:"10vh"}} >
                 {activeButton === 'Posts' ? <PublishedPersonalMap /> : 
                 <Grid container space = {2}>
