@@ -15,6 +15,6 @@ const MapFeed = ({ maps }) => {
       </Grid>
     </StyledMapFeed>
   );
-};
+}; 
 
 export default MapFeed;
