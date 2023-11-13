@@ -16,7 +16,7 @@ function DraftPersonalMap(map){
 
     function handleEditClick (){
         //store.setCurrentMap(map.map)
-        store.setCurrentPage("EditMapScreen")
+        store.setCurrentEditMap(map.map, "EditMapScreen")
     }
     return(
         <Grid container spacing = {2}>
@@ -33,7 +33,6 @@ function DraftPersonalMap(map){
                 <Button
                     sx = {{marginBottom: "2vh",
                     marginLeft: "3vw", color: "white"}}
-                    data-testid="EditScreenButton"
                     onClick={handleEditClick}
                     >
                         <ModeEditIcon></ModeEditIcon>
@@ -52,5 +51,7 @@ function DraftPersonalMap(map){
             </Grid>
         </Grid>
     );
+}
+export default DraftPersonalMap;
 }
 export default DraftPersonalMap;
