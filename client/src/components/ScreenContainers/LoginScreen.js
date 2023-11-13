@@ -32,7 +32,7 @@ const LoginScreen = () => {
       <div style = {launchStyle.leftSide}>
         <Container>
         <form onSubmit={handleLogin}>
-          <Typography style={launchStyle.header_text} variant="h5">Welcome, Map Lovers</Typography>
+          <Typography style={launchStyle.header_text} variant="h5">Welcome, Map Lovers!</Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Typography>Username or email:</Typography>

@@ -23,3 +23,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.leaflet-popup-content-wrapper, .leaflet-popup-tip{
+  background: black !important;
+  color: #ff24bd !important;
+  border: 2px solid #ff24bd;
+}
+
+.leaflet-popup-content{
+  margin: 10px !important;
+  display: flex;
+  flex-direction: column;
+}

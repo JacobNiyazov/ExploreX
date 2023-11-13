@@ -1,22 +1,12 @@
-import React, {useState} from 'react';
-import Button from '@mui/material/Button';
+import React from 'react';
 import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
-import {TextField} from '@mui/material';
-import {Input} from '@mui/material';
 import {FormControl} from '@mui/material';
 import {InputLabel} from '@mui/material';
-import { StyledButton, StyledInput, StyledBio, StyledInfo, StyledSubmitButton} from './AccountManagerStyles';
+import { StyledButton, StyledInput, StyledBio, StyledInfo, StyledSubmitButton} from '../StyleSheets/EditAccountScreenStyles';
 import {InputAdornment} from '@mui/material';
-import { InputBase } from '@mui/material';
 
-/*to do for the weekend/tomorrow:
-    - change the color/font, do this when pulled
-    - make the error modals for the account manage
-    - pull the other code, see if footer is sticky
-    to the bottom
-*/
-function AccountManager(){
+function EditAccountScreen(){
     const center = {
         display:"flex", 
         justifyContent:"center", 
@@ -25,24 +15,26 @@ function AccountManager(){
     const text = {
         fontSize:"5vh",
         paddingTop:"5vh",
-        color:"pink"
     }
     return(
         <Grid container spacing = {3}>
             <Grid item xs = {12} sx = {center}>
-                <Typography sx = {text}>
+                <Typography sx = {text} data-testid="title">
                     Let's make some changes
                 </Typography>
             </Grid>
             <Grid item xs = {12} sx = {center}>
                 <FormControl>
-                    <InputLabel htmlFor="basic-input" style={{ color: 'white' }}>
+                    <InputLabel htmlFor="basic-input" 
+                    style={{ color: 'white' }}>
                         Username
                     </InputLabel>
                     <StyledInput
                         sx={{padding: "10px"}}
                         disableUnderline
                         id="basic-input"
+                        defaultValue="Team Pink"
+                        data-testid="username-input"
                         endAdornment={
                             <InputAdornment position="end">
                             <StyledButton>
@@ -65,6 +57,8 @@ function AccountManager(){
                         sx={{padding: "10px"}}
                         disableUnderline
                         id="basic-input"
+                        data-testid="bio-input"
+                        defaultValue="Hello, welcome to my page thisis where the bio goes. I hope you enjoy all my maps!"
                         endAdornment={
                             <InputAdornment position="end" sx = {{marginTop:"45vh", marginLeft:"3vw"}}>
                             <StyledButton>
@@ -84,9 +78,12 @@ function AccountManager(){
                         sx={{padding: "10px"}}
                         disableUnderline
                         id="basic-input"
+                        defaultValue="teampink@stonybrook.edu"
+                        data-testid="email-input"
                         endAdornment={
                             <InputAdornment position="end">
-                            <StyledButton>
+                            <StyledButton
+                            >
                                 Edit
                             </StyledButton>
                             </InputAdornment>
@@ -101,13 +98,8 @@ function AccountManager(){
                         sx={{padding: "10px"}}
                         disableUnderline
                         id="basic-input"
-                        endAdornment={
-                            <InputAdornment position="end">
-                            <StyledButton>
-                                Edit
-                            </StyledButton>
-                            </InputAdornment>
-                        }
+                        type="password"
+                        defaultValue="123123123"
                     />
                 </FormControl>
                 <FormControl>
@@ -118,13 +110,8 @@ function AccountManager(){
                         sx={{padding: "10px"}}
                         disableUnderline
                         id="basic-input"
-                        endAdornment={
-                            <InputAdornment position="end">
-                            <StyledButton>
-                                Edit
-                            </StyledButton>
-                            </InputAdornment>
-                        }
+                        defaultValue="123123123"
+                        type="password"
                     />
                 </FormControl>
                 <StyledSubmitButton sx = {{marginTop:"20vh", marginLeft: "-15vh"}}>
@@ -134,4 +121,4 @@ function AccountManager(){
         </Grid>
     );
 }
-export default AccountManager;
+export default EditAccountScreen;

@@ -1,12 +1,10 @@
 import styled from "@emotion/styled";
-import { Select } from "@mui/material";
 import {Input} from "@mui/material";
 import { Button } from "@mui/material";
-import TextField from "@mui/material";
 import {InputBase} from "@mui/material";
 
 export const StyledButton = styled(Button)({
-  backgroundColor: "#ffb7ce",
+  backgroundColor: "#FF76D6",
   color: "black",
   fontSize: "1.4vh",
   "&:hover": {
@@ -14,7 +12,7 @@ export const StyledButton = styled(Button)({
   }
 })
 export const StyledSubmitButton = styled(Button)({
-  backgroundColor: "#ffb7ce",
+  backgroundColor: "#FF76D6",
   color: "black",
   fontSize: "2.5vh",
   "&:hover": {
@@ -22,7 +20,7 @@ export const StyledSubmitButton = styled(Button)({
   }
 })
 export const StyledInput = styled(Input)({
-  backgroundColor: "black",
+  backgroundColor: "#242526",
   "& input": {
       color:"white",
   },
@@ -35,14 +33,14 @@ export const StyledInput = styled(Input)({
   borderRadius: "2vh",
 })
 export const StyledBio = styled(InputBase)({
-  backgroundColor: "black",
+  backgroundColor: "#242526",
   borderRadius: "2vh",
   '& textarea': {
-      color:"black",
-      fontSize:"3vh",
-      backgroundColor:"white",
+      color:"white",
+      fontSize:"3.5vh",
       borderRadius: "2vh",
-      marginRight:"-7vw"
+      marginRight:"-7vw",
+      lineHeight:"4vh"
   },
   "&:hover":{
       border:"1px solid #ff24bd"
@@ -52,7 +50,7 @@ export const StyledBio = styled(InputBase)({
 })
 
 export const StyledInfo = styled(Input)({
-  backgroundColor: "black",
+  backgroundColor: "#242526",
   borderRadius: "2vh",
   "& input": {
       color:"white",

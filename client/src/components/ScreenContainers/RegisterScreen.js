@@ -58,7 +58,7 @@ const RegisterScreen = () => {
               <Typography style={launchStyle.confirmPassword}>Confirm Password:</Typography>
               <input
                   type="password"
-                  id="password"
+                  id="passwordConfirm"
                   style = {launchStyle.rounded_input}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

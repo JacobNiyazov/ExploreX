@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import { Square } from "./StyleSheets/ColorSelectorStyles";
 import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
+import * as ReactDOMServer from 'react-dom/server';
 
 const MapEditInner = () =>{
     const map = useMap();
@@ -20,24 +21,14 @@ const MapEditInner = () =>{
 
 const MapEdit = ({
     colors,
-    setColors,
-    colorPicker,
-    setColorPicker,
-    anchors,
-    setAnchors,
     font,
-    setFont,
     size,
-    setSize,
     range,
-    setRange,
     borderWidth,
-    setBorderWidth,
     selectAll,
-    setSelectAll,
     hideLegend,
-    setHideLegend,
   }) =>{
+    //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
     const [legendColor, setLegendColor] = useState({
@@ -65,7 +56,7 @@ const MapEdit = ({
         label3: "Field 3"
     })
 
-    const handleClick = (event, label) => {
+    const handleLegendClick = (event, label) => {
         setLegendColorPicker({
             ...legendColorPicker,
             [label]: !legendColorPicker[label]
@@ -116,11 +107,18 @@ const MapEdit = ({
     }
 
     function onEachFeature(feature, layer) {
-        
         // Customize popup content
         layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-          return k + ": " + feature.properties[k];
-        }).join("<br />"), {
+            
+          return (
+            ReactDOMServer.renderToString(
+                <Box sx={{display:'flex', alignItems:'center'}}>
+                    <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+                    <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+                </Box>
+            )
+          )
+        }).join(""), {
           maxHeight: 200
         });
         var shade = getRandomShade();
@@ -174,7 +172,7 @@ const MapEdit = ({
                     <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}}>
                         <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
                         <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleClick(e, "label1")}></Square>
+                            <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
                             <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
                             <Popover 
                                 open={Boolean(legendAnchors.label1)} 
@@ -197,7 +195,7 @@ const MapEdit = ({
                             </Popover>
                         </Box>
                         <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label2, '&:hover':{backgroundColor: legendColor.label2}}} onClick={(e) => handleClick(e, "label2")}></Square>
+                            <Square sx={{backgroundColor: legendColor.label2, '&:hover':{backgroundColor: legendColor.label2}}} onClick={(e) => handleLegendClick(e, "label2")}></Square>
                             <LegendTextField variant="standard" value={legendText.label2} onChange={(e) => handleTextChange(e, "label2")}></LegendTextField>
                             <Popover 
                                 open={Boolean(legendAnchors.label2)} 
@@ -220,7 +218,7 @@ const MapEdit = ({
                             </Popover>
                         </Box>
                         <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label3, '&:hover':{backgroundColor: legendColor.label3}}} onClick={(e) => handleClick(e, "label3")}></Square>
+                            <Square sx={{backgroundColor: legendColor.label3, '&:hover':{backgroundColor: legendColor.label3}}} onClick={(e) => handleLegendClick(e, "label3")}></Square>
                             <LegendTextField variant="standard" value={legendText.label3} onChange={(e) => handleTextChange(e, "label3")}></LegendTextField>
                             <Popover 
                                 open={Boolean(legendAnchors.label3)} 

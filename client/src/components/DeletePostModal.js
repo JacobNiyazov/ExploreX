@@ -2,11 +2,11 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import {DescriptionText, StyledCloud, StyledButton} from './StyleSheets/UploadFileStyles';
+import {DescriptionText, StyledError, StyledButton} from './StyleSheets/DeletePostModalStyles';
 import { Grid } from '@mui/material';
 
 
-function UploadFileModal({open,onClose}){
+function DeletePostModal({open,onClose}){
     const style = {
         position: 'absolute',
         top: '50%',
@@ -34,24 +34,21 @@ function UploadFileModal({open,onClose}){
         >
             <Box sx={style}>
             <Grid container spacing = {2}>
-                <Grid item xs = {12}>
-                    <DescriptionText id="modal-modal-title" variant="h6" component="h2">
-                        Upload an ExploreX Map file:
-                    </DescriptionText>
-                </Grid>
                 <Grid item xs = {2}>
                     <Button>
-                        <StyledCloud></StyledCloud>
+                        <StyledError></StyledError>
                     </Button>
                 </Grid>
                 <Grid item xs = {6} sx = {{marginTop:"1vh"}}>
                     <DescriptionText id="modal-modal-description">
-                        name_of_file.json
+                        Are you sure you want to delete this map?
+                        This action is <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                            PERMANENT</span>
                     </DescriptionText>
                 </Grid>
                 <Grid item xs = {4} sx = {center}>
                         <StyledButton >
-                            Create Map
+                            Confirm
                         </StyledButton>
                 </Grid>
             </Grid>
@@ -59,4 +56,4 @@ function UploadFileModal({open,onClose}){
         </Modal>
     )
 }
-export default UploadFileModal;
+export default DeletePostModal;

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -30,13 +31,14 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
   }) => {  
-    const { store } = React.useContext(GlobalStoreContext);
-
+    const { store } = useContext(GlobalStoreContext);
+    
+    console.log(store.currentPage)
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
 
-    const [title, setTitle] = React.useState("")
+    const [title, setTitle] = useState(store.currentMap.title)
     
 
     const handleTitle= (event) => {
@@ -74,12 +76,12 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
 
-    const [publishModal, setPublishModal] = React.useState(false)
+    const [publishModal, setPublishModal] = useState(false)
     const handleOpenPublish= () => {
         setPublishModal(true)
     }
 
-    const [saveModal, setSaveModal] = React.useState(false)
+    const [saveModal, setSaveModal] = useState(false)
     const handleOpenSave= () => {
         setSaveModal(true)
     }
@@ -117,17 +119,16 @@ const EditSidePanel = ({
         'Nova Square', 
       ];
 
-
     return (
         <SidePanelGrid container direction="column" item xs={4}>
             
             
             <AccordianContainer item xs>
                 <TitleContainer item>  
-                    <TitleTextField label="Title" value={title} onChange={handleTitle}/>
+                    <TitleTextField label="Title" value={title} onChange={handleTitle} data-testid="title-input"/>
                 </TitleContainer>
                 {/* Edit Text Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Text</Typography>
                     </EditAccordionSummary>
@@ -250,7 +251,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Region Options */}
-                {
+                {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters>
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
@@ -430,7 +431,7 @@ const EditSidePanel = ({
                     </Grid>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons onClick={handleOpenPublish}>
+                        <Buttons onClick={handleOpenPublish} data-testid="map-publish-button">
                             <Typography variant='inherit'>Publish</Typography>
                         </Buttons>
                     </Grid>

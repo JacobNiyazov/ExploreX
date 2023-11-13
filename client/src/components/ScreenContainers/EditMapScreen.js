@@ -1,18 +1,7 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
-
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-console.log(Item)
 
 
 const EditScreen = () => {
@@ -101,23 +90,12 @@ const EditScreen = () => {
                 setHideLegend={setHideLegend}/>
             <MapEdit 
                 colors={colors}
-                setColors={setColors}
-                colorPicker={colorPicker}
-                setColorPicker={setColorPicker}
-                anchors={anchors}
-                setAnchors={setAnchors}
                 font={font}
-                setFont={setFont}
                 size={size}
-                setSize={setSize}
                 range={range}
-                setRange={setRange}
                 borderWidth={borderWidth}
-                setBorderWidth={setBorderWidth}
                 selectAll={selectAll}
-                setSelectAll={setSelectAll}
-                hideLegend={hideLegend}
-                setHideLegend={setHideLegend}/>
+                hideLegend={hideLegend}/>
         </Grid>
     );
 }
