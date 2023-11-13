@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap} from "react-leaf
 import 'leaflet/dist/leaflet.css';
 import { GlobalStoreContext } from './store';
 import L from "leaflet";
-import { Box, Grid, TextField, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import geojson from '../ExampleData/poland.geojson.json'
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
