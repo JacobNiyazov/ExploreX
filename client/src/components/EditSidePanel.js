@@ -119,50 +119,6 @@ const EditSidePanel = ({
         'Nova Square', 
       ];
 
-      const exampleMaps = {
-        Map1: {
-            title: 'Map 1',
-            author: 'Author 1',
-            likes: 10,
-            dislikes: 2,
-            type: "Voronoi Map",
-            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-          },
-        Map2: {
-            title: 'Map 556',
-            author: 'Author 2',
-            likes: 34,
-            dislikes: 55,
-            type: "Heat Map",
-            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-          },
-        Map3: {
-            title: 'Map 6',
-            author: 'Author 2',
-            likes: 0,
-            dislikes: 8,
-            type: "Dot Map",
-            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-          },
-        Map4: {
-            title: 'Map 7',
-            author: 'Author 2',
-            likes: 2,
-            dislikes: 100,
-            type: "Spike Map",
-            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-          },
-        Map5:{
-            title: 'Map 8',
-            author: 'Author 2',
-            likes: 2,
-            dislikes: 100,
-            type: "Chorolopleth Map",
-            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-        }
-    }
-
-
     return (
         <SidePanelGrid container direction="column" item xs={4}>
             

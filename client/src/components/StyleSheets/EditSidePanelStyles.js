@@ -41,7 +41,6 @@ export const AccordianContainer = styled(Grid)({
   // Styles for Firefox
   scrollbarWidth: 'thin',
   scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
-  maxHeight: '80vh'
 });
 
 export const EditAccordion = styled(Accordion)({
