@@ -84,7 +84,7 @@ function AppBanner() {
           {/* Logo and AppName */}
           <LogoButton data-testid='logo'/>
           <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
-            CSE416
+            ExploreX
           </Typography>
           <Link style = {{color: "#FF76D6"}} onClick={handleRegister}>Don't have an account?</Link>
 
@@ -99,7 +99,7 @@ function AppBanner() {
           {/* Logo and AppName */}
           <LogoButton data-testid='logo'/>
           <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
-            CSE416
+            ExploreX
           </Typography>
           <Link style = {{color: "#FF76D6"}} onClick={handleLogin}>Return to Login</Link>
 
@@ -115,7 +115,7 @@ function AppBanner() {
           {/* Logo and AppName */}
           <LogoButton data-testid='logo'/>
           <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
-            CSE416
+            ExploreX
           </Typography>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
             Frequently Asked Questions
@@ -160,7 +160,7 @@ function AppBanner() {
         {/* Logo and AppName */}
         <LogoButton data-testid='logo' onClick={handleLogoClick}/>
         <StyledTypography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
-         CSE416
+          ExploreX
         </StyledTypography>
         {/* Search Bar with Dropdown */}
         <Search>
