@@ -1,7 +1,6 @@
-import { useState, React, useContext} from "react";
+import { useState, React} from "react";
 import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import { GlobalStoreContext } from './store';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import geojson from '../ExampleData/poland.geojson.json'
