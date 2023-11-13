@@ -1,4 +1,5 @@
 import React from 'react';
+import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -30,14 +31,14 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
   }) => {  
-    const { store } = React.useContext(GlobalStoreContext);
+    const { store } = useContext(GlobalStoreContext);
     
     console.log(store.currentPage)
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
 
-    const [title, setTitle] = React.useState("")
+    const [title, setTitle] = useState(store.currentMap.title)
     
 
     const handleTitle= (event) => {
@@ -75,12 +76,12 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
 
-    const [publishModal, setPublishModal] = React.useState(false)
+    const [publishModal, setPublishModal] = useState(false)
     const handleOpenPublish= () => {
         setPublishModal(true)
     }
 
-    const [saveModal, setSaveModal] = React.useState(false)
+    const [saveModal, setSaveModal] = useState(false)
     const handleOpenSave= () => {
         setSaveModal(true)
     }
@@ -118,6 +119,49 @@ const EditSidePanel = ({
         'Nova Square', 
       ];
 
+      const exampleMaps = {
+        Map1: {
+            title: 'Map 1',
+            author: 'Author 1',
+            likes: 10,
+            dislikes: 2,
+            type: "Voronoi Map",
+            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+          },
+        Map2: {
+            title: 'Map 556',
+            author: 'Author 2',
+            likes: 34,
+            dislikes: 55,
+            type: "Heat Map",
+            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+          },
+        Map3: {
+            title: 'Map 6',
+            author: 'Author 2',
+            likes: 0,
+            dislikes: 8,
+            type: "Dot Map",
+            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+          },
+        Map4: {
+            title: 'Map 7',
+            author: 'Author 2',
+            likes: 2,
+            dislikes: 100,
+            type: "Spike Map",
+            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+          },
+        Map5:{
+            title: 'Map 8',
+            author: 'Author 2',
+            likes: 2,
+            dislikes: 100,
+            type: "Chorolopleth Map",
+            imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
+        }
+    }
+
 
     return (
         <SidePanelGrid container direction="column" item xs={4}>
@@ -125,10 +169,10 @@ const EditSidePanel = ({
             
             <AccordianContainer item xs>
                 <TitleContainer item>  
-                    <TitleTextField label="Title" value={title} onChange={handleTitle}/>
+                    <TitleTextField label="Title" value={title} onChange={handleTitle} data-testid="title-input"/>
                 </TitleContainer>
                 {/* Edit Text Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Text</Typography>
                     </EditAccordionSummary>
@@ -431,7 +475,7 @@ const EditSidePanel = ({
                     </Grid>
                     <Grid item xs={1}></Grid>
                     <Grid item xs={7}>
-                        <Buttons onClick={handleOpenPublish}>
+                        <Buttons onClick={handleOpenPublish} data-testid="map-publish-button">
                             <Typography variant='inherit'>Publish</Typography>
                         </Buttons>
                     </Grid>

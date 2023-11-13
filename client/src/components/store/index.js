@@ -1,3 +1,4 @@
+import { stepperClasses } from '@mui/material';
 import { createContext, useState } from 'react'
 import React from 'react';
 
@@ -10,40 +11,44 @@ export const GlobalStoreActionType = {
    DISPLAY_MODAL: "DISPLAY_MODAL",
    SET_MODAL: "SET_MODAL",
    CLOSE_MODAL: "CLOSE_MODAL",
-   SET_CURRENT_MAP:"SET_CURRENT_MAP"
+   SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP"
 }
 
 const exampleMaps = {
     Map1: {
-        title: 'Map 1',
+        title: 'Voronoi Map Example',
         author: 'Author 1',
         likes: 10,
         dislikes: 2,
-        type: "Voronoi Map"
+        type: "Voronoi Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map2: {
-        title: 'Map 2',
+        title: 'Heat Map Example',
         author: 'Author 2',
-        likes: 20,
-        dislikes: 8,
-        type: "Heat Map"
+        likes: 34,
+        dislikes: 55,
+        type: "Heat Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map3: {
-        title: 'Map 2',
+        title: 'Dot Map Example',
         author: 'Author 2',
-        likes: 20,
+        likes: 0,
         dislikes: 8,
-        type: "Dot Map"
+        type: "Dot Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map4: {
-        title: 'Map 2',
+        title: 'Spike Map Example',
         author: 'Author 2',
-        likes: 20,
-        dislikes: 8,
-        type: "Spike Map"
+        likes: 2,
+        dislikes: 100,
+        type: "Spike Map",
+        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map5:{
-        title: 'Map 2',
+        title: 'Choropleth Map Example',
         author: 'Author 2',
         likes: 20,
         dislikes: 8,
@@ -53,7 +58,7 @@ const exampleMaps = {
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
-       currentPage: "Login",
+       currentPage: "LoginScreen",
        modalMessage: "Blah",
        modalOpen: false,
        currentMap: exampleMaps.Map1
@@ -83,9 +88,9 @@ function GlobalStoreContextProvider(props) {
                     currentMap: store.currentMap
                 });
             }
-            case GlobalStoreActionType.SET_CURRENT_MAP:{
+            case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
                 return setStore({
-                    currentPage: store.currentPage,
+                    currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     currentMap: payload.currentMap
@@ -138,12 +143,13 @@ function GlobalStoreContextProvider(props) {
         );
     }
 
-    store.setCurrentMap = (currentMap) =>{
-        console.log(currentMap)
+    store.setCurrentEditMap = (currentMap, currentPage) =>{
+        console.log(currentMap, exampleMaps[currentMap])
         storeReducer({
-            type: GlobalStoreActionType.SET_CURRENT_MAP,
+            type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
             payload: {
-                currentMap: exampleMaps.currentMap,
+                currentMap: exampleMaps[currentMap],
+                currentPage: currentPage,
             }
         });
     }

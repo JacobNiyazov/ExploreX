@@ -24,7 +24,24 @@ export const ButtonContainer = styled(Grid)({
 export const AccordianContainer = styled(Grid)({
   maxHeight: '100%', 
   overflow: 'auto',
-  scrollbarColor: '#007 #bada55'
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#FF76D6',
+    borderRadius: '10px',
+    '&:hover': {
+      backgroundColor: '#FF76D6',
+    },
+  },
+  // Styles for Firefox
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
+  maxHeight: '80vh'
 });
 
 export const EditAccordion = styled(Accordion)({
