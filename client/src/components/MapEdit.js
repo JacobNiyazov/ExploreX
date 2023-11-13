@@ -29,7 +29,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const { store } = useContext(GlobalStoreContext);
+    //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
     const [legendColor, setLegendColor] = useState({
