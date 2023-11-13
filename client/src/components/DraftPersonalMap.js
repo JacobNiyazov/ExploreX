@@ -53,5 +53,3 @@ function DraftPersonalMap(map){
     );
 }
 export default DraftPersonalMap;
-}
-export default DraftPersonalMap;
