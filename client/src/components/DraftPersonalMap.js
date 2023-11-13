@@ -33,6 +33,7 @@ function DraftPersonalMap(map){
                 <Button
                     sx = {{marginBottom: "2vh",
                     marginLeft: "3vw", color: "white"}}
+                    data-testid="EditScreenButton"
                     onClick={handleEditClick}
                     >
                         <ModeEditIcon></ModeEditIcon>
