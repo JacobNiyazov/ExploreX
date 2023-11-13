@@ -14,7 +14,7 @@ function DraftPersonalMap(map){
     const handleOpenDelete = () => setOpenDelete(true);
     const handleCloseDelete = () => setOpenDelete(false);
 
-    function handleEditClick (){
+    function handleEditClick (map){
         //store.setCurrentMap(map.map)
         store.setCurrentEditMap(map.map, "EditMapScreen")
     }
