@@ -27,3 +27,16 @@ jobs:
           cd ./server
           npm ci
           npm test &
+
+    deploy:
+      name: Deploy
+      needs: [Back-End-Tests]
+      runs-on: ubuntu-latest
+
+      steps: 
+        - name: Deploy to production
+          uses: johnbeynon/render-deploy-action@v0.0.8
+          with:
+            service-id: ${{ secrets.SERVICE_ID_SERVER }} # Can be found as part of the Deploy Hook
+            api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
+    

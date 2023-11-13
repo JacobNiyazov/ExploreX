@@ -37,3 +37,15 @@ jobs:
          working-directory: ./client  # Actions start at root, our front end is in client
          build: npm run build
          start: npm start
+
+  deploy:
+      name: Deploy
+      needs: [Back-End-Tests]
+      runs-on: ubuntu-latest
+
+      steps: 
+        - name: Deploy to production
+          uses: johnbeynon/render-deploy-action@v0.0.8
+          with:
+            service-id: ${{ secrets.SERVICE_ID_CLIENT }} # Can be found as part of the Deploy Hook
+            api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
