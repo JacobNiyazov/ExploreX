@@ -60,23 +60,18 @@ function ProfileScreen(){
             Drafts
                 </StyledButton2>
             </Grid> 
-            <Grid item xs = {12} sx = {{marginLeft:"10vh"}} >
-                {activeButton === 'Posts' ? <PublishedPersonalMap /> : 
+            <Grid item xs = {12} sx = {{marginLeft:"5vw", marginRight:"3vw"}} >
+                {activeButton === 'Posts' ? <Grid container space = {2}>
+                    <Grid item xs = {3}>
+                    <PublishedPersonalMap class = "post"></PublishedPersonalMap>
+                    </Grid>
+                    <Grid item xs = {3}>
+                    <PublishedPersonalMap class = "post"></PublishedPersonalMap>
+                    </Grid>
+                </Grid> : 
                 <Grid container space = {2}>
                     <Grid item xs = {3}>
-                    <DraftPersonalMap map = "Map1"/>
-                    </Grid>
-                    <Grid item xs = {3}>
-                    <DraftPersonalMap map = "Map2"/>
-                    </Grid>
-                    <Grid item xs = {3} >
-                    <DraftPersonalMap map = "Map3"/>
-                    </Grid>
-                    <Grid item xs = {3} >
-                    <DraftPersonalMap map = "Map4"/>
-                    </Grid>
-                    <Grid item xs = {3} >
-                    <DraftPersonalMap map = "Map5"/>
+                    <PublishedPersonalMap class = "draft"></PublishedPersonalMap>
                     </Grid>
                 </Grid>
                 }
