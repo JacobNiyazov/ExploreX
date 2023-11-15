@@ -143,7 +143,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.setCurrentEditMap = (currentMap, currentPage) =>{
-        console.log(currentMap, exampleMaps[currentMap])
         storeReducer({
             type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
             payload: {
