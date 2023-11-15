@@ -33,7 +33,6 @@ const EditSidePanel = ({
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
-    console.log(store.currentPage)
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
