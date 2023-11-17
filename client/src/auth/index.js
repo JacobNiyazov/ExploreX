@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { useHistory } from 'react-router-dom'
+// import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
 const AuthContext = createContext();
@@ -21,7 +21,7 @@ function AuthContextProvider(props) {
         isLoggedIn: false,
         isGuest: null,
     });
-    const history = useHistory();
+    // const history = useHistory();
 
     useEffect(() => {
         auth.getLoggedIn();
@@ -53,8 +53,8 @@ function AuthContextProvider(props) {
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
-                    user: payload.user,
-                    loggedIn: true,
+                    user: null,
+                    loggedIn: false,
                     isGuest: null,
                 })
             }
@@ -98,24 +98,21 @@ function AuthContextProvider(props) {
 
         });
     }
-    auth.registerUser = async function(firstName, lastName, email, username, password, passwordVerify) {
-        console.log("create user: " + firstName + " " + lastName + " " + email+ " " + username + " " + " " + password + " " + passwordVerify);
-        const response = await api.registerUser(firstName, lastName, email, username, password, passwordVerify);      
+    auth.registerUser = async function( email, username, password, passwordVerify) {
+        console.log("create user:" + email + " " + username + " " + " " + password + " " + passwordVerify);
+        const response = await api.registerUser(email, username, password, passwordVerify);      
         if (response.status === 200) {
             authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
+                type: AuthActionType.REGISTER_USER
             })
-            history.push("/login");
+
+            // history.push("/login");
         }
     }
 
-    auth.loginUser = async function(email, password) {
-        const response = await api.loginUser(email, password);
+    auth.loginUser = async function(username, password) {
+        const response = await api.loginUser(username, password);
         if (response.status === 200) {
-            console.log("AUTHENTICATED")
             console.log(response.data.user)
             authReducer({
                 type: AuthActionType.LOGIN_USER,
@@ -123,7 +120,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             })
-            history.push("/");
+            // history.push("/");
         }
     }
 
@@ -134,8 +131,35 @@ function AuthContextProvider(props) {
                 type: AuthActionType.LOGOUT_USER,
                 payload: null
             })
-            history.push("/");
+            // history.push("/");
         }
+    }
+
+    auth.recoverPassword = async function(email) {
+        const response = await api.recoverPassword(email);
+        //TODO Don't worry about these for now.
+        if (response.status === 200) {
+            authReducer( {
+                type: AuthActionType.LOGOUT_USER,
+                payload: null
+            })
+            // history.push("/");
+        }
+
+    }
+
+    auth.resetUserPassword = async function(userId, token, password) {
+        const response = await api.resetUserPassword(userId, token, password);
+        //TODO Don't worry about these for now.
+        if (response.status === 200) {
+            console.log("SUCCESS")
+            // authReducer( {
+            //     type: AuthActionType.LOGOUT_USER,
+            //     payload: null
+            // })
+            // history.push("/");
+        }
+
     }
 
     auth.getUserInitials = function() {

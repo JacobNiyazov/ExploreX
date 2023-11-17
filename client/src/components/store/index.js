@@ -70,6 +70,7 @@ function GlobalStoreContextProvider(props) {
         faqScreen: "FAQScreen",
         forgotPassScreen: "ForgotPasswordScreen",
         registerScreen: "RegisterScreen",
+        resetPasswordScreen: "ResetPasswordScreen",
         editMapScreen: "EditMapScreen",
         editAccScreen: "EditAccountScreen",
         profileScreen: "ProfileScreen"

@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../store';
+import AuthContext from '../../auth'; 
+
 import {
   Typography,
   Button,
@@ -11,16 +13,23 @@ import {
 } from '@mui/material';
 
 const ForgotPasswordScreen = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
+
 
   const handleRecover = (e) => {
-    store.setModal("Password recovery email sent","Login");
+    // store.setModal("Password recovery email sent","Login");
+    auth.recoverPassword(email);
+  };
+
+  const tempHandler = (e) => {
+    store.setCurrentPage(store.currentPageType.resetPasswordScreen);  
   };
 
   const handleLogin = (e) => {
     store.setCurrentPage(store.currentPageType.login);  
-    };
+  };
   
   return (
     <div style = {launchStyle.container}>
@@ -32,19 +41,22 @@ const ForgotPasswordScreen = () => {
 
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography>Username or email:</Typography>
+              <Typography>Email:</Typography>
                 <input
                   type="text"
-                  id="username"
-                  value={username}
+                  id="email"
+                  value={email}
                   style = {launchStyle.rounded_input}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
             </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
 
               <Button style={launchStyle.button} onClick = {handleRecover} variant="contained">
                 Recover
+              </Button>
+              <Button style={launchStyle.button} onClick = {tempHandler} variant="contained">
+                temp password reset
               </Button>
               <Link style={launchStyle.forgot} onClick={handleLogin}>Return to Login</Link>
 

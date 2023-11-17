@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import Navigator from './components/Navigator.js';
 import ModalScreen from './components/ScreenContainers/ModalScreen.js';
 
+import { AuthContextProvider } from './auth'
 import { GlobalStoreContextProvider } from './components/store'
 
 const MainLayout = styled('div')({
@@ -19,18 +20,20 @@ const MainLayout = styled('div')({
 
 function App() {
   return (
-    <GlobalStoreContextProvider>
-      <MainLayout>
-        <ThemeProvider theme={theme}>
-          <AppBanner />
-          <div style={{flexGrow: 1}}>
-            <ModalScreen/>
-            <Navigator />
-          </div>
-          <Footer />
-        </ThemeProvider>
-      </MainLayout>
-    </GlobalStoreContextProvider>
+    <AuthContextProvider>
+      <GlobalStoreContextProvider>
+        <MainLayout>
+          <ThemeProvider theme={theme}>
+            <AppBanner />
+            <div style={{flexGrow: 1}}>
+              <ModalScreen/>
+              <Navigator />
+            </div>
+            <Footer />
+          </ThemeProvider>
+        </MainLayout>
+      </GlobalStoreContextProvider>
+    </AuthContextProvider>
   );
 }
 
