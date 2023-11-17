@@ -10,7 +10,7 @@ import Navigator from './components/Navigator.js';
 import UniversalModal from './components/UniversalModal.js';
 
 import { AuthContextProvider } from './auth'
-import { GlobalStoreContextProvider } from './components/store'
+import { GlobalStoreContextProvider } from './store'
 
 const MainLayout = styled('div')({
   display: 'flex',

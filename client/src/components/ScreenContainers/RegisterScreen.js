@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
 
 import {
