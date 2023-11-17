@@ -24,10 +24,9 @@ const RegisterScreen = () => {
     e.preventDefault();
     alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
-    .then( 
-      (val) => store.setModal("Welcome to ExploreX! Log in with your newly created account","Login"))
+    .then()
     .catch(
-      (error) => store.displayModal(error.response.data.errorMessage)
+      (error) => alert(error.response.data.errorMessage)
       
   )
 

@@ -2,8 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
-const AuthContext = createContext();
-console.log("create AuthContext: " + AuthContext);
+export const AuthContext = createContext();
 
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR AUTH STATE THAT CAN BE PROCESSED
 export const AuthActionType = {
@@ -19,13 +18,13 @@ function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
         isLoggedIn: false,
-        isGuest: null,
+        isGuest: false,
     });
     // const history = useHistory();
 
-    useEffect(() => {
-        auth.getLoggedIn();
-    }, []);
+    // useEffect(() => {
+    //     auth.getLoggedIn();
+    // }, []);
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -105,7 +104,6 @@ function AuthContextProvider(props) {
             authReducer({
                 type: AuthActionType.REGISTER_USER
             })
-
             // history.push("/login");
         }
     }

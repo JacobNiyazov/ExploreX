@@ -4,18 +4,20 @@ import {Typography} from '@mui/material';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
-import { useState } from 'react';
-import DeletePostModal from './DeletePostModal';
-import { GlobalStoreContext } from './store';
+import { GlobalStoreContext } from '../store';
 
 function DraftPersonalMap(map){
     const { store } = useContext(GlobalStoreContext);
-    const [openDelete, setOpenDelete] = useState(false);
-    const handleOpenDelete = () => setOpenDelete(true);
-    const handleCloseDelete = () => setOpenDelete(false);
+    let deleteMessage = (
+        <div>
+            Are you sure you want to delete this map?
+            This action is <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                PERMANENT</span>
+        </div>
+    )
+    const handleOpenDelete = () => store.displayModal(deleteMessage, true);
 
-    function handleEditClick (map){
-        //store.setCurrentMap(map.map)
+    function handleEditClick (){
         store.setCurrentEditMap(map.map, "EditMapScreen")
     }
     return(
@@ -47,8 +49,6 @@ function DraftPersonalMap(map){
                 >
                     <DeleteIcon></DeleteIcon>
                 </Button>
-                <DeletePostModal
-                open={openDelete} onClose={handleCloseDelete}/>
             </Grid>
         </Grid>
     );

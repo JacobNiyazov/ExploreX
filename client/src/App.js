@@ -7,7 +7,7 @@ import theme from './theme';
 import AppBanner from './components/AppBanner';
 import Footer from './components/Footer';
 import Navigator from './components/Navigator.js';
-import ModalScreen from './components/ScreenContainers/ModalScreen.js';
+import UniversalModal from './components/UniversalModal.js';
 
 import { AuthContextProvider } from './auth'
 import { GlobalStoreContextProvider } from './components/store'
@@ -26,7 +26,7 @@ function App() {
           <ThemeProvider theme={theme}>
             <AppBanner />
             <div style={{flexGrow: 1}}>
-              <ModalScreen/>
+              <UniversalModal/>
               <Navigator />
             </div>
             <Footer />
