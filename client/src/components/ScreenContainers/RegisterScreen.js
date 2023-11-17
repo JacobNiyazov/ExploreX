@@ -24,7 +24,7 @@ const RegisterScreen = () => {
     e.preventDefault();
     alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
-    .then()
+    .then((val) => store.setCurrentPage(store.currentPageType.login))
     .catch(
       (error) => alert(error.response.data.errorMessage)
       
