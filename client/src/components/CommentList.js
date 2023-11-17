@@ -1,5 +1,5 @@
 // CommentList.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Comment from './Comment';
 import { StyledCommentList } from './StyleSheets/CommentStyles';
 const sampleComments = [
@@ -66,15 +66,15 @@ const sampleComments = [
 ];
 
 const CommentList = ({ mapId }) => {
-  const [comments, setComments] = useState([]);
-  console.log(comments)
-  useEffect(() => {
-    // Replace with your actual API endpoint
-    fetch(`/api/maps/${mapId}/comments`)
-      .then(response => response.json())
-      .then(data => setComments(data))
-      .catch(error => console.error('Error fetching comments:', error));
-  }, [mapId]);
+  // const [comments, setComments] = useState([]);
+  // console.log(comments)
+  // useEffect(() => {
+  //   // Replace with your actual API endpoint
+  //   fetch(`/api/maps/${mapId}/comments`)
+  //     .then(response => response.json())
+  //     .then(data => setComments(data))
+  //     .catch(error => console.error('Error fetching comments:', error));
+  // }, [mapId]);
 
   if (sampleComments.length === 0) {
     return null;

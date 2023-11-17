@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 import {
   Typography,
   Button,
@@ -18,10 +18,22 @@ const RegisterScreen = () => {
   const handleRegister = (e) => {
     e.preventDefault();
     if(password !== confirmPassword){
-      store.displayModal("Passwords do not match, try again");
+      const passwordsNotMatchingMessage = (
+        <div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Passwords Do Not Match</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem' }}>The entered passwords do not match. Please try again.</p>
+        </div>
+      );  
+      store.displayModal(passwordsNotMatchingMessage, false);
     }
     else{
-      store.setModal("Welcome to ExploreX! Verify your email and then log in here.","Login");
+      const welcomeMessage = (
+        <div>
+            <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem' }}>Verify your email and then log in here.</p>
+        </div>
+      );  
+      store.setModal(welcomeMessage,"Login",false);
     }
 
   }

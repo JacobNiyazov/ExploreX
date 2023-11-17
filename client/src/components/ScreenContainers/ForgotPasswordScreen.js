@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 import {
   Typography,
   Button,
@@ -15,7 +15,7 @@ const ForgotPasswordScreen = () => {
   const { store } = useContext(GlobalStoreContext);
 
   const handleRecover = (e) => {
-    store.setModal("Password recovery email sent","Login");
+    store.setModal("Your password recovery email has been sent!", "Login", false);
   };
 
   const handleLogin = (e) => {

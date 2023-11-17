@@ -7,9 +7,10 @@ import theme from './theme';
 import AppBanner from './components/AppBanner';
 import Footer from './components/Footer';
 import Navigator from './components/Navigator.js';
-import ModalScreen from './components/ScreenContainers/ModalScreen.js';
+import UniversalModal from './components/UniversalModal.js';
 
-import { GlobalStoreContextProvider } from './components/store'
+import { GlobalStoreContextProvider } from './store'
+import { AuthContextProvider } from './auth'
 
 const MainLayout = styled('div')({
   display: 'flex',
@@ -19,18 +20,20 @@ const MainLayout = styled('div')({
 
 function App() {
   return (
-    <GlobalStoreContextProvider>
-      <MainLayout>
-        <ThemeProvider theme={theme}>
-          <AppBanner />
-          <div style={{flexGrow: 1}}>
-            <ModalScreen/>
-            <Navigator />
-          </div>
-          <Footer />
-        </ThemeProvider>
-      </MainLayout>
-    </GlobalStoreContextProvider>
+    <AuthContextProvider>
+      <GlobalStoreContextProvider>
+        <MainLayout>
+          <ThemeProvider theme={theme}>
+            <AppBanner />
+            <div style={{flexGrow: 1}}>
+              <UniversalModal/>
+              <Navigator />
+            </div>
+            <Footer />
+          </ThemeProvider>
+        </MainLayout>
+      </GlobalStoreContextProvider>
+    </AuthContextProvider>
   );
 }
 

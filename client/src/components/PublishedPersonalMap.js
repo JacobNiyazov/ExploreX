@@ -5,7 +5,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { Button } from '@mui/material';
 import { useState } from 'react';
-import { GlobalStoreContext } from './store';
+import { GlobalStoreContext } from '../store';
 
 function PublishedPersonalMap(){
     const { store } = useContext(GlobalStoreContext);
