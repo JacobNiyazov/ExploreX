@@ -20,6 +20,7 @@ export const StyledSubmitButton = styled(Button)({
   }
 })
 export const StyledInput = styled(Input)({
+  marginBottom: 10,
   backgroundColor: "#242526",
   "& input": {
       color:"white",
@@ -33,6 +34,8 @@ export const StyledInput = styled(Input)({
   borderRadius: "2vh",
 })
 export const StyledBio = styled(InputBase)({
+  marginBottom: 10,
+  marginTop:15,
   backgroundColor: "#242526",
   borderRadius: "2vh",
   '& textarea': {
@@ -50,6 +53,7 @@ export const StyledBio = styled(InputBase)({
 })
 
 export const StyledInfo = styled(Input)({
+  marginBottom: 15,
   backgroundColor: "#242526",
   borderRadius: "2vh",
   "& input": {

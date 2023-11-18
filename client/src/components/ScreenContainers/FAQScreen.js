@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import faqStyle from '../StyleSheets/faqStyle'; 
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Container } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 

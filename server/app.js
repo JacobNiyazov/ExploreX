@@ -34,4 +34,7 @@ app.use('/api', mapRouter)
 const graphicsRouter = require('./routes/graphics-router');
 app.use('/api', graphicsRouter)
 
+const userRouter = require('./routes/user-router')
+app.use('/user', userRouter)
+
 module.exports = {server,app}

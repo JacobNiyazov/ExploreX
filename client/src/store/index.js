@@ -1,5 +1,7 @@
-import { createContext, useState } from 'react'
+import { createContext, useState, useContext } from 'react'
 import React from 'react';
+import api from './store-request-api'
+import { AuthContext } from '../auth'
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -60,6 +62,7 @@ function GlobalStoreContextProvider(props) {
        currentPage: "Login",
        modalMessage: "Blah",
        modalOpen: false,
+       modalConfirmButton: false,
        currentMap: exampleMaps.Map1
    });
 
@@ -70,12 +73,15 @@ function GlobalStoreContextProvider(props) {
         faqScreen: "FAQScreen",
         forgotPassScreen: "ForgotPasswordScreen",
         registerScreen: "RegisterScreen",
+        resetPasswordScreen: "ResetPasswordScreen",
         editMapScreen: "EditMapScreen",
         editAccScreen: "EditAccountScreen",
         profileScreen: "ProfileScreen"
     }
 
-   const storeReducer = (action) => {
+    const { auth } = useContext(AuthContext);
+
+    const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
@@ -84,6 +90,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
+                    modalConfirmButton: false,
                     currentMap: store.currentMap
                 });
             }
@@ -92,6 +99,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
+                    modalConfirmButton: false,
                     currentMap: payload.currentMap
                 });  
             }
@@ -100,6 +108,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
+                    modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap
                 });
             }
@@ -108,6 +117,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
+                    modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap
                 });
             }
@@ -116,6 +126,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
+                    modalConfirmButton: false,
                     currentMap: store.currentMap
                 });
             }
@@ -124,6 +135,7 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
+                    modalConfirmButton: false,
                     currentMap: store.currentMap
                 });
             }
@@ -152,22 +164,24 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.displayModal = (modalMessage) => {
+    store.displayModal = (modalMessage, confirmButton=true) => {
         storeReducer({
                 type: GlobalStoreActionType.DISPLAY_MODAL,
                 payload: {
                     modalMessage: modalMessage,
+                    confirmButton: confirmButton,
                 }
             }
         );
     }
 
-    store.setModal = (modalMessage, currentPage) => {
+    store.setModal = (modalMessage, currentPage, confirmButton=true) => {
         storeReducer({
                 type: GlobalStoreActionType.SET_MODAL,
                 payload: {
                     modalMessage: modalMessage,
                     currentPage: currentPage,
+                    confirmButton: confirmButton,
                 }
             }
         );
@@ -179,6 +193,37 @@ function GlobalStoreContextProvider(props) {
             }
         );
     };
+
+    store.updateUserInfo = function (username, email, bio, password) {
+        async function asyncUpdateUser(username, email, bio, password) {
+            try {
+                // const response = await api.editUserInfo('6556394afc995c6c2eac63a9', username, email, bio, password);
+                const response = await api.editUserInfo(auth.user._id, username, email, bio, password);
+                if (response.data.success) {
+                    const successMessage = (
+                        <div>
+                            <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Success</h4>
+                            <p style={{ margin: '5px 0', fontSize: '1rem' }}>Your account details have been updated.</p>
+                        </div>
+                    );
+                    store.displayModal(successMessage, false);
+                }
+            }
+            catch (error){
+                if (error.response.data.errorMessage === "An account with this email address already exists." || error.response.data.errorMessage === "An account with this username already exists."){
+                    const failMessage = (
+                        <div>
+                            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Oops</h4>
+                            <p style={{ margin: '5px 0', fontSize: '1rem' }}>{error.response.data.errorMessage}</p>
+                        </div>
+                    );
+                    store.displayModal(failMessage, false);
+                }
+
+            }
+        }
+        asyncUpdateUser(username, email, bio, password);
+    }
    
    return (
     <GlobalStoreContext.Provider value={{

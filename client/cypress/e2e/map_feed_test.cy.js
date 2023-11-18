@@ -7,22 +7,21 @@ describe('Map Feed and Public Map View Test', () => {
 
   it('loads the map feed', () => {
     cy.get('[data-testid=map-feed-card]').should('have.length.at.least', 1);
-  });
-
-  it('navigates to the Public Map View when a map card is clicked', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=public-map-view]').should('exist');
-  });
-
-  it('likes and dislikes work in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=like-button]').click();
-    cy.get('[data-testid=dislike-button]').click();
-  });
-
-  it('can submit a comment in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=comment-input]').type('This is a test comment');
-    cy.get('[data-testid=submit-comment]').click();
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get(':nth-child(1) > [data-testid="map-feed-card"] > .MuiCardContent-root > .css-8g2ide > .MuiBox-root > :nth-child(1) > [data-testid="ThumbUpIcon"] > path').click();
+    cy.get(':nth-child(1) > [data-testid="map-feed-card"] > .MuiCardContent-root > .css-8g2ide > .MuiBox-root > .css-omj7so > [data-testid="ThumbDownIcon"] > path').click();
+    cy.get(':nth-child(1) > [data-testid="map-feed-card"] > .MuiCardContent-root > .css-8g2ide > .css-zg1vud > .css-rklg78').should('be.visible');
+    cy.get(':nth-child(1) > [data-testid="map-feed-card"] > .MuiCardContent-root > .css-8g2ide > .css-zg1vud > .css-r8b4a').should('be.visible');
+    cy.get(':nth-child(1) > [data-testid="map-feed-card"] > .MuiCardContent-root > .css-8g2ide').click();
+    cy.get('.MuiButtonBase-root > .MuiTypography-root').should('have.text', 'Fork');
+    cy.get('.MuiTypography-h4').should('be.visible');
+    cy.get('.MuiCardMedia-root').should('be.visible');
+    cy.get('.MuiTypography-subtitle1').should('be.visible');
+    cy.get('.MuiCardContent-root > .MuiTypography-body1').should('be.visible');
+    cy.get('[data-testid="ThumbUpIcon"] > path').click();
+    cy.get('[data-testid="comment-input"]').click();
+    cy.get('[data-testid="comment-input"]').type('great map');
+    cy.get('[data-testid="submit-comment"]').should('have.text', 'Post Comment');
+    /* ==== End Cypress Studio ==== */
   });
 });

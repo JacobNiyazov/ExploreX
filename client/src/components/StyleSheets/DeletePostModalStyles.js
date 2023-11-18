@@ -14,7 +14,7 @@ export const StyledError = styled(ErrorOutlineIcon)({
 export const StyledButton = styled(Button)({
     backgroundColor: "#FF76D6",
     color: "black",
-    fontSize: "1.4vh",
+    fontSize: "1.7vh",
     marginTop:"6.5vh",
     "&:hover": {
         backgroundColor: "#ffd0d7"

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Button, Modal, Box, Typography } from '@mui/material';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 
 const ModalScreen = () => {
   const { store } = useContext(GlobalStoreContext);

@@ -7,7 +7,8 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import SearchIcon from '@mui/icons-material/Search';
 
 
-import { GlobalStoreContext } from './store'
+import { GlobalStoreContext } from '../store'
+import { AuthContext } from '../auth'
 
 import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, UserIconButton, dropdownStyle, StyledMenu, StyledTypography, LogoButton } from './StyleSheets/AppBannerStyles';
 
@@ -15,6 +16,7 @@ function AppBanner() {
   const [searchType, setSearchType] = React.useState('user'); // Default to 'user'
 
   const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
@@ -64,19 +66,19 @@ function AppBanner() {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.mapFeed);
   };
+  const handleLoginOption = () => {
+    handleAccountMenuClose();
+    store.setCurrentPage(store.currentPageType.login);
+  };
+  const handleRegisterOption = () => {
+    handleAccountMenuClose();
+    store.setCurrentPage(store.currentPageType.registerScreen);
+  };
 
-  let menuOptions = {'MyProfile':handleProfileOption, 'EditAccount':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
-  if(store.currentPage === store.currentPageType.faqScreen){
-    menuOptions = {'MyProfile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'EditAccount':handleEditAccOption, 'Logout':handleLogin}
+  let menuOptions = {'My Profile':handleProfileOption, 'Edit Account':handleEditAccOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+  if(auth.isGuest){
+    menuOptions = {'Map Feed':handleMapFeedOption, 'Login':handleLoginOption, 'Register':handleRegisterOption, 'FAQ':handleFAQOption}
   }
-  else if(store.currentPage === store.currentPageType.profileScreen){
-    menuOptions = {'Map Feed':handleMapFeedOption, 'EditAccount':handleEditAccOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
-  }
-  else if(store.currentPage === store.currentPageType.editAccScreen){
-    menuOptions = {'MyProfile':handleProfileOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
-  }
-
-
   if (store.currentPage === store.currentPageType.login){
     return (
       <StyledAppBar data-testid='app-banner' position="static">
@@ -178,8 +180,8 @@ function AppBanner() {
             }}
             sx={{ color: '#ff24bd', zIndex: 1 }}
           >
-            <MenuItem data-testid='search-type-option' value="user">User</MenuItem>
-            <MenuItem data-testid='search-type-option' value="map">Map Name</MenuItem>
+            <MenuItem data-testid='search-type-option1' value="user">User</MenuItem>
+            <MenuItem data-testid='search-type-option2' value="map">Map Name</MenuItem>
           </SearchSelect>
           <StyledInputBase
             data-testid='search-bar'

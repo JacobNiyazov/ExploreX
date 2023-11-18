@@ -11,29 +11,29 @@ import {
   Grid,
   Link,
 } from '@mui/material';
-const LoginScreen = () => {
-  const [username, setUsername] = useState('');
+const RecoverPasswordScreen = () => {
+  const [passwordConfirm, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
+
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
 
   const handleLogin = (e) => {
     e.preventDefault();
-    auth.loginUser(username,password)
-    .then( 
-      (val) => store.setCurrentPage(store.currentPageType.mapFeed))
-    .catch(
-      (error) => store.displayModal(error.response.data.errorMessage));
+    store.setCurrentPage(store.currentPageType.login);
+
 
   };
 
-  const handleForgot = (e) => {
-    store.setCurrentPage(store.currentPageType.forgotPassScreen);
-  };
 
-  const handleEnterGuest = (event) => {
-    store.setCurrentPage(store.currentPageType.mapFeed);
+  const handleReset = (event) => {
+    // store.setCurrentPage(store.currentPageType.mapFeed);
+    let userId = "6556363042ac2c664845227b"
+    let token = "126de3f85a98646dc950ac8cfba9a1d32e27965b7d825073ac1927f116ceda0c"
+    let password = "coolman123"
+    auth.resetUserPassword(userId, token, password);
+    // alert("TRY")
   };
   
   return (
@@ -41,36 +41,33 @@ const LoginScreen = () => {
       <div style = {launchStyle.leftSide}>
         <Container>
         <form>
-          <Typography style={launchStyle.header_text} variant="h5">Welcome, Map Lovers!</Typography>
+          <Typography style={launchStyle.header_text} variant="h5">Reset Password</Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography>Username:</Typography>
+              <Typography>New Password:</Typography>
                 <input
                   type="text"
-                  id="username"
-                  value={username}
-                  style = {launchStyle.rounded_input}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-            </Grid>
-            <Grid style={launchStyle.password_container} item xs={12}>
-              <Typography style={launchStyle.password}>Password:</Typography>
-              <input
-                  type="password"
-                  id="password"
-                  style = {launchStyle.rounded_input}
+                  id="recover"
                   value={password}
+                  style = {launchStyle.rounded_input}
                   onChange={(e) => setPassword(e.target.value)}
                 />
             </Grid>
+            <Grid style={launchStyle.password_container} item xs={12}>
+              <Typography style={launchStyle.password}>Confirm Password:</Typography>
+              <input
+                  type="password"
+                  id="recoverConfirm"
+                  style = {launchStyle.rounded_input}
+                  value={passwordConfirm}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+            </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
-              <Button style={launchStyle.button} onClick= {handleLogin} variant="contained" color="primary">
-                Sign in
+              <Button style={launchStyle.button} onClick= {handleReset} variant="contained" color="primary">
+                Reset
               </Button>
-              <Button style={launchStyle.button} onClick={ handleEnterGuest } variant="contained" color="secondary" data-testid="guest-button">
-                Log in as guest
-              </Button>
-              <Link style={launchStyle.forgot} onClick={handleForgot}>Forgot your password?</Link>
+              <Link style={launchStyle.forgot} onClick={handleLogin}>Return to Login</Link>
 
             </Grid>
           </Grid>
@@ -85,4 +82,4 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default RecoverPasswordScreen;
