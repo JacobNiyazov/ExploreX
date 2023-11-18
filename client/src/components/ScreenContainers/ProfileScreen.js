@@ -84,7 +84,6 @@ function ProfileScreen(){
                 <StyledButton onClick = {handleOpenUpload}>upload</StyledButton>
                 <ImportFileModal data-testid="import-modal" open={openImport} onClose={handleCloseImport}/>
                 <UploadFileModal open = {openUpload} onClose = {handleCloseUpload}></UploadFileModal>
-                
             </Grid>
             <Grid item xs = {12}>
                 <StyledTypography2
