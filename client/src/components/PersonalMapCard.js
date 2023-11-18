@@ -10,7 +10,7 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { ToggleButton } from '@mui/material';
 import {Typography} from '@mui/material';
-import { GlobalStoreContext } from './store';
+import { GlobalStoreContext } from '../store';
 import DeletePostModal from './DeletePostModal';
 import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'

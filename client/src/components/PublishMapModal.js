@@ -2,7 +2,7 @@ import React from 'react';
 import { useContext } from 'react';
 import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title, SubTitle} from './StyleSheets/PublishMapModalStyles.js';
 import { Grid } from '@mui/material';
-import GlobalStoreContext from './store';
+import GlobalStoreContext from '../store/index.js';
 
 
 const PublishMapModal = ({open, setOpen}) =>{

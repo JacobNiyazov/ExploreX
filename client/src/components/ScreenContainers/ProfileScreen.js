@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import {TabIndicatorProps} from "@mui/material"
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;

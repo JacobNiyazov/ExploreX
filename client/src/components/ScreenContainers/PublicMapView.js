@@ -3,7 +3,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import Box from '@mui/material/Box';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 
 import {
   StyledCard,

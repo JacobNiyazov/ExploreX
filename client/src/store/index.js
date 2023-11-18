@@ -1,8 +1,8 @@
 import { createContext, useState } from 'react'
 import React from 'react';
-import api from './map-request-api';
-import graphics from './graphics-request-api';
-import sampleComments from '../CommentList'
+import api from '../components/store/map-request-api';
+import graphics from '../components/store/graphics-request-api';
+import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);

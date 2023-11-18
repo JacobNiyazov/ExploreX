@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import MapFeedCard from '../MapFeedCard';
 import { Grid } from '@mui/material';
 import { StyledMapFeed } from '../StyleSheets/MapFeedStyles';
-import { GlobalStoreContext } from '../store';
+import { GlobalStoreContext } from '../../store';
 
 const MapFeed = () => {
   const { store } = useContext(GlobalStoreContext);

@@ -5,7 +5,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
-import { GlobalStoreContext } from './store'
+import { GlobalStoreContext } from '../store'
 
 
 const MapFeedCard = ({ map, likes, dislikes }) => {

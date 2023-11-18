@@ -1,7 +1,7 @@
 // CommentForm.js
 import React, { useState, useContext } from 'react';
 import { StyledCommentForm } from './StyleSheets/CommentStyles';
-import { GlobalStoreContext } from './store';
+import { GlobalStoreContext } from '../store';
 
 const CommentForm = ({ map }) => {
   const [commentText, setCommentText] = useState('');

@@ -9,7 +9,7 @@ import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
 import PublishMapModal from './PublishMapModal.js'
 import FinishedEditingMapModal from './FinishedEditingMapModal.js'
-import GlobalStoreContext from './store';
+import GlobalStoreContext from '../store/index.js';
 
 const EditSidePanel = ({
     colors,

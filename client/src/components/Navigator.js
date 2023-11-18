@@ -1,6 +1,6 @@
 import React from 'react';
 import { useContext } from 'react';
-import { GlobalStoreContext } from './store';
+import { GlobalStoreContext } from '../store/index.js';
 import LoginScreen from './ScreenContainers/LoginScreen.js';
 import RegisterScreen from './ScreenContainers/RegisterScreen.js';
 import ForgotPasswordScreen from './ScreenContainers/ForgotPasswordScreen.js';
