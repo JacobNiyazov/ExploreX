@@ -180,7 +180,7 @@ const EditSidePanel = ({
                 {/* Edit Heat Map options */}
                 {
                     store.currentMap.type === "Heat Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Heat Map Options</Typography>
                         </EditAccordionSummary>
@@ -211,7 +211,7 @@ const EditSidePanel = ({
                 }
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -252,7 +252,7 @@ const EditSidePanel = ({
                 {/* Edit Region Options */}
                 {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Region</Typography>
                         </EditAccordionSummary>
@@ -305,7 +305,7 @@ const EditSidePanel = ({
                 {/* Edit Dot Map Options */}
                 {
                     store.currentMap.type === "Dot Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>
                         </EditAccordionSummary>
@@ -343,7 +343,7 @@ const EditSidePanel = ({
                 {/* Edit Spike Map Options */}
                 {
                     store.currentMap.type === "Spike Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Spike Map Options</Typography>
                         </EditAccordionSummary>
@@ -382,7 +382,7 @@ const EditSidePanel = ({
                 {/* Edit Voronoi Map Options */}
                 {
                     store.currentMap.type === "Voronoi Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Voronoi Map Options</Typography>
                         </EditAccordionSummary>

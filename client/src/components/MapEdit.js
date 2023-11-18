@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import geojson from '../ExampleData/poland.geojson.json'
+import kmlFile from "../ExampleData/example1.kml"
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -12,10 +13,78 @@ import { Square } from "./StyleSheets/ColorSelectorStyles";
 import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
+import * as togeojson from "@tmcw/togeojson"
 
-const MapEditInner = () =>{
+const MapEditInner = ({mapType}) =>{
+
+    function getRandomShade(){
+        // Generate random values for the red and green components
+        const red = Math.floor(Math.random() * 256); // Random red value (0-255)
+        const green = Math.floor(Math.random() * 128); // Random green value (0-127)
+      
+        // Create a random shade of orange-red by combining red and green
+        const blue = 0; // Set blue to 0 for shades of orange
+        const alpha = 1; // Alpha (opacity) value
+      
+        // Construct the RGB color string
+        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+      
+        return color;
+    }
+
     const map = useMap();
-    map.fitBounds(L.geoJSON(geojson).getBounds());
+
+    function loadMap(geojson){
+        L.geoJSON(geojson, {
+            onEachFeature: function (feature, layer) {
+                
+                // Customize popup content
+                layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+                
+                    return (
+                    ReactDOMServer.renderToString(
+                        <Box sx={{display:'flex', alignItems:'center'}}>
+                            <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+                            <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+                        </Box>
+                    )
+                    )
+                }).join(""), {
+                    maxHeight: 200
+                });
+                if(feature.geometry.type == 'Polygon'){
+                var shade = getRandomShade();
+                layer.setStyle({
+                fillColor: shade,
+                weight: 3,
+                opacity: 1,
+                color: shade,
+                fillOpacity: 0.5
+                });}
+                console.log(feature, layer)
+            }
+        }).addTo(map);
+        map.fitBounds(L.geoJSON(geojson).getBounds());
+    }
+
+    // Function to check the file extension and determine the file type
+        
+    if (mapType == 'kml'){
+        fetch(kmlFile)
+        .then((res) => res.text())
+        .then((text) => {
+            const DOMParser = require("xmldom").DOMParser;
+            let geojson = togeojson.kml(new DOMParser().parseFromString(text, "text/xml"));
+            loadMap(geojson);
+        })
+    }
+    else if(mapType == 'geojson'){
+        loadMap(geojson);
+    }
+    else if(mapType == 'shapefile'){
+        
+    }
+    
     return null;
 }
 
@@ -28,6 +97,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
+    const test = "kml"
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
@@ -91,22 +161,9 @@ const MapEdit = ({
             [label]: event.target.value
         })
     }
-    function getRandomShade(){
-        // Generate random values for the red and green components
-        const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-        const green = Math.floor(Math.random() * 128); // Random green value (0-127)
-      
-        // Create a random shade of orange-red by combining red and green
-        const blue = 0; // Set blue to 0 for shades of orange
-        const alpha = 1; // Alpha (opacity) value
-      
-        // Construct the RGB color string
-        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-      
-        return color;
-    }
+    
 
-    function onEachFeature(feature, layer) {
+    /*function onEachFeature(feature, layer) {
         // Customize popup content
         layer.bindPopup(Object.keys(feature.properties).map(function(k) {
             
@@ -129,7 +186,7 @@ const MapEdit = ({
           color: shade,
           fillOpacity: 0.5
         });
-    }
+    }*/
 
     return(
         <Grid item xs = {8}>
@@ -143,8 +200,8 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner/>
-                <GeoJSON data={geojson} onEachFeature={onEachFeature} />
+                <MapEditInner mapType={test}/>
+                {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 <ZoomControl position="bottomleft"/>
                 <ControlGrid>
                     <UndoRedoContainer>

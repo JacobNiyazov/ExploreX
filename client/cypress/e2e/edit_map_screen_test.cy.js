@@ -13,12 +13,18 @@ describe('Edit Map Screen Test', () => {
     });
   
     it('Open color switch and change color', () => {
-      cy.get('[data-testid=edit-accordion]').first().click();
-      cy.get('[data-testid=color-text]').first().click().type('{selectall}{backspace}').type("FFFFFF")
-      cy.get('[data-testid=color-box]').first().should('have.css', 'background-color', 'rgb(255, 255, 255)');
-  
-      cy.get('[data-testid=color-box]').first().click()
-      cy.get('[data-testid=color-picker]').first().should('be.visible')
+      cy.get('[data-testid=edit-accordion]').each((val, i, collection) => {
+        cy.wrap(val).click()
+        cy.wrap(val).within(()=>{
+          cy.get('[data-testid=color-text]').each((color,i,collection)=>{
+            cy.get('[data-testid=color-text]').eq(i).click().type('{selectall}{backspace}').type("FFFFFF");
+            cy.get('[data-testid=color-box]').eq(i).should('have.css', 'background-color', 'rgb(255, 255, 255)');
+            cy.get('[data-testid=color-box]').eq(i).click()
+            cy.document().its('body').find('[data-testid=color-picker]').should('be.visible')
+            cy.document().its('body').find('[data-testid=color-picker]').click()
+          })
+        })
+      })
     }); 
   
     it('navigates to the Public Map View when map is published', () => {
