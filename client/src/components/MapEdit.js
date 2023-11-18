@@ -97,7 +97,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const test = "kml"
+    const test = "geojson"
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 

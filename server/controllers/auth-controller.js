@@ -70,6 +70,7 @@ loginUser = async (req, res) => {
                 })
         }
 
+        console.log("id: " + existingUser._id)
         // LOGIN THE USER
         const token = auth.signToken(existingUser._id);
         console.log(token);
@@ -85,7 +86,7 @@ loginUser = async (req, res) => {
                 email: existingUser.email              
             }
         })
-        return res
+        //return res
 
     } catch (err) {
         console.error(err);
