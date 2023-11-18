@@ -93,6 +93,32 @@ loginUser = async (req, res) => {
     }
 }
 
+deleteUserAccount = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log("Deleting an account")
+        console.log("fields: " + email)
+
+
+        const existingUser = await User.findOneAndDelete({ email: email });
+        console.log("existingUser: " + existingUser);
+        if (!existingUser) {
+            return res
+                .status(401)
+                .json({
+                    errorMessage: "User not found."
+                })
+        }
+        return res.status(200).json({
+            message: "User deleted successfully."
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
+
 logoutUser = async (req, res) => {
 
 }
@@ -274,5 +300,6 @@ module.exports = {
     recoverPassword,
     resetUserPassword,
     loginUser,
-    logoutUser
+    logoutUser,
+    deleteUserAccount
 }

@@ -34,13 +34,20 @@ export const resetUserPassword = (userId, token, password) => {
         password : password,
     })
 }
+export const deleteUserAccount = (email) => {
+    return api.delete(`/deleteAccount/`, {
+        email: email
+    })
+}
+
 const apis = {
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser,
     recoverPassword,
-    resetUserPassword
+    resetUserPassword,
+    deleteUserAccount
 }
 
 export default apis
