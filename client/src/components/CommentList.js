@@ -65,24 +65,26 @@ const sampleComments = [
   }
 ];
 
-const CommentList = ({ mapId }) => {
+const CommentList = ({ map,commentsList }) => {
   const [comments, setComments] = useState([]);
   console.log(comments)
-  useEffect(() => {
+  /*useEffect(() => {
     // Replace with your actual API endpoint
     fetch(`/api/maps/${mapId}/comments`)
       .then(response => response.json())
       .then(data => setComments(data))
       .catch(error => console.error('Error fetching comments:', error));
-  }, [mapId]);
+  }, [mapId]);*/
+  console.log("what is inside comment list:: ", map.reactions.comments)
+  console.log("this is what was passed: ", commentsList)
 
-  if (sampleComments.length === 0) {
+  if (commentsList.length === 0) {
     return null;
   }
 
   return (
     <StyledCommentList>
-      {sampleComments.map(comment => (
+      {commentsList.map(comment => (
         <Comment key={comment._id} comment={comment} />
       ))}
     </StyledCommentList>

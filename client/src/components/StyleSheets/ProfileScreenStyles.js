@@ -5,11 +5,11 @@ import { Typography } from '@mui/material';
 export const StyledTypography = styled(Typography)({
     fontSize: "5vh",
     padding: "3vh",
-    paddingLeft: "12vh"
+    paddingLeft: "4vw"
 });
 export const StyledTypography2 = styled(Typography)({
     fontSize: "2vh",
-    paddingLeft: "12vh"
+    paddingLeft: "4vw"
 });
 export const StyledButton = styled(Button)({
     backgroundColor: "#f57fd9",

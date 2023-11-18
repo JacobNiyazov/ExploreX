@@ -4,8 +4,8 @@ import { StyledComment } from './StyleSheets/CommentStyles';
 const Comment = ({ comment }) => {
   return (
     <StyledComment>
-      <p><strong>{comment.author}</strong></p>
-      <p>{comment.text}</p>
+      <p><strong>{comment.authorUsername}</strong></p>
+      <p>{comment.comment}</p>
     </StyledComment>
   );
 };

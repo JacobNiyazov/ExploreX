@@ -16,7 +16,7 @@ import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
-function PublishedPersonalMap({ map,id, onEditClick, onDeleteClick }) {
+function PersonalMapCard({ map,id,likes,dislikes }) {
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const { store } = useContext(GlobalStoreContext);
@@ -24,23 +24,41 @@ function PublishedPersonalMap({ map,id, onEditClick, onDeleteClick }) {
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
 
-  function handleEditClick (map){
-      //store.setCurrentMap(map.map)
-      store.setCurrentEditMap(map.map, "EditMapScreen")
+  function handleEditClick (){
+    store.setCurrentEditMap(map, "EditMapScreen")
   }
   const handleLikeToggle = () => {
     setLiked((prevLiked) => !prevLiked);
     setDisliked(false);
+  
+    if (!liked) {
+      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
+    } else {
+      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    }
   };
-
+  
   const handleDislikeToggle = () => {
     setDisliked((prevDisliked) => !prevDisliked);
     setLiked(false);
+  
+    if (!disliked) {
+      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+    } else {
+      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    }
   };
-
+  
+  const handlePostClick = () => {
+    if (isPost) {
+      store.setCurrentPage(store.currentPageType.publicMapView);
+    } else {
+      store.setCurrentEditMap(map, "EditMapScreen");
+    }
+  };
   const card = {
-    maxHeight: '45vh',
-    maxWidth: '20vw',
+    height: '37vh',
+    maxWidth: '23vw',
     marginTop: '5vh',
     borderRadius: '2.5vh',
   };
@@ -53,16 +71,17 @@ function PublishedPersonalMap({ map,id, onEditClick, onDeleteClick }) {
         height="194"
         image="https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"
         alt="map test"
+        onClick = {handlePostClick}
       />
       <CardActions disableSpacing>
         {isPost ? (
           <>
             <ToggleButton value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none' }}>
-              <Typography sx={{ marginRight: '0.2vw' }}>123</Typography>
+              <Typography sx={{ marginRight: '0.2vw' }}>{likes}</Typography>
               {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
             </ToggleButton>
             <ToggleButton value="dislike" selected={disliked} onChange={handleDislikeToggle} sx={{ border: 'none' }}>
-              <Typography sx={{ marginRight: '0.2vw' }}>123</Typography>
+              <Typography sx={{ marginRight: '0.2vw' }}>{dislikes}</Typography>
               {disliked ? <ThumbDownIcon /> : <ThumbDownOutlinedIcon />}
             </ToggleButton>
           </>
@@ -74,10 +93,13 @@ function PublishedPersonalMap({ map,id, onEditClick, onDeleteClick }) {
               <DeleteIcon sx={{color:"#FF76D6"}}/>
             </Button>
             <DeletePostModal
-                open={openDelete} onClose={handleCloseDelete}/>
+                open={openDelete} 
+                onClose={handleCloseDelete}
+                map = {map}
+                />
             <Button
               data-testid="EditScreenButton"
-              onClick={() => onEditClick(map)}
+              onClick={handleEditClick}
             >
               <ModeEditIcon sx={{color:"#FF76D6"}}/>
             </Button>
@@ -88,4 +110,4 @@ function PublishedPersonalMap({ map,id, onEditClick, onDeleteClick }) {
   );
 }
 
-export default PublishedPersonalMap;
+export default PersonalMapCard;

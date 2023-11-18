@@ -8,24 +8,33 @@ import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from './store'
 
 
-const MapFeedCard = ({ map }) => {
+const MapFeedCard = ({ map, likes, dislikes }) => {
   const { store } = useContext(GlobalStoreContext);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleLike = (event) => {
-    event.stopPropagation();
-    setLiked(prevLiked => !prevLiked);
-    setDisliked(false);  // Reset disliked state
+  const handleLikeToggle = (event) => {
+    setLiked((prevLiked) => !prevLiked);
+    setDisliked(false);
+    event.stopPropagation()
+    if (!liked) {
+      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
+    } else {
+      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    }
   };
-
-  const handleDislike = (event) => {
+  
+  const handleDislikeToggle = (event) => {
+    setDisliked((prevDisliked) => !prevDisliked);
+    setLiked(false);
     event.stopPropagation();
-    setDisliked(prevDisliked => !prevDisliked);
-    setLiked(false);  // Reset liked state
+    if (!disliked) {
+      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+    } else {
+      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    }
   };
-
   const handleOpenMap = () => {
     store.setCurrentPage(store.currentPageType.publicMapView);
   };
@@ -48,13 +57,13 @@ const MapFeedCard = ({ map }) => {
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLike}>
+            <ReactionButton selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount>{map.likes}</ReactionCount>
+              <ReactionCount>{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislike}>
+            <ReactionButton selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount>{map.dislikes}</ReactionCount>
+              <ReactionCount>{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </ContentContainer>

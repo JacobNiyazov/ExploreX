@@ -1,5 +1,8 @@
 import { createContext, useState } from 'react'
 import React from 'react';
+import api from './map-request-api';
+import graphics from './graphics-request-api';
+import sampleComments from '../CommentList'
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -10,47 +13,69 @@ export const GlobalStoreActionType = {
    DISPLAY_MODAL: "DISPLAY_MODAL",
    SET_MODAL: "SET_MODAL",
    CLOSE_MODAL: "CLOSE_MODAL",
-   SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP"
+   SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP",
+   DELETE_MAP: "DELETE_MAP",
+   UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION"
 }
 
-const exampleMaps = {
+let exampleMaps = {
     Map1: {
         title: 'Voronoi Map Example',
         author: 'Author 1',
-        likes: 10,
-        dislikes: 2,
+        reactions:{
+            likes: 10,
+            dislikes: 2,
+            comments: {sampleComments},
+        },
         type: "Voronoi Map",
+        isPublic: true,
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map2: {
         title: 'Heat Map Example',
         author: 'Author 2',
-        likes: 34,
-        dislikes: 55,
+        reactions:{
+            likes: 34,
+            dislikes: 55,
+            comments: {sampleComments},
+        },
         type: "Heat Map",
+        isPublic: true,
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map3: {
         title: 'Dot Map Example',
         author: 'Author 2',
-        likes: 0,
-        dislikes: 8,
+        reactions:{
+            likes: 0,
+            dislikes: 8,
+            comments: {sampleComments},
+        },
         type: "Dot Map",
+        isPublic: true,
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map4: {
         title: 'Spike Map Example',
         author: 'Author 2',
-        likes: 2,
-        dislikes: 100,
+        reactions:{
+            likes: 2,
+            dislikes: 100,
+            comments: {sampleComments},
+        },
         type: "Spike Map",
+        isPublic: true,
         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
       },
     Map5:{
         title: 'Choropleth Map Example',
         author: 'Author 2',
-        likes: 20,
-        dislikes: 8,
+        reactions:{
+            likes: 20,
+            dislikes: 8,
+            comments: {sampleComments},
+        },
+        isPublic: true,
         type: "Choropleth Map"
     }
 }
@@ -60,7 +85,8 @@ function GlobalStoreContextProvider(props) {
        currentPage: "Login",
        modalMessage: "Blah",
        modalOpen: false,
-       currentMap: exampleMaps.Map1
+       currentMap: exampleMaps.Map1,
+       currentMaps: exampleMaps
    });
 
    store.currentPageType = {
@@ -84,7 +110,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-                    currentMap: store.currentMap
+                    currentMap: store.currentMap,
+                    currentMaps: exampleMaps
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -92,7 +119,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-                    currentMap: payload.currentMap
+                    currentMap: payload.currentMap,
+                    currentMaps: exampleMaps
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -100,7 +128,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-                    currentMap: store.currentMap
+                    currentMap: store.currentMap,
+                    currentMaps: exampleMaps
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -108,7 +137,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
-                    currentMap: store.currentMap
+                    currentMap: store.currentMap,
+                    currentMaps: exampleMaps
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -116,7 +146,26 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-                    currentMap: store.currentMap
+                    currentMap: store.currentMap,
+                    currentMaps: exampleMaps
+                });
+            }
+            case GlobalStoreActionType.DELETE_MAP: {       
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: null,
+                    currentMaps: payload.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: null,
+                    currentMaps: payload.currentMaps,
                 });
             }
             default: {
@@ -124,7 +173,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: store.modalMessage,
                     modalOpen: false,
-                    currentMap: store.currentMap
+                    currentMap: store.currentMap,
+                    currentMaps: exampleMaps
                 });
             }
 
@@ -146,7 +196,7 @@ function GlobalStoreContextProvider(props) {
         storeReducer({
             type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
             payload: {
-                currentMap: exampleMaps[currentMap],
+                currentMap: currentMap,
                 currentPage: currentPage,
             }
         });
@@ -178,8 +228,44 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.CLOSE_MODAL,
             }
         );
+    }
+    store.deleteMap = (currentMap, currentPage) => {
+        // some of the values in this will need to change
+        // when the map in the db is created
+        let mapValues = Object.values(store.currentMaps)
+        let mapList = (
+        mapValues.filter((map) => (
+            map.title !== currentMap.title
+          ))
+      );
+        storeReducer({
+            type: GlobalStoreActionType.DELETE_MAP,
+            payload: {
+                currentPage: currentPage,
+                currentMaps: mapList
+            },
+        });
     };
-   
+    store.updateMapReaction = (map, like, dislike, comment, data) =>{
+        let mapList = Object.keys(exampleMaps).map((key) => {
+            const currentMap = exampleMaps[key];
+            if (currentMap.title === map.title) {
+                map.reactions.likes = like;
+                map.reactions.dislikes = dislike;
+                if (comment) {
+                    map.reactions.comments.push(data);
+                }
+                return map;
+            }
+            return currentMap;
+        });
+        
+        storeReducer({
+            type: GlobalStoreActionType.UPDATE_MAP_REACTION,
+            payload: {
+                currentMaps: mapList
+            }})
+    }
    return (
     <GlobalStoreContext.Provider value={{
         store

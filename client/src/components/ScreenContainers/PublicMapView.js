@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import Box from '@mui/material/Box';
+import { GlobalStoreContext } from '../store';
 
 import {
   StyledCard,
@@ -16,23 +17,39 @@ import { ReactionButton, ReactionCount } from '../StyleSheets/MapFeedStyles'; //
 import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
 
-const PublicMapView = ({ map }) => {
+const PublicMapView = ({ map, likes, dislikes, comments }) => {
+  const { store } = useContext(GlobalStoreContext);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleCommentSubmit = () => {
+  /*const handleCommentSubmit = () => {
     // Logic to refresh comments after a new one is added
     // Potentially re-fetch the comments or add the new comment to the state
-  };
+    store.updateMapReaction(map, likes, dislikes, true, "HELLO")
+    console.log(map.reactions.comments)
+  };*/
 
-  const handleLike = () => {
-    setLiked(prevLiked => !prevLiked);
-    setDisliked(false);  // Reset disliked state
+  const handleLikeToggle = (event) => {
+    setLiked((prevLiked) => !prevLiked);
+    setDisliked(false);
+    event.stopPropagation()
+    if (!liked) {
+      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
+      console.log("likes: ",likes)
+    } else {
+      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    }
   };
-
-  const handleDislike = () => {
-    setDisliked(prevDisliked => !prevDisliked);
-    setLiked(false);  // Reset liked state
+  
+  const handleDislikeToggle = (event) => {
+    setDisliked((prevDisliked) => !prevDisliked);
+    setLiked(false);
+    event.stopPropagation();
+    if (!disliked) {
+      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+    } else {
+      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    }
   };
 
   return (
@@ -45,12 +62,12 @@ const PublicMapView = ({ map }) => {
   }}>
       <StyledCard>
         <StyledTypography variant="h4" component="div">
-          {map.name}
+          {map.title}
         </StyledTypography>
         <StyledCardMedia
           component="img"
           image={map.imageUrl}
-          alt={`Map titled ${map.name}`}
+          alt={`Map titled ${map.title}`}
         />
         <StyledCardContent>
           <StyledTypography variant="subtitle1">
@@ -60,18 +77,18 @@ const PublicMapView = ({ map }) => {
             {map.description}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLike} data-testid={'like-button'}>
+            <ReactionButton selected={liked} onClick={handleLikeToggle} data-testid={'like-button'}>
               <ThumbUpIcon />
-              <ReactionCount>{map.likes}</ReactionCount>
+              <ReactionCount>{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislike} data-testid={'dislike-button'}>
+            <ReactionButton selected={disliked} onClick={handleDislikeToggle} data-testid={'dislike-button'}>
               <ThumbDownIcon />
-              <ReactionCount>{map.dislikes}</ReactionCount>
+              <ReactionCount>{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </StyledCardContent>
-        <CommentList mapId={map._id} />
-        <CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />
+        <CommentList map={map} commentsList ={map.reactions.comments} />
+        <CommentForm map={map}/>
       </StyledCard>
       <StyledForkButton sx={{ 
           position: 'absolute', 

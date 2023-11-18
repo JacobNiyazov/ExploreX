@@ -29,5 +29,9 @@ const server = app.listen(PORT, () => console.log(`Server running on port ${PORT
 
 const authRouter = require('./routes/auth-router')
 app.use('/auth', authRouter)
+const mapRouter = require('./routes/map-router')
+app.use('/maps', mapRouter)
+const graphicsRouter = require('./routes/graphics-router')
+app.use('/graphics', graphicsRouter)
 
 module.exports = {server,app}
