@@ -28,6 +28,7 @@ jobs:
           echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
           echo CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY}} >> .env
           echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+          echo GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} >> .env
 
       - name: Start Backend
         run: |
