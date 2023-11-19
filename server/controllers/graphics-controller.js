@@ -1,9 +1,8 @@
 const Graphics = require('../models/graphics-model')
 
-// i have to use dummy variables rn 
 createGraphics = (req,res) =>{
     const body = req.body;
-    console.log("createGraphics body: " + JSON.stringify(body));
+    //console.log("createGraphics body: " + JSON.stringify(body));
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -38,7 +37,7 @@ deleteGraphics = (req, res) =>{
     console.log("delete Map Graphics with id: " + JSON.stringify(req.params.id));
     console.log("delete " + req.params.id);
     Graphics.findById({ _id: req.params.id }).then((graphics) => {
-        console.log("Map Graphics found: " + JSON.stringify(graphics));
+        //console.log("Map Graphics found: " + JSON.stringify(graphics));
 
         // DOES THIS MAP BELONG TO THIS USER?
         /*async function asyncFindUser(map) {
@@ -72,7 +71,7 @@ getGraphicsById = async (req, res) => {
 
     
     Graphics.findById({ _id: req.params.id }).then((graphics) => {
-        console.log("Found map graphics: " + JSON.stringify(graphics));
+        //console.log("Found map graphics: " + JSON.stringify(graphics));
         // DOES THIS MAP BELONG TO THIS USER?
         /*async function asyncFindUser(map) {
             await User.findOne({ email: map.ownerEmail }, (err, user) => {

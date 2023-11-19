@@ -1,10 +1,11 @@
-//const User = require('../models/user-model')
+const User = require('../models/user-model')
 const Map = require('../models/map-model')
 
-// i have to use dummy variables rn 
-createMap = (req,res) =>{
+
+createMap = async (req,res) =>{
     const body = req.body;
     console.log("createMap body: " + JSON.stringify(body));
+    console.log("user id: " + req.userId)
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -13,12 +14,12 @@ createMap = (req,res) =>{
     }
 
     const map = new Map(body);
-    /*User.findOne({ _id: req.userId }, (err, user) => {
+    User.findOne({ _id: req.userId }).then( (user) => {
         console.log("user found: " + JSON.stringify(user));
         user.mapsOwned.push(map._id);
         user
             .save()
-            .then(() => {*/
+            .then(() => {
                 map
                     .save()
                     .then(() => {
@@ -32,26 +33,31 @@ createMap = (req,res) =>{
                             errorMessage: 'Map Not Created!'
                         })
                     })
-            /*});
-    })*/
+            });
+    }).catch(error => {
+        console.log(error)
+        return res.status(400).json({
+            errorMessage: 'Map Not Created!'
+        })
+    })
 }
-deleteMap = (req, res) =>{
+deleteMap = async (req, res) =>{
     console.log("delete Map with id: " + JSON.stringify(req.params.id));
     console.log("delete " + req.params.id);
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Map found: " + JSON.stringify(map));
 
         // DOES THIS MAP BELONG TO THIS USER?
-        /*async function asyncFindUser(map) {
-            User.findOne({ email: map.ownerEmail }, (err, user) => {
+        async function asyncFindUser(map) {
+            User.findOne({ username: map.ownerUsername }).then((user) => {
                 console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
-                    console.log("correct user!");*/
+                    console.log("correct user!");
                     Map.findOneAndDelete({ _id: req.params.id }).then(() => {
                         return res.status(200).json({ success: true });
                     }).catch(err => console.log(err))
-                /*}
+                }
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
@@ -60,7 +66,7 @@ deleteMap = (req, res) =>{
                 }
             });
         }
-        asyncFindUser(map);*/
+        asyncFindUser(map);
     }).catch((err) => {
         return res.status(404).json({
             errorMessage: 'Map not found!',
@@ -79,34 +85,33 @@ getMapById = async (req, res) => {
             return res.status(200).json({ success: true, map: map })
         }
         // DOES THIS MAP BELONG TO THIS USER?
-        /*async function asyncFindUser(map) {
-            await User.findOne({ email: map.ownerEmail }, (err, user) => {
+        async function asyncFindUser(map) {
+            User.findOne({ username: map.ownerUsername }).then((user) => {
                 console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
-                    console.log("correct user!");*/
+                    console.log("correct user!");
                     return res.status(200).json({ success: true, map: map })
-                /*}
+                }
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ success: false, description: "authentication error" });
                 }
             });
         }
-        asyncFindUser(map);*/
+        asyncFindUser(map);
     }).catch((err) => {
-        console.log(map)
         return res.status(400).json({ success: false, error: err });
     })
 }
 
 getUserMapIdPairs = async (req, res) => {
     console.log("getMapPairs");
-    /*await User.findOne({ _id: req.userId }, (err, user) => {
-        console.log("find user with id " + req.userId);*/
+    await User.findOne({ _id: req.userId }, (err, user) => {
+        console.log("find user with id " + req.userId);
         async function asyncFindMap(username) {
             console.log("find all Playlists owned by " + username);
-            await Map.find({ ownerUsername: username, name: {"$regex": req.query.name, "$options": "i"} }, (err, maps) => {
+            await Map.find({ ownerUsername: username, title: {"$regex": req.query.title, "$options": "i"} }, (err, maps) => {
                 console.log("found Maps: " + JSON.stringify(maps));
                 if (err) {
                     return res.status(400).json({ success: false, error: err })
@@ -139,8 +144,8 @@ getUserMapIdPairs = async (req, res) => {
                 }
             }).catch(err => console.log(err))
         }
-        /*asyncFindMap(user.email);
-    }).catch(err => console.log(err))*/
+        asyncFindMap(user.email);
+    }).catch(err => console.log(err))
 }
 
 getPublicMapIdPairs = async (req, res) => {
@@ -193,13 +198,13 @@ updateMapById = async (req, res) => {
     Map.findOne({ _id: req.params.id }).then((map) => {
         //console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
-        /*async function asyncFindUser(map) {
-            await User.findOne({ email: map.ownerUsername }, (err, user) => {*/
+        async function asyncFindUser(map) {
+            User.findOne({ username: map.ownerUsername }).then((user) => {
                 //console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
-                //if (user._id == req.userId) {
-                    //console.log("correct user!");
-                    //console.log("req.body.name: " + req.body.name);
+                if (user._id == req.userId) {
+                    console.log("correct user!");
+                    console.log("req.body.name: " + req.body.name);
 
                     map.title = body.map.title;
                     map.ownerUsername = body.map.ownerUsername;
@@ -224,10 +229,8 @@ updateMapById = async (req, res) => {
                                 message: 'Map not updated!',
                             })
                         })
-                //}\
-                /*
+                }
                 else {
-                    //Amy do something here
                     //If not then we can only update likes/dislikes/comments
                     map.reactions.comments = body.map.comments;
                     map.reactions.likes = body.map.likes;
@@ -249,10 +252,10 @@ updateMapById = async (req, res) => {
                                 message: 'Map not updated!',
                             })
                         })
-                }*/
-            /*});
+                }
+            });
         }
-        asyncFindUser(map);*/
+        asyncFindUser(map);
     }).catch((err) =>{
         return res.status(404).json({
             err,

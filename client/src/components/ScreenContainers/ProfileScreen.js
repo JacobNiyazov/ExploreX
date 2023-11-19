@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
+import AddIcon from '@mui/icons-material/Add';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -80,9 +81,10 @@ function ProfileScreen(){
             </Grid>
             <Grid item xs = {2}>
                 <StyledButton data-testid="import-button"
-                onClick = {handleOpenImport}>import</StyledButton>
-                <StyledButton onClick = {handleOpenUpload}>upload</StyledButton>
-                <ImportFileModal data-testid="import-modal" open={openImport} onClose={handleCloseImport}/>
+                onClick = {handleOpenImport}>
+                  <AddIcon></AddIcon>
+                </StyledButton>
+                <ImportFileModal open={openImport} onClose={handleCloseImport}/>
                 <UploadFileModal open = {openUpload} onClose = {handleCloseUpload}></UploadFileModal>
             </Grid>
             <Grid item xs = {12}>
@@ -99,9 +101,9 @@ function ProfileScreen(){
                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" 
                         TabIndicatorProps={{style: {background:'#FF76D6'}}}
                         textColor="inherit" >
-                        <Tab label="Posts" {...a11yProps(0)} sx = {{color: value === 0 ? '#FF76D6' : 'white'}}
+                        <Tab data-testid="posts-tab" label="Posts" {...a11yProps(0)} sx = {{color: value === 0 ? '#FF76D6' : 'white'}}
                         />
-                        <Tab label="Drafts" {...a11yProps(1)} sx = {{color: value === 1 ? '#FF76D6' : 'white'}}/>
+                        <Tab data-testid="drafts-tab" label="Drafts" {...a11yProps(1)} sx = {{color: value === 1 ? '#FF76D6' : 'white'}}/>
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
@@ -117,7 +119,7 @@ function ProfileScreen(){
                       <Grid id="map-cards" container spacing={1}>
                         {drafts.map((map, index) => (
                           <Grid item key={index} xs={3}>
-                            <PersonalMapCard id={`map-draft-${index}`} map={map}/>
+                            <PersonalMapCard data-testid = {`map-draft-${index}`} id={`map-draft-${index}`} map={map}/>
                           </Grid>
                         ))}
                       </Grid>

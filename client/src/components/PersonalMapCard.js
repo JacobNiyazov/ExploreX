@@ -57,18 +57,18 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
     }
   };
   const card = {
-    height: '37vh',
+    height: '34vh',
     maxWidth: '23vw',
     marginTop: '5vh',
     borderRadius: '2.5vh',
   };
   const isPost = id.includes('post');
   return (
-    <Card sx={card}>
+    <Card sx={card} data-testid={id}>
       <CardHeader title="map test" subheader="team pink" />
       <CardMedia
         component="img"
-        height="194"
+        height="160vh"
         image="https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"
         alt="map test"
         onClick = {handlePostClick}
@@ -76,18 +76,19 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
       <CardActions disableSpacing>
         {isPost ? (
           <>
-            <ToggleButton value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none' }}>
-              <Typography sx={{ marginRight: '0.2vw' }}>{likes}</Typography>
+            <ToggleButton data-testid = "like-button" value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none' }}>
+              <Typography data-testid = "likes-count" sx={{ marginRight: '0.2vw' }}>{likes}</Typography>
               {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
             </ToggleButton>
-            <ToggleButton value="dislike" selected={disliked} onChange={handleDislikeToggle} sx={{ border: 'none' }}>
-              <Typography sx={{ marginRight: '0.2vw' }}>{dislikes}</Typography>
+            <ToggleButton data-testid = "dislike-button" value="dislike" selected={disliked} onChange={handleDislikeToggle} sx={{ border: 'none' }}>
+              <Typography data-testid = "dislikes-count" sx={{ marginRight: '0.2vw' }}>{dislikes}</Typography>
               {disliked ? <ThumbDownIcon /> : <ThumbDownOutlinedIcon />}
             </ToggleButton>
           </>
         ) : (
           <>
             <Button
+              data-testid="delete-button"
               onClick = {handleOpenDelete}
             >
               <DeleteIcon sx={{color:"#FF76D6"}}/>
@@ -98,7 +99,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
                 map = {map}
                 />
             <Button
-              data-testid="EditScreenButton"
+              data-testid="edit-button"
               onClick={handleEditClick}
             >
               <ModeEditIcon sx={{color:"#FF76D6"}}/>

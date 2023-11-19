@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
+import AuthContext from '../../auth'; 
+
 import {
   Typography,
   Button,
@@ -10,19 +12,23 @@ import {
 } from '@mui/material';
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
 
   
   const handleRegister = (e) => {
     e.preventDefault();
-    if(password !== confirmPassword){
-      store.displayModal("Passwords do not match, try again");
-    }
-    else{
-      store.setModal("Welcome to ExploreX! Verify your email and then log in here.","Login");
-    }
+    alert(email + " " + username  + " " + password + " " + confirmPassword)
+    auth.registerUser(email, username,password,confirmPassword)
+    .then((val) => store.setCurrentPage(store.currentPageType.login))
+    .catch(
+      (error) => store.displayModal(error.response.data.errorMessage)
+      
+  )
 
   }
 
@@ -35,7 +41,17 @@ const RegisterScreen = () => {
           <Typography style={launchStyle.header_text}>Let's Get Started</Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography>Username or email:</Typography>
+              <Typography>Email:</Typography>
+                <input
+                  type="text"
+                  id="email"
+                  value={email}
+                  style = {launchStyle.rounded_input}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+            </Grid>
+            <Grid style={launchStyle.password_container} item xs={129}>
+              <Typography>Username:</Typography>
                 <input
                   type="text"
                   id="username"

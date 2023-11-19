@@ -1,6 +1,6 @@
 import React from 'react';
 import { useContext } from 'react';
-import { GlobalStoreContext } from '../store/index.js';
+import { GlobalStoreContext } from '../store';
 import { Buttons, ModalStyled, ModalContainer, ButtonContainer, Title} from './StyleSheets/PublishMapModalStyles.js';
 import { Grid } from '@mui/material';
 

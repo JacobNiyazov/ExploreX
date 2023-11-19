@@ -75,14 +75,24 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
 
-    const [publishModal, setPublishModal] = useState(false)
-    const handleOpenPublish= () => {
-        setPublishModal(true)
+    const handleOpenPublish = () => {
+        let publishMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
+            </div>
+        )
+        store.displayModal(publishMessage, true);
     }
 
-    const [saveModal, setSaveModal] = useState(false)
     const handleOpenSave= () => {
-        setSaveModal(true)
+        let saveMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Save Edits?</span><br></br>They'll be there forever...
+            </div>
+        )
+        store.displayModal(saveMessage, true);
     }
 
     const commonFonts = [
@@ -438,9 +448,6 @@ const EditSidePanel = ({
                 </Grid>
 
             </ButtonContainer>
-            
-            <PublishMapModal open={publishModal} setOpen={setPublishModal} />
-            <FinishedEditingMapModal open={saveModal} setOpen={setSaveModal} />
         </SidePanelGrid>
     );
 }

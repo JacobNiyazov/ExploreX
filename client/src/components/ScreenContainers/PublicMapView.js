@@ -77,13 +77,13 @@ const PublicMapView = ({ map, likes, dislikes, comments }) => {
             {map.description}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLikeToggle} data-testid={'like-button'}>
+            <ReactionButton data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount>{likes}</ReactionCount>
+              <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislikeToggle} data-testid={'dislike-button'}>
+            <ReactionButton data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount>{dislikes}</ReactionCount>
+              <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </StyledCardContent>

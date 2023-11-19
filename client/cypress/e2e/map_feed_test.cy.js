@@ -5,24 +5,32 @@ describe('Map Feed and Public Map View Test', () => {
     cy.get('[data-testid=guest-button]').click();
   });
 
-  it('loads the map feed', () => {
-    cy.get('[data-testid=map-feed-card]').should('have.length.at.least', 1);
-  });
+  it('updates likes and dislikes', () => {
+    cy.get('[data-testid=map-feed-card-0]').first().within(() => {
+      cy.get('[data-testid=feed-like-button]').click();
+      cy.get('[data-testid=feed-likes-count]').should('have.text', '11');
 
-  it('navigates to the Public Map View when a map card is clicked', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=public-map-view]').should('exist');
+      cy.get('[data-testid=feed-dislike-button]').click();
+      cy.get('[data-testid=feed-dislikes-count]').should('have.text', '3');
+      cy.get('[data-testid=feed-likes-count]').should('have.text', '10');
+    });
   });
+  it('leads to public view page and likes and dislikes', ()=>{
+    cy.get('[data-testid=map-feed-card-0]').click();
+    cy.get('[data-testid=public-map-view]').first().within(()=>{
+      cy.get('[data-testid=map-like-button]').click();
+      cy.get('[data-testid=map-likes-count]').should('have.text', '11');
 
-  it('likes and dislikes work in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=like-button]').click();
-    cy.get('[data-testid=dislike-button]').click();
-  });
-
-  it('can submit a comment in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=comment-input]').type('This is a test comment');
-    cy.get('[data-testid=submit-comment]').click();
-  });
+      cy.get('[data-testid=map-dislike-button]').click();
+      cy.get('[data-testid=map-dislikes-count]').should('have.text', '3');
+      cy.get('[data-testid=map-likes-count]').should('have.text', '10');
+    })
+  })
+  it('leads to public map view and leaves a comment', ()=>{
+    cy.get('[data-testid=map-feed-card-0]').click();
+    cy.get('[data-testid=public-map-view]').first().within(()=>{
+      cy.get('[data-testid=comment-input]').type("hello!!")
+      cy.get('[data-testid=submit-comment]').click()
+    })
+  })
 });

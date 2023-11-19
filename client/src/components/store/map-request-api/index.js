@@ -1,11 +1,11 @@
 import axios from 'axios'
 
 axios.defaults.withCredentials = true;
-const api = axios.create({
+const maps = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL + '/maps',
 })
 export const createMap = (title, ownerUsername, reactions, graphics, isPublic, type, publishDate) => {
-    return api.post(`/map/`, {
+    return maps.post(`/map/`, {
         // SPECIFY THE PAYLOAD
         title:title,
         ownerUsername: ownerUsername, 
@@ -17,21 +17,21 @@ export const createMap = (title, ownerUsername, reactions, graphics, isPublic, t
     })
 }
 export const updateMapById = (id, map) =>{
-    return api.put(`/map/${id}`,{
+    return maps.put(`/map/${id}`,{
         map: map
     })
 }
 export const getMapById = (id) =>{
-    return api.get(`/map/${id}`)
+    return maps.get(`/map/${id}`)
 }
 export const getUserMapIdPairs = (id) =>{
-    return api.get('usermapidpairs')
+    return maps.get('usermapidpairs')
 }
 export const deleteMap = (id) => {
-    return api.delete(`/map/${id}`)
+    return maps.delete(`/map/${id}`)
 }
 export const getPublicMapPairs = ()=>{
-    return api.get('/publicmapidpairs')
+    return maps.get('/publicmapidpairs')
 }
 
 const apis = {

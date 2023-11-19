@@ -6,28 +6,48 @@ const api = axios.create({
 })
 
 export const getLoggedIn = () => api.get(`/loggedIn/`);
-export const loginUser = (email, password) => {
+
+export const loginUser = (username, password) => {
     return api.post(`/login/`, {
-        email : email,
+        username : username,
         password : password
     })
 }
 export const logoutUser = () => api.get(`/logout/`)
-export const registerUser = (firstName, lastName, email, username, password, passwordVerify) => {
+export const registerUser = (email, username, password, passwordVerify) => {
     return api.post(`/register/`, {
-        firstName : firstName,
-        lastName : lastName,
         email : email,
         username: username,
         password : password,
         passwordVerify : passwordVerify
     })
 }
+export const recoverPassword = (email) => {
+    return api.post(`/forgotPassword/`, {
+        email : email,
+    })
+}
+export const resetUserPassword = (userId, token, password) => {
+    return api.post(`/resetPassword/`, {
+        userId: userId,
+        token: token,
+        password : password,
+    })
+}
+export const deleteUserAccount = (email) => {
+    return api.delete(`/deleteAccount/`, {
+        email: email
+    })
+}
+
 const apis = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    recoverPassword,
+    resetUserPassword,
+    deleteUserAccount
 }
 
 export default apis

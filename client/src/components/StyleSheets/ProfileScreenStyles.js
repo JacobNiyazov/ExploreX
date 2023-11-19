@@ -14,9 +14,10 @@ export const StyledTypography2 = styled(Typography)({
 export const StyledButton = styled(Button)({
     backgroundColor: "#f57fd9",
     color: "black",
-    fontSize: "2vh",
+    width:"1vw",
+    height:"4.5vh",
     padding: "1vh",
-    margin: "1vw",
+    marginLeft: "7vw",
     marginTop: "3vh",
     borderRadius:"3vh",
     "&:hover": {

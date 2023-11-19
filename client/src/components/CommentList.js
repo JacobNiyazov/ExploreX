@@ -1,5 +1,5 @@
 // CommentList.js
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 import Comment from './Comment';
 import { StyledCommentList } from './StyleSheets/CommentStyles';
 const sampleComments = [

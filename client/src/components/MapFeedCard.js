@@ -8,7 +8,7 @@ import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
 
 
-const MapFeedCard = ({ map, likes, dislikes }) => {
+const MapFeedCard = ({ map, likes, dislikes,id }) => {
   const { store } = useContext(GlobalStoreContext);
 
   const [liked, setLiked] = useState(false);
@@ -40,7 +40,7 @@ const MapFeedCard = ({ map, likes, dislikes }) => {
   };
 
   return (
-    <StyledCard as={Card} onClick={handleOpenMap} data-testid='map-feed-card'>
+    <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}
@@ -57,13 +57,13 @@ const MapFeedCard = ({ map, likes, dislikes }) => {
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLikeToggle}>
+            <ReactionButton data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount>{likes}</ReactionCount>
+              <ReactionCount data-testid= "feed-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislikeToggle}>
+            <ReactionButton data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount>{dislikes}</ReactionCount>
+              <ReactionCount data-testid= "feed-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </ContentContainer>

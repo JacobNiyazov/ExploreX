@@ -1,8 +1,9 @@
 import React from 'react';
 import { useContext } from 'react';
-import { GlobalStoreContext } from '../store/index.js';
+import { GlobalStoreContext } from '../store';
 import LoginScreen from './ScreenContainers/LoginScreen.js';
 import RegisterScreen from './ScreenContainers/RegisterScreen.js';
+import RecoverPasswordScreen from './ScreenContainers/RecoverPasswordScreen.js';
 import ForgotPasswordScreen from './ScreenContainers/ForgotPasswordScreen.js';
 import FAQScreen from './ScreenContainers/FAQScreen.js';
 import EditScreen from './ScreenContainers/EditMapScreen.js';
@@ -110,6 +111,8 @@ export default function Navigator() {
             return (<ForgotPasswordScreen/>)
         case store.currentPageType.registerScreen:
             return (<RegisterScreen/>)
+        case store.currentPageType.resetPasswordScreen:
+            return (<RecoverPasswordScreen/>)
         case store.currentPageType.faqScreen:
             return (<FAQScreen/>)
         case store.currentPageType.editMapScreen:
