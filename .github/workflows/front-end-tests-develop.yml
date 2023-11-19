@@ -19,12 +19,15 @@ jobs:
           echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
 
       - name: create env file client
         run: |
           cd ./client
           touch .env
           echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+          echo CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY}} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
 
       - name: Start Backend
         run: |
@@ -40,6 +43,7 @@ jobs:
           working-directory: ./client  # Actions start at root, our front end is in client
           build: npm run build
           start: npm start
+          record: true
       - name: Upload screenshots
         uses: actions/upload-artifact@latest
         if: failure()
