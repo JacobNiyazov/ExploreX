@@ -191,7 +191,7 @@ function EditAccountScreen(){
                         type="password"
                     />
                 </FormControl>
-                <StyledSubmitButton sx = {{marginTop:"20vh", marginLeft: "-15vh"}} onClick={handleSubmit}>
+                <StyledSubmitButton sx = {{marginTop:"20vh", marginLeft: "-15vh"}} onClick={handleSubmit} data-testid="submit-button">
                     Save Changes
                 </StyledSubmitButton>
             </Grid>

@@ -64,7 +64,7 @@ describe('Edit Account Screen Test', () => {
       cy.get('[data-testid="email-input"] > #basic-input').type('apple@gmail.com');
       cy.get(':nth-child(2) > .MuiInputBase-root > #basic-input').type('abcd1234');
       cy.get(':nth-child(3) > .MuiInputBase-root > #basic-input').type('abcd1234');
-      cy.get('.css-1osj8n2-MuiGrid-root > .MuiButtonBase-root').click();
+      cy.get('[data-testid="submit-button"]').click();
       cy.get('#modal-modal-description > div > p').should('have.text', 'An account with this username already exists.');
       /* ==== End Cypress Studio ==== */
 

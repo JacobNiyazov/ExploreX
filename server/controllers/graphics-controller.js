@@ -3,7 +3,7 @@ const User = require('../models/user-model')
 
 createGraphics = (req,res) =>{
     const body = req.body;
-    //console.log("createGraphics body: " + JSON.stringify(body));
+    console.log("createGraphics body: " + JSON.stringify(body));
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -118,9 +118,10 @@ updateGraphicsById = async (req, res) => {
                     //console.log("correct user!");
                     //console.log("req.body.name: " + req.body.name);
 
-                    graphics.type = body.graphics.type;
+                    graphics.geojson = body.graphics.geojson;
                     graphics.ownerUsername = body.graphics.ownerUsername;
-                    graphics.features = body.graphics.features;
+                    graphics.legend = body.graphics.legend;
+                    graphics.typeSpecific = body.graphics.typeSpecific;
                     graphics
                         .save()
                         .then(() => {
