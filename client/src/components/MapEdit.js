@@ -1,5 +1,5 @@
 import { useState, React} from "react";
-import { MapContainer, TileLayer, GeoJSON, ZoomControl, useMap} from "react-leaflet";
+import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
@@ -52,7 +52,7 @@ const MapEditInner = ({mapType}) =>{
                 }).join(""), {
                     maxHeight: 200
                 });
-                if(feature.geometry.type == 'Polygon'){
+                if(feature.geometry.type === 'Polygon'){
                 var shade = getRandomShade();
                 layer.setStyle({
                 fillColor: shade,
@@ -69,7 +69,7 @@ const MapEditInner = ({mapType}) =>{
 
     // Function to check the file extension and determine the file type
         
-    if (mapType == 'kml'){
+    if (mapType === 'kml'){
         fetch(kmlFile)
         .then((res) => res.text())
         .then((text) => {
@@ -78,10 +78,10 @@ const MapEditInner = ({mapType}) =>{
             loadMap(geojson);
         })
     }
-    else if(mapType == 'geojson'){
+    else if(mapType === 'geojson'){
         loadMap(geojson);
     }
-    else if(mapType == 'shapefile'){
+    else if(mapType === 'shapefile'){
         
     }
     
