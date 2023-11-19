@@ -19,8 +19,12 @@ const ForgotPasswordScreen = () => {
 
 
   const handleRecover = (e) => {
-    // store.setModal("Password recovery email sent","Login");
-    auth.recoverPassword(email);
+
+    auth.recoverPassword(email).then( 
+      (val) => store.setCurrentPage(store.currentPageType.login))
+    .catch(
+      (error) => store.displayModal(error.response.data.errorMessage));
+    store.displayModal("Please check your email for a password recovery link.")
   };
 
   const tempHandler = (e) => {

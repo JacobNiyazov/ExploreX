@@ -26,7 +26,7 @@ const RegisterScreen = () => {
     auth.registerUser(email, username,password,confirmPassword)
     .then((val) => store.setCurrentPage(store.currentPageType.login))
     .catch(
-      (error) => alert(error.response.data.errorMessage)
+      (error) => store.displayModal(error.response.data.errorMessage)
       
   )
 

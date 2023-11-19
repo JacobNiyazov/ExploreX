@@ -367,6 +367,7 @@ describe('Edit Account details tests', function(){
     });
   });
 
+
   afterAll(async ()=>{
     await server.close();
     await mongoose.disconnect();
