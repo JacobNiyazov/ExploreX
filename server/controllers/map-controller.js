@@ -166,7 +166,7 @@ getUserMapIdPairs = async (req, res) => {
 
 getPublicMapIdPairs = async (req, res) => {
     console.log("getPublicMapIdPairs:");
-    Map.find({ published: true }).then((maps) => {
+    Map.find({ isPublic : true }).then((maps) => {
         console.log("found Maps: " + JSON.stringify(maps));
         if (!maps) {
             console.log("!maps.length");

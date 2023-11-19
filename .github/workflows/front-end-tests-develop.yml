@@ -1,5 +1,5 @@
 name: Front End Test Cases Develop
-run-name: ${{ github.actor }} is running Front End Test Cases
+run-name: ${{ github.actor }} is running Front End Test Cases Develop
 # Here we are saying that trhis action will happen on push to the repository
 on: 
   push:
