@@ -84,10 +84,7 @@ loginUser = async (req, res) => {
             sameSite: true
         }).status(200).json({
             success: true,
-            user: {
-                success: true,
-                username: existingUser.username,
-            }
+            username: existingUser.username,
         })
         return res
 
