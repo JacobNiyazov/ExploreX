@@ -40,3 +40,9 @@ jobs:
           working-directory: ./client  # Actions start at root, our front end is in client
           build: npm run build
           start: npm start
+      - name: Upload screenshots
+        uses: actions/upload-artifact@latest
+        if: failure()
+        with:
+            name: cypress-snapshots
+            path: client/cypress/screenshots
