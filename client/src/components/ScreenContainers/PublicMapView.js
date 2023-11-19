@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
@@ -15,8 +15,11 @@ import {
 import { ReactionButton, ReactionCount } from '../StyleSheets/MapFeedStyles'; // adjust the import path as needed
 import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
+import { AuthContext } from '../../auth'
 
 const PublicMapView = ({ map }) => {
+  const { auth } = useContext(AuthContext);
+
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
@@ -35,6 +38,23 @@ const PublicMapView = ({ map }) => {
     setLiked(false);  // Reset liked state
   };
 
+  let forkButton = ""
+  let commentSection = ""
+  if(auth.user !== null && auth.loggedIn === true){
+    forkButton = (<StyledForkButton sx={{ 
+        position: 'absolute', 
+        top: 0, 
+        right: 0 
+    }}>
+      <CallSplitIcon />
+      <StyledTypography variant="h5">
+        Fork
+      </StyledTypography>
+    </StyledForkButton>)
+
+    commentSection = (<CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />)
+
+  }
   return (
     <Box data-testid='public-map-view' sx={{ 
       display: 'flex', 
@@ -60,29 +80,20 @@ const PublicMapView = ({ map }) => {
             {map.description}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLike} data-testid={'like-button'}>
+            <ReactionButton disabled={auth.isGuest} selected={liked} onClick={handleLike} data-testid={'like-button'}>
               <ThumbUpIcon />
               <ReactionCount>{map.likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislike} data-testid={'dislike-button'}>
+            <ReactionButton disabled={auth.isGuest} selected={disliked} onClick={handleDislike} data-testid={'dislike-button'}>
               <ThumbDownIcon />
               <ReactionCount>{map.dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </StyledCardContent>
         <CommentList mapId={map._id} />
-        <CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />
+        {commentSection}
       </StyledCard>
-      <StyledForkButton sx={{ 
-          position: 'absolute', 
-          top: 0, 
-          right: 0 
-      }}>
-        <CallSplitIcon />
-        <StyledTypography variant="h5">
-          Fork
-        </StyledTypography>
-      </StyledForkButton>
+      {forkButton}
     </Box>
   );
 };

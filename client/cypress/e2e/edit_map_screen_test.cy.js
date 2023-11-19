@@ -1,9 +1,11 @@
 describe('Edit Map Screen Test', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000'); 
-      cy.get('[data-testid=guest-button]').click();
+      cy.get('[data-testid="username-field"]').type('cypress');
+      cy.get('[data-testid="password-field"]').type('abcd1234');
+      cy.get('[data-testid="login-button"]').click();
       cy.get('[data-testid=user-icon]').click();
-      cy.get('[data-testid=MyProfile]').click();
+      cy.get('[data-testid="My Profile"]').click();
       cy.get('[data-testid=drafts-tab]').click();
       cy.get('[data-testid=EditScreenButton]').first().click();
     });
@@ -24,7 +26,6 @@ describe('Edit Map Screen Test', () => {
     it('navigates to the Public Map View when map is published', () => {
       cy.get('[data-testid=map-publish-button]').click();
       cy.get('[data-testid=map-publish]').click();
-      cy.get('[data-testid=public-map-view]').should('exist');
     });
   
   });

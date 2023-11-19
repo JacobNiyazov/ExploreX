@@ -115,8 +115,8 @@ function AppBanner() {
       <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
           {/* Logo and AppName */}
-          <LogoButton data-testid='logo'/>
-          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+          <LogoButton data-testid='logo' onClick={handleLogoClick}/>
+          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
             ExploreX
           </Typography>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>

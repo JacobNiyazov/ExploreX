@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs')
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendRecoveryEmail");
 const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log(emailRegex.test(email))
     return emailRegex.test(email);
 };
 
@@ -84,7 +85,7 @@ loginUser = async (req, res) => {
             sameSite: true
         }).status(200).json({
             success: true,
-            username: existingUser.username,
+            user: existingUser,
         })
         return res
 
@@ -212,8 +213,6 @@ recoverPassword = async(req,res) => {
 registerUser = async (req, res) => {
     try {
         const { email, username, password, passwordVerify } = req.body;
-        console.log(req.body)
-        console.log("create user:" + username + " " + email + " " + " " + password + " " + passwordVerify);
         if (!email || !username || !password || !passwordVerify ) {
             return res
                 .status(400)
@@ -221,8 +220,7 @@ registerUser = async (req, res) => {
                     success: false,
                     errorMessage: "Please enter all required fields." });
         }
-        console.log("all fields provided");
-        if (!isValidEmail(email)){
+        if (isValidEmail(email) === false){
             return res
                 .status(400)
                 .json({
@@ -239,7 +237,6 @@ registerUser = async (req, res) => {
                     errorMessage: "Please enter a password of at least 8 characters."
                 });
         }
-        console.log("password long enough");
         if (password !== passwordVerify) {
             return res
                 .status(400)

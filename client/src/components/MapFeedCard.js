@@ -6,10 +6,12 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
+import { AuthContext } from '../auth'
 
 
 const MapFeedCard = ({ map }) => {
   const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -48,11 +50,11 @@ const MapFeedCard = ({ map }) => {
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
-            <ReactionButton selected={liked} onClick={handleLike}>
+            <ReactionButton disabled={auth.isGuest} selected={liked} onClick={handleLike}>
               <ThumbUpIcon />
               <ReactionCount>{map.likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton selected={disliked} onClick={handleDislike}>
+            <ReactionButton disabled={auth.isGuest} selected={disliked} onClick={handleDislike}>
               <ThumbDownIcon />
               <ReactionCount>{map.dislikes}</ReactionCount>
             </ReactionButton>

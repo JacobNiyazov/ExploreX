@@ -1,9 +1,11 @@
 describe('Profile Screen Test', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000'); 
-      cy.get('[data-testid=guest-button]').click();
+      cy.get('[data-testid="username-field"]').type('cypress');
+      cy.get('[data-testid="password-field"]').type('abcd1234');
+      cy.get('[data-testid="login-button"]').click();
       cy.get('[data-testid=user-icon]').click();
-      cy.get('[data-testid=MyProfile]').click();
+      cy.get('[data-testid="My Profile"]').click();
     });
   
     it('displays the user bio', () => {

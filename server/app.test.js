@@ -53,7 +53,16 @@ describe('Login user tests', function(){
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
         success: true,
-        username: 'tester1234',
+        user: {
+          "__v": 0,
+          "_id": expect.any(String),
+          "bio": "I'm a new user!",
+          "createdAt": expect.any(String),
+          "email": "tester1234@gmail.com",
+          "mapsOwned": [],
+          "passwordHash": expect.any(String),
+          "updatedAt": expect.any(String),
+          "username": "tester1234"},
     });
   });
 });

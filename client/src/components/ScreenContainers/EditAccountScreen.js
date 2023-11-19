@@ -10,10 +10,11 @@ import { AuthContext } from '../../auth'
 function EditAccountScreen(){
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    let user = auth.user
 
-    const [username, setUsername] = useState("");
-    const [bio, setBio] = useState("");
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState(user !== null && auth.loggedIn === true ? user.username : "");
+    const [bio, setBio] = useState(user !== null && auth.loggedIn === true ? user.bio : "");
+    const [email, setEmail] = useState(user !== null && auth.loggedIn === true ? user.email : "");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -62,7 +63,7 @@ function EditAccountScreen(){
         else if (password !== confirmPassword) {
             store.displayModal(passwordsNotMatchingMessage, false);
         }
-        else if (password.length < 8) {
+        else if (password !== "" && password.length < 8) {
             store.displayModal(passwordTooShortMessage, false);
         }
         else if (username.length === 0) {
@@ -72,12 +73,6 @@ function EditAccountScreen(){
             store.updateUserInfo(username, email, bio, password);
         }
     };
-
-    if (auth.user !== null && auth.isLoggedIn === true){
-        setUsername(auth.user.username);
-        setBio(auth.user.bio);
-        setEmail(auth.user.email);
-    }
 
     const center = {
         display:"flex", 
@@ -120,7 +115,7 @@ function EditAccountScreen(){
             </Grid>
             <Grid item xs = {6} sx = {center}>
             <FormControl>
-                <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
+                <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }} data-testid="bio-label">
                         Bio
                     </InputLabel>
                     <StyledBio

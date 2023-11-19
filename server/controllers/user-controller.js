@@ -6,7 +6,7 @@ async function editUserAccount(req, res) {
 	try {
 		const { username, email, bio, password } = req.body;
 
-		const existingUserEmail = await User.findOne({ email: email });
+		const existingUserEmail = await User.findOne({ email: email, _id: { $ne: req.params.id }  });
 		if (existingUserEmail) {
 			return res
 				.status(400)
@@ -15,7 +15,7 @@ async function editUserAccount(req, res) {
 					errorMessage: "An account with this email address already exists."
 				})
 		}
-		const existingUserUsername = await User.findOne({ username: username });
+		const existingUserUsername = await User.findOne({ username: username, _id: { $ne: req.params.id } });
 		if (existingUserUsername) {
 			return res
 				.status(400)
@@ -25,11 +25,16 @@ async function editUserAccount(req, res) {
 				})
 		}
 
-		const saltRounds = 10;
-		const salt = await bcrypt.genSalt(saltRounds);
-		const passwordHash = await bcrypt.hash(password, salt);
+		if(password !== ""){
+			const saltRounds = 10;
+			const salt = await bcrypt.genSalt(saltRounds);
+			const passwordHash = await bcrypt.hash(password, salt);
 
-		data = {username:username, email:email, bio:bio, passwordHash:passwordHash}
+			data = {username:username, email:email, bio:bio, passwordHash:passwordHash}
+		}
+		else{
+			data = {username:username, email:email, bio:bio}
+		}
 		const updatedUser = await User.findByIdAndUpdate(
 			req.params.id,
 			data,

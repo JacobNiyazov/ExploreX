@@ -2,7 +2,9 @@ describe('Map Feed and Public Map View Test', () => {
 
   beforeEach(() => {
     cy.visit('http://localhost:3000');
-    cy.get('[data-testid=guest-button]').click();
+    cy.get('[data-testid="username-field"]').type('cypress');
+    cy.get('[data-testid="password-field"]').type('abcd1234');
+    cy.get('[data-testid="login-button"]').click();
   });
 
   it('loads the map feed', () => {
