@@ -356,7 +356,7 @@ function GlobalStoreContextProvider(props) {
     };
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
-        let currentMap = map._id;
+        /*let currentMap = map._id;
         let author = map.author;
         async function reactToMap(){
             // get all the maps based on page
@@ -375,8 +375,8 @@ function GlobalStoreContextProvider(props) {
             else if(store.currentPage === "PublicMapView"){
 
             }
-        }
-        /*let mapList = Object.keys(exampleMaps).map((key) => {
+        }*/
+        let mapList = Object.keys(exampleMaps).map((key) => {
             const currentMap = exampleMaps[key];
             if (currentMap.title === map.title) {
                 map.reactions.likes = like;
@@ -393,7 +393,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.UPDATE_MAP_REACTION,
             payload: {
                 currentMaps: mapList
-            }})*/
+            }})
     }
    return (
     <GlobalStoreContext.Provider value={{
