@@ -231,7 +231,7 @@ describe('Edit Account details tests', function(){
     const response = await request(app)
       .put(reqURL)
       .send({ username: 'explorer', email: 'dsfsdvsd@yahoo.com', bio:'', password:'password'});
-    expect(response.statusCode).toBe(401);
+    expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
         success: false,
         errorMessage: "An account with this username already exists."
