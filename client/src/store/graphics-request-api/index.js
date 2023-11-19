@@ -2,7 +2,7 @@ import axios from 'axios'
 
 axios.defaults.withCredentials = true;
 const graphics = axios.create({
-    baseURL: process.env.REACT_APP_SERVER_URL + '/graphics',
+    baseURL: process.env.REACT_APP_SERVER_URL + '/api',
 })
 
 export const createGraphics = (type, features, ownerUsername) =>{

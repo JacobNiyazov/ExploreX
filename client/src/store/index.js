@@ -2,8 +2,8 @@ import { createContext, useState, useContext } from 'react'
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
-import maps from '../components/store/map-request-api';
-import graphics from '../components/store/graphics-request-api';
+import maps from './map-request-api';
+import graphics from './graphics-request-api';
 import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
@@ -118,7 +118,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps
+                    currentMaps: payload.currentMaps
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -195,10 +195,38 @@ function GlobalStoreContextProvider(props) {
 
 
    store.setCurrentPage = (currentPage) => {
+        if(currentPage === "MapFeed"){
+            async function getMap(){
+                try{
+                    console.log("user: ", auth.username)
+                    let response = await maps.createMap("testMap", auth.username, [], [], true,"Heat Map", "2023-11-01T09:24:00.000Z");
+                    if(response.data.success){
+                        response = await maps.getPublicMapPairs()
+                        if(response.data.success){
+                            console.log("hello!: ");
+                            console.log("data: ", response)
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                                payload: {
+                                    currentPage: currentPage,
+                                    currentMaps: response.data.idNamePairs
+                                }
+                            }
+                        ); 
+                        }
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: currentPage,
+                    currentMaps: exampleMaps
                 }
             }
         );
@@ -326,8 +354,9 @@ function GlobalStoreContextProvider(props) {
       }
       processDelete();*/
     };
+
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
-        /*let currentMap = map._id;
+        let currentMap = map._id;
         let author = map.author;
         async function reactToMap(){
             // get all the maps based on page
@@ -346,8 +375,8 @@ function GlobalStoreContextProvider(props) {
             else if(store.currentPage === "PublicMapView"){
 
             }
-        }*/
-        let mapList = Object.keys(exampleMaps).map((key) => {
+        }
+        /*let mapList = Object.keys(exampleMaps).map((key) => {
             const currentMap = exampleMaps[key];
             if (currentMap.title === map.title) {
                 map.reactions.likes = like;
@@ -364,7 +393,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.UPDATE_MAP_REACTION,
             payload: {
                 currentMaps: mapList
-            }})
+            }})*/
     }
    return (
     <GlobalStoreContext.Provider value={{
