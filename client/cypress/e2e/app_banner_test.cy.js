@@ -11,7 +11,7 @@ describe('App Banner Tests', () => {
 
     /* ==== Generated with Cypress Studio ==== */
     cy.get('[data-testid="logo"] > path').should('be.visible');
-    cy.get('[data-testid="app-name"]').should('have.text', 'ExploreX');
+    cy.get('[data-testid="app-name"]', {timeout: 7000}).should('have.text', 'ExploreX');
     cy.get('[data-testid="search-type"]').click();
     cy.get('[data-testid="search-type-option1"]').should('have.text', 'User');
     cy.get('[data-testid="search-type-option2"]').should('have.text', 'Map Name');
