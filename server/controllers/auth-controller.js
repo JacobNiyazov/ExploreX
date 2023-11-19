@@ -46,7 +46,9 @@ loginUser = async (req, res) => {
         if (!username || !password) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({         
+                    success: false,
+                    errorMessage: "Please enter all required fields." });
         }
 
         const existingUser = await User.findOne({ username: username });
@@ -55,6 +57,7 @@ loginUser = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong username or password provided."
                 })
         }
@@ -66,6 +69,7 @@ loginUser = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong username or password provided."
                 })
         }
@@ -81,8 +85,8 @@ loginUser = async (req, res) => {
         }).status(200).json({
             success: true,
             user: {
+                success: true,
                 username: existingUser.username,
-                email: existingUser.email              
             }
         })
         return res
@@ -106,10 +110,12 @@ deleteUserAccount = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "User not found."
                 })
         }
         return res.status(200).json({
+            success: true,
             message: "User deleted successfully."
         });
 
@@ -159,7 +165,9 @@ recoverPassword = async(req,res) => {
         console.log(email + " Requesting email");
         if (!email) {
             return res.status(400)
-            .json({ errorMessage: "Please enter an email."});
+            .json({ 
+                success: false,
+                errorMessage: "Please enter an email."});
         }
 
         let existingUser = await User.findOne({ email: email });
@@ -191,7 +199,10 @@ recoverPassword = async(req,res) => {
 
         // sendEmail(existingUser.email);
         let link = "s"
-        return link;
+        return res.status(200).json({
+            success: true,
+            message: "An email has been sent successfully."
+        });
 
         
         sendEmail()
@@ -209,13 +220,16 @@ registerUser = async (req, res) => {
         if (!email || !username || !password || !passwordVerify ) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ 
+                    success: false,
+                    errorMessage: "Please enter all required fields." });
         }
         console.log("all fields provided");
         if (!isValidEmail(email)){
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Invalid email format, please try again."
                 });
             
@@ -224,6 +238,7 @@ registerUser = async (req, res) => {
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Please enter a password of at least 8 characters."
                 });
         }
@@ -232,6 +247,7 @@ registerUser = async (req, res) => {
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Please enter the same password twice."
                 })
         }
@@ -282,7 +298,6 @@ registerUser = async (req, res) => {
             user: {
                 username: savedUser.username,
                 email: savedUser.email,              
-                bio: savedUser.bio
             }
         })
 
