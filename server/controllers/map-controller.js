@@ -1,5 +1,6 @@
 const User = require('../models/user-model')
 const Map = require('../models/map-model')
+const Graphics = require('../models/graphics-model')
 
 
 createMap = async (req,res) =>{
@@ -13,26 +14,36 @@ createMap = async (req,res) =>{
         })
     }
 
-    const map = new Map(body);
+    
+    const graphics = new Graphics(body.graphics)
     User.findOne({ _id: req.userId }).then( (user) => {
         console.log("user found: " + JSON.stringify(user));
-        user.mapsOwned.push(map._id);
-        user
+        graphics
             .save()
-            .then(() => {
-                map
+            .then(()=>{
+                tempMap = body
+                tempMap.graphics = graphics._id
+                const map = new Map(tempMap);
+                
+                user.mapsOwned.push(map._id);
+                user
                     .save()
                     .then(() => {
-                        return res.status(201).json({
-                            map: map
-                        })
+                        map
+                            .save()
+                            .then(() => {
+                                return res.status(201).json({
+                                    map: map
+                                })
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                return res.status(400).json({
+                                    errorMessage: 'Map Not Created!'
+                                })
+                            }) 
                     })
-                    .catch(error => {
-                        console.log(error)
-                        return res.status(400).json({
-                            errorMessage: 'Map Not Created!'
-                        })
-                    })
+                
             });
     }).catch(error => {
         console.log(error)
@@ -55,7 +66,9 @@ deleteMap = async (req, res) =>{
                 if (user._id == req.userId) {
                     console.log("correct user!");
                     Map.findOneAndDelete({ _id: req.params.id }).then(() => {
-                        return res.status(200).json({ success: true });
+                        Graphics.findOneAndDelete({ _id: map.graphics }).then(() => {
+                            return res.status(200).json({ success: true });
+                        }).catch(err => console.log(err))
                     }).catch(err => console.log(err))
                 }
                 else {
@@ -90,8 +103,11 @@ getMapById = async (req, res) => {
                 console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
-                    console.log("correct user!");
-                    return res.status(200).json({ success: true, map: map })
+                    Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+                        map.graphics = graphics;
+                        console.log("correct user!");
+                        return res.status(200).json({ success: true, map: map })
+                    })
                 }
                 else {
                     console.log("incorrect user!");
@@ -107,15 +123,13 @@ getMapById = async (req, res) => {
 
 getUserMapIdPairs = async (req, res) => {
     console.log("getMapPairs");
-    await User.findOne({ _id: req.userId }, (err, user) => {
+    User.findOne({ _id: req.userId }).then((user) => {
         console.log("find user with id " + req.userId);
         async function asyncFindMap(username) {
             console.log("find all Playlists owned by " + username);
-            await Map.find({ ownerUsername: username, title: {"$regex": req.query.title, "$options": "i"} }, (err, maps) => {
+            console.log("Title parameter: " + req.query.title);
+            Map.find({ ownerUsername: username, title: {"$regex": req.query.title, "$options": "i"} }).then((maps) => {
                 console.log("found Maps: " + JSON.stringify(maps));
-                if (err) {
-                    return res.status(400).json({ success: false, error: err })
-                }
                 if (!maps) {
                     console.log("!maps.length");
                     return res
@@ -142,19 +156,18 @@ getUserMapIdPairs = async (req, res) => {
                     }
                     return res.status(200).json({ success: true, idNamePairs: pairs })
                 }
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                return res.status(400).json({ success: false, error: err })
+            })
         }
-        asyncFindMap(user.email);
-    }).catch(err => console.log(err))
+        asyncFindMap(user.username);
+    }).catch(err => {return res.status(400).json({ success: false, error: err })})
 }
 
 getPublicMapIdPairs = async (req, res) => {
     console.log("getPublicMapIdPairs:");
-    await Map.find({ published: true }, (err, maps) => {
+    Map.find({ published: true }).then((maps) => {
         console.log("found Maps: " + JSON.stringify(maps));
-        if (err) {
-            return res.status(400).json({ success: false, error: err })
-        }
         if (!maps) {
             console.log("!maps.length");
             return res
@@ -180,7 +193,7 @@ getPublicMapIdPairs = async (req, res) => {
             }
             return res.status(200).json({ success: true, idNamePairs: pairs })
         }
-    }).catch(err => console.log(err))
+    }).catch(err => {return res.status(400).json({ success: false, error: err })})
 }
 
 updateMapById = async (req, res) => {

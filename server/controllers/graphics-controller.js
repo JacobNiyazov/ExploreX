@@ -1,4 +1,5 @@
 const Graphics = require('../models/graphics-model')
+const User = require('../models/user-model')
 
 createGraphics = (req,res) =>{
     const body = req.body;
@@ -11,27 +12,27 @@ createGraphics = (req,res) =>{
     }
 
     const graphics = new Graphics(body);
-    /*User.findOne({ _id: req.userId }, (err, user) => {
+    User.findOne({ _id: req.userId }).then( (user) => {
         console.log("user found: " + JSON.stringify(user));
-        user.mapsOwned.push(map._id);
-        user
+        graphics
             .save()
-            .then(() => {*/
-                graphics
-                    .save()
-                    .then(() => {
-                        return res.status(201).json({
-                            graphics: graphics
-                        })
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        return res.status(400).json({
-                            errorMessage: 'Map Graphics Not Created!'
-                        })
-                    })
-            /*});
-    })*/
+            .then(() => {
+                return res.status(201).json({
+                    graphics: graphics
+                })
+            })
+            .catch(error => {
+                console.log(error)
+                return res.status(400).json({
+                    errorMessage: 'Map Graphics Not Created!'
+                })
+            })
+    }).catch(error => {
+        console.log(error)
+        return res.status(400).json({
+            errorMessage: 'User not found and Map Graphics Not Created!'
+        })
+    })
 }
 deleteGraphics = (req, res) =>{
     console.log("delete Map Graphics with id: " + JSON.stringify(req.params.id));
@@ -39,17 +40,17 @@ deleteGraphics = (req, res) =>{
     Graphics.findById({ _id: req.params.id }).then((graphics) => {
         //console.log("Map Graphics found: " + JSON.stringify(graphics));
 
-        // DOES THIS MAP BELONG TO THIS USER?
-        /*async function asyncFindUser(map) {
-            User.findOne({ email: map.ownerEmail }, (err, user) => {
+        // DOES THIS MAP GRAPHICS BELONG TO THIS USER?
+        async function asyncFindUser(graphics) {
+            User.findOne({ username: graphics.ownerUsername }).then((user) => {
                 console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
-                    console.log("correct user!");*/
+                    console.log("correct user!");
                     Graphics.findOneAndDelete({ _id: req.params.id }).then(() => {
                         return res.status(200).json({ success: true });
                     }).catch(err => console.log(err))
-                /*}
+                }
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
@@ -58,7 +59,7 @@ deleteGraphics = (req, res) =>{
                 }
             });
         }
-        asyncFindUser(map);*/
+        asyncFindUser(graphics);
     }).catch((err) => {
         return res.status(404).json({
             errorMessage: 'Map Graphics not found!',
@@ -109,15 +110,15 @@ updateGraphicsById = async (req, res) => {
     Graphics.findOne({ _id: req.params.id }).then((graphics) => {
         //console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
-        /*async function asyncFindUser(map) {
-            await User.findOne({ email: map.ownerUsername }, (err, user) => {*/
+        async function asyncFindUser(graphics) {
+            User.findOne({ username: graphics.ownerUsername }).then((user) => {
                 //console.log("user._id: " + user._id);
                 console.log("req.userId: " + req.userId);
-                //if (user._id == req.userId) {
+                if (user._id == req.userId) {
                     //console.log("correct user!");
                     //console.log("req.body.name: " + req.body.name);
 
-                    graphics.type = body.type;
+                    graphics.type = body.graphics.type;
                     graphics.ownerUsername = body.graphics.ownerUsername;
                     graphics.features = body.graphics.features;
                     graphics
@@ -137,14 +138,14 @@ updateGraphicsById = async (req, res) => {
                                 message: 'Map Graphics not updated!',
                             })
                         })
-                //}\
-                /*else {
+                }
+                else {
                     console.log("incorrect user!");
                     return res.status(400).json({ success: false, description: "authentication error" });
-                }*/
-            /*});
+                }
+            });
         }
-        asyncFindUser(map);*/
+        asyncFindUser(graphics);
     }).catch((err) =>{
         return res.status(404).json({
             err,

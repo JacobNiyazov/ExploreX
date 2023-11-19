@@ -163,31 +163,6 @@ const MapEdit = ({
     }
     
 
-    /*function onEachFeature(feature, layer) {
-        // Customize popup content
-        layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-            
-          return (
-            ReactDOMServer.renderToString(
-                <Box sx={{display:'flex', alignItems:'center'}}>
-                    <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                    <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                </Box>
-            )
-          )
-        }).join(""), {
-          maxHeight: 200
-        });
-        var shade = getRandomShade();
-        layer.setStyle({
-          fillColor: shade,
-          weight: 3,
-          opacity: 1,
-          color: shade,
-          fillOpacity: 0.5
-        });
-    }*/
-
     return(
         <Grid item xs = {8}>
             <MapContainer center={[0,0]} zoom={3} style={{ height: '100%'}} zoomControl={false}>
