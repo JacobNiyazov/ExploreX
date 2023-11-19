@@ -40,6 +40,7 @@ jobs:
           working-directory: ./client  # Actions start at root, our front end is in client
           build: npm run build
           start: npm start
+          browser: chrome
 
   deploy:
       name: Deploy
