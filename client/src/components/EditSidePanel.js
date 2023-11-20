@@ -7,8 +7,8 @@ import { NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, 
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
-import PublishMapModal from './PublishMapModal.js'
-import FinishedEditingMapModal from './FinishedEditingMapModal.js'
+//import PublishMapModal from './PublishMapModal.js'
+//import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
 
 const EditSidePanel = ({

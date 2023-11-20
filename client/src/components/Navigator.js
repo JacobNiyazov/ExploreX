@@ -85,7 +85,7 @@ let exampleMaps = {
   }
 }
 let Map1 = exampleMaps.Map1;
-const mapData = {
+/*const mapData = {
     name: 'Map of Treasure Island',
     author: 'John Doe',
     imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
@@ -95,7 +95,7 @@ const mapData = {
       dislikes: 2,
       comments: [],
     },
-  };
+  };*/
 export default function Navigator() {
     const { store } = useContext(GlobalStoreContext);
     console.log(store)

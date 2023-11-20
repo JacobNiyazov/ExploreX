@@ -1,15 +1,15 @@
-import React, {useState, useContext} from 'react';
+import React, {useState,useContext} from 'react';
 import Grid from '@mui/material/Grid';
-import { StyledButton, StyledTypography,StyledTypography2, StyledButton2 } from '../StyleSheets/ProfileScreenStyles';
+import { StyledButton, StyledTypography,StyledTypography2 } from '../StyleSheets/ProfileScreenStyles';
 import ImportFileModal from '../ImportFileModal';
-import UploadFileModal from '../UploadFilesModal';
+//import UploadFileModal from '../UploadFilesModal';
 import PersonalMapCard from '../PersonalMapCard';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
+//import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
-import {TabIndicatorProps} from "@mui/material"
+//import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
 import AddIcon from '@mui/icons-material/Add';
 
@@ -51,7 +51,7 @@ function ProfileScreen(){
     const handleOpenImport = () => setOpenImport(true);
     const handleCloseImport = () => setOpenImport(false);
 
-    const [openUpload, setOpenUpload] = useState(false);
+    /*const [openUpload, setOpenUpload] = useState(false);
     const handleOpenUpload = () => setOpenUpload(true);
     const handleCloseUpload = () => setOpenUpload(false);
 
@@ -59,7 +59,7 @@ function ProfileScreen(){
 
     const handleButtonClick = (buttonName) => {
       setActiveButton(buttonName);
-    };
+    };*/
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
@@ -85,7 +85,6 @@ function ProfileScreen(){
                   <AddIcon></AddIcon>
                 </StyledButton>
                 <ImportFileModal open={openImport} onClose={handleCloseImport}/>
-                <UploadFileModal open = {openUpload} onClose = {handleCloseUpload}></UploadFileModal>
             </Grid>
             <Grid item xs = {12}>
                 <StyledTypography2
