@@ -1,0 +1,51 @@
+name: Front End Test Cases Develop
+run-name: ${{ github.actor }} is running Front End Test Cases Develop
+# Here we are saying that trhis action will happen on push to the repository
+on: 
+  push:
+    branches: [develop]
+    
+jobs:
+  Cypress-Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GitCode
+        uses: actions/checkout@v4
+
+      - name: create env file server
+        run: |
+          cd ./server
+          touch .env
+          echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+
+      - name: create env file client
+        run: |
+          cd ./client
+          touch .env
+          echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+          echo CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY}} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+          echo GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} >> .env
+
+      - name: Start Backend
+        run: |
+          cd ./server
+          npm ci
+          node app.js &
+
+
+        # Here we run all the tests
+      - name: Run Cypress Test
+        uses: cypress-io/github-action@v6
+        with:       
+          working-directory: ./client  # Actions start at root, our front end is in client
+          build: npm run build
+          start: npm start
+          record: false # Use record : true to debug 
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY}}
+

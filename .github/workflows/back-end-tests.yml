@@ -1,5 +1,5 @@
 name: Back End Tests
-run-name: ${{ github.actor }} is running Back End Test Cases
+run-name: ${{ github.actor }} is running Back End Test Cases Develop
 on: 
   push:
     branches: [main]
@@ -24,6 +24,7 @@ jobs:
           cd ./client
           touch .env
           echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
 
       - name: Run Tests
         run: |

@@ -19,12 +19,16 @@ jobs:
           echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+          
 
       - name: create env file client
         run: |
           cd ./client
           touch .env
           echo REACT_APP_SERVER_URL=${{ secrets.REACT_APP_SERVER_URL }} >> .env
+          echo CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY}} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+          echo GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}} >> .env
 
       - name: Start Backend
         run: |

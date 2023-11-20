@@ -2,27 +2,63 @@ describe('Map Feed and Public Map View Test', () => {
 
   beforeEach(() => {
     cy.visit('http://localhost:3000');
-    cy.get('[data-testid=guest-button]').click();
+    cy.get('[data-testid="username-field"]').type('cypress');
+    cy.get('[data-testid="password-field"]').type('abcd1234');
+    cy.get('[data-testid="login-button"]').click();
   });
 
-  it('loads the map feed', () => {
-    cy.get('[data-testid=map-feed-card]').should('have.length.at.least', 1);
-  });
+  it('leads to public view page and likes and dislikes', ()=>{
+    cy.get('[data-testid=map-feed-card-0]').click();
+    cy.get('[data-testid=public-map-view]').first().within(()=>{
+      cy.get('[data-testid=map-likes-count]')
+        .invoke('text')
+        .then((initialLikesText) => {
+          const initialLikes = parseInt(initialLikesText, 10);
+          cy.get('[data-testid=map-like-button]')
+            .click();
 
-  it('navigates to the Public Map View when a map card is clicked', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=public-map-view]').should('exist');
-  });
+          cy.get('[data-testid=map-likes-count]')
+            .invoke('text')
+            .should('equal', (initialLikes + 1).toString());
+      });
+      cy.get('[data-testid=map-dislikes-count]')
+        .invoke('text')
+        .then((initialDislikesText) => {
+          cy.get('[data-testid=map-likes-count]')
+            .invoke('text')
+            .then((initialLikesText) => {
+              const initialLikes = parseInt(initialLikesText, 10);
 
-  it('likes and dislikes work in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=like-button]').click();
-    cy.get('[data-testid=dislike-button]').click();
-  });
+              const initialDislikes = parseInt(initialDislikesText, 10);
+              cy.get('[data-testid=map-dislike-button]')
+                .click();
 
-  it('can submit a comment in Public Map View', () => {
-    cy.get('[data-testid=map-feed-card]').first().click();
-    cy.get('[data-testid=comment-input]').type('This is a test comment');
-    cy.get('[data-testid=submit-comment]').click();
-  });
+              cy.get('[data-testid=map-dislikes-count]')
+                .invoke('text')
+                .should('equal', (initialDislikes + 1).toString());
+              cy.get('[data-testid=map-likes-count]')
+                .invoke('text')
+                .should('equal', (initialLikes - 1).toString());
+          });
+      });
+      cy.get('[data-testid=map-dislikes-count]')
+        .invoke('text')
+        .then((initialDislikesText) => {
+          const initialDislikes = parseInt(initialDislikesText, 10);
+          cy.get('[data-testid=map-dislike-button]')
+            .click();
+
+          cy.get('[data-testid=map-dislikes-count]')
+            .invoke('text')
+            .should('equal', (initialDislikes - 1).toString());
+      });
+    })
+  })
+  it('leads to public map view and leaves a comment', ()=>{
+    cy.get('[data-testid=map-feed-card-0]').click();
+    cy.get('[data-testid=public-map-view]').first().within(()=>{
+      cy.get('[data-testid=comment-input]').type("hello!!")
+      cy.get('[data-testid=submit-comment]').click()
+    })
+  })
 });

@@ -7,9 +7,9 @@ import { NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, 
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
-import PublishMapModal from './PublishMapModal.js'
-import FinishedEditingMapModal from './FinishedEditingMapModal.js'
-import GlobalStoreContext from './store';
+//import PublishMapModal from './PublishMapModal.js'
+//import FinishedEditingMapModal from './FinishedEditingMapModal.js'
+import GlobalStoreContext from '../store/index.js';
 
 const EditSidePanel = ({
     colors,
@@ -75,14 +75,24 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
 
-    const [publishModal, setPublishModal] = useState(false)
-    const handleOpenPublish= () => {
-        setPublishModal(true)
+    const handleOpenPublish = () => {
+        let publishMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
+            </div>
+        )
+        store.displayModal(publishMessage, true);
     }
 
-    const [saveModal, setSaveModal] = useState(false)
     const handleOpenSave= () => {
-        setSaveModal(true)
+        let saveMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Save Edits?</span><br></br>They'll be there forever...
+            </div>
+        )
+        store.displayModal(saveMessage, true);
     }
 
     const commonFonts = [
@@ -151,6 +161,7 @@ const EditSidePanel = ({
                                     }}
                                     onChange={(e) =>{handleFont(e, "Text")}}
                                     value={font}
+                                    data-testid="font-selector"
                                     >
                                         {commonFonts.map((option) => (
                                             <MenuItem key={option} value={option}>
@@ -163,6 +174,7 @@ const EditSidePanel = ({
                             <CustomListItem>
                                 <Typography>Size</Typography>
                                 <NumberSelector
+                                    data-testid="text-selector"
                                     type="number"
                                     InputLabelProps={{
                                         shrink: true,
@@ -177,41 +189,10 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
-                {/* Edit Heat Map options */}
-                {
-                    store.currentMap.type === "Heat Map" ?
-                    <EditAccordion disableGutters>
-                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Heat Map Options</Typography>
-                        </EditAccordionSummary>
-                        <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                                <CustomListItem>
-                                    <Typography>Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Range</Typography>
-                                    <NumberSelector
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={range}
-                                        onChange={(event)=>{handleRange(event)}}
-                                        error={range === ""}
-                                    />
-                                </CustomListItem>
-                            </CustomList>
-                        </AccordionDetails>
-                    </EditAccordion>
-                    : null
-                }
+                
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -235,6 +216,7 @@ const EditSidePanel = ({
                             <CustomListItem>
                                 <Typography>Border Width</Typography>
                                 <NumberSelector
+                                    data-testid="legend-selector"
                                     type="number"
                                     InputLabelProps={{
                                         shrink: true,
@@ -252,7 +234,7 @@ const EditSidePanel = ({
                 {/* Edit Region Options */}
                 {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Region</Typography>
                         </EditAccordionSummary>
@@ -266,6 +248,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="region-selector1"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -285,6 +268,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Border Width</Typography>
                                     <NumberSelector
+                                    data-testid="region-selector2"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -301,11 +285,44 @@ const EditSidePanel = ({
                     : null
                 }
 
+                {/* Edit Heat Map options */}
+                {
+                    store.currentMap.type === "Heat Map" ?
+                    <EditAccordion disableGutters data-testid="edit-accordion heat-map">
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Heat Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                        <CustomList>
+                                <CustomListItem>
+                                    <Typography>Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Range</Typography>
+                                    <NumberSelector
+                                        data-testid="heat-map-selector"
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={range}
+                                        onChange={(event)=>{handleRange(event)}}
+                                        error={range === ""}
+                                    />
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
                 {/* Edit Dot Map Options */}
                 {
                     store.currentMap.type === "Dot Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion dot-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>
                         </EditAccordionSummary>
@@ -319,6 +336,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="dot-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -343,7 +361,7 @@ const EditSidePanel = ({
                 {/* Edit Spike Map Options */}
                 {
                     store.currentMap.type === "Spike Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion spike-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Spike Map Options</Typography>
                         </EditAccordionSummary>
@@ -357,6 +375,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="spike-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -382,7 +401,7 @@ const EditSidePanel = ({
                 {/* Edit Voronoi Map Options */}
                 {
                     store.currentMap.type === "Voronoi Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion voronoi-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Voronoi Map Options</Typography>
                         </EditAccordionSummary>
@@ -396,6 +415,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="voronoi-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -438,9 +458,6 @@ const EditSidePanel = ({
                 </Grid>
 
             </ButtonContainer>
-            
-            <PublishMapModal open={publishModal} setOpen={setPublishModal} />
-            <FinishedEditingMapModal open={saveModal} setOpen={setSaveModal} />
         </SidePanelGrid>
     );
 }

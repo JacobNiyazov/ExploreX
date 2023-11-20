@@ -9,65 +9,39 @@ require("dotenv").config();
 
 const app = express();
 // app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json());
+
+app.use(express.urlencoded({ limit: '50mb', extended: true}))
 const corsOptions = {
   origin: process.env.CLIENT_URL, // frontend URI (ReactJS)
   credentials: true
 }
+
 app.use(cors(corsOptions));
+app.use(express.json({ extended: true, limit: '50mb' }))
 app.use(cookieParser())
 
-// connect MongoDB
-// mongoose.connect(process.env.MONGODB_URI).then(() => {
-//   const PORT = process.env.PORT || 8000
-//   app.listen(PORT, () => {
-//       console.log(`App is Listening on PORT ${PORT}`);
-//   })
-// }).catch(err => {
-//   console.log(err);
-// });
-
 const PORT = process.env.PORT || 8000
+
+const authRouter = require('./routes/auth-router')
+app.use('/auth', authRouter)
+const userRouter = require('./routes/user-router')
+app.use('/user', userRouter)
+const mapRouter = require('./routes/map-router');
+app.use('/api', mapRouter)
+//const mapTestRouter = require('.routes/map-test-router')
+//app.use('/api', mapTestRouter)
+const graphicsRouter = require('./routes/graphics-router');
+app.use('/api', graphicsRouter)
 
 // INITIALIZE OUR DATABASE OBJECT
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-app.use(express.static(path.join(__dirname, '../client/build')))
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build'))
-})
-
 // PUT THE SERVER IN LISTENING MODE
 const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
 
-const Item = mongoose.model('Item', { name: String });
 
-app.put('/api/items', async (req, res) => {
-  try {
-    const { name } = req.body;
-    const item = new Item({ name });
-    await item.save();
-    res.status(201).json(item);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
-app.get('/api/items', async (req, res) => {
-  try {
-    const items = await Item.find();
-    res.status(200).json(items);
-  } catch (error) {
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// route
-app.get("/api", (req, res) => {
-    res.status(201).json({message: "Welcome& to Backend!"});
-});
 
 module.exports = {server,app}
