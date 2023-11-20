@@ -19,13 +19,6 @@ const ForgotPasswordScreen = () => {
 
 
   const handleRecover = (e) => {
-    const wrongUsernameMessage = (error) => (
-      <div>
-          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-          <p style={{ margin: '5px 0', fontSize: '1rem' }}>{error.response.data.errorMessage}</p>
-      </div>
-  ); 
-
     auth.recoverPassword(email).then( 
       (val) => {
         store.setCurrentPage(store.currentPageType.login);
