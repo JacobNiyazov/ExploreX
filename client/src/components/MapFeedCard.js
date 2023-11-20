@@ -6,38 +6,47 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
-import { AuthContext } from '../auth'
+//import { AuthContext } from '../auth'
 
 
-const MapFeedCard = ({ map }) => {
+const MapFeedCard = ({ map, likes, dislikes,id }) => {
   const { store } = useContext(GlobalStoreContext);
-  const { auth } = useContext(AuthContext);
+  //const { auth } = useContext(AuthContext);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleLike = (event) => {
-    event.stopPropagation();
-    setLiked(prevLiked => !prevLiked);
-    setDisliked(false);  // Reset disliked state
+  const handleLikeToggle = (event) => {
+    setLiked((prevLiked) => !prevLiked);
+    setDisliked(false);
+    event.stopPropagation()
+    if (!liked) {
+      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
+    } else {
+      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    }
   };
-
-  const handleDislike = (event) => {
+  
+  const handleDislikeToggle = (event) => {
+    setDisliked((prevDisliked) => !prevDisliked);
+    setLiked(false);
     event.stopPropagation();
-    setDisliked(prevDisliked => !prevDisliked);
-    setLiked(false);  // Reset liked state
+    if (!disliked) {
+      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+    } else {
+      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    }
   };
-
   const handleOpenMap = () => {
-    store.setCurrentPage(store.currentPageType.publicMapView);
+    store.setCurrentPage(store.currentPageType.publicMapView, map);
   };
-
+  console.log("map owner: ", map)
   return (
-    <StyledCard as={Card} onClick={handleOpenMap} data-testid='map-feed-card'>
+    <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}
-        image={map.imageUrl}
+        image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
       />
       <StyledCardContent as={CardContent}>
         <ContentContainer>
@@ -50,13 +59,13 @@ const MapFeedCard = ({ map }) => {
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
-            <ReactionButton disabled={auth.isGuest} selected={liked} onClick={handleLike}>
+            <ReactionButton sx ={{display:"none"}} data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount>{map.likes}</ReactionCount>
+              <ReactionCount data-testid= "feed-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton disabled={auth.isGuest} selected={disliked} onClick={handleDislike}>
+            <ReactionButton sx ={{display:"none"}} data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount>{map.dislikes}</ReactionCount>
+              <ReactionCount data-testid= "feed-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </ContentContainer>

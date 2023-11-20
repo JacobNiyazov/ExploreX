@@ -40,7 +40,7 @@ function UniversalModal(){
         color: 'white',
     };
     let confirmButton = ""
-    if (store.modalConfirmButton === true){
+    if (store.modalConfirmButton){
       confirmButton = (<Grid item xs = {4} sx = {center}>
                               <StyledButton onClick = {handleClose}>
                                   Confirm

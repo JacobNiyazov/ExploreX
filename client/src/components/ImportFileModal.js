@@ -31,10 +31,11 @@ function ImportFileModal({open,onClose}){
     }
     return (     
         <Modal
-          open={open}
-          onClose={onClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
+            data-testid="import-modal"
+            open={open}
+            onClose={onClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
           <Grid container spacing = {2}>
@@ -53,6 +54,9 @@ function ImportFileModal({open,onClose}){
                         </DescriptionText>
                         <DescriptionText id = "modal-modal-description">
                             - GeoJSON
+                        </DescriptionText>
+                        <DescriptionText id = "modal-modal-description">
+                            - Native File Type
                         </DescriptionText>
                         <Grid container spacing={2}>
                             <Grid item xs = {4}>

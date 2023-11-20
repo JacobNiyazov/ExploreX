@@ -12,43 +12,89 @@ import EditAccountScreen from './ScreenContainers/EditAccountScreen.js'
 import MapFeed from './ScreenContainers/MapFeed.js';
 import PublicMapView from './ScreenContainers/PublicMapView.js';
 
-const maps = [
-    {
-      title: 'Map 1',
+let exampleMaps = {
+  Map1: {
+      title: 'Voronoi Map Example',
       author: 'Author 1',
-      likes: 10,
-      dislikes: 2,
+      reactions:{
+          likes: 10,
+          dislikes: 2,
+          comments: [  {
+            _id: '1',
+            authorUsername: 'MapLover42',
+            comment: 'This map is incredibly detailed. Great work!',
+            timestamp: '2023-11-01T09:24:00.000Z'
+          },
+          {
+            _id: '2',
+            authorUsername: 'GeoGeek',
+            comment: 'Does anyone have recommendations for similar maps?',
+            timestamp: '2023-11-02T10:35:00.000Z'
+          },],
+      },
+      type: "Voronoi Map",
+      isPublic: true,
       imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
     },
-    {
-      title: 'Map 556',
+  Map2: {
+      title: 'Heat Map Example',
       author: 'Author 2',
-      likes: 34,
-      dislikes: 55,
+      reactions:{
+          likes: 34,
+          dislikes: 55,
+          comments: [],
+      },
+      type: "Heat Map",
+      isPublic: true,
       imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
     },
-    {
-      title: 'Map 6',
+  Map3: {
+      title: 'Dot Map Example',
       author: 'Author 2',
-      likes: 0,
-      dislikes: 8,
+      reactions:{
+          likes: 0,
+          dislikes: 8,
+          comments: [],
+      },
+      type: "Dot Map",
+      isPublic: true,
       imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
     },
-    {
-      title: 'Map 7',
+  Map4: {
+      title: 'Spike Map Example',
       author: 'Author 2',
-      likes: 2,
-      dislikes: 100,
+      reactions:{
+          likes: 2,
+          dislikes: 100,
+          comments: [],
+      },
+      type: "Spike Map",
+      isPublic: true,
       imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
     },
-  ];
+  Map5:{
+      title: 'Choropleth Map Example',
+      author: 'Author 2',
+      reactions:{
+          likes: 20,
+          dislikes: 8,
+          comments: [],
+      },
+      isPublic: true,
+      type: "Choropleth Map"
+  }
+}
+let Map1 = exampleMaps.Map1;
 const mapData = {
     name: 'Map of Treasure Island',
     author: 'John Doe',
     imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
     description: 'This is a detailed map of Treasure Island showing all the hidden spots.',
-    likes: 150,
-    dislikes: 3
+    reactions:{
+      likes: 10,
+      dislikes: 2,
+      comments: [],
+    },
   };
 export default function Navigator() {
     const { store } = useContext(GlobalStoreContext);
@@ -58,9 +104,9 @@ export default function Navigator() {
         case store.currentPageType.login:
             return (<LoginScreen />)
         case store.currentPageType.mapFeed:
-            return (<MapFeed maps={maps}/>)
+            return (<MapFeed maps/>)
         case store.currentPageType.publicMapView:
-            return (<PublicMapView map={mapData}/>)
+            return (<PublicMapView map={Map1} likes = {Map1.reactions.likes} dislikes = {Map1.reactions.dislikes} comments = {Map1.reactions.comments}/>)
         case store.currentPageType.forgotPassScreen:
             return (<ForgotPasswordScreen/>)
         case store.currentPageType.registerScreen:

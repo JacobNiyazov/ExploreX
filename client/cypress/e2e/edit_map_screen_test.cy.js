@@ -7,7 +7,7 @@ describe('Edit Map Screen Test', () => {
       cy.get('[data-testid=user-icon]').click();
       cy.get('[data-testid="My Profile"]').click();
       cy.get('[data-testid=drafts-tab]').click();
-      cy.get('[data-testid=EditScreenButton]').first().click();
+      cy.get('[data-testid=edit-button]').first().click();
     });
   
     it('can type into title', () => {

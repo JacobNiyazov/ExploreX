@@ -28,6 +28,8 @@ const userRouter = require('./routes/user-router')
 app.use('/user', userRouter)
 const mapRouter = require('./routes/map-router');
 app.use('/api', mapRouter)
+//const mapTestRouter = require('.routes/map-test-router')
+//app.use('/api', mapTestRouter)
 const graphicsRouter = require('./routes/graphics-router');
 app.use('/api', graphicsRouter)
 

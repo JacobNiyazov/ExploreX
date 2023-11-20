@@ -3,6 +3,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import Box from '@mui/material/Box';
+import { GlobalStoreContext } from '../../store';
 
 import {
   StyledCard,
@@ -17,29 +18,49 @@ import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
 import { AuthContext } from '../../auth'
 
-const PublicMapView = ({ map }) => {
+const PublicMapView = () => {
+  const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const handleCommentSubmit = () => {
+  /*const handleCommentSubmit = () => {
     // Logic to refresh comments after a new one is added
     // Potentially re-fetch the comments or add the new comment to the state
+    store.updateMapReaction(map, likes, dislikes, true, "HELLO")
+    console.log(map.reactions.comments)
+  };*/
+  if (!store.currentMap) {
+    return <div>Loading...</div>; // or any loading indicator
+  }
+  let map = store.currentMap;
+  let likes = store.currentMap.reactions.likes;
+  let dislikes = store.currentMap.reactions.dislikes;
+  const handleLikeToggle = (event) => {
+    setLiked((prevLiked) => !prevLiked);
+    setDisliked(false);
+    event.stopPropagation()
+    if (!liked) {
+      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
+    } else {
+      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    }
   };
 
-  const handleLike = () => {
-    setLiked(prevLiked => !prevLiked);
-    setDisliked(false);  // Reset disliked state
-  };
-
-  const handleDislike = () => {
-    setDisliked(prevDisliked => !prevDisliked);
-    setLiked(false);  // Reset liked state
+  const handleDislikeToggle = (event) => {
+    setDisliked((prevDisliked) => !prevDisliked);
+    setLiked(false);
+    event.stopPropagation();
+    if (!disliked) {
+      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+    } else {
+      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    }
   };
 
   let forkButton = ""
-  let commentSection = ""
+  //let commentSection = ""
   if(auth.user !== null && auth.loggedIn === true){
     forkButton = (<StyledForkButton sx={{ 
         position: 'absolute', 
@@ -52,7 +73,7 @@ const PublicMapView = ({ map }) => {
       </StyledTypography>
     </StyledForkButton>)
 
-    commentSection = (<CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />)
+    //commentSection = (<CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />)
 
   }
   return (
@@ -65,33 +86,33 @@ const PublicMapView = ({ map }) => {
   }}>
       <StyledCard>
         <StyledTypography variant="h4" component="div">
-          {map.name}
+          {map.title}
         </StyledTypography>
         <StyledCardMedia
           component="img"
-          image={map.imageUrl}
-          alt={`Map titled ${map.name}`}
+          image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
+          alt={`Map titled ${map.title}`}
         />
         <StyledCardContent>
           <StyledTypography variant="subtitle1">
-            Author: {map.author}
+            Author: {map.ownerUsername}
           </StyledTypography>
           <StyledTypography variant="body1" paragraph>
-            {map.description}
+            {map.type}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton disabled={auth.isGuest} selected={liked} onClick={handleLike} data-testid={'like-button'}>
+            <ReactionButton disabled={auth.isGuest} data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount>{map.likes}</ReactionCount>
+              <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton disabled={auth.isGuest} selected={disliked} onClick={handleDislike} data-testid={'dislike-button'}>
+            <ReactionButton disabled={auth.isGuest} data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount>{map.dislikes}</ReactionCount>
+              <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </StyledCardContent>
-        <CommentList mapId={map._id} />
-        {commentSection}
+        <CommentList map={map} commentsList ={map.reactions.comments} />
+        <CommentForm map={map}/>
       </StyledCard>
       {forkButton}
     </Box>
