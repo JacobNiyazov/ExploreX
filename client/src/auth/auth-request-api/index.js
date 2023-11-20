@@ -15,7 +15,7 @@ export const loginUser = (username, password) => {
 }
 export const logoutUser = () => api.get(`/logout/`)
 export const registerUser = (email, username, password, passwordVerify) => {
-    return api.post(`/register/`, {
+    return api.post(`/register`, {
         email : email,
         username: username,
         password : password,

@@ -1,11 +1,11 @@
 import React from 'react';
 import { StyledComment } from './StyleSheets/CommentStyles';
 
-const Comment = ({ comment }) => {
+const Comment = ({ commentAuthor, comment }) => {
   return (
     <StyledComment>
-      <p><strong>{comment.authorUsername}</strong></p>
-      <p>{comment.comment}</p>
+      <p><strong>{commentAuthor}</strong></p>
+      <p>{comment}</p>
     </StyledComment>
   );
 };

@@ -89,33 +89,15 @@ deleteMap = async (req, res) =>{
 
 getMapById = async (req, res) => {
     console.log("Find Map with id: " + JSON.stringify(req.params.id));
-
-    
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found map: " + JSON.stringify(map));
-        if(map.published){
-            console.log("map is public");
+        Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+            map.graphics = graphics;
+            console.log("correct user!");
             return res.status(200).json({ success: true, map: map })
-        }
-        // DOES THIS MAP BELONG TO THIS USER?
-        async function asyncFindUser(map) {
-            User.findOne({ username: map.ownerUsername }).then((user) => {
-                console.log("user._id: " + user._id);
-                console.log("req.userId: " + req.userId);
-                if (user._id == req.userId) {
-                    Graphics.findOne({ _id: map.graphics }).then((graphics) => {
-                        map.graphics = graphics;
-                        console.log("correct user!");
-                        return res.status(200).json({ success: true, map: map })
-                    })
-                }
-                else {
-                    console.log("incorrect user!");
-                    return res.status(400).json({ success: false, description: "authentication error" });
-                }
-            });
-        }
-        asyncFindUser(map);
+        }).catch((err) => {
+            return res.status(400).json({ success: false, error: err });
+        })
     }).catch((err) => {
         return res.status(400).json({ success: false, error: err });
     })
@@ -127,8 +109,8 @@ getUserMapIdPairs = async (req, res) => {
         console.log("find user with id " + req.userId);
         async function asyncFindMap(username) {
             console.log("find all Playlists owned by " + username);
-            console.log("Title parameter: " + req.query.title);
-            Map.find({ ownerUsername: username, title: {"$regex": req.query.title, "$options": "i"} }).then((maps) => {
+            //console.log("Title parameter: " + req.query.title);
+            Map.find({ ownerUsername: username, title: {"$regex": req.title, "$options": "i"} }).then((maps) => {
                 console.log("found Maps: " + JSON.stringify(maps));
                 if (!maps) {
                     console.log("!maps.length");
@@ -166,7 +148,7 @@ getUserMapIdPairs = async (req, res) => {
 
 getPublicMapIdPairs = async (req, res) => {
     console.log("getPublicMapIdPairs:");
-    Map.find({ isPublic: true }).then((maps) => {
+    Map.find({ isPublic : true }).then((maps) => {
         console.log("found Maps: " + JSON.stringify(maps));
         if (!maps) {
             console.log("!maps.length");
@@ -211,72 +193,72 @@ updateMapById = async (req, res) => {
     Map.findOne({ _id: req.params.id }).then((map) => {
         //console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
-        async function asyncFindUser(map) {
-            User.findOne({ username: map.ownerUsername }).then((user) => {
-                //console.log("user._id: " + user._id);
-                console.log("req.userId: " + req.userId);
-                if (user._id == req.userId) {
-                    console.log("correct user!");
-                    console.log("req.body.name: " + req.body.name);
+        User.findOne({ username: map.ownerUsername }).then((user) => {
+            console.log("user._id: " + user._id);
+            console.log("username: " + user.username);
+            console.log("req.userId: " + req.userId);
+            if (user._id == req.userId) {
+                console.log("correct user!");
+                console.log("req.body.name: " + req.body.name);
 
-                    map.title = body.map.title;
-                    map.ownerUsername = body.map.ownerUsername;
-                    map.reactions = body.map.reactions;
-                    map.graphics = body.map.graphics;
-                    if(body.map.publishDate)
-                        map.publishDate = body.map.publishDate;
-                    map
-                        .save()
-                        .then(() => {
-                            console.log("SUCCESS!!!");
-                            return res.status(200).json({
-                                success: true,
-                                id: map._id,
-                                message: 'Map updated!',
-                            })
+                map.title = body.map.title;
+                map.reactions = body.map.reactions;
+                if(body.map.publishDate)
+                    map.publishDate = body.map.publishDate;
+                map
+                    .save()
+                    .then(() => {
+                        console.log("SUCCESS!!!");
+                        return res.status(200).json({
+                            success: true,
+                            id: map._id,
+                            message: 'Map updated!',
                         })
-                        .catch(error => {
-                            console.log("FAILURE: " + JSON.stringify(error));
-                            return res.status(404).json({
-                                error,
-                                message: 'Map not updated!',
-                            })
+                    })
+                    .catch(error => {
+                        console.log("1FAILURE: " + JSON.stringify(error));
+                        return res.status(404).json({
+                            error,
+                            message: 'Map not updated!',
                         })
-                }
-                else {
-                    //If not then we can only update likes/dislikes/comments
-                    map.reactions.comments = body.map.comments;
-                    map.reactions.likes = body.map.likes;
-                    map.reactions.dislikes = body.map.dislikes;
-                    map
-                        .save()
-                        .then(() => {
-                            console.log("SUCCESS!!!");
-                            return res.status(200).json({
-                                success: true,
-                                id: list._id,
-                                message: 'Map updated!',
-                            })
+                    })
+            }
+            else{
+                //If not then we can only update likes/dislikes/comments
+                map.reactions = body.map.reactions
+                map
+                    .save()
+                    .then(() => {
+                        console.log("SUCCESS!!!");
+                        return res.status(200).json({
+                            success: true,
+                            id: map._id,
+                            message: 'Map updated!',
                         })
-                        .catch(error => {
-                            console.log("FAILURE: " + JSON.stringify(error));
-                            return res.status(404).json({
-                                error,
-                                message: 'Map not updated!',
-                            })
+                    })
+                    .catch(error => {
+                        console.log("2FAILURE: " + JSON.stringify(error));
+                        return res.status(404).json({
+                            error,
+                            message: 'Map not updated!',
                         })
-                }
-            });
-        }
-        asyncFindUser(map);
+                    })
+            }
+        }).catch((err) => {
+            console.log("3FAILURE: " + JSON.stringify(err));
+            return res.status(404).json({
+                err,
+                message: 'Map not updated!',
+            })
+        });
     }).catch((err) =>{
         return res.status(404).json({
             err,
             message: 'Map not found!',
         })
     })
-}
 
+}
 
 module.exports = {
     createMap,

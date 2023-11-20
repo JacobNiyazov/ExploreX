@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs')
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendRecoveryEmail");
 const isValidEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log(emailRegex.test(email))
     return emailRegex.test(email);
 };
 
@@ -46,7 +47,9 @@ loginUser = async (req, res) => {
         if (!username || !password) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({         
+                    success: false,
+                    errorMessage: "Please enter all required fields." });
         }
 
         const existingUser = await User.findOne({ username: username });
@@ -55,6 +58,7 @@ loginUser = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong username or password provided."
                 })
         }
@@ -66,10 +70,12 @@ loginUser = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "Wrong username or password provided."
                 })
         }
 
+        console.log("id: " + existingUser._id)
         // LOGIN THE USER
         const token = auth.signToken(existingUser._id);
         console.log(token);
@@ -80,12 +86,9 @@ loginUser = async (req, res) => {
             sameSite: true
         }).status(200).json({
             success: true,
-            user: {
-                username: existingUser.username,
-                email: existingUser.email              
-            }
+            user: existingUser,
         })
-        return res
+        //return res
 
     } catch (err) {
         console.error(err);
@@ -106,10 +109,12 @@ deleteUserAccount = async (req, res) => {
             return res
                 .status(401)
                 .json({
+                    success: false,
                     errorMessage: "User not found."
                 })
         }
         return res.status(200).json({
+            success: true,
             message: "User deleted successfully."
         });
 
@@ -159,7 +164,9 @@ recoverPassword = async(req,res) => {
         console.log(email + " Requesting email");
         if (!email) {
             return res.status(400)
-            .json({ errorMessage: "Please enter an email."});
+            .json({ 
+                success: false,
+                errorMessage: "Please enter an email."});
         }
 
         let existingUser = await User.findOne({ email: email });
@@ -191,7 +198,10 @@ recoverPassword = async(req,res) => {
 
         // sendEmail(existingUser.email);
         let link = "s"
-        return link;
+        return res.status(200).json({
+            success: true,
+            message: "An email has been sent successfully."
+        });
 
         
         sendEmail()
@@ -204,18 +214,18 @@ recoverPassword = async(req,res) => {
 registerUser = async (req, res) => {
     try {
         const { email, username, password, passwordVerify } = req.body;
-        console.log(req.body)
-        console.log("create user:" + username + " " + email + " " + " " + password + " " + passwordVerify);
         if (!email || !username || !password || !passwordVerify ) {
             return res
                 .status(400)
-                .json({ errorMessage: "Please enter all required fields." });
+                .json({ 
+                    success: false,
+                    errorMessage: "Please enter all required fields." });
         }
-        console.log("all fields provided");
-        if (!isValidEmail(email)){
+        if (isValidEmail(email) === false){
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Invalid email format, please try again."
                 });
             
@@ -224,14 +234,15 @@ registerUser = async (req, res) => {
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Please enter a password of at least 8 characters."
                 });
         }
-        console.log("password long enough");
         if (password !== passwordVerify) {
             return res
                 .status(400)
                 .json({
+                    success: false,
                     errorMessage: "Please enter the same password twice."
                 })
         }
@@ -282,7 +293,6 @@ registerUser = async (req, res) => {
             user: {
                 username: savedUser.username,
                 email: savedUser.email,              
-                bio: savedUser.bio
             }
         })
 

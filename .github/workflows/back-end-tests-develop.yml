@@ -1,8 +1,8 @@
-name: Back End Tests
-run-name: ${{ github.actor }} is running Back End Test Cases Develop
+name: Back End Tests Develop
+run-name: ${{ github.actor }} is running Back End Test Cases
 on: 
   push:
-    branches: [main]
+    branches: [develop]
 
 jobs:
   Back-End-Tests:
@@ -30,16 +30,3 @@ jobs:
           cd ./server
           npm ci
           npm test &
-
-  deploy:
-    name: Deploy
-    needs: [Back-End-Tests]
-    runs-on: ubuntu-latest
-
-    steps: 
-      - name: Deploy to production
-        uses: johnbeynon/render-deploy-action@v0.0.8
-        with:
-          service-id: ${{ secrets.SERVICE_ID_SERVER }} # Can be found as part of the Deploy Hook
-          api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
-  

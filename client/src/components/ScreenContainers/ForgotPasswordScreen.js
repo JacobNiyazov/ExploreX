@@ -23,8 +23,8 @@ const ForgotPasswordScreen = () => {
     auth.recoverPassword(email).then( 
       (val) => store.setCurrentPage(store.currentPageType.login))
     .catch(
-      (error) => store.displayModal(error.response.data.errorMessage));
-    store.displayModal("Please check your email for a password recovery link.")
+      (error) => store.displayModal(error.response.data.errorMessage, false));
+    store.displayModal("Please check your email for a password recovery link.", false)
   };
 
   const tempHandler = (e) => {

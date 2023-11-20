@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
@@ -17,7 +17,7 @@ export const AuthActionType = {
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        isLoggedIn: false,
+        loggedIn: false,
         isGuest: false,
     });
     // const history = useHistory();
@@ -98,7 +98,6 @@ function AuthContextProvider(props) {
         });
     }
     auth.registerUser = async function( email, username, password, passwordVerify) {
-        console.log("create user:" + email + " " + username + " " + " " + password + " " + passwordVerify);
         const response = await api.registerUser(email, username, password, passwordVerify);      
         if (response.status === 200) {
             authReducer({

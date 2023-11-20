@@ -1,14 +1,18 @@
 describe('App Banner Tests', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');
-    cy.get('[data-testid=guest-button]').click();
+    // cy.get('[data-testid=guest-button]').click();
   });
 
   it('should display the app banner with all elements', () => {
+    cy.get('[data-testid="username-field"]').type('cypress');
+    cy.get('[data-testid="password-field"]').type('abcd1234');
+    cy.get('[data-testid="login-button"]').click();
+
     /* ==== Generated with Cypress Studio ==== */
     cy.get('[data-testid="logo"] > path').should('be.visible');
     cy.get('[data-testid="app-name"]').should('have.text', 'ExploreX');
-    cy.get('[data-testid="search-type"]').click();
+    cy.get('[data-testid="search-type"]', {timeout: 7000}).click();
     cy.get('[data-testid="search-type-option1"]').should('have.text', 'User');
     cy.get('[data-testid="search-type-option2"]').should('have.text', 'Map Name');
     cy.get('[data-testid="search-type-option2"]').click();

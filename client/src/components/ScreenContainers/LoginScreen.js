@@ -24,7 +24,7 @@ const LoginScreen = () => {
     .then( 
       (val) => store.setCurrentPage(store.currentPageType.mapFeed))
     .catch(
-      (error) => store.displayModal(error.response.data.errorMessage));
+      (error) => store.displayModal(error.response.data.errorMessage, false));
 
   };
 
@@ -34,6 +34,7 @@ const LoginScreen = () => {
 
   const handleEnterGuest = (event) => {
     store.setCurrentPage(store.currentPageType.mapFeed);
+    auth.guestLogin();
   };
   
   return (
@@ -46,6 +47,7 @@ const LoginScreen = () => {
             <Grid item xs={12}>
               <Typography>Username:</Typography>
                 <input
+                  data-testid="username-field"
                   type="text"
                   id="username"
                   value={username}
@@ -56,6 +58,7 @@ const LoginScreen = () => {
             <Grid style={launchStyle.password_container} item xs={12}>
               <Typography style={launchStyle.password}>Password:</Typography>
               <input
+                  data-testid="password-field"
                   type="password"
                   id="password"
                   style = {launchStyle.rounded_input}
@@ -64,7 +67,7 @@ const LoginScreen = () => {
                 />
             </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
-              <Button style={launchStyle.button} onClick= {handleLogin} variant="contained" color="primary">
+              <Button style={launchStyle.button} onClick= {handleLogin} variant="contained" color="primary" data-testid="login-button">
                 Sign in
               </Button>
               <Button style={launchStyle.button} onClick={ handleEnterGuest } variant="contained" color="secondary" data-testid="guest-button">

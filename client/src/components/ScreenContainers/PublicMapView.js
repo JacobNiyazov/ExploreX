@@ -16,9 +16,12 @@ import {
 import { ReactionButton, ReactionCount } from '../StyleSheets/MapFeedStyles'; // adjust the import path as needed
 import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
+import { AuthContext } from '../../auth'
 
-const PublicMapView = ({ map, likes, dislikes, comments }) => {
+const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
+  const { auth } = useContext(AuthContext);
+
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
@@ -28,19 +31,23 @@ const PublicMapView = ({ map, likes, dislikes, comments }) => {
     store.updateMapReaction(map, likes, dislikes, true, "HELLO")
     console.log(map.reactions.comments)
   };*/
-
+  if (!store.currentMap) {
+    return <div>Loading...</div>; // or any loading indicator
+  }
+  let map = store.currentMap;
+  let likes = store.currentMap.reactions.likes;
+  let dislikes = store.currentMap.reactions.dislikes;
   const handleLikeToggle = (event) => {
     setLiked((prevLiked) => !prevLiked);
     setDisliked(false);
     event.stopPropagation()
     if (!liked) {
       store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
-      console.log("likes: ",likes)
     } else {
       store.updateMapReaction(map, likes - 1, dislikes, false, null);
     }
   };
-  
+
   const handleDislikeToggle = (event) => {
     setDisliked((prevDisliked) => !prevDisliked);
     setLiked(false);
@@ -52,6 +59,23 @@ const PublicMapView = ({ map, likes, dislikes, comments }) => {
     }
   };
 
+  let forkButton = ""
+  //let commentSection = ""
+  if(auth.user !== null && auth.loggedIn === true){
+    forkButton = (<StyledForkButton sx={{ 
+        position: 'absolute', 
+        top: 0, 
+        right: 0 
+    }}>
+      <CallSplitIcon />
+      <StyledTypography variant="h5">
+        Fork
+      </StyledTypography>
+    </StyledForkButton>)
+
+    //commentSection = (<CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />)
+
+  }
   return (
     <Box data-testid='public-map-view' sx={{ 
       display: 'flex', 
@@ -66,22 +90,22 @@ const PublicMapView = ({ map, likes, dislikes, comments }) => {
         </StyledTypography>
         <StyledCardMedia
           component="img"
-          image={map.imageUrl}
+          image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
           alt={`Map titled ${map.title}`}
         />
         <StyledCardContent>
           <StyledTypography variant="subtitle1">
-            Author: {map.author}
+            Author: {map.ownerUsername}
           </StyledTypography>
           <StyledTypography variant="body1" paragraph>
-            {map.description}
+            {map.type}
           </StyledTypography>
           <StyledBox>
-            <ReactionButton data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
+            <ReactionButton disabled={auth.isGuest} data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
               <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
+            <ReactionButton disabled={auth.isGuest} data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
               <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>
@@ -90,16 +114,7 @@ const PublicMapView = ({ map, likes, dislikes, comments }) => {
         <CommentList map={map} commentsList ={map.reactions.comments} />
         <CommentForm map={map}/>
       </StyledCard>
-      <StyledForkButton sx={{ 
-          position: 'absolute', 
-          top: 0, 
-          right: 0 
-      }}>
-        <CallSplitIcon />
-        <StyledTypography variant="h5">
-          Fork
-        </StyledTypography>
-      </StyledForkButton>
+      {forkButton}
     </Box>
   );
 };

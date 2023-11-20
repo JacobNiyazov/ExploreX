@@ -1,5 +1,5 @@
 const { json } = require('body-parser')
-const { Int32 } = require('mongodb')
+const { Int32, ObjectId } = require('mongodb')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -15,7 +15,7 @@ const MapSchema = new Schema(
             likes: {type: Number},
             dislikes:{type: Number},
         },
-        graphics:{type: Object, required: true},
+        graphics:{type: ObjectId},
         isPublic:{type: Boolean},
         type: {type: String, required: true},
         publishDate:{type: Date, default: new Date()},

@@ -6,10 +6,12 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
+//import { AuthContext } from '../auth'
 
 
 const MapFeedCard = ({ map, likes, dislikes,id }) => {
   const { store } = useContext(GlobalStoreContext);
+  //const { auth } = useContext(AuthContext);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -36,15 +38,15 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
     }
   };
   const handleOpenMap = () => {
-    store.setCurrentPage(store.currentPageType.publicMapView);
+    store.setCurrentPage(store.currentPageType.publicMapView, map);
   };
-
+  console.log("map owner: ", map)
   return (
     <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.author}`}
-        image={map.imageUrl}
+        image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
       />
       <StyledCardContent as={CardContent}>
         <ContentContainer>
@@ -57,11 +59,11 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
-            <ReactionButton data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
+            <ReactionButton sx ={{display:"none"}} data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
               <ReactionCount data-testid= "feed-likes-count">{likes}</ReactionCount>
             </ReactionButton>
-            <ReactionButton data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
+            <ReactionButton sx ={{display:"none"}} data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
               <ReactionCount data-testid= "feed-dislikes-count">{dislikes}</ReactionCount>
             </ReactionButton>

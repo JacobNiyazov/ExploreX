@@ -4,7 +4,7 @@ const AuthController = require('../controllers/auth-controller')
 const auth = require('../auth')
 
 
-/*router.post('/register', AuthController.registerUser)
+router.post('/register', AuthController.registerUser)
 router.post('/login', AuthController.loginUser)
 router.post('/forgotPassword', AuthController.recoverPassword)
 router.post('/resetPassword', AuthController.resetUserPassword)
@@ -12,5 +12,5 @@ router.post('/resetPassword', AuthController.resetUserPassword)
 // router.get('/logout', AuthController.logoutUser)
 router.delete('/deleteAccount', AuthController.deleteUserAccount);
 router.get('/loggedIn', AuthController.getLoggedIn)
-*/
+
 module.exports = router

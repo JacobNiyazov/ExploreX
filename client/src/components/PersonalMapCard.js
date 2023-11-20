@@ -76,11 +76,11 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
       <CardActions disableSpacing>
         {isPost ? (
           <>
-            <ToggleButton data-testid = "like-button" value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none' }}>
+            <ToggleButton data-testid = "like-button" value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none', display:"hidden" }}>
               <Typography data-testid = "likes-count" sx={{ marginRight: '0.2vw' }}>{likes}</Typography>
               {liked ? <ThumbUpIcon /> : <ThumbUpOutlinedIcon />}
             </ToggleButton>
-            <ToggleButton data-testid = "dislike-button" value="dislike" selected={disliked} onChange={handleDislikeToggle} sx={{ border: 'none' }}>
+            <ToggleButton data-testid = "dislike-button" value="dislike" selected={disliked} onChange={handleDislikeToggle} sx={{ border: 'none', display:"hidden" }}>
               <Typography data-testid = "dislikes-count" sx={{ marginRight: '0.2vw' }}>{dislikes}</Typography>
               {disliked ? <ThumbDownIcon /> : <ThumbDownOutlinedIcon />}
             </ToggleButton>

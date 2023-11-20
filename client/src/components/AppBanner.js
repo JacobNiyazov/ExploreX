@@ -75,7 +75,7 @@ function AppBanner() {
     store.setCurrentPage(store.currentPageType.registerScreen);
   };
 
-  let menuOptions = {'MyProfile':handleProfileOption, 'Edit Account':handleEditAccOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
+  let menuOptions = {'My Profile':handleProfileOption, 'Edit Account':handleEditAccOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
   if(auth.isGuest){
     menuOptions = {'Map Feed':handleMapFeedOption, 'Login':handleLoginOption, 'Register':handleRegisterOption, 'FAQ':handleFAQOption}
   }
@@ -115,8 +115,8 @@ function AppBanner() {
       <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
           {/* Logo and AppName */}
-          <LogoButton data-testid='logo'/>
-          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>
+          <LogoButton data-testid='logo' onClick={handleLogoClick}/>
+          <Typography data-testid='app-name' variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }} onClick={handleLogoClick}>
             ExploreX
           </Typography>
           <Typography variant="h5" component="div" sx={{ flexGrow: 1, color: '#ff24bd' }}>

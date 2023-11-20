@@ -3,7 +3,6 @@ import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from './map-request-api';
-import graphics from './graphics-request-api';
 import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
@@ -117,7 +116,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
-                    currentMap: store.currentMap,
+                    currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps
                 });
             }
@@ -175,8 +174,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
-                    currentMap: null,
-                    currentMaps: payload.currentMaps,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
                 });
             }
             default: {
@@ -195,25 +194,43 @@ function GlobalStoreContextProvider(props) {
 
 
    store.setCurrentPage = (currentPage) => {
-        if(currentPage === "MapFeed"){
+       /*if(currentPage === "MapFeed"){
             async function getMap(){
                 try{
-                    console.log("user: ", auth.username)
-                    let response = await maps.createMap("testMap", auth.username, [], [], true,"Heat Map", "2023-11-01T09:24:00.000Z");
+                    let response = await maps.getPublicMapPairs()
                     if(response.data.success){
-                        response = await maps.getPublicMapPairs()
-                        if(response.data.success){
-                            console.log("hello!: ");
-                            console.log("data: ", response)
-                            storeReducer({
-                                type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                                payload: {
-                                    currentPage: currentPage,
-                                    currentMaps: response.data.idNamePairs
-                                }
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
                             }
-                        ); 
                         }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }*/
+        if(currentPage === "PublicMapView"){
+            async function getMap(){
+                try{
+                    let response = await maps.getMapById("655adce3a7d58f312f06073b")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: null,
+                                currentMap: response.data.map
+                            }
+                        }
+                        ); 
                     }
                 }
                 catch(error){
@@ -222,6 +239,29 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }
+       /* else if(currentPage === "ProfileScreen"){
+            async function getMap(){
+                try{
+                    let response = await maps.getUserMapIdPairs(auth.user._id)
+                    if(response.data.success){
+                        console.log("profile!!!")
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
+                            }
+                        }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }*/
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
@@ -356,27 +396,39 @@ function GlobalStoreContextProvider(props) {
     };
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
-        /*let currentMap = map._id;
-        let author = map.author;
+        //let currentMap = map._id;
+        //make the current map id a static value
+        let currentMap = "655adce3a7d58f312f06073b";
+        let author = auth.user.username;
+        //console.log("curr and author: ", currentMap, author)
         async function reactToMap(){
             // get all the maps based on page
-            map.reactions.likes = like;
-            map.reactions.dislikes = dislike;
-            if (comment){
-                map.reactions.comments.push({author: author, comment: data})
+            let map = await maps.getMapById(currentMap);
+            if(map.data.success){
+                console.log("RAHHHHHHH")
+                let tempMap = {...map.data.map}
+                console.log("map: ",tempMap)
+                tempMap.reactions.likes = like;
+                tempMap.reactions.dislikes = dislike;
+                if (comment){
+                    tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
+                }
+                console.log("map reactions: ",tempMap.reactions)
+                let update = await maps.updateMapById(currentMap,tempMap);
+                console.log("update: ", update.data)
+                if(update.data.success){
+                    console.log("yay!")
+                    storeReducer({
+                        type: GlobalStoreActionType.UPDATE_MAP_REACTION,
+                        payload: {
+                            currentMap: tempMap
+                        }})
+                    
+                }
             }
-            if(store.currentPage === "ProfileScreen"){
-                let mapList = maps.getUserMapIdPairs(author)
-
-            }
-            else if(store.currentPage === "MapFeed"){
-
-            }
-            else if(store.currentPage === "PublicMapView"){
-
-            }
-        }*/
-        let mapList = Object.keys(exampleMaps).map((key) => {
+        }
+        reactToMap()
+        /*let mapList = Object.keys(exampleMaps).map((key) => {
             const currentMap = exampleMaps[key];
             if (currentMap.title === map.title) {
                 map.reactions.likes = like;
@@ -393,7 +445,7 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.UPDATE_MAP_REACTION,
             payload: {
                 currentMaps: mapList
-            }})
+            }})*/
     }
    return (
     <GlobalStoreContext.Provider value={{

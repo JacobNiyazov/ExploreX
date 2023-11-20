@@ -2,9 +2,11 @@ describe('Profile Screen Test', () => {
   beforeEach(() => {
     cy.viewport(1200,900);
     cy.visit('http://localhost:3000');
-    cy.get('[data-testid=guest-button]').click();
+    cy.get('[data-testid=username-field]').type("cypress")
+    cy.get('[data-testid=password-field]').type("abcd1234")
+    cy.get('[data-testid=login-button]').click();
     cy.get('[data-testid=user-icon]').click();
-    cy.get('[data-testid=MyProfile]').click();
+    cy.get('[data-testid="My Profile"]').click();
   });
 
   it('displays the user bio', () => {
@@ -24,19 +26,6 @@ describe('Profile Screen Test', () => {
   it('shows the import modal when import button is clicked', () => {
     cy.get('[data-testid=import-button]').click();
     cy.get('[data-testid=import-modal]').should('be.visible');
-  });
-
-  it('updates likes and dislikes when changed under the Posts tab', () => {
-    cy.get('[data-testid=posts-tab]').click();
-
-    cy.get('[data-testid=map-posted-0]').first().within(() => {
-      cy.get('[data-testid=like-button]').click();
-      cy.get('[data-testid=likes-count]').should('have.text', '1');
-
-      cy.get('[data-testid=dislike-button]').click();
-      cy.get('[data-testid=dislikes-count]').should('have.text', '9');
-      cy.get('[data-testid=likes-count]').should('have.text', '0');
-    });
   });
 
   it('deletes a draft post when confirm is pressed in the delete modal', () => {

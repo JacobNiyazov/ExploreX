@@ -161,6 +161,7 @@ const EditSidePanel = ({
                                     }}
                                     onChange={(e) =>{handleFont(e, "Text")}}
                                     value={font}
+                                    data-testid="font-selector"
                                     >
                                         {commonFonts.map((option) => (
                                             <MenuItem key={option} value={option}>
@@ -173,6 +174,7 @@ const EditSidePanel = ({
                             <CustomListItem>
                                 <Typography>Size</Typography>
                                 <NumberSelector
+                                    data-testid="text-selector"
                                     type="number"
                                     InputLabelProps={{
                                         shrink: true,
@@ -187,41 +189,10 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
-                {/* Edit Heat Map options */}
-                {
-                    store.currentMap.type === "Heat Map" ?
-                    <EditAccordion disableGutters>
-                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Heat Map Options</Typography>
-                        </EditAccordionSummary>
-                        <AccordionDetails sx={{padding:0}}>
-                        <CustomList>
-                                <CustomListItem>
-                                    <Typography>Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Range</Typography>
-                                    <NumberSelector
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={range}
-                                        onChange={(event)=>{handleRange(event)}}
-                                        error={range === ""}
-                                    />
-                                </CustomListItem>
-                            </CustomList>
-                        </AccordionDetails>
-                    </EditAccordion>
-                    : null
-                }
+                
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters>
+                <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -245,6 +216,7 @@ const EditSidePanel = ({
                             <CustomListItem>
                                 <Typography>Border Width</Typography>
                                 <NumberSelector
+                                    data-testid="legend-selector"
                                     type="number"
                                     InputLabelProps={{
                                         shrink: true,
@@ -262,7 +234,7 @@ const EditSidePanel = ({
                 {/* Edit Region Options */}
                 {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Region</Typography>
                         </EditAccordionSummary>
@@ -276,6 +248,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="region-selector1"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -295,6 +268,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Border Width</Typography>
                                     <NumberSelector
+                                    data-testid="region-selector2"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -311,11 +285,44 @@ const EditSidePanel = ({
                     : null
                 }
 
+                {/* Edit Heat Map options */}
+                {
+                    store.currentMap.type === "Heat Map" ?
+                    <EditAccordion disableGutters data-testid="edit-accordion heat-map">
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Heat Map Options</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                        <CustomList>
+                                <CustomListItem>
+                                    <Typography>Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Range</Typography>
+                                    <NumberSelector
+                                        data-testid="heat-map-selector"
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={range}
+                                        onChange={(event)=>{handleRange(event)}}
+                                        error={range === ""}
+                                    />
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
 
                 {/* Edit Dot Map Options */}
                 {
                     store.currentMap.type === "Dot Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion dot-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>
                         </EditAccordionSummary>
@@ -329,6 +336,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="dot-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -353,7 +361,7 @@ const EditSidePanel = ({
                 {/* Edit Spike Map Options */}
                 {
                     store.currentMap.type === "Spike Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion spike-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Spike Map Options</Typography>
                         </EditAccordionSummary>
@@ -367,6 +375,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="spike-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -392,7 +401,7 @@ const EditSidePanel = ({
                 {/* Edit Voronoi Map Options */}
                 {
                     store.currentMap.type === "Voronoi Map" ?
-                    <EditAccordion disableGutters>
+                    <EditAccordion disableGutters data-testid="edit-accordion voronoi-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Voronoi Map Options</Typography>
                         </EditAccordionSummary>
@@ -406,6 +415,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Size</Typography>
                                     <NumberSelector
+                                        data-testid="voronoi-map-selector"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,

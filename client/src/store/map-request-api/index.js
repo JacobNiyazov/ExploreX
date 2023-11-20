@@ -21,18 +21,13 @@ export const updateMapById = (id, map) =>{
         map: map
     })
 }
-export const getMapById = (id) =>{
-    return maps.get(`/map/${id}`)
-}
-export const getUserMapIdPairs = (id) =>{
-    return maps.get('/usermapidpairs')
-}
-export const deleteMap = (id) => {
-    return maps.delete(`/map/${id}`)
-}
-export const getPublicMapPairs = ()=>{
-    return maps.get(`/publicmapidpairs`)
-}
+export const getMapById = (id) =>maps.get(`/map/${id}`)
+
+export const getUserMapIdPairs = (id) =>maps.get('/usermapidpairs')
+
+export const deleteMap = (id) => {maps.delete(`/map/${id}`)}
+export const getPublicMapPairs = ()=>maps.get(`/publicmapidpairs`)
+
 
 const apis = {
     createMap,

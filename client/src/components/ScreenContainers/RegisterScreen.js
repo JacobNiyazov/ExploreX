@@ -22,11 +22,11 @@ const RegisterScreen = () => {
   
   const handleRegister = (e) => {
     e.preventDefault();
-    alert(email + " " + username  + " " + password + " " + confirmPassword)
+    //alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
     .then((val) => store.setCurrentPage(store.currentPageType.login))
     .catch(
-      (error) => store.displayModal(error.response.data.errorMessage)
+      (error) => {store.displayModal(error.response.data.errorMessage,false); console.log("hello: ", error)}
       
   )
 
