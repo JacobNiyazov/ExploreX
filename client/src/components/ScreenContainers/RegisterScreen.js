@@ -26,7 +26,12 @@ const RegisterScreen = () => {
     auth.registerUser(email, username,password,confirmPassword)
     .then((val) => store.setCurrentPage(store.currentPageType.login))
     .catch(
-      (error) => {store.displayModal(error.response.data.errorMessage,false); console.log("hello: ", error)}
+      (error) => {
+        store.displayModal(<div>
+          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
+        </div>, false);
+      }
       
   )
 

@@ -19,12 +19,26 @@ const ForgotPasswordScreen = () => {
 
 
   const handleRecover = (e) => {
+    const wrongUsernameMessage = (error) => (
+      <div>
+          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem' }}>{error.response.data.errorMessage}</p>
+      </div>
+  ); 
 
     auth.recoverPassword(email).then( 
-      (val) => store.setCurrentPage(store.currentPageType.login))
+      (val) => {
+        store.setCurrentPage(store.currentPageType.login);
+        store.displayModal(<div>
+          <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Woosh...</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem' }}>Please check your email for a password recovery link.</p>
+        </div>, false);
+      })
     .catch(
-      (error) => store.displayModal(error.response.data.errorMessage, false));
-    store.displayModal("Please check your email for a password recovery link.", false)
+      (error) => store.displayModal(<div>
+        <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem' }}>{error.response.data.errorMessage}</p>
+      </div>, false));
   };
 
   const tempHandler = (e) => {

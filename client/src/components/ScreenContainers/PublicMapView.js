@@ -60,7 +60,7 @@ const PublicMapView = () => {
   };
 
   let forkButton = ""
-  //let commentSection = ""
+  let commentSection = ""
   if(auth.user !== null && auth.loggedIn === true){
     forkButton = (<StyledForkButton sx={{ 
         position: 'absolute', 
@@ -73,7 +73,7 @@ const PublicMapView = () => {
       </StyledTypography>
     </StyledForkButton>)
 
-    //commentSection = (<CommentForm mapId={map._id} onCommentSubmit={handleCommentSubmit} />)
+    commentSection = (<CommentForm map={map}/>)
 
   }
   return (
@@ -112,7 +112,7 @@ const PublicMapView = () => {
           </StyledBox>
         </StyledCardContent>
         <CommentList map={map} commentsList ={map.reactions.comments} />
-        <CommentForm map={map}/>
+        {commentSection}
       </StyledCard>
       {forkButton}
     </Box>
