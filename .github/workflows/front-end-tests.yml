@@ -19,6 +19,7 @@ jobs:
           echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
           
 
       - name: create env file client
@@ -44,6 +45,10 @@ jobs:
           working-directory: ./client  # Actions start at root, our front end is in client
           build: npm run build
           start: npm start
+          record: false # Use record : true to debug 
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY}}
 
   deploy:
       name: Deploy
