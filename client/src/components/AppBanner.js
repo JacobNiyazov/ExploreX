@@ -21,6 +21,7 @@ function AppBanner() {
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
   };
+  //test
 
   // State for the account menu dropdown
   const [anchorEl, setAnchorEl] = useState(null);
