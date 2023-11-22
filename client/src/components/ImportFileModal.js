@@ -73,8 +73,10 @@ function ImportFileModal({open,onClose}){
                 setFileType("kml");
             }
             else {
-                // Alert the user about invalid file format
-                alert('Invalid file format! Please select one of the accepted types.');
+                store.displayModal(<div>
+                    <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+                    <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
+                  </div>, false);
             }
         }
         else if (selectedFiles.length === 2) {
@@ -91,12 +93,17 @@ function ImportFileModal({open,onClose}){
                 setFileType("shapefile");
             }
             else{
-                alert('Invalid file format! Please select one of the accepted types.');
+                store.displayModal(<div>
+                    <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+                    <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
+                  </div>, false);
             }
         }
         else{
-            // alert the upload error
-            alert('Invalid file format! Please select one of the accepted types.');
+            store.displayModal(<div>
+                <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+                <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
+              </div>, false);
         }
     }
     return (     
