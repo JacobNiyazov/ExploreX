@@ -16,7 +16,8 @@ export const GlobalStoreActionType = {
    CLOSE_MODAL: "CLOSE_MODAL",
    SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP",
    DELETE_MAP: "DELETE_MAP",
-   UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION"
+   UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
+   CREATE_MAP: "CREATE_MAP"
 }
 
 let exampleMaps = {
@@ -280,6 +281,41 @@ function GlobalStoreContextProvider(props) {
                 currentPage: currentPage,
             }
         });
+    }
+
+    store.createMap = (mapType) =>{
+        // not sure how map file plays into this but i feel like
+        // it does with the graphics, ask when juan is done driving
+        //self note: i passed map file as a param
+        let title = "New Map";
+        let owner = auth.user.username;
+        let reactions = {
+            comments: [],
+            likes: 0,
+            dislikes: 0
+        }
+        let isPublic = false;
+        let type = mapType;
+        let publishDate = Date.now();
+        async function createGraphics(){
+            //have to come back to  set graphics properly
+            let graphics = await graphics.createGraphics(mapType, null, owner);
+            if(graphics.data.success){
+                async function createNewMap(){
+                    let response = await maps.createMap(title, owner, reactions, graphics, isPublic, type, publishDate);
+                    if(response.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.CREATE_MAP,
+                            payload: {
+                                currentMap: response.data
+                            }
+                        })
+                    }
+                }
+                createNewMap();
+            }
+        }
+        createGraphics();
     }
 
     store.displayModal = (modalMessage, confirmButton=true) => {
