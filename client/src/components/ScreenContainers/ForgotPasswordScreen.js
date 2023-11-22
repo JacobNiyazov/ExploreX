@@ -11,17 +11,24 @@ import {
   Grid,
   Link,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // if (store.currentPageType != store.currentPageType.forgotPassScreen){
+  //   store.setCurrentPage(store.currentPageType.forgotPassScreen);
+  // }
 
 
   const handleRecover = (e) => {
     auth.recoverPassword(email).then( 
       (val) => {
         store.setCurrentPage(store.currentPageType.login);
+        navigate("/login");
+        
         store.displayModal(<div>
           <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Woosh...</h4>
           <p style={{ margin: '5px 0', fontSize: '1rem' }}>Please check your email for a password recovery link.</p>
@@ -34,12 +41,10 @@ const ForgotPasswordScreen = () => {
       </div>, false));
   };
 
-  const tempHandler = (e) => {
-    store.setCurrentPage(store.currentPageType.resetPasswordScreen);  
-  };
 
   const handleLogin = (e) => {
     store.setCurrentPage(store.currentPageType.login);  
+    navigate("/login");
   };
   
   return (
@@ -65,9 +70,6 @@ const ForgotPasswordScreen = () => {
 
               <Button style={launchStyle.button} onClick = {handleRecover} variant="contained">
                 Recover
-              </Button>
-              <Button style={launchStyle.button} onClick = {tempHandler} variant="contained">
-                temp password reset
               </Button>
               <Link style={launchStyle.forgot} onClick={handleLogin}>Return to Login</Link>
 

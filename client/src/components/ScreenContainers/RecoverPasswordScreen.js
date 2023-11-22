@@ -11,28 +11,53 @@ import {
   Grid,
   Link,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
+
 const RecoverPasswordScreen = () => {
   const [passwordConfirm, setConfirmPassword] = useState('');
   const [password, setPassword] = useState('');
 
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
-
+  const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
     store.setCurrentPage(store.currentPageType.login);
-
+    navigate("/login");
 
   };
 
 
   const handleReset = (event) => {
     // store.setCurrentPage(store.currentPageType.mapFeed);
-    let userId = "6556363042ac2c664845227b"
-    let token = "126de3f85a98646dc950ac8cfba9a1d32e27965b7d825073ac1927f116ceda0c"
-    let password = "coolman123"
-    auth.resetUserPassword(userId, token, password);
+    let urlString = window.location.href;
+    const url = new URL(urlString);
+    const searchParams = new URLSearchParams(url.search);
+    const token = searchParams.get('token');
+    const id = searchParams.get('id');
+
+    if (password !== passwordConfirm) {
+      store.displayModal(<div>
+        <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}> Passwords do not match, try again. </p>
+      </div>, false);
+    }
+    else{
+      auth.resetUserPassword(id,token,password)
+      .then( 
+        (val) => {
+          store.setCurrentPage(store.currentPageType.mapFeed);
+          navigate("/feed");
+        })
+      .catch(
+        (error) => store.displayModal(<div>
+          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
+        </div>, false));
+    }
+     
     // alert("TRY")
   };
   
@@ -46,7 +71,7 @@ const RecoverPasswordScreen = () => {
             <Grid item xs={12}>
               <Typography>New Password:</Typography>
                 <input
-                  type="text"
+                  type="password"
                   id="recover"
                   value={password}
                   style = {launchStyle.rounded_input}

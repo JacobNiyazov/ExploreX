@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
+
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
-
+import { GlobalStoreContext } from '../../store'
+import { AuthContext } from '../../auth'
+import { useNavigate } from 'react-router-dom';
 
 const EditScreen = () => {
+    const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const waitForAuthCheck = async () => {
+          if (auth.loggedIn === undefined) {
+              // Wait until authentication check is completed
+              await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+              waitForAuthCheck(); // Re-check status
+          } else {
+              if(!auth.loggedIn){
+                  store.setCurrentPage(store.currentPageType.login)
+                  navigate("/login");
+              }   
+              setLoading(false);
+              
+          }
+      };
+  
+      waitForAuthCheck();
+    }, [auth.loggedIn]);
     const [colors, setColors] = React.useState({
         Text: '#FFFFFF',
         HeatMap: '#FFFFFF',
@@ -66,38 +93,46 @@ const EditScreen = () => {
 
     const [hideLegend, setHideLegend] = React.useState(false)
 
-
-    return (
-        <Grid container sx={{height:"100%"}}>
-            <EditSidePanel 
-                colors={colors}
-                setColors={setColors}
-                colorPicker={colorPicker}
-                setColorPicker={setColorPicker}
-                anchors={anchors}
-                setAnchors={setAnchors}
-                font={font}
-                setFont={setFont}
-                size={size}
-                setSize={setSize}
-                range={range}
-                setRange={setRange}
-                borderWidth={borderWidth}
-                setBorderWidth={setBorderWidth}
-                selectAll={selectAll}
-                setSelectAll={setSelectAll}
-                hideLegend={hideLegend}
-                setHideLegend={setHideLegend}/>
-            <MapEdit 
-                colors={colors}
-                font={font}
-                size={size}
-                range={range}
-                borderWidth={borderWidth}
-                selectAll={selectAll}
-                hideLegend={hideLegend}/>
-        </Grid>
-    );
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (store.currentPage === store.currentPageType.editMapScreen){
+        return (
+            <Grid container sx={{height:"100%"}}>
+                <EditSidePanel 
+                    colors={colors}
+                    setColors={setColors}
+                    colorPicker={colorPicker}
+                    setColorPicker={setColorPicker}
+                    anchors={anchors}
+                    setAnchors={setAnchors}
+                    font={font}
+                    setFont={setFont}
+                    size={size}
+                    setSize={setSize}
+                    range={range}
+                    setRange={setRange}
+                    borderWidth={borderWidth}
+                    setBorderWidth={setBorderWidth}
+                    selectAll={selectAll}
+                    setSelectAll={setSelectAll}
+                    hideLegend={hideLegend}
+                    setHideLegend={setHideLegend}/>
+                <MapEdit 
+                    colors={colors}
+                    font={font}
+                    size={size}
+                    range={range}
+                    borderWidth={borderWidth}
+                    selectAll={selectAll}
+                    hideLegend={hideLegend}/>
+            </Grid>
+        );
+    }
+    else{
+        return <div></div>
+    }
+   
 }
 
 export default EditScreen

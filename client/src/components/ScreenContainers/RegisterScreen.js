@@ -10,6 +10,8 @@ import {
   Container,
   Grid,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -18,13 +20,26 @@ const RegisterScreen = () => {
 
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
+  const navigate = useNavigate();
 
-  
+  // store.setCurrentPage(store.currentPageType.registerScreen)
+
+
+  // store.setCurrentPage(store.currentPageType.register)
+
   const handleRegister = (e) => {
     e.preventDefault();
     //alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
-    .then((val) => store.setCurrentPage(store.currentPageType.login))
+    .then((val) => {
+      store.setCurrentPage(store.currentPageType.mapFeed);
+      navigate("/feed");
+
+      store.displayModal(<div>
+        <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem' }}>Not sure where to get started? Check out the FAQ found in the profile menu!</p>
+      </div>, false);
+    })
     .catch(
       (error) => {
         store.displayModal(<div>

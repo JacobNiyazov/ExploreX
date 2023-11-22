@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
@@ -17,10 +17,32 @@ import { ReactionButton, ReactionCount } from '../StyleSheets/MapFeedStyles'; //
 import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
 import { AuthContext } from '../../auth'
+import { useNavigate } from 'react-router-dom';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(!auth.loggedIn){
+                store.setCurrentPage(store.currentPageType.login)
+                navigate("/login");
+            }   
+            setLoading(false);
+            
+        }
+    };
+
+    waitForAuthCheck();
+  }, [auth.loggedIn]);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -76,47 +98,52 @@ const PublicMapView = () => {
     commentSection = (<CommentForm map={map}/>)
 
   }
-  return (
-    <Box data-testid='public-map-view' sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
-      alignItems: 'start', 
-      position: 'relative', // Added to position the button relative to this box
-      mt: 2
-  }}>
-      <StyledCard>
-        <StyledTypography variant="h4" component="div">
-          {map.title}
-        </StyledTypography>
-        <StyledCardMedia
-          component="img"
-          image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
-          alt={`Map titled ${map.title}`}
-        />
-        <StyledCardContent>
-          <StyledTypography variant="subtitle1">
-            Author: {map.ownerUsername}
+  if (store.currentPage === store.currentPageType.publicMapView){
+      return (
+      <Box data-testid='public-map-view' sx={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'start', 
+        position: 'relative', // Added to position the button relative to this box
+        mt: 2
+    }}>
+        <StyledCard>
+          <StyledTypography variant="h4" component="div">
+            {map.title}
           </StyledTypography>
-          <StyledTypography variant="body1" paragraph>
-            {map.type}
-          </StyledTypography>
-          <StyledBox>
-            <ReactionButton disabled={auth.isGuest} data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
-              <ThumbUpIcon />
-              <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
-            </ReactionButton>
-            <ReactionButton disabled={auth.isGuest} data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
-              <ThumbDownIcon />
-              <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
-            </ReactionButton>
-          </StyledBox>
-        </StyledCardContent>
-        <CommentList map={map} commentsList ={map.reactions.comments} />
-        {commentSection}
-      </StyledCard>
-      {forkButton}
-    </Box>
-  );
+          <StyledCardMedia
+            component="img"
+            image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
+            alt={`Map titled ${map.title}`}
+          />
+          <StyledCardContent>
+            <StyledTypography variant="subtitle1">
+              Author: {map.ownerUsername}
+            </StyledTypography>
+            <StyledTypography variant="body1" paragraph>
+              {map.type}
+            </StyledTypography>
+            <StyledBox>
+              <ReactionButton disabled={auth.isGuest} data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
+                <ThumbUpIcon />
+                <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
+              </ReactionButton>
+              <ReactionButton disabled={auth.isGuest} data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
+                <ThumbDownIcon />
+                <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
+              </ReactionButton>
+            </StyledBox>
+          </StyledCardContent>
+          <CommentList map={map} commentsList ={map.reactions.comments} />
+          {commentSection}
+        </StyledCard>
+        {forkButton}
+      </Box>
+    );
+  }
+  else{
+    return <div>ASDSA</div>
+  }
 };
 
 export default PublicMapView;

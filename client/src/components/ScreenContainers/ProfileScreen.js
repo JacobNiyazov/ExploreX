@@ -1,4 +1,4 @@
-import React, {useState,useContext} from 'react';
+import React, {useState,useContext, useEffect} from 'react';
 import Grid from '@mui/material/Grid';
 import { StyledButton, StyledTypography,StyledTypography2 } from '../StyleSheets/ProfileScreenStyles';
 import ImportFileModal from '../ImportFileModal';
@@ -12,6 +12,8 @@ import PropTypes from 'prop-types';
 //import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
 import AddIcon from '@mui/icons-material/Add';
+import { AuthContext } from '../../auth'
+import { useNavigate } from 'react-router-dom';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -47,6 +49,31 @@ function CustomTabPanel(props) {
   }
 function ProfileScreen(){
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const waitForAuthCheck = async () => {
+          if (auth.loggedIn === undefined) {
+              // Wait until authentication check is completed
+              await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+              waitForAuthCheck(); // Re-check status
+          } else {
+              if(!auth.loggedIn){
+                  store.setCurrentPage(store.currentPageType.login)
+                  navigate("/login");
+              }   
+              setLoading(false);
+              
+          }
+      };
+  
+      waitForAuthCheck();
+    }, [auth.loggedIn]);
+
+    
     const [openImport, setOpenImport] = useState(false);
     const handleOpenImport = () => setOpenImport(true);
     const handleCloseImport = () => setOpenImport(false);
@@ -71,8 +98,11 @@ function ProfileScreen(){
     }
     const drafts = mapValues.filter((map) => !map.isPublic);
     const posted = mapValues.filter((map) => map.isPublic);
-    
-    return(
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+    if (store.currentPage === store.currentPageType.profileScreen){
+      return (
         <Grid container spacing = {2}>
             <Grid item xs = {10}>
                 <StyledTypography>
@@ -126,6 +156,10 @@ function ProfileScreen(){
                 </Box>
             </Grid> 
         </Grid>
-    );
+     );
+    }
+    else{
+      return <div></div>
+    }
 }
 export default ProfileScreen;

@@ -3,6 +3,8 @@ import launchStyle from '../StyleSheets/launchStyle';
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
+import { useNavigate } from 'react-router-dom';
+
 
 import {
   Typography,
@@ -16,13 +18,18 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // store.setCurrentPage(store.currentPageType.login)
 
 
   const handleLogin = (e) => {
     e.preventDefault();
     auth.loginUser(username,password)
     .then( 
-      (val) => store.setCurrentPage(store.currentPageType.mapFeed))
+      (val) => {
+        store.setCurrentPage(store.currentPageType.mapFeed)
+        navigate("/feed")
+      })
     .catch(
       (error) => store.displayModal(<div>
         <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
@@ -33,10 +40,13 @@ const LoginScreen = () => {
 
   const handleForgot = (e) => {
     store.setCurrentPage(store.currentPageType.forgotPassScreen);
+    navigate("/forgotPassword")
+
   };
 
   const handleEnterGuest = (event) => {
     store.setCurrentPage(store.currentPageType.mapFeed);
+    navigate("/feed");
     auth.guestLogin();
   };
   

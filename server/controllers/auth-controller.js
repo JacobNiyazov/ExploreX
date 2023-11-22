@@ -27,10 +27,8 @@ getLoggedIn = async (req, res) => {
 
         return res.status(200).json({
             loggedIn: true,
-            user: {
-                username: loggedInUser.username,
-                email: loggedInUser.email
-            }
+            user: loggedInUser,
+
         })
     } catch (err) {
         console.log("err: " + err);
@@ -125,37 +123,50 @@ deleteUserAccount = async (req, res) => {
 }
 
 logoutUser = async (req, res) => {
-
+    return res.cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(0),
+        secure: true,
+        sameSite: "none"
+    }).status(200).json({ success: true, message: 'Logged out successfully' });
 }
 
 resetUserPassword = async (req, res) => {
-    const { userId, token, password } = req.body;
-    console.log(userId + token + password)
-    let passwordResetToken = await Token.findOne({ userId });
-    console.log("ASDSA")
-    if (!passwordResetToken) {
-      throw new Error("Invalid or expired password reset token");
+    try{
+        const { userId, token, password } = req.body;
+        console.log(userId + token + password)
+        let passwordResetToken = await Token.findOne({ userId });
+        if (!passwordResetToken) {
+            throw new Error("Invalid or expired password reset token");
+        }
+
+        console.log(token)
+        console.log(passwordResetToken.token)
+        const isValid = await bcrypt.compare(token, passwordResetToken.token);
+        if (!isValid) {
+            throw new Error("Invalid or expired password reset token");
+        }
+
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const hash = await bcrypt.hash(password, salt);
+
+        await User.updateOne(
+            { _id: userId },
+            { $set: { passwordHash: hash } },
+            { new: true }
+        );
+        await passwordResetToken.deleteOne();
+        return res.status(200).json({
+            success: true,
+            message: "Password Reset Successfully."
+        });
+    }
+    catch (err){
+        console.error(err);
+        res.status(500).send();
     }
 
-    console.log(token)
-    console.log(passwordResetToken.token)
-    const isValid = await bcrypt.compare(token, passwordResetToken.token);
-    if (!isValid) {
-      throw new Error("Invalid or expired password reset token");
-    }
-
-    const saltRounds = 10;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const hash = await bcrypt.hash(password, salt);
-
-    await User.updateOne(
-      { _id: userId },
-      { $set: { passwordHash: hash } },
-      { new: true }
-    );
-    await passwordResetToken.deleteOne();
-    console.log("SUCCCESS RESET OASSWORD")
-    return true;
 };
 
 recoverPassword = async(req,res) => {
@@ -173,7 +184,7 @@ recoverPassword = async(req,res) => {
         console.log("existingUser: " + existingUser); 
         if (!existingUser) {
             return res
-                .status(400)
+                .status(401)
                 .json({
                     success: false,
                     errorMessage: "An account with this email address does not exist."
@@ -194,17 +205,14 @@ recoverPassword = async(req,res) => {
         }).save();
         console.log(existingUser._id)
         console.log(resetToken)
-        // const link = `${clientURL}/passwordReset?token=${resetToken}&id=${user._id}`;
+        let link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${existingUser._id}`;
 
-        // sendEmail(existingUser.email);
-        let link = "s"
+        sendEmail(existingUser.email, link);
         return res.status(200).json({
             success: true,
             message: "An email has been sent successfully."
         });
 
-        
-        sendEmail()
     }catch (err) {
         console.error("ERROR " + err);
         res.status(500).send();
@@ -290,10 +298,7 @@ registerUser = async (req, res) => {
             sameSite: "none"
         }).status(200).json({
             success: true,
-            user: {
-                username: savedUser.username,
-                email: savedUser.email,              
-            }
+            user: savedUser
         })
 
         console.log("token sent");

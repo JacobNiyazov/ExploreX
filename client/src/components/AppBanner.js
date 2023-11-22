@@ -11,12 +11,14 @@ import { GlobalStoreContext } from '../store'
 import { AuthContext } from '../auth'
 
 import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, UserIconButton, dropdownStyle, StyledMenu, StyledTypography, LogoButton } from './StyleSheets/AppBannerStyles';
+import { useNavigate } from 'react-router-dom';
 
 function AppBanner() {
   const [searchType, setSearchType] = React.useState('user'); // Default to 'user'
 
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
@@ -37,43 +39,53 @@ function AppBanner() {
 
   const handleLogoClick = () => {
     store.setCurrentPage(store.currentPageType.mapFeed);
+    navigate("/feed");
   };
 
   const handleRegister = (e) => {
     store.setCurrentPage(store.currentPageType.registerScreen);
+    navigate("/register");
   };
 
   const handleLogin = (e) => {
+    auth.logoutUser();
     store.setCurrentPage(store.currentPageType.login);
+    navigate("/login");
     handleAccountMenuClose();
   };
 
   const handleFAQOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.faqScreen);
+    navigate("/FAQ");
   };
 
   const handleProfileOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.profileScreen);
+    navigate("/profile");
   };
 
   const handleEditAccOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.editAccScreen);
+    navigate("/editAccount");
   };
 
   const handleMapFeedOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.mapFeed);
+    navigate("/feed");
   };
   const handleLoginOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.login);
+    navigate("/login");
   };
   const handleRegisterOption = () => {
     handleAccountMenuClose();
     store.setCurrentPage(store.currentPageType.registerScreen);
+    navigate("/register");
   };
 
   let menuOptions = {'My Profile':handleProfileOption, 'Edit Account':handleEditAccOption, 'Map Feed':handleMapFeedOption, 'FAQ':handleFAQOption, 'Logout':handleLogin}
@@ -95,7 +107,7 @@ function AppBanner() {
       </StyledAppBar>
     )
   }
-  if (store.currentPage === store.currentPageType.registerScreen || store.currentPage === store.currentPageType.forgotPassScreen){
+  if (store.currentPage === store.currentPageType.registerScreen || store.currentPage === store.currentPageType.resetPasswordScreen || store.currentPage === store.currentPageType.forgotPassScreen){
     return (
       <StyledAppBar data-testid='app-banner' position="static">
         <StyledToolbar>
@@ -110,7 +122,6 @@ function AppBanner() {
       </StyledAppBar>
     )
   }
-  console.log(store.currentPage)
   if (store.currentPage === store.currentPageType.faqScreen){
     return (
       <StyledAppBar data-testid='app-banner' position="static">

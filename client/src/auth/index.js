@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
@@ -17,14 +17,14 @@ export const AuthActionType = {
 function AuthContextProvider(props) {
     const [auth, setAuth] = useState({
         user: null,
-        loggedIn: false,
+        loggedIn: undefined,
         isGuest: false,
     });
     // const history = useHistory();
 
-    // useEffect(() => {
-    //     auth.getLoggedIn();
-    // }, []);
+    useEffect(() => {
+        auth.getLoggedIn();
+    }, []);
 
     const authReducer = (action) => {
         const { type, payload } = action;
@@ -52,16 +52,16 @@ function AuthContextProvider(props) {
             }
             case AuthActionType.REGISTER_USER: {
                 return setAuth({
-                    user: null,
-                    loggedIn: false,
-                    isGuest: null,
+                    user: payload.user,
+                    loggedIn: true,
+                    isGuest: false,
                 })
             }
             case AuthActionType.SET_LOGGED_IN: {
                 return setAuth({
                     user: payload.user,
                     loggedIn: payload.loggedIn,
-                    isGuest: null,
+                    isGuest: false,
                 })
             }
             case AuthActionType.GUEST_LOGIN:{
@@ -87,8 +87,10 @@ function AuthContextProvider(props) {
                         user: response.data.user
                     }
                 });
+                return true
             }
         }
+        return false
 
     }
     auth.guestLogin = async function (){
@@ -101,10 +103,15 @@ function AuthContextProvider(props) {
         const response = await api.registerUser(email, username, password, passwordVerify);      
         if (response.status === 200) {
             authReducer({
-                type: AuthActionType.REGISTER_USER
+                type: AuthActionType.REGISTER_USER,
+                payload: {
+                    user: response.data.user
+                }
             })
+            
             // history.push("/login");
         }
+        console.log(auth.loggedIn)
     }
 
     auth.loginUser = async function(username, password) {
@@ -117,6 +124,7 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             })
+            localStorage.setItem('authToken', response.data.token)
             // history.push("/");
         }
     }
@@ -124,6 +132,7 @@ function AuthContextProvider(props) {
     auth.logoutUser = async function() {
         const response = await api.logoutUser();
         if (response.status === 200) {
+            console.log("LOGGED")
             authReducer( {
                 type: AuthActionType.LOGOUT_USER,
                 payload: null

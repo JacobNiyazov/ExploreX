@@ -15,6 +15,7 @@ import DeletePostModal from './DeletePostModal';
 import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { useNavigate } from 'react-router-dom';
 
 function PersonalMapCard({ map,id,likes,dislikes }) {
   const [liked, setLiked] = useState(false);
@@ -23,9 +24,11 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => setOpenDelete(false);
+  const navigate = useNavigate();
 
   function handleEditClick (){
     store.setCurrentEditMap(map, "EditMapScreen")
+    navigate("/editMap")
   }
   const handleLikeToggle = () => {
     setLiked((prevLiked) => !prevLiked);
@@ -52,8 +55,12 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const handlePostClick = () => {
     if (isPost) {
       store.setCurrentPage(store.currentPageType.publicMapView);
+      navigate("/map");
     } else {
       store.setCurrentEditMap(map, "EditMapScreen");
+      navigate("/editMap")
+
+
     }
   };
   const card = {

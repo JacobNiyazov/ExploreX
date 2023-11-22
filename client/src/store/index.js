@@ -1,9 +1,10 @@
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, useEffect } from 'react'
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
 import sampleComments from '../components/CommentList'
+import { useNavigate } from 'react-router-dom';
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -90,6 +91,20 @@ function GlobalStoreContextProvider(props) {
        currentMap: exampleMaps.Map1,
        currentMaps: exampleMaps
    });
+   const navigate = useNavigate();
+   const dict = {
+    "/login": "Login",
+    "/register": "RegisterScreen",
+    "/faq" : "FAQScreen",
+    "/forgotPassword" : "ForgotPasswordScreen",
+    "/passwordReset" : "ResetPasswordScreen",
+    "/feed" : "MapFeed",
+    "/map" : "PublicMapView",
+    "/profile" : "ProfileScreen",
+    "/editAccount" : "EditAccountScreen",
+
+   }
+
 
    store.currentPageType = {
         login: "Login",
@@ -262,6 +277,42 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }*/
+        // switch (currentPage) {
+        //     case store.currentPageType.login:
+        //         navigate("/login");
+        //         break
+        //     case store.currentPageType.mapFeed:
+        //     //   return (<MapFeed maps/>)
+        //         navigate("/feed")
+        //         break
+        //     case store.currentPageType.publicMapView:
+        //         navigate("/map")
+        //         break
+        //     //   return (<PublicMapView map={Map1} likes = {Map1.reactions.likes} dislikes = {Map1.reactions.dislikes} comments = {Map1.reactions.comments}/>)
+        //     case store.currentPageType.forgotPassScreen:
+        //         navigate("/forgotPassword");
+        //         break
+        //     case store.currentPageType.registerScreen:
+        //         navigate("/register");
+        //         break
+        //     case store.currentPageType.resetPasswordScreen:
+        //         navigate("/recover");
+        //         break
+        //     case store.currentPageType.faqScreen:
+        //         navigate("/FAQ");
+        //         break
+        //     case store.currentPageType.editMapScreen:
+        //         navigate("/editMap/")
+        //         break
+        //     case store.currentPageType.editAccScreen:
+        //         navigate("/editAccount");
+        //         break
+        //     case store.currentPageType.profileScreen:
+        //         navigate("/profile");
+        //         break
+        //     default:
+        //         navigate("/login");
+        // }
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
@@ -271,6 +322,58 @@ function GlobalStoreContextProvider(props) {
             }
         );
     }
+
+    store.updatePageLink = (pageURL) => {
+        if(dict[pageURL] === "PublicMapView"){
+            async function getMap(){
+                try{
+                    let response = await maps.getMapById("655adce3a7d58f312f06073b")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: dict[pageURL],
+                                currentMaps: null,
+                                currentMap: response.data.map
+                            }
+                        }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
+        else{
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentPage: dict[pageURL],
+                    currentMaps: exampleMaps
+                }
+            });
+        }
+    }
+
+    useEffect(() => {
+        const updateCurrentPage = () => {
+          const currentPage = window.location.pathname;
+          store.updatePageLink(currentPage)
+        };
+    
+        window.addEventListener('popstate', updateCurrentPage);
+        window.addEventListener('DOMContentLoaded', updateCurrentPage);
+    
+        updateCurrentPage();
+    
+        return () => {
+          window.removeEventListener('popstate', updateCurrentPage);
+          window.removeEventListener('DOMContentLoaded', updateCurrentPage);
+        };
+      }, []);
 
     store.setCurrentEditMap = (currentMap, currentPage) =>{
         storeReducer({
@@ -315,7 +418,6 @@ function GlobalStoreContextProvider(props) {
     store.updateUserInfo = function (username, email, bio, password) {
         async function asyncUpdateUser(username, email, bio, password) {
             try {
-                // const response = await api.editUserInfo('6556394afc995c6c2eac63a9', username, email, bio, password);
                 const response = await api.editUserInfo(auth.user._id, username, email, bio, password);
                 if (response.data.success) {
                     const successMessage = (
@@ -326,6 +428,7 @@ function GlobalStoreContextProvider(props) {
                     );
                     store.displayModal(successMessage, false);
                 }
+                auth.user = response.data.user;
             }
             catch (error){
                 if (error.response.data.errorMessage === "An account with this email address already exists." || error.response.data.errorMessage === "An account with this username already exists."){

@@ -1,16 +1,52 @@
-import React, { useState, useContext } from 'react';import Grid from '@mui/material/Grid';
+import React, { useState, useContext, useEffect } from 'react';
+import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
 import {FormControl} from '@mui/material';
 import {InputLabel} from '@mui/material';
 import { StyledInput, StyledBio, StyledInfo, StyledSubmitButton} from '../StyleSheets/EditAccountScreenStyles';
 import { GlobalStoreContext } from '../../store'
 import { AuthContext } from '../../auth'
+import { useNavigate } from 'react-router-dom';
 
 
 function EditAccountScreen(){
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const waitForAuthCheck = async () => {
+            if (auth.loggedIn === undefined) {
+                // Wait until authentication check is completed
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+                waitForAuthCheck(); // Re-check status
+            } else {
+                if(!auth.loggedIn){
+                    store.setCurrentPage(store.currentPageType.login)
+                    navigate("/login");
+                }   
+                else{
+                    user = auth.user
+                    setUsername(user.username)
+                    setBio(user.bio)
+                    setEmail(user.email)
+                    setLoading(false);
+                }
+                
+            }
+        };
+
+        waitForAuthCheck();
+    }, [auth.loggedIn]);
+
+    // if(!auth.loggedIn){
+    //     store.setCurrentPage(store.currentPageType.login)
+    //     navigate("/login");
+    // }   
+
     let user = auth.user
+    console.log(user)
 
     const [username, setUsername] = useState(user !== null && auth.loggedIn === true ? user.username : "");
     const [bio, setBio] = useState(user !== null && auth.loggedIn === true ? user.bio : "");
@@ -70,7 +106,9 @@ function EditAccountScreen(){
             store.displayModal(noUsernameMessage, false);
         }
         else{
-            store.updateUserInfo(username, email, bio, password);
+            store.updateUserInfo(username, email, bio, password)
+            // setBio(user.bio)
+            // setBio(user.bio)
         }
     };
 
@@ -83,114 +121,120 @@ function EditAccountScreen(){
         fontSize:"5vh",
         paddingTop:"5vh",
     }
-    return(
-        <Grid container spacing = {3}>
-            <Grid item xs = {12} sx = {center}>
-                <Typography sx = {text} data-testid="title">
-                    Let's make some changes
-                </Typography>
-            </Grid>
-            <Grid item xs = {12} sx = {center}>
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+    if (store.currentPage === store.currentPageType.editAccScreen){
+        return(
+            <Grid container spacing = {3}>
+                <Grid item xs = {12} sx = {center}>
+                    <Typography sx = {text} data-testid="title">
+                        Let's make some changes
+                    </Typography>
+                </Grid>
+                <Grid item xs = {12} sx = {center}>
+                    <FormControl>
+                        <InputLabel htmlFor="basic-input" 
+                        style={{ color: 'white', fontSize:'25px' }}>
+                            Username
+                        </InputLabel>
+                        <StyledInput
+                            value={username}
+                            onChange={handleUsernameChange}
+                            sx={{padding: "10px"}}
+                            disableUnderline
+                            id="basic-input"
+                            data-testid="username-input"
+                            // endAdornment={
+                            //     <InputAdornment position="end">
+                            //     <StyledButton>
+                            //         Edit
+                            //     </StyledButton>
+                            //     </InputAdornment>
+                            // }
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs = {6} sx = {center}>
                 <FormControl>
-                    <InputLabel htmlFor="basic-input" 
-                    style={{ color: 'white', fontSize:'25px' }}>
-                        Username
-                    </InputLabel>
-                    <StyledInput
-                        value={username}
-                        onChange={handleUsernameChange}
-                        sx={{padding: "10px"}}
-                        disableUnderline
-                        id="basic-input"
-                        data-testid="username-input"
-                        // endAdornment={
-                        //     <InputAdornment position="end">
-                        //     <StyledButton>
-                        //         Edit
-                        //     </StyledButton>
-                        //     </InputAdornment>
-                        // }
-                    />
-                </FormControl>
-            </Grid>
-            <Grid item xs = {6} sx = {center}>
-            <FormControl>
-                <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }} data-testid="bio-label">
-                        Bio
-                    </InputLabel>
-                    <StyledBio
-                        value={bio}
-                        onChange={handleBioChange}
-                        multiline
-                        rows={10}
-                        fullWidth                                     
-                        sx={{padding: "10px"}}
-                        disableUnderline
-                        id="basic-input"
-                        data-testid="bio-input"
-                        // endAdornment={
-                        //     <InputAdornment position="end" sx = {{marginTop:"45vh", marginLeft:"3vw"}}>
-                        //     <StyledButton>
-                        //         Edit
-                        //     </StyledButton>
-                        //     </InputAdornment>
-                        // }
-                    />
-                </FormControl>
-            </Grid>
-            <Grid item xs = {6}>
-            <FormControl>
-                    <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
-                        Email
-                    </InputLabel>
-                    <StyledInfo
-                        value={email}
-                        onChange={handleEmailChange}
-                        sx={{padding: "10px"}}
-                        disableUnderline
-                        id="basic-input"
-                        data-testid="email-input"
-                        // endAdornment={
-                        //     <InputAdornment position="end">
-                        //     <StyledButton
-                        //     >
-                        //         Edit
-                        //     </StyledButton>
-                        //     </InputAdornment>
-                        // }
-                    />
-                </FormControl>
+                    <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }} data-testid="bio-label">
+                            Bio
+                        </InputLabel>
+                        <StyledBio
+                            value={bio}
+                            onChange={handleBioChange}
+                            multiline
+                            rows={10}
+                            fullWidth                                     
+                            sx={{padding: "10px"}}
+                            disableUnderline
+                            id="basic-input"
+                            data-testid="bio-input"
+                            // endAdornment={
+                            //     <InputAdornment position="end" sx = {{marginTop:"45vh", marginLeft:"3vw"}}>
+                            //     <StyledButton>
+                            //         Edit
+                            //     </StyledButton>
+                            //     </InputAdornment>
+                            // }
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs = {6}>
                 <FormControl>
-                    <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
-                        Password
-                    </InputLabel>
-                    <StyledInfo
-                        value={password}
-                        onChange={handlePasswordChange}
-                        sx={{padding: "10px"}}
-                        disableUnderline
-                        id="basic-input"
-                        type="password"
-                    />
-                </FormControl>
-                <FormControl>
-                    <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
-                        Confirm Password
-                    </InputLabel>
-                    <StyledInfo
-                        value={confirmPassword}
-                        onChange={handleConfirmPasswordChange}
-                        sx={{padding: "10px"}}
-                        disableUnderline
-                        id="basic-input"
-                        type="password"
-                    />
-                </FormControl>
-                <StyledSubmitButton sx = {{marginTop:"20vh", marginLeft: "-15vh"}} onClick={handleSubmit} data-testid="submit-button">
-                    Save Changes
-                </StyledSubmitButton>
+                        <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
+                            Email
+                        </InputLabel>
+                        <StyledInfo
+                            value={email}
+                            onChange={handleEmailChange}
+                            sx={{padding: "10px"}}
+                            disableUnderline
+                            id="basic-input"
+                            data-testid="email-input"
+                            // endAdornment={
+                            //     <InputAdornment position="end">
+                            //     <StyledButton
+                            //     >
+                            //         Edit
+                            //     </StyledButton>
+                            //     </InputAdornment>
+                            // }
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
+                            Password
+                        </InputLabel>
+                        <StyledInfo
+                            value={password}
+                            onChange={handlePasswordChange}
+                            sx={{padding: "10px"}}
+                            disableUnderline
+                            id="basic-input"
+                            type="password"
+                        />
+                    </FormControl>
+                    <FormControl>
+                        <InputLabel htmlFor="basic-input" style={{ color: 'white', fontSize:'25px' }}>
+                            Confirm Password
+                        </InputLabel>
+                        <StyledInfo
+                            value={confirmPassword}
+                            onChange={handleConfirmPasswordChange}
+                            sx={{padding: "10px"}}
+                            disableUnderline
+                            id="basic-input"
+                            type="password"
+                        />
+                    </FormControl>
+                    <StyledSubmitButton sx = {{marginTop:"20vh", marginLeft: "-15vh"}} onClick={handleSubmit} data-testid="submit-button">
+                        Save Changes
+                    </StyledSubmitButton>
+                </Grid>
             </Grid>
-        </Grid>
-    );
+        );
+    }
+    return <div></div>
 }
 export default EditAccountScreen;

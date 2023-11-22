@@ -6,12 +6,14 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
+import { useNavigate } from 'react-router-dom';
 //import { AuthContext } from '../auth'
 
 
 const MapFeedCard = ({ map, likes, dislikes,id }) => {
   const { store } = useContext(GlobalStoreContext);
   //const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -39,6 +41,7 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
   };
   const handleOpenMap = () => {
     store.setCurrentPage(store.currentPageType.publicMapView, map);
+    navigate("/map");
   };
   console.log("map owner: ", map)
   return (
