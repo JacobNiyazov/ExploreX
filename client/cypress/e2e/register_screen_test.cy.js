@@ -76,7 +76,7 @@ describe('Register Screen Tests', () => {
       cy.get('#passwordConfirm').type("1234512345");
 
       cy.get('button').contains('Create Account').click();
-      cy.contains('Welcome, Map Lovers!').should('be.visible'); 
+      cy.contains('Welcome to ExploreX!').should('be.visible'); 
 
     });
     
