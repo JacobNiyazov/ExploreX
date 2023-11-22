@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 // import { useHistory } from 'react-router-dom'
 import api from './auth-request-api'
 
@@ -22,9 +22,11 @@ function AuthContextProvider(props) {
     });
     // const history = useHistory();
 
+    const authRef = useRef(auth);
+
     useEffect(() => {
-        auth.getLoggedIn();
-    }, []);
+        authRef.current.getLoggedIn();
+    }, [authRef]);
 
     const authReducer = (action) => {
         const { type, payload } = action;

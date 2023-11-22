@@ -1,10 +1,9 @@
-import { createContext, useState, useContext, useEffect } from 'react'
+import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
 import sampleComments from '../components/CommentList'
-import { useNavigate } from 'react-router-dom';
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -91,7 +90,6 @@ function GlobalStoreContextProvider(props) {
        currentMap: exampleMaps.Map1,
        currentMaps: exampleMaps
    });
-   const navigate = useNavigate();
    const dict = {
     "/login": "Login",
     "/register": "RegisterScreen",
@@ -358,10 +356,12 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    const storeRef = useRef(store);
+
     useEffect(() => {
         const updateCurrentPage = () => {
           const currentPage = window.location.pathname;
-          store.updatePageLink(currentPage)
+          storeRef.current.updatePageLink(currentPage)
         };
     
         window.addEventListener('popstate', updateCurrentPage);
@@ -373,7 +373,7 @@ function GlobalStoreContextProvider(props) {
           window.removeEventListener('popstate', updateCurrentPage);
           window.removeEventListener('DOMContentLoaded', updateCurrentPage);
         };
-      }, []);
+      }, [storeRef]);
 
     store.setCurrentEditMap = (currentMap, currentPage) =>{
         storeReducer({

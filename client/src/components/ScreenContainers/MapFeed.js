@@ -33,7 +33,7 @@ const MapFeed = () => {
     };
 
     waitForAuthCheck();
-  }, [auth.loggedIn]);
+  }, [auth, navigate, store]);
 
   let mapValues = "";
 

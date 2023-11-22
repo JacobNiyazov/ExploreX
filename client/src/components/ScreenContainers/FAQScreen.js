@@ -29,7 +29,7 @@ const FAQScreen = () => {
     };
 
     waitForAuthCheck();
-  }, [auth.loggedIn]);
+  }, [auth, navigate, store]);
 
   if (loading) {
     return <div>Loading...</div>;

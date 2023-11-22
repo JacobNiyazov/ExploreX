@@ -27,10 +27,9 @@ function EditAccountScreen(){
                     navigate("/login");
                 }   
                 else{
-                    user = auth.user
-                    setUsername(user.username)
-                    setBio(user.bio)
-                    setEmail(user.email)
+                    setUsername(auth.user.username)
+                    setBio(auth.user.bio)
+                    setEmail(auth.user.email)
                     setLoading(false);
                 }
                 
@@ -38,7 +37,7 @@ function EditAccountScreen(){
         };
 
         waitForAuthCheck();
-    }, [auth.loggedIn]);
+    }, [auth, navigate, store]);
 
     // if(!auth.loggedIn){
     //     store.setCurrentPage(store.currentPageType.login)

@@ -1,5 +1,5 @@
 // client/src/App.js
-import React, { useEffect, useContext } from 'react';
+import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import theme from './theme';
@@ -23,7 +23,7 @@ import PublicMapView from './components/ScreenContainers/PublicMapView.js';
 import UniversalModal from './components/UniversalModal'
 
 import { AuthContextProvider } from './auth'
-import { GlobalStoreContextProvider, GlobalStoreContext } from './store'
+import { GlobalStoreContextProvider } from './store'
 
 const MainLayout = styled('div')({
   display: 'flex',
@@ -32,8 +32,6 @@ const MainLayout = styled('div')({
 });
 
 function App() {
-  const {store} = useContext(GlobalStoreContext); // Access the GlobalStoreContext
-
 
   return (
     <BrowserRouter>
@@ -45,7 +43,6 @@ function App() {
               <div style={{flexGrow: 1}}>
                 <UniversalModal/>
                 <Routes>
-                  <Route path="/" element= {<LoginScreen/>} />
                   <Route path="/login/" element= {<LoginScreen/>} />
                   <Route path="/register/" element= {<RegisterScreen/>}/>
                   <Route path="/forgotPassword/" element= {<ForgotPasswordScreen/>}/>
@@ -56,7 +53,7 @@ function App() {
                   <Route path="/editAccount/" element= {<EditAccountScreen/>}/>
                   <Route path="/passwordReset/" element= {<RecoverPasswordScreen/>}/>
                   <Route path="/map/" element= {<PublicMapView/>}/>
-                  <Route path="/*" element= {<Navigate to='/' />} />
+                  <Route path="/*" element= {<Navigate to='/login' />} />
               </Routes>
               </div>
               <Footer />

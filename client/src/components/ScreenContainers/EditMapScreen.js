@@ -31,7 +31,7 @@ const EditScreen = () => {
       };
   
       waitForAuthCheck();
-    }, [auth.loggedIn]);
+    }, [auth, navigate, store]);
     const [colors, setColors] = React.useState({
         Text: '#FFFFFF',
         HeatMap: '#FFFFFF',

@@ -71,7 +71,7 @@ function ProfileScreen(){
       };
   
       waitForAuthCheck();
-    }, [auth.loggedIn]);
+    }, [auth, navigate, store]);
 
     
     const [openImport, setOpenImport] = useState(false);

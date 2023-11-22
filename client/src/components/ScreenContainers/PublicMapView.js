@@ -42,7 +42,7 @@ const PublicMapView = () => {
     };
 
     waitForAuthCheck();
-  }, [auth.loggedIn]);
+  }, [auth, navigate, store]);
 
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
@@ -53,7 +53,7 @@ const PublicMapView = () => {
     store.updateMapReaction(map, likes, dislikes, true, "HELLO")
     console.log(map.reactions.comments)
   };*/
-  if (!store.currentMap) {
+  if (!store.currentMap || loading) {
     return <div>Loading...</div>; // or any loading indicator
   }
   let map = store.currentMap;
