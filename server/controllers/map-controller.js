@@ -1,12 +1,15 @@
 const User = require('../models/user-model')
 const Map = require('../models/map-model')
 const Graphics = require('../models/graphics-model')
+const Convert = require('../map-convert/map-conversion')
+
 
 
 createMap = async (req,res) =>{
     const body = req.body;
     console.log("createMap body: " + JSON.stringify(body));
     console.log("user id: " + req.userId)
+    console.log("graphics: " + JSON.stringify(body.stringGraphics[0]))
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -14,14 +17,79 @@ createMap = async (req,res) =>{
         })
     }
 
+    let geojsonData = {}
+    if(body.fileType == "kml"){
+        geojsonData = Convert.convertKML(body.stringGraphics[0])
+    }
+    else if(body.fileType == "shapefile"){
+        geojsonData = Convert.convertShapeFile(body.stringGraphics[0], body.stringGraphics[1])
+    }
+    else{// check if native file type TODO
+        geojsonData = JSON.parse(body.stringGraphics[0])
+    }
+
+    console.log(geojsonData)
+
+
+    let graphic = {}
+
+    graphic.geojson = geojsonData
+    // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
+    graphic.legend =
+        {
+            hideLegend: false,
+            fillColor: "#FFFFFF",
+            borderColor: "#FFFFFF",
+            borderWidth: 1,
+            title: "Example Title",
+            fields:[
+            {
+                fieldColor:"#FF0000",
+                fieldText:"Field 1"
+            },
+            {
+                fieldColor:"#000000",
+                fieldText:"Field 2"
+            },
+            {
+                fieldColor:"#FFFFFF",
+                fieldText:"Field 3"
+            },
+            ]
+        }
+
+    graphic.typeSpecific =
+        {
+            selectAll: false,
+            size: 0,
+            dotColor: "#000000",
+            color: "#FFFFFF",
+            range:3,
+            spikeColor: "#FFFFFF",
+        }
     
-    const graphics = new Graphics(body.graphics)
+    graphic.ownerUsername = body.ownerUsername
+    
+    const graphics = new Graphics(graphic)
+    
     User.findOne({ _id: req.userId }).then( (user) => {
         console.log("user found: " + JSON.stringify(user));
+        
         graphics
             .save()
             .then(()=>{
-                tempMap = body
+                tempMap = {
+                    title: "Map Example",
+                    ownerUsername: body.ownerUsername,
+                    reactions:{
+                        comments:[],
+                    likes:0,
+                    dislikes:0,
+                    },
+                    isPublic: false,
+                    type: body.mapType,
+                    publishedDate: body.publishedDate,
+                }
                 tempMap.graphics = graphics._id
                 const map = new Map(tempMap);
                 
@@ -44,6 +112,11 @@ createMap = async (req,res) =>{
                             }) 
                     })
                 
+            }).catch((err) => {
+                console.log(err)
+                return res.status(400).json({
+                errorMessage: 'Map Not Created! Incorrect Graphics'
+                })
             });
     }).catch(error => {
         console.log(error)

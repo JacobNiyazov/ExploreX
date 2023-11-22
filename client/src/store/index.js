@@ -283,39 +283,74 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createMap = (mapType) =>{
-        // not sure how map file plays into this but i feel like
-        // it does with the graphics, ask when juan is done driving
-        //self note: i passed map file as a param
-        let title = "New Map";
-        let owner = auth.user.username;
-        let reactions = {
-            comments: [],
-            likes: 0,
-            dislikes: 0
+    store.createMap = async (files, mapType) =>{
+        let fileType = ""
+        let stringGraphics = []
+        const getFileExtension = (filename) => filename.split(".").pop().toLowerCase();
+
+        // Already confirmed extension types, 1 -> kml or json, 2 -> shapefile
+        // We will send the file as text to our backend where all the checking will be done.
+        // This enables us to do easy error checking
+        if(files.length == 1){
+            fileType = getFileExtension(files[0].name);
+            await new Promise((resolve, reject) => {
+                var fr = new FileReader();  
+                fr.onload = (event) => {
+                  resolve(stringGraphics.push(event.target.result))
+                };
+                fr.onerror = reject;
+                fr.readAsText(files[0]);
+            });
         }
-        let isPublic = false;
-        let type = mapType;
-        let publishDate = Date.now();
-        async function createGraphics(){
-            //have to come back to  set graphics properly
-            let graphics = await graphics.createGraphics(mapType, null, owner);
-            if(graphics.data.success){
-                async function createNewMap(){
-                    let response = await maps.createMap(title, owner, reactions, graphics, isPublic, type, publishDate);
-                    if(response.data.success){
-                        storeReducer({
-                            type: GlobalStoreActionType.CREATE_MAP,
-                            payload: {
-                                currentMap: response.data
-                            }
-                        })
+        else{
+            fileType = "shapefile"
+            async function shapeBuffers(){
+                await new Promise((resolve, reject) => {
+                    // Two strings instead of one
+                    var fr = new FileReader();
+                    fr.onload = (event) => {
+                        resolve(stringGraphics.push(event.target.result));
                     }
-                }
-                createNewMap();
+                    if("shp" == getFileExtension(files[0].name)){
+                        fr.readAsArrayBuffer(files[0]);
+                    }
+                    else{
+                        fr.readAsArrayBuffer(files[1]);
+                    }
+                    fr.onerror = reject;
+                })
+                await new Promise((resolve, reject) => {
+                    // Two strings instead of one
+                    var fr = new FileReader();
+                    fr.onload = (event) => {
+                        resolve(stringGraphics.push(event.target.result));
+                    }
+                    if("shp" == getFileExtension(files[0].name)){
+                        fr.readAsArrayBuffer(files[1]);
+                    }
+                    else{
+                        fr.readAsArrayBuffer(files[0]);
+                    }
+                    fr.onerror = reject;
+                })
             }
+            await shapeBuffers()
         }
-        createGraphics();
+
+        // We will instantiate data in the backend, so only fields that already have values are sent through
+        let ownerUsername = auth.user.username;
+        let publishDate = Date.now();
+        console.log(stringGraphics)
+        // No need to create graphics create map takes care of this
+        let response = await maps.createMap(ownerUsername, stringGraphics, mapType, publishDate, fileType);
+        if(response.data.success){
+            storeReducer({
+                type: GlobalStoreActionType.CREATE_MAP,
+                payload: {
+                    currentMap: response.data
+                }
+            })
+        }
     }
 
     store.displayModal = (modalMessage, confirmButton=true) => {

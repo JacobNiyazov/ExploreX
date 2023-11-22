@@ -13,7 +13,7 @@ import GlobalStoreContext from '../store';
 
 function ImportFileModal({open,onClose}){
     const { store } = useContext(GlobalStoreContext);
-    const [fileNames, setFileNames] = useState([]);
+    const [files, setFiles] = useState([]);
     const [fileType, setFileType] = useState('');
     const style = {
         position: 'absolute',
@@ -54,28 +54,28 @@ function ImportFileModal({open,onClose}){
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
     }
-    function handleLoadNewMap(){
-        //have to make a create new map here, passes the file (?)
-        // how does choosing the 
-        //let newMap = store.createMap(fileType);
-        //store.setCurrentEditMap(newMap,"EditMapScreen");
+    function handleLoadNewMap(mapType){
+        store.createMap(files, mapType)
+            .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
+            .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
     }
+        //
     function handleFileSelect(event){
-        let selectedFiles = event.target.files;
-        console.log(selectedFiles)
+        const selectedFiles = event.target.files
         if(selectedFiles.length === 1){
+            setFiles([selectedFiles[0]]);
             // check extension for json or kml
             // set the file name if its either
             const fileName = selectedFiles[0].name;
             const extension = getFileExtension(fileName);
+
+            
             // i have to pass the map type to mapEdit
             // also have to handle setting the page to editMapScreen
             if (extension === 'json') {
-                setFileNames([fileName]);
                 setFileType("geojson");
             }
             else if (extension === 'kml') {
-                setFileNames([fileName]);
                 setFileType("kml");
             }
             else {
@@ -83,6 +83,7 @@ function ImportFileModal({open,onClose}){
             }
         }
         else if (selectedFiles.length === 2) {
+            setFiles([selectedFiles[0], selectedFiles[1]]);
             // they must check to see if they are 
             //shp and dbf in here and if they are then display the file names
             const newFileNames = Array.from(selectedFiles).map(file => file.name);
@@ -92,7 +93,6 @@ function ImportFileModal({open,onClose}){
             const extension2 = getFileExtension(file2);
             if((extension1 === "shp" && extension2 === "dbf") || 
             (extension1 === "dbf" && extension2 === "shp")){
-                setFileNames([...fileNames, ...newFileNames]);
                 setFileType("shapefile");
             }
             else{
@@ -138,11 +138,11 @@ function ImportFileModal({open,onClose}){
                                     upload
                                     <VisuallyHiddenInput type="file" onChange={handleFileSelect} multiple/>
                                 </StyledImportButton>
-                                {fileNames.length > 0 && (
+                                {files.length > 0 && (
                                     <div>
-                                        {fileNames.map((fileName, index) => (
+                                        {files.map((files, index) => (
                                             <Typography key={index} sx={{color: "white" }}>
-                                                {fileName}
+                                                {files.name}
                                             </Typography>
                                         ))}
                                     </div>
@@ -169,7 +169,7 @@ function ImportFileModal({open,onClose}){
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={handleLoadNewMap}>
+                        <StyledButton onClick={() => handleLoadNewMap("Heat Map")}>
                             Create Map
                         </StyledButton>
                     </Grid>

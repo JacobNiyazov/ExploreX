@@ -78,6 +78,7 @@ const MapEditInner = ({mapType}) =>{
         .then((text) => {
             const DOMParser = require("xmldom").DOMParser;
             let geojson = togeojson.kml(new DOMParser().parseFromString(text, "text/xml"));
+            console.log(geojson)
             loadMap(geojson);
         })
     }
@@ -104,7 +105,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const test = "shapefile"
+    const test = "kml"
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 

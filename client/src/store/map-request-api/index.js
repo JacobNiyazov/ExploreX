@@ -4,16 +4,16 @@ const maps = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL + '/api',
 })
 
-export const createMap = (title, ownerUsername, reactions, graphics, isPublic, type, publishDate) => {
+export const createMap = (ownerUsername, stringGraphics, mapType, publishDate, fileType) => {
+    console.log(stringGraphics)
     return maps.post(`/map/`, {
         // SPECIFY THE PAYLOAD
-        title:title,
+        //owner, stringGraphics, type, publishDate, fileType
         ownerUsername: ownerUsername, 
-        reactions: reactions,
-        graphics: graphics,
-        isPublic: isPublic, 
-        type: type, 
-        publishDate: publishDate
+        stringGraphics: stringGraphics,
+        mapType: mapType, 
+        publishDate: publishDate,
+        fileType: fileType
     })
 }
 export const updateMapById = (id, map) =>{
