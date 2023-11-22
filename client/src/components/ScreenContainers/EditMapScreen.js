@@ -1,17 +1,20 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import Grid from '@mui/material/Grid';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
+import { GlobalStoreContext } from '../../store';
 
 
 const EditScreen = () => {
+    const { store } = useContext(GlobalStoreContext);
+    console.log("current map in edit screen: ", store.currentMap)
     const [colors, setColors] = React.useState({
-        Text: '#FFFFFF',
+        Text: store.currentMap.graphics.typeSpecific.color,
         HeatMap: '#FFFFFF',
-        LegendFill: '#FFFFFF',
-        LegendBorder: '#FFFFFF',
-        RegionFill: '#FFFFFF',
-        RegionBorder: '#FFFFFF',
+        LegendFill: store.currentMap.graphics.legend.fillColor,
+        LegendBorder: store.currentMap.graphics.legend.borderColor,
+        RegionFill: store.currentMap.graphics.region.fillColor,
+        RegionBorder: store.currentMap.graphics.region.borderColor,
         DotMap: '#FFFFFF',
         SpikeMap: '#FFFFFF',
         VoronoiMap: '#FFFFFF'
@@ -44,8 +47,8 @@ const EditScreen = () => {
     const [font, setFont] = React.useState("Nova Square")
 
     const [size, setSize] = React.useState({
-        Text: 12,
-        Region: 12,
+        Text: store.currentMap.graphics.text.size,
+        Region: store.currentMap.graphics.region.size,
         DotMap: 12,
         SpikeMap: 12,
         VoronoiMap: 12
@@ -54,8 +57,8 @@ const EditScreen = () => {
     const [range, setRange] = React.useState(5)
 
     const [borderWidth, setBorderWidth] = React.useState({
-        Region: 1,
-        Legend: 1,
+        Region: store.currentMap.graphics.region.borderWidth,
+        Legend: store.currentMap.graphics.legend.borderWidth,
     })
 
     const [selectAll, setSelectAll] = React.useState({
