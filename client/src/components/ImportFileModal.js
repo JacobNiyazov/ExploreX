@@ -48,6 +48,12 @@ function ImportFileModal({open,onClose}){
     function getFileExtension(filename){
         return filename.split(".").pop().toLowerCase();
     }
+    function alertModal(header, paragraph){
+        store.displayModal(<div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
+          </div>, false);
+    }
     function handleLoadNewMap(){
         //have to make a create new map here, passes the file (?)
         // how does choosing the 
@@ -73,10 +79,7 @@ function ImportFileModal({open,onClose}){
                 setFileType("kml");
             }
             else {
-                store.displayModal(<div>
-                    <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-                    <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
-                  </div>, false);
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
             }
         }
         else if (selectedFiles.length === 2) {
@@ -93,17 +96,11 @@ function ImportFileModal({open,onClose}){
                 setFileType("shapefile");
             }
             else{
-                store.displayModal(<div>
-                    <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-                    <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
-                  </div>, false);
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
             }
         }
         else{
-            store.displayModal(<div>
-                <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-                <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>Invalid file format! Please select one of the accepted types.</p>
-              </div>, false);
+            alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
         }
     }
     return (     
