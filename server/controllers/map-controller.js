@@ -100,8 +100,9 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                tempMap.graphics = graphic
                                 return res.status(201).json({
-                                    map: map
+                                    map: tempMap
                                 })
                             })
                             .catch(error => {

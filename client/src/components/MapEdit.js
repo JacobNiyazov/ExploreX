@@ -1,4 +1,4 @@
-import { useState, React} from "react";
+import { useState, React, useContext} from "react";
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
@@ -16,10 +16,11 @@ import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
 import * as togeojson from "@tmcw/togeojson"
+import GlobalStoreContext from '../store/index.js';
 var shapefile = require("shapefile");
 
 const MapEditInner = ({mapType}) =>{
-
+    const { store } = useContext(GlobalStoreContext);
     function getRandomShade(){
         // Generate random values for the red and green components
         const red = Math.floor(Math.random() * 256); // Random red value (0-255)
@@ -72,7 +73,7 @@ const MapEditInner = ({mapType}) =>{
 
     // Function to check the file extension and determine the file type
         
-    if (mapType === 'kml'){
+    /*if (mapType === 'kml'){
         fetch(kmlFile)
         .then((res) => res.text())
         .then((text) => {
@@ -92,7 +93,8 @@ const MapEditInner = ({mapType}) =>{
         }
         loadShapefile()
     }
-    
+    */
+   loadMap(store.currentMap.graphics.geojson);
     return null;
 }
 

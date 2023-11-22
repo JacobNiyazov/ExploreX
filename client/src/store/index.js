@@ -179,6 +179,16 @@ function GlobalStoreContextProvider(props) {
                     currentMaps: store.currentMaps,
                 });
             }
+            case GlobalStoreActionType.CREATE_MAP:{
+                console.log("create map in store: ", payload.currentMap)
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
             default: {
                 return setStore({
                     currentPage: store.currentPage,
@@ -343,11 +353,14 @@ function GlobalStoreContextProvider(props) {
         console.log(stringGraphics)
         // No need to create graphics create map takes care of this
         let response = await maps.createMap(ownerUsername, stringGraphics, mapType, publishDate, fileType);
-        if(response.data.success){
+        console.log("RESPONSE: ",response.data)
+        if(response.data){
+            console.log("map in store: ",response.data.map)
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
                 payload: {
-                    currentMap: response.data
+                    currentPage: "EditMapScreen",
+                    currentMap: response.data.map
                 }
             })
         }

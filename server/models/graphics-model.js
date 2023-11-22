@@ -12,7 +12,7 @@ const GraphicsSchema = new Schema(
                     coordinates:{type: Object, required: true},
                 },
                 properties: {type: Object, required: true},
-                id: {type: Number}
+                id: {type: Schema.Types.Mixed}
             }],
         },
         legend:{

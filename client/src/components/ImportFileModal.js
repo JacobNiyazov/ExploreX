@@ -54,10 +54,12 @@ function ImportFileModal({open,onClose}){
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
     }
-    function handleLoadNewMap(mapType){
-        store.createMap(files, mapType)
-            .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
-            .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+    function handleCreateNewMap(mapType){
+        store.createMap(files, mapType);
+
+        //console.log("this is in load new map: ",store.currentMap);
+            //.then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
+            //.catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
     }
         //
     function handleFileSelect(event){
@@ -169,7 +171,7 @@ function ImportFileModal({open,onClose}){
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={() => handleLoadNewMap("Heat Map")}>
+                        <StyledButton onClick={() => handleCreateNewMap("Heat Map")}>
                             Create Map
                         </StyledButton>
                     </Grid>
