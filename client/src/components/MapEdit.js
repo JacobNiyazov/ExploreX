@@ -5,6 +5,8 @@ import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import geojson from '../ExampleData/poland.geojson.json'
 import kmlFile from "../ExampleData/example1.kml"
+import shp from '../ExampleData/USA_adm0.shp'
+import dbf from "../ExampleData/USA_adm0.dbf"
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -14,6 +16,7 @@ import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
 import * as togeojson from "@tmcw/togeojson"
+var shapefile = require("shapefile");
 
 const MapEditInner = ({mapType}) =>{
 
@@ -82,7 +85,11 @@ const MapEditInner = ({mapType}) =>{
         loadMap(geojson);
     }
     else if(mapType === 'shapefile'){
-        
+        const loadShapefile = async () => {
+            let geojson = await shapefile.read(shp, dbf);
+            loadMap(geojson)
+        }
+        loadShapefile()
     }
     
     return null;
@@ -97,7 +104,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const test = "geojson"
+    const test = "shapefile"
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
