@@ -283,66 +283,12 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createMap = async (files, mapType) =>{
-        let fileType = ""
-        let stringGraphics = []
-        const getFileExtension = (filename) => filename.split(".").pop().toLowerCase();
-
-        // Already confirmed extension types, 1 -> kml or json, 2 -> shapefile
-        // We will send the file as text to our backend where all the checking will be done.
-        // This enables us to do easy error checking
-        if(files.length == 1){
-            fileType = getFileExtension(files[0].name);
-            await new Promise((resolve, reject) => {
-                var fr = new FileReader();  
-                fr.onload = (event) => {
-                  resolve(stringGraphics.push(event.target.result))
-                };
-                fr.onerror = reject;
-                fr.readAsText(files[0]);
-            });
-        }
-        else{
-            fileType = "shapefile"
-            async function shapeBuffers(){
-                await new Promise((resolve, reject) => {
-                    // Two strings instead of one
-                    var fr = new FileReader();
-                    fr.onload = (event) => {
-                        resolve(stringGraphics.push(event.target.result));
-                    }
-                    if("shp" == getFileExtension(files[0].name)){
-                        fr.readAsArrayBuffer(files[0]);
-                    }
-                    else{
-                        fr.readAsArrayBuffer(files[1]);
-                    }
-                    fr.onerror = reject;
-                })
-                await new Promise((resolve, reject) => {
-                    // Two strings instead of one
-                    var fr = new FileReader();
-                    fr.onload = (event) => {
-                        resolve(stringGraphics.push(event.target.result));
-                    }
-                    if("shp" == getFileExtension(files[0].name)){
-                        fr.readAsArrayBuffer(files[1]);
-                    }
-                    else{
-                        fr.readAsArrayBuffer(files[0]);
-                    }
-                    fr.onerror = reject;
-                })
-            }
-            await shapeBuffers()
-        }
-
+    store.createMap = async (files, mapType, fileType) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
         let ownerUsername = auth.user.username;
         let publishDate = Date.now();
-        console.log(stringGraphics)
         // No need to create graphics create map takes care of this
-        let response = await maps.createMap(ownerUsername, stringGraphics, mapType, publishDate, fileType);
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType);
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
@@ -524,8 +470,8 @@ function GlobalStoreContextProvider(props) {
     }}>
         {props.children}
     </GlobalStoreContext.Provider>
-);
-}
+)};
+
 
 export default GlobalStoreContext;
 export { GlobalStoreContextProvider };

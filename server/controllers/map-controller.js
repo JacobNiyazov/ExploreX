@@ -2,38 +2,44 @@ const User = require('../models/user-model')
 const Map = require('../models/map-model')
 const Graphics = require('../models/graphics-model')
 const Convert = require('../map-convert/map-conversion')
-
+var zlib = require('zlib');
 
 
 createMap = async (req,res) =>{
-    const body = req.body;
-    console.log("createMap body: " + JSON.stringify(body));
+    const body = req.query;
     console.log("user id: " + req.userId)
-    console.log("graphics: " + JSON.stringify(body.stringGraphics[0]))
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a Map',
+            errorMessage: 'You must provide a Map File',
         })
     }
 
+    console.log(body)
     let geojsonData = {}
     if(body.fileType == "kml"){
-        geojsonData = Convert.convertKML(body.stringGraphics[0])
+        geojsonData = Convert.convertKML(req.files[0])
     }
     else if(body.fileType == "shapefile"){
-        geojsonData = Convert.convertShapeFile(body.stringGraphics[0], body.stringGraphics[1])
+        geojsonData = await Convert.convertShapeFile(req.files[1], req.files[0])
     }
     else{// check if native file type TODO
-        geojsonData = JSON.parse(body.stringGraphics[0])
+        geojsonData = Convert.convertJSON(req.files[0])
     }
 
-    console.log(geojsonData)
-
+    if(!Convert.checkGeoJSON(geojsonData)){
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+        })
+    }
 
     let graphic = {}
 
-    graphic.geojson = geojsonData
+    var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
+    var deflated= zlib.deflateSync(input);
+
+    graphic.geojson = deflated
     // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
     graphic.legend =
         {
@@ -69,6 +75,8 @@ createMap = async (req,res) =>{
         }
     
     graphic.ownerUsername = body.ownerUsername
+
+    console.log(graphic)
     
     const graphics = new Graphics(graphic)
     
@@ -100,8 +108,9 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                tempMap.graphics = graphic
                                 return res.status(201).json({
-                                    map: map
+                                    map: tempMap
                                 })
                             })
                             .catch(error => {
@@ -115,7 +124,7 @@ createMap = async (req,res) =>{
             }).catch((err) => {
                 console.log(err)
                 return res.status(400).json({
-                errorMessage: 'Map Not Created! Incorrect Graphics'
+                errorMessage: 'Map Not Created. File Size too big.'
                 })
             });
     }).catch(error => {
@@ -167,6 +176,7 @@ getMapById = async (req, res) => {
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+            graphics.geojson = JSON.parse(zlib.inflateSync(graphics.geojson).toString("utf-8"));
             map.graphics = graphics;
             console.log("correct user!");
             return res.status(200).json({ success: true, map: map })

@@ -3,18 +3,7 @@ const Schema = mongoose.Schema
 
 const GraphicsSchema = new Schema(
     {
-        geojson: {
-            type: {type:String, required: true},
-            features: [{
-                type: {type: String, required: true},
-                geometry: {
-                    type: {type: String, required: true},
-                    coordinates:{type: Object, required: true},
-                },
-                properties: {type: Object, required: true},
-                id: {type: Number}
-            }],
-        },
+        geojson: {type:String, required: true},
         legend:{
             hideLegend: {type: Boolean, required: true},
             fillColor: {type: String, required: true},

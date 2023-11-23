@@ -55,7 +55,7 @@ function ImportFileModal({open,onClose}){
           </div>, false);
     }
     function handleLoadNewMap(mapType){
-        store.createMap(files, mapType)
+        store.createMap(files, mapType, fileType)
             .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
             .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
     }
@@ -63,7 +63,9 @@ function ImportFileModal({open,onClose}){
     function handleFileSelect(event){
         const selectedFiles = event.target.files
         if(selectedFiles.length === 1){
-            setFiles([selectedFiles[0]]);
+            const formData = new FormData();
+            formData.append('file', selectedFiles[0]);
+            setFiles(formData)
             // check extension for json or kml
             // set the file name if its either
             const fileName = selectedFiles[0].name;
@@ -83,7 +85,11 @@ function ImportFileModal({open,onClose}){
             }
         }
         else if (selectedFiles.length === 2) {
-            setFiles([selectedFiles[0], selectedFiles[1]]);
+            const formData = new FormData();
+            formData.append('file', selectedFiles[0]);
+            formData.append('file', selectedFiles[1]);
+            console.log(formData)
+            setFiles(formData);
             // they must check to see if they are 
             //shp and dbf in here and if they are then display the file names
             const newFileNames = Array.from(selectedFiles).map(file => file.name);
