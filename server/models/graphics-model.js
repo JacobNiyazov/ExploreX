@@ -23,6 +23,17 @@ const GraphicsSchema = new Schema(
             range:{type: Number, required: true},
             spikeColor: {type: String, required: true},
         },
+        region:{
+            fillColor: {type: String, required: true},
+            borderColor: {type: String, required:true},
+            borderWidth: {type: Number, required:true},
+            size: {type: Number, required: true},
+        },
+        text:{
+            color: {type: String, required: true},
+            size: {type: Number, required: true},
+            font: {type: String, required: true}
+        },
         ownerUsername:{type: String, required: true},
     }
 )

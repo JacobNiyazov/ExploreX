@@ -73,7 +73,17 @@ createMap = async (req,res) =>{
             range:3,
             spikeColor: "#FFFFFF",
         }
-    
+    graphic.region = {
+            fillColor: "#FFFFFF",
+            borderColor: "#FFFFFF",
+            borderWidth: 1,
+            size: 12
+        }
+    graphic.text = {
+            color: "#FFFFFF",
+            font: "Nova Square",
+            size: 12
+        }
     graphic.ownerUsername = body.ownerUsername
 
     console.log(graphic)

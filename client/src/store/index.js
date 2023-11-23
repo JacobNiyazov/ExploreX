@@ -179,6 +179,16 @@ function GlobalStoreContextProvider(props) {
                     currentMaps: store.currentMaps,
                 });
             }
+            case GlobalStoreActionType.CREATE_MAP:{
+                console.log("create map in store: ", payload.currentMap)
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
             default: {
                 return setStore({
                     currentPage: store.currentPage,
@@ -293,7 +303,8 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
                 payload: {
-                    currentMap: response.data
+                    currentPage: "EditMapScreen",
+                    currentMap: response.data.map
                 }
             })
         }

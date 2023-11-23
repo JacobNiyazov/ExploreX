@@ -15,6 +15,7 @@ function ImportFileModal({open,onClose}){
     const { store } = useContext(GlobalStoreContext);
     const [files, setFiles] = useState([]);
     const [fileType, setFileType] = useState('');
+    const [mapType, setMapType] = useState('');
     const style = {
         position: 'absolute',
         top: '50%',
@@ -55,9 +56,17 @@ function ImportFileModal({open,onClose}){
           </div>, false);
     }
     function handleLoadNewMap(mapType){
-        store.createMap(files, mapType, fileType)
-            .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
-            .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+        if(files.length === 0){
+            alertModal("Try Again", "There were no files uploaded.");
+        }
+        else if(mapType === ""){
+            alertModal("Try Again", "There were no map type set.");
+        }
+        else{
+            store.createMap(files, mapType)
+                .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+        }
     }
         //
     function handleFileSelect(event){
@@ -165,17 +174,19 @@ function ImportFileModal({open,onClose}){
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="Heat"
                                 name="radio-buttons-group"
+                                value = {mapType}
+                                onChange = {(e) => setMapType(e.target.value)}
                             >
-                                <FormControlLabel sx = {{color:"white"}} value = "Heat" control={<StyledRadio/>} label="Heat Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Dot"control={<StyledRadio/>} label="Dot Distribution Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth"control={<StyledRadio/>} label="Chloropleth Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi" control={<StyledRadio/>} label="Voronoi Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Spike" control={<StyledRadio/>} label="Spike Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth Map"control={<StyledRadio/>} label="Chloropleth Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi Map" control={<StyledRadio/>} label="Voronoi Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Spike Map" control={<StyledRadio/>} label="Spike Map" />
                             </RadioGroup>
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={() => handleLoadNewMap("Heat Map")}>
+                        <StyledButton onClick={() => handleCreateNewMap(mapType)}>
                             Create Map
                         </StyledButton>
                     </Grid>
