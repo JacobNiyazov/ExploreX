@@ -12,7 +12,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import GlobalStoreContext from '../store';
 import { useNavigate } from 'react-router-dom';
 
-function ImportFileModal({open,onClose}){
+function ImportFileModal({open,onClose,openSelectPropModal}){
     const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
     const [files, setFiles] = useState([]);
@@ -23,7 +23,7 @@ function ImportFileModal({open,onClose}){
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 600,
+        width: 700,
         bgcolor: '#242526',
         border: '2px solid #000',
         boxShadow: 24,
@@ -48,6 +48,38 @@ function ImportFileModal({open,onClose}){
         whiteSpace: 'nowrap',
         width: 1,
       });
+      
+    const fileTypesStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '30px',
+        color: 'white',
+        backgroundColor: 'rgba(255, 118, 214, 0.8)',
+        fontSize: '1.2rem',
+        border: '2px dashed black',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        margin: '20px 0',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 118, 214, 0.7)',
+        },
+        width: '100%',
+        maxWidth: '500px',
+        boxSizing: 'border-box',
+    };
+    const uploadIconStyle = {
+        marginRight: '10px',
+      };
+    const headerTextStyle = {
+        color: 'white',
+        marginBottom: '10px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        fontSize: '1.25rem',
+      };
     function getFileExtension(filename){
         return filename.split(".").pop().toLowerCase();
     }
@@ -70,9 +102,22 @@ function ImportFileModal({open,onClose}){
             navigate("/editMap");
         }
     }
+    const handleNextPage = (event, mapType) => {
+        if(files.length === 0){
+            alertModal("Try Again", "There were no files uploaded.");
+        }
+        else if(mapType === ""){
+            alertModal("Try Again", "There were no map type set.");
+        }
+        else{
+            onClose();
+            openSelectPropModal();
+        }
+    }
+
         //
     function handleFileSelect(event){
-        const selectedFiles = event.target.files
+        const selectedFiles = event.target.files;
         if(selectedFiles.length === 1){
             const formData = new FormData();
             formData.append('file', selectedFiles[0]);
@@ -130,47 +175,35 @@ function ImportFileModal({open,onClose}){
         >
           <Box sx={style}>
           <Grid container spacing = {2}>
-                    <Grid item xs = {5}>
-                        <DescriptionText id="modal-modal-title" variant="h6" component="h2">
-                            Import a vector file below!
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            Accepted files:
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - Shapefile/DBF
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - KML
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - GeoJSON
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - Native File Type
-                        </DescriptionText>
-                        <Grid container spacing={2}>
-                            <Grid item xs = {12}>
-                                <StyledImportButton component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                                    upload
-                                    <VisuallyHiddenInput type="file" onChange={handleFileSelect} multiple/>
-                                </StyledImportButton>
-                                {files.length > 0 && (
-                                    <div>
-                                        {files.map((files, index) => (
-                                            <Typography key={index} sx={{color: "white" }}>
-                                                {files.name}
-                                            </Typography>
-                                        ))}
-                                    </div>
-                                )}
-                            </Grid>
-                        </Grid>
+                    <Grid item xs = {6}>
+                        {/* File upload section */}
+                        <Typography variant="h6" component="h2" sx={headerTextStyle}>
+                        Import a vector file below!
+                        </Typography>
+                        {/* File types label */}
+                        <Box sx={fileTypesStyle} component="label">
+                        <CloudUploadIcon sx={uploadIconStyle} /> {/* Upload icon */}
+                        Click to upload
+                        <Typography variant="body2" component="div" sx={{ marginTop: '10px' }}>
+                        .JSON, .SHP/.DBF, .KML
+                        </Typography>
+                        <VisuallyHiddenInput accept=".json,.shp,.dbf,.kml" type="file" onChange={handleFileSelect} multiple />
+                        </Box>
+                        {/* Display selected files */}
+                        {files.length > 0 && (
+                        <Box sx={{ color: 'white' }}>
+                            {files.map((file, index) => (
+                            <Typography key={index}>
+                                {file.name}
+                            </Typography>
+                            ))}
+                        </Box>
+                        )}
                     </Grid>
                     <Grid item xs = {1} sx = {line}></Grid>
-                    <Grid item xs = {5}>
+                    <Grid item xs = {4}>
                         <FormControl>
-                        <StyledFormLabel id="demo-radio-buttons-group-label" >Select a type of map:
+                        <StyledFormLabel id="demo-radio-buttons-group-label" >Select a map type:
                         </StyledFormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
@@ -188,8 +221,8 @@ function ImportFileModal({open,onClose}){
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={() => handleCreateNewMap(mapType)}>
-                            Create Map
+                        <StyledButton onClick={() => handleNextPage(mapType)}>
+                            Next
                         </StyledButton>
                     </Grid>
                 </Grid>

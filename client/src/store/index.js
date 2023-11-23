@@ -243,7 +243,7 @@ function GlobalStoreContextProvider(props) {
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("655adce3a7d58f312f06073b")
+                    let response = await maps.getMapById("655e887194bac3b4b0f94984")
                     if(response.data.success){
                         console.log("response: ", response.data)
                         storeReducer({
@@ -336,7 +336,7 @@ function GlobalStoreContextProvider(props) {
         if(dict[pageURL] === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("655adce3a7d58f312f06073b")
+                    let response = await maps.getMapById("655e887194bac3b4b0f94984")
                     if(response.data.success){
                         console.log("response: ", response.data)
                         storeReducer({
@@ -530,7 +530,7 @@ function GlobalStoreContextProvider(props) {
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
         //let currentMap = map._id;
         //make the current map id a static value
-        let currentMap = "655adce3a7d58f312f06073b";
+        let currentMap = "655e887194bac3b4b0f94984";
         let author = auth.user.username;
         //console.log("curr and author: ", currentMap, author)
         async function reactToMap(){

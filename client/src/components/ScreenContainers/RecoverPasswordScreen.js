@@ -31,7 +31,7 @@ const RecoverPasswordScreen = () => {
             await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
             waitForAuthCheck(); // Re-check status
         } else {
-            if(auth.loggedIn){
+            if(auth.loggedIn && auth.user !== null){
                 store.setCurrentPage(store.currentPageType.mapFeed)
                 navigate("/feed");
             }   

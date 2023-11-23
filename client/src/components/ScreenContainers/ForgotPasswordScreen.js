@@ -28,7 +28,7 @@ const ForgotPasswordScreen = () => {
             await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
             waitForAuthCheck(); // Re-check status
         } else {
-            if(auth.loggedIn){
+            if(auth.loggedIn && auth.user !== null){
                 store.setCurrentPage(store.currentPageType.mapFeed)
                 navigate("/feed");
             }   
@@ -46,13 +46,12 @@ const ForgotPasswordScreen = () => {
   const handleRecover = (e) => {
     auth.recoverPassword(email).then( 
       (val) => {
-        store.setCurrentPage(store.currentPageType.login);
         navigate("/login");
         
-        store.displayModal(<div>
+        store.setModal(<div>
           <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Woosh...</h4>
           <p style={{ margin: '5px 0', fontSize: '1rem' }}>Please check your email for a password recovery link.</p>
-        </div>, false);
+        </div>, store.currentPageType.login, false);
       })
     .catch(
       (error) => store.displayModal(<div>

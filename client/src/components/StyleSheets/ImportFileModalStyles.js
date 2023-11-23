@@ -31,7 +31,7 @@ export const DescriptionText = styled(Typography)({
 })
 export const StyledFormLabel = styled(FormLabel)({
     color:"white",
-    '&.Mui-focused': {color: "pink",}
+    '&.Mui-focused': {color: "white",}
 })
 export const StyledRadio = styled(Radio)({
     color: "white",

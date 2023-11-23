@@ -14,6 +14,7 @@ import { GlobalStoreContext } from '../../store';
 import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import SelectPropModal from '../SelectPropModal';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -77,7 +78,9 @@ function ProfileScreen(){
     const [openImport, setOpenImport] = useState(false);
     const handleOpenImport = () => setOpenImport(true);
     const handleCloseImport = () => setOpenImport(false);
-
+    const [openSelectPropModal, setOpenSelectPropModal] = useState(false);
+    const handleOpenSelectPropModal = () => setOpenSelectPropModal(true);
+    const handleCloseSelectPropModal = () => setOpenSelectPropModal(false);
     /*const [openUpload, setOpenUpload] = useState(false);
     const handleOpenUpload = () => setOpenUpload(true);
     const handleCloseUpload = () => setOpenUpload(false);
@@ -114,7 +117,8 @@ function ProfileScreen(){
                 onClick = {handleOpenImport}>
                   <AddIcon></AddIcon>
                 </StyledButton>
-                <ImportFileModal open={openImport} onClose={handleCloseImport}/>
+                <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}/>
+                <SelectPropModal open={openSelectPropModal} onClose={handleCloseSelectPropModal}/>
             </Grid>
             <Grid item xs = {12}>
                 <StyledTypography2

@@ -31,7 +31,7 @@ const RegisterScreen = () => {
             await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
             waitForAuthCheck(); // Re-check status
         } else {
-            if(auth.loggedIn){
+            if(auth.loggedIn && auth.user !== null){
                 store.setCurrentPage(store.currentPageType.mapFeed)
                 navigate("/feed");
             }   
@@ -51,13 +51,12 @@ const RegisterScreen = () => {
     //alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
     .then((val) => {
-      store.setCurrentPage(store.currentPageType.mapFeed);
       navigate("/feed");
 
-      store.displayModal(<div>
+      store.setModal(<div>
         <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
         <p style={{ margin: '5px 0', fontSize: '1rem' }}>Not sure where to get started? Check out the FAQ found in the profile menu!</p>
-      </div>, false);
+      </div>, store.currentPageType.mapFeed, false);
     })
     .catch(
       (error) => {
