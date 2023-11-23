@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
@@ -17,12 +17,32 @@ const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
-  // if (store.currentPageType != store.currentPageType.forgotPassScreen){
-  //   store.setCurrentPage(store.currentPageType.forgotPassScreen);
-  // }
 
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(auth.loggedIn){
+                store.setCurrentPage(store.currentPageType.mapFeed)
+                navigate("/feed");
+            }   
+            setLoading(false);
+            
+        }
+    };
 
+    waitForAuthCheck();
+  }, [auth, navigate, store]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   const handleRecover = (e) => {
     auth.recoverPassword(email).then( 
       (val) => {

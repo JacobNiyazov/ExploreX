@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
@@ -20,13 +20,32 @@ const RegisterScreen = () => {
 
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
-  // store.setCurrentPage(store.currentPageType.registerScreen)
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(auth.loggedIn){
+                store.setCurrentPage(store.currentPageType.mapFeed)
+                navigate("/feed");
+            }   
+            setLoading(false);
+            
+        }
+    };
 
+    waitForAuthCheck();
+  }, [auth, navigate, store]);
 
-  // store.setCurrentPage(store.currentPageType.register)
-
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   const handleRegister = (e) => {
     e.preventDefault();
     //alert(email + " " + username  + " " + password + " " + confirmPassword)
