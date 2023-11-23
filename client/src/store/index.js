@@ -16,7 +16,8 @@ export const GlobalStoreActionType = {
    CLOSE_MODAL: "CLOSE_MODAL",
    SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP",
    DELETE_MAP: "DELETE_MAP",
-   UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION"
+   UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
+   CREATE_MAP: "CREATE_MAP"
 }
 
 let exampleMaps = {
@@ -121,6 +122,7 @@ function GlobalStoreContextProvider(props) {
 
     const storeReducer = (action) => {
         const { type, payload } = action;
+        console.log(type)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -185,6 +187,16 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
                 return setStore({
                     currentPage: store.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.CREATE_MAP:{
+                console.log("create map in store: ", payload.currentMap)
+                return setStore({
+                    currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
                     currentMap: payload.currentMap,
@@ -385,6 +397,24 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
+    store.createMap = async (files, mapType, fileType) =>{
+        // We will instantiate data in the backend, so only fields that already have values are sent through
+        let ownerUsername = auth.user.username;
+        let publishDate = Date.now();
+        // No need to create graphics create map takes care of this
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType);
+        console.log(response.data)
+        if(response.data.success){
+            storeReducer({
+                type: GlobalStoreActionType.CREATE_MAP,
+                payload: {
+                    currentPage: "EditMapScreen",
+                    currentMap: response.data.map
+                }
+            })
+        }
+    }
+
     store.displayModal = (modalMessage, confirmButton=true) => {
         storeReducer({
                 type: GlobalStoreActionType.DISPLAY_MODAL,
@@ -556,8 +586,8 @@ function GlobalStoreContextProvider(props) {
     }}>
         {props.children}
     </GlobalStoreContext.Provider>
-);
-}
+)};
+
 
 export default GlobalStoreContext;
 export { GlobalStoreContextProvider };

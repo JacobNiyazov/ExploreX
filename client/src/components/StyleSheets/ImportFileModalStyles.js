@@ -8,11 +8,19 @@ export const StyledButton = styled(Button)({
     backgroundColor: "#FF76D6",
     color: "black",
     fontSize: "2vh",
-    marginTop: "3vh",
+    marginTop: "2vh",
     "&:hover": {
         backgroundColor: "#ffd0d7"
     }
 });
+export const StyledImportButton = styled(Button)({
+    backgroundColor:"#FF76D6", 
+    color: "black", 
+    marginTop: "4vh", 
+    "&:hover": {
+        backgroundColor: "#ffd0d7"
+    }  
+})
 export const StyledCloud = styled(CloudUploadIcon)({
     fontSize:"5vh",  
     color:"#FF76D6",

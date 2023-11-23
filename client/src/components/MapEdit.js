@@ -1,10 +1,8 @@
-import { useState, React} from "react";
+import { useState, React, useContext} from "react";
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
-import geojson from '../ExampleData/poland.geojson.json'
-import kmlFile from "../ExampleData/example1.kml"
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -13,9 +11,10 @@ import { Square } from "./StyleSheets/ColorSelectorStyles";
 import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
-import * as togeojson from "@tmcw/togeojson"
+import GlobalStoreContext from '../store/index.js';
 
-const MapEditInner = ({mapType}) =>{
+const MapEditInner = () =>{
+    const { store } = useContext(GlobalStoreContext);
 
     function getRandomShade(){
         // Generate random values for the red and green components
@@ -69,12 +68,13 @@ const MapEditInner = ({mapType}) =>{
 
     // Function to check the file extension and determine the file type
         
-    if (mapType === 'kml'){
+    /*if (mapType === 'kml'){
         fetch(kmlFile)
         .then((res) => res.text())
         .then((text) => {
             const DOMParser = require("xmldom").DOMParser;
             let geojson = togeojson.kml(new DOMParser().parseFromString(text, "text/xml"));
+            console.log(geojson)
             loadMap(geojson);
         })
     }
@@ -82,9 +82,14 @@ const MapEditInner = ({mapType}) =>{
         loadMap(geojson);
     }
     else if(mapType === 'shapefile'){
-        
+        const loadShapefile = async () => {
+            let geojson = await shapefile.read(shp, dbf);
+            loadMap(geojson)
+        }
+        loadShapefile()
     }
-    
+    */
+    loadMap(store.currentMap.graphics.geojson);
     return null;
 }
 
@@ -97,7 +102,7 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const test = "geojson"
+    const test = "kml"
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
@@ -175,7 +180,7 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner mapType={test}/>
+                <MapEditInner />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 <ZoomControl position="bottomleft"/>
                 <ControlGrid>

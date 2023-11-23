@@ -17,7 +17,7 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions));
-app.use(express.json({ extended: true, limit: '50mb' }))
+app.use(express.json({ extended: true, limit: '100mb' }))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 8000
