@@ -37,7 +37,7 @@ createMap = async (req,res) =>{
     let graphic = {}
 
     var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
-    var deflated= zlib.deflateSync(input);
+    var deflated= zlib.deflate(input);
 
     graphic.geojson = deflated
     // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
@@ -106,7 +106,7 @@ createMap = async (req,res) =>{
                     },
                     isPublic: false,
                     type: body.mapType,
-                    publishedDate: body.publishedDate,
+                    publishDate: body.publishedDate,
                 }
                 tempMap.graphics = graphics._id
                 const map = new Map(tempMap);
@@ -118,14 +118,18 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                //Show actual geojson data not ID or zipped
+                                graphic.geojson = geojsonData
                                 tempMap.graphics = graphic
                                 return res.status(201).json({
+                                    success: true,
                                     map: tempMap
                                 })
                             })
                             .catch(error => {
                                 console.log(error)
                                 return res.status(400).json({
+                                    success:false,
                                     errorMessage: 'Map Not Created!'
                                 })
                             }) 
@@ -134,13 +138,15 @@ createMap = async (req,res) =>{
             }).catch((err) => {
                 console.log(err)
                 return res.status(400).json({
-                errorMessage: 'Map Not Created. File Size too big.'
+                    success:false,
+                    errorMessage: 'Map Not Created. File Size too big.'
                 })
             });
     }).catch(error => {
         console.log(error)
         return res.status(400).json({
-            errorMessage: 'Map Not Created!'
+            success:false,
+            errorMessage: 'Authentication Error, please log in again!'
         })
     })
 }
@@ -166,7 +172,7 @@ deleteMap = async (req, res) =>{
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
-                        errorMessage: "authentication error" 
+                        errorMessage: "Authentication Error" 
                     });
                 }
             });
@@ -227,7 +233,7 @@ getUserMapIdPairs = async (req, res) => {
                             reactions: map.reactions,
                             graphics: map.graphics,
                             isPublic: map.isPublic,
-                            publishedDate: map.publishedDate,
+                            publishDate: map.publishDate,
                         };
                         pairs.push(pair);
                     }
@@ -264,7 +270,7 @@ getPublicMapIdPairs = async (req, res) => {
                     reactions: map.reactions,
                     graphics: map.graphics,
                     isPublic: map.isPublic,
-                    publishedDate: map.publishedDate,
+                    publishDate: map.publishDate,
                 };
                 pairs.push(pair);
             }
@@ -303,11 +309,18 @@ updateMapById = async (req, res) => {
                 map
                     .save()
                     .then(() => {
-                        console.log("SUCCESS!!!");
-                        return res.status(200).json({
-                            success: true,
-                            id: map._id,
-                            message: 'Map updated!',
+                        Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+                            graphics = body.map.graphics
+                            graphics
+                                .save()
+                                .then(()=>{
+                                    console.log("SUCCESS!!!");
+                                    return res.status(200).json({
+                                        success: true,
+                                        id: map._id,
+                                        message: 'Map updated!',
+                                    })
+                                })
                         })
                     })
                     .catch(error => {

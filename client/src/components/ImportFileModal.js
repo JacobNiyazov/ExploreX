@@ -55,7 +55,7 @@ function ImportFileModal({open,onClose}){
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
     }
-    function handleLoadNewMap(mapType){
+    function handleCreateNewMap(mapType){
         if(files.length === 0){
             alertModal("Try Again", "There were no files uploaded.");
         }
@@ -63,8 +63,7 @@ function ImportFileModal({open,onClose}){
             alertModal("Try Again", "There were no map type set.");
         }
         else{
-            store.createMap(files, mapType)
-                .then(()=>store.setCurrentEditMap(store.currentMap,"EditMapScreen"))
+            store.createMap(files, mapType, fileType)
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
         }
     }

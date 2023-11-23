@@ -109,6 +109,7 @@ function GlobalStoreContextProvider(props) {
 
     const storeReducer = (action) => {
         const { type, payload } = action;
+        console.log(type)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -299,6 +300,7 @@ function GlobalStoreContextProvider(props) {
         let publishDate = Date.now();
         // No need to create graphics create map takes care of this
         let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType);
+        console.log(response.data)
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
