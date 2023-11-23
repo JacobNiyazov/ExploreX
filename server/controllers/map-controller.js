@@ -37,7 +37,7 @@ createMap = async (req,res) =>{
     let graphic = {}
 
     var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
-    var deflated= zlib.deflate(input);
+    var deflated= zlib.deflateSync(input);
 
     graphic.geojson = deflated
     // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow

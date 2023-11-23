@@ -10,9 +10,11 @@ import { StyledButton, StyledImportButton, DescriptionText, StyledFormLabel, Sty
 import styled from '@emotion/styled';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import GlobalStoreContext from '../store';
+import { useNavigate } from 'react-router-dom';
 
 function ImportFileModal({open,onClose}){
     const { store } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
     const [files, setFiles] = useState([]);
     const [fileType, setFileType] = useState('');
     const [mapType, setMapType] = useState('');
@@ -55,7 +57,7 @@ function ImportFileModal({open,onClose}){
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
     }
-    function handleCreateNewMap(mapType){
+    async function handleCreateNewMap(mapType){
         if(files.length === 0){
             alertModal("Try Again", "There were no files uploaded.");
         }
@@ -63,8 +65,9 @@ function ImportFileModal({open,onClose}){
             alertModal("Try Again", "There were no map type set.");
         }
         else{
-            store.createMap(files, mapType, fileType)
+            await store.createMap(files, mapType, fileType)
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+            navigate("/editMap");
         }
     }
         //

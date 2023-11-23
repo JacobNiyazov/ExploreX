@@ -101,7 +101,7 @@ function GlobalStoreContextProvider(props) {
     "/map" : "PublicMapView",
     "/profile" : "ProfileScreen",
     "/editAccount" : "EditAccountScreen",
-
+    "/editMap": "EditMapScreen"
    }
 
 
@@ -194,7 +194,6 @@ function GlobalStoreContextProvider(props) {
                 });
             }
             case GlobalStoreActionType.CREATE_MAP:{
-                console.log("create map in store: ", payload.currentMap)
                 return setStore({
                     currentPage: payload.currentPage,
                     modalMessage: null,
@@ -408,7 +407,7 @@ function GlobalStoreContextProvider(props) {
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
                 payload: {
-                    currentPage: "EditMapScreen",
+                    currentPage: dict["/editMap"],
                     currentMap: response.data.map
                 }
             })
