@@ -1,13 +1,23 @@
-import {Modal} from '@mui/material';
+import React, { useState, useContext } from 'react';
+import {Modal, Typography} from '@mui/material';
 import {Box} from '@mui/material';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { Button } from '@mui/material';
 import {Grid} from '@mui/material';
-import { StyledButton, StyledCloud, DescriptionText, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
+import { StyledButton, StyledImportButton, DescriptionText, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
+import styled from '@emotion/styled';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import GlobalStoreContext from '../store';
+import { useNavigate } from 'react-router-dom';
 
 function ImportFileModal({open,onClose}){
+    const { store } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
+    const [files, setFiles] = useState([]);
+    const [fileType, setFileType] = useState('');
+    const [mapType, setMapType] = useState('');
     const style = {
         position: 'absolute',
         top: '50%',
@@ -28,6 +38,87 @@ function ImportFileModal({open,onClose}){
         display:"flex", 
         justifyContent:"center", 
         alignItems:"center"
+    }
+    const VisuallyHiddenInput = styled('input')({
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+      });
+    function getFileExtension(filename){
+        return filename.split(".").pop().toLowerCase();
+    }
+    function alertModal(header, paragraph){
+        store.displayModal(<div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
+          </div>, false);
+    }
+    async function handleCreateNewMap(mapType){
+        if(files.length === 0){
+            alertModal("Try Again", "There were no files uploaded.");
+        }
+        else if(mapType === ""){
+            alertModal("Try Again", "There were no map type set.");
+        }
+        else{
+            await store.createMap(files, mapType, fileType)
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+            navigate("/editMap");
+        }
+    }
+        //
+    function handleFileSelect(event){
+        const selectedFiles = event.target.files
+        if(selectedFiles.length === 1){
+            const formData = new FormData();
+            formData.append('file', selectedFiles[0]);
+            setFiles(formData)
+            // check extension for json or kml
+            // set the file name if its either
+            const fileName = selectedFiles[0].name;
+            const extension = getFileExtension(fileName);
+
+            
+            // i have to pass the map type to mapEdit
+            // also have to handle setting the page to editMapScreen
+            if (extension === 'json') {
+                setFileType("geojson");
+            }
+            else if (extension === 'kml') {
+                setFileType("kml");
+            }
+            else {
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+            }
+        }
+        else if (selectedFiles.length === 2) {
+            const formData = new FormData();
+            formData.append('file', selectedFiles[0]);
+            formData.append('file', selectedFiles[1]);
+            console.log(formData)
+            setFiles(formData);
+            // they must check to see if they are 
+            //shp and dbf in here and if they are then display the file names
+            const newFileNames = Array.from(selectedFiles).map(file => file.name);
+            const file1 = newFileNames[0];
+            const file2 = newFileNames[1];
+            const extension1 = getFileExtension(file1);
+            const extension2 = getFileExtension(file2);
+            if((extension1 === "shp" && extension2 === "dbf") || 
+            (extension1 === "dbf" && extension2 === "shp")){
+                setFileType("shapefile");
+            }
+            else{
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+            }
+        }
+        else{
+            alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+        }
     }
     return (     
         <Modal
@@ -59,13 +150,20 @@ function ImportFileModal({open,onClose}){
                             - Native File Type
                         </DescriptionText>
                         <Grid container spacing={2}>
-                            <Grid item xs = {4}>
-                                <Button>
-                                    <StyledCloud></StyledCloud>
-                                </Button>
-                            </Grid>
-                            <Grid item xs = {8}>
-                                <DescriptionText sx= {{ paddingTop: "5vh"}}>name_of_file.json</DescriptionText>
+                            <Grid item xs = {12}>
+                                <StyledImportButton component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                                    upload
+                                    <VisuallyHiddenInput type="file" onChange={handleFileSelect} multiple/>
+                                </StyledImportButton>
+                                {files.length > 0 && (
+                                    <div>
+                                        {files.map((files, index) => (
+                                            <Typography key={index} sx={{color: "white" }}>
+                                                {files.name}
+                                            </Typography>
+                                        ))}
+                                    </div>
+                                )}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -78,17 +176,19 @@ function ImportFileModal({open,onClose}){
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="Heat"
                                 name="radio-buttons-group"
+                                value = {mapType}
+                                onChange = {(e) => setMapType(e.target.value)}
                             >
-                                <FormControlLabel sx = {{color:"white"}} value = "Heat" control={<StyledRadio/>} label="Heat Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Dot"control={<StyledRadio/>} label="Dot Distribution Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth"control={<StyledRadio/>} label="Chloropleth Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi" control={<StyledRadio/>} label="Voronoi Map" />
-                                <FormControlLabel sx = {{color:"white"}}value = "Spike" control={<StyledRadio/>} label="Spike Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth Map"control={<StyledRadio/>} label="Chloropleth Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi Map" control={<StyledRadio/>} label="Voronoi Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Spike Map" control={<StyledRadio/>} label="Spike Map" />
                             </RadioGroup>
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton >
+                        <StyledButton onClick={() => handleCreateNewMap(mapType)}>
                             Create Map
                         </StyledButton>
                     </Grid>

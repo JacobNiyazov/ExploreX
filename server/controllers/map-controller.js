@@ -1,27 +1,113 @@
 const User = require('../models/user-model')
 const Map = require('../models/map-model')
 const Graphics = require('../models/graphics-model')
+const Convert = require('../map-convert/map-conversion')
+var zlib = require('zlib');
 
 
 createMap = async (req,res) =>{
-    const body = req.body;
-    console.log("createMap body: " + JSON.stringify(body));
+    const body = req.query;
     console.log("user id: " + req.userId)
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a Map',
+            errorMessage: 'You must provide a Map File',
         })
     }
 
+    console.log(body)
+    let geojsonData = {}
+    if(body.fileType == "kml"){
+        geojsonData = Convert.convertKML(req.files[0])
+    }
+    else if(body.fileType == "shapefile"){
+        geojsonData = await Convert.convertShapeFile(req.files[1], req.files[0])
+    }
+    else{// check if native file type TODO
+        geojsonData = Convert.convertJSON(req.files[0])
+    }
+
+    if(!Convert.checkGeoJSON(geojsonData)){
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+        })
+    }
+
+    let graphic = {}
+
+    var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
+    var deflated= zlib.deflateSync(input);
+
+    graphic.geojson = deflated
+    // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
+    graphic.legend =
+        {
+            hideLegend: false,
+            fillColor: "#FFFFFF",
+            borderColor: "#FFFFFF",
+            borderWidth: 1,
+            title: "Example Title",
+            fields:[
+            {
+                fieldColor:"#FF0000",
+                fieldText:"Field 1"
+            },
+            {
+                fieldColor:"#000000",
+                fieldText:"Field 2"
+            },
+            {
+                fieldColor:"#FFFFFF",
+                fieldText:"Field 3"
+            },
+            ]
+        }
+
+    graphic.typeSpecific =
+        {
+            selectAll: false,
+            size: 0,
+            dotColor: "#000000",
+            color: "#FFFFFF",
+            range:3,
+            spikeColor: "#FFFFFF",
+        }
+    graphic.region = {
+            fillColor: "#FFFFFF",
+            borderColor: "#FFFFFF",
+            borderWidth: 1,
+            size: 12
+        }
+    graphic.text = {
+            color: "#FFFFFF",
+            font: "Nova Square",
+            size: 12
+        }
+    graphic.ownerUsername = body.ownerUsername
+
+    console.log(graphic)
     
-    const graphics = new Graphics(body.graphics)
+    const graphics = new Graphics(graphic)
+    
     User.findOne({ _id: req.userId }).then( (user) => {
         console.log("user found: " + JSON.stringify(user));
+        
         graphics
             .save()
             .then(()=>{
-                tempMap = body
+                tempMap = {
+                    title: "Map Example",
+                    ownerUsername: body.ownerUsername,
+                    reactions:{
+                        comments:[],
+                    likes:0,
+                    dislikes:0,
+                    },
+                    isPublic: false,
+                    type: body.mapType,
+                    publishDate: body.publishedDate,
+                }
                 tempMap.graphics = graphics._id
                 const map = new Map(tempMap);
                 
@@ -32,23 +118,35 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                //Show actual geojson data not ID or zipped
+                                graphic.geojson = geojsonData
+                                tempMap.graphics = graphic
                                 return res.status(201).json({
-                                    map: map
+                                    success: true,
+                                    map: tempMap
                                 })
                             })
                             .catch(error => {
                                 console.log(error)
                                 return res.status(400).json({
+                                    success:false,
                                     errorMessage: 'Map Not Created!'
                                 })
                             }) 
                     })
                 
+            }).catch((err) => {
+                console.log(err)
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: 'Map Not Created. File Size too big.'
+                })
             });
     }).catch(error => {
         console.log(error)
         return res.status(400).json({
-            errorMessage: 'Map Not Created!'
+            success:false,
+            errorMessage: 'Authentication Error, please log in again!'
         })
     })
 }
@@ -74,7 +172,7 @@ deleteMap = async (req, res) =>{
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
-                        errorMessage: "authentication error" 
+                        errorMessage: "Authentication Error" 
                     });
                 }
             });
@@ -94,6 +192,7 @@ getMapById = async (req, res) => {
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+            graphics.geojson = JSON.parse(zlib.inflateSync(graphics.geojson).toString("utf-8"));
             map.graphics = graphics;
             console.log("correct user!");
             return res.status(200).json({ success: true, map: map })
@@ -134,7 +233,7 @@ getUserMapIdPairs = async (req, res) => {
                             reactions: map.reactions,
                             graphics: map.graphics,
                             isPublic: map.isPublic,
-                            publishedDate: map.publishedDate,
+                            publishDate: map.publishDate,
                         };
                         pairs.push(pair);
                     }
@@ -171,7 +270,7 @@ getPublicMapIdPairs = async (req, res) => {
                     reactions: map.reactions,
                     graphics: map.graphics,
                     isPublic: map.isPublic,
-                    publishedDate: map.publishedDate,
+                    publishDate: map.publishDate,
                 };
                 pairs.push(pair);
             }
@@ -210,11 +309,18 @@ updateMapById = async (req, res) => {
                 map
                     .save()
                     .then(() => {
-                        console.log("SUCCESS!!!");
-                        return res.status(200).json({
-                            success: true,
-                            id: map._id,
-                            message: 'Map updated!',
+                        Graphics.findOne({ _id: map.graphics }).then((graphics) => {
+                            graphics = body.map.graphics
+                            graphics
+                                .save()
+                                .then(()=>{
+                                    console.log("SUCCESS!!!");
+                                    return res.status(200).json({
+                                        success: true,
+                                        id: map._id,
+                                        message: 'Map updated!',
+                                    })
+                                })
                         })
                     })
                     .catch(error => {
