@@ -12,6 +12,8 @@ import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
+import DotDistMap from './DotDistMap.js';
+import SpikeMap from './SpikeMap.js';
 
 const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
@@ -89,7 +91,15 @@ const MapEditInner = () =>{
         loadShapefile()
     }
     */
-    loadMap(store.currentMap.graphics.geojson);
+    if(store.currentMap.type === "Dot Distribution Map"){
+        return <DotDistMap/>
+    }
+    else if(store.currentMap.type === "Spike Map"){
+        return <SpikeMap/>
+    }
+    else{
+        loadMap(store.currentMap.graphics.geojson);
+    }
     return null;
 }
 
@@ -103,6 +113,7 @@ const MapEdit = ({
     hideLegend,
   }) =>{
     const test = "kml"
+    console.log(test)
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 

@@ -32,6 +32,7 @@ const EditScreen = () => {
   
       waitForAuthCheck();
     }, [auth, navigate, store]);
+    console.log(store.currentMap)
     const [colors, setColors] = React.useState({
         Text: store.currentMap.graphics.typeSpecific.color,
         HeatMap: '#FFFFFF',

@@ -4,9 +4,8 @@ import {Box} from '@mui/material';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import { Button } from '@mui/material';
 import {Grid} from '@mui/material';
-import { StyledButton, StyledImportButton, DescriptionText, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
+import { StyledButton, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
 import styled from '@emotion/styled';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import GlobalStoreContext from '../store';
@@ -102,18 +101,19 @@ function ImportFileModal({open,onClose,openSelectPropModal}){
             navigate("/editMap");
         }
     }
-    const handleNextPage = (event, mapType) => {
-        if(files.length === 0){
-            alertModal("Try Again", "There were no files uploaded.");
-        }
-        else if(mapType === ""){
-            alertModal("Try Again", "There were no map type set.");
-        }
-        else{
-            onClose();
-            openSelectPropModal();
-        }
-    }
+    // const handleNextPage = (mapType) => {
+    //     if(files.length === 0){
+    //         alertModal("Try Again", "There were no files uploaded.");
+    //     }
+    //     else if(mapType === ""){
+    //         alertModal("Try Again", "There were no map type set.");
+    //     }
+    //     else{
+    //         // onClose();
+    //         handleCreateNewMap(mapType);
+    //         // openSelectPropModal();
+    //     }
+    // }
 
         //
     function handleFileSelect(event){
@@ -221,7 +221,7 @@ function ImportFileModal({open,onClose,openSelectPropModal}){
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={() => handleNextPage(mapType)}>
+                        <StyledButton onClick={() => handleCreateNewMap(mapType)}>
                             Next
                         </StyledButton>
                     </Grid>
