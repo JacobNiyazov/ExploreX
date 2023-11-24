@@ -3,6 +3,7 @@ import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
+import graphicsApi from '../store/graphics-request-api';
 import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
@@ -185,6 +186,15 @@ function GlobalStoreContextProvider(props) {
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.UPDATE_MAP_GRAPHICS: {       
                 return setStore({
                     currentPage: store.currentPage,
                     modalMessage: null,
@@ -578,6 +588,33 @@ function GlobalStoreContextProvider(props) {
             payload: {
                 currentMaps: mapList
             }})*/
+    }
+    store.updateMapGraphics = (dotPoints=null, dotScale=null) =>{
+        async function updateGraphics(dotPoints=null, dotScale=null){
+            let currentMap = store.currentMap;
+            console.log(store.currentMap)
+            console.log(store.currentMap._id)
+            let graphics = currentMap.graphics;
+            console.log(dotPoints)
+            graphics['typeSpecific']['dotPoints'] = dotPoints;
+            graphics['typeSpecific']['dotScale'] = dotScale;
+            try {
+                let res = await maps.updateMapById(currentMap._id, currentMap);
+                if(res.data.success){
+                    console.log(res.data.map)
+                    storeReducer({
+                        type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
+                        payload: {
+                            currentMap: res.data.map
+                        }});
+                }
+            }
+            catch (err) {
+                console.log(err)
+            }
+            
+        }
+        updateGraphics(dotPoints, dotScale);
     }
    return (
     <GlobalStoreContext.Provider value={{

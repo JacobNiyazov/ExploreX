@@ -99,7 +99,8 @@ const DotDistMap = () => {
   
       return {
           type: 'FeatureCollection',
-          features: points
+          features: points,
+          scale: scale
       };
     }
     const dotsLayerGroup = L.featureGroup().addTo(map);
@@ -143,6 +144,9 @@ const DotDistMap = () => {
     var geojsonData = store.currentMap.graphics.geojson;
     var propertyKey = 'id';
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
+    var scale = dotDensityData['scale'];
+    delete dotDensityData['scale'];
+    store.updateMapGraphics(dotDensityData['features'], scale);
     updateLayers(geojsonData, dotDensityData);
 
     return () => {

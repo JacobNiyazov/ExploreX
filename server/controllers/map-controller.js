@@ -72,6 +72,8 @@ createMap = async (req,res) =>{
             color: "#FFFFFF",
             range:3,
             spikeColor: "#FFFFFF",
+            dotPoints: null,
+            dotScale: null
         }
     graphic.region = {
             fillColor: "#FFFFFF",
@@ -121,6 +123,7 @@ createMap = async (req,res) =>{
                                 //Show actual geojson data not ID or zipped
                                 graphic.geojson = geojsonData
                                 tempMap.graphics = graphic
+                                tempMap._id = map._id;
                                 return res.status(201).json({
                                     success: true,
                                     map: tempMap
@@ -295,12 +298,11 @@ updateMapById = async (req, res) => {
         //console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
         User.findOne({ username: map.ownerUsername }).then((user) => {
-            console.log("user._id: " + user._id);
-            console.log("username: " + user.username);
-            console.log("req.userId: " + req.userId);
+            // console.log("user._id: " + user._id);
+            // console.log("username: " + user.username);
+            // console.log("req.userId: " + req.userId);
             if (user._id == req.userId) {
                 console.log("correct user!");
-                console.log("req.body.name: " + req.body.name);
 
                 map.title = body.map.title;
                 map.reactions = body.map.reactions;
@@ -309,18 +311,28 @@ updateMapById = async (req, res) => {
                 map
                     .save()
                     .then(() => {
-                        Graphics.findOne({ _id: map.graphics }).then((graphics) => {
-                            graphics = body.map.graphics
-                            graphics
-                                .save()
-                                .then(()=>{
-                                    console.log("SUCCESS!!!");
-                                    return res.status(200).json({
-                                        success: true,
-                                        id: map._id,
-                                        message: 'Map updated!',
-                                    })
-                                })
+                        var tempGraphics = {...body.map.graphics};
+                        var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
+                        var deflated= zlib.deflateSync(input);
+                        body.map.graphics.geojson = deflated;
+                        Graphics.findByIdAndUpdate(
+                            map.graphics,
+                            body.map.graphics,
+                            // { new: true }
+                        ).then(() => {
+                            let tempMap = {...map}._doc
+                            tempMap.graphics = tempGraphics;
+                            return res.status(200).json({
+                                success: true,
+                                map: tempMap,
+                                message: 'Map updated!',
+                            })
+                        }).catch(error => {
+                            console.log("Graphics FAILURE: " + JSON.stringify(error));
+                            return res.status(404).json({
+                                error,
+                                message: 'Map not updated!',
+                            })
                         })
                     })
                     .catch(error => {

@@ -17,7 +17,7 @@ export const createMap = (ownerUsername, files, mapType, publishDate, fileType) 
         files: files,
         mapType: mapType, 
         publishDate: publishDate,
-        fileType: fileType}
+        fileType: fileType},
     },  {headers:headers})
 }
 export const updateMapById = (id, map) =>{
