@@ -25,7 +25,7 @@ export const updateMapById = (id, map) =>{
         map: map
     })
 }
-export const getMapById = (id) =>maps.get(`/map/${id}`)
+export const getMapById = (id) =>maps.get(`/map/${id}`, {decompress:false, responseType:'arraybuffer'})
 
 export const getUserMapIdPairs = (id) =>maps.get('/usermapidpairs')
 
