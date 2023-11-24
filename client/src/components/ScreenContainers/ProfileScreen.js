@@ -66,6 +66,7 @@ function ProfileScreen(){
       setValue(newValue);
     };
     let mapValues = ""
+    console.log("what is in current maps: ", store.currentMaps)
     if (store.currentMaps) {
       mapValues = Object.values(store.currentMaps);
     }

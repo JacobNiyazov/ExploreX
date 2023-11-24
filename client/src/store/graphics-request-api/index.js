@@ -23,3 +23,12 @@ export const getGraphicsById = (id) =>{
 export const deleteGraphics = (id) =>{
     return graphics.delete(`/graphics/${id}`)
 }
+
+const apis = {
+    createGraphics,
+    updateGraphicsById,
+    getGraphicsById,
+    deleteGraphics,
+}
+
+export default apis

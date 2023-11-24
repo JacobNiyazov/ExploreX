@@ -9,12 +9,12 @@ const EditScreen = () => {
     const { store } = useContext(GlobalStoreContext);
     console.log("current map in edit screen: ", store.currentMap)
     const [colors, setColors] = React.useState({
-        Text: store.currentMap.graphics.typeSpecific.color,
+        Text: store.currentGraphics.typeSpecific.color,
         HeatMap: '#FFFFFF',
-        LegendFill: store.currentMap.graphics.legend.fillColor,
-        LegendBorder: store.currentMap.graphics.legend.borderColor,
-        RegionFill: store.currentMap.graphics.region.fillColor,
-        RegionBorder: store.currentMap.graphics.region.borderColor,
+        LegendFill: store.currentGraphics.legend.fillColor,
+        LegendBorder: store.currentGraphics.legend.borderColor,
+        RegionFill: store.currentGraphics.region.fillColor,
+        RegionBorder: store.currentGraphics.region.borderColor,
         DotMap: '#FFFFFF',
         SpikeMap: '#FFFFFF',
         VoronoiMap: '#FFFFFF'
@@ -47,8 +47,8 @@ const EditScreen = () => {
     const [font, setFont] = React.useState("Nova Square")
 
     const [size, setSize] = React.useState({
-        Text: store.currentMap.graphics.text.size,
-        Region: store.currentMap.graphics.region.size,
+        Text: store.currentGraphics.text.size,
+        Region: store.currentGraphics.region.size,
         DotMap: 12,
         SpikeMap: 12,
         VoronoiMap: 12
@@ -57,8 +57,8 @@ const EditScreen = () => {
     const [range, setRange] = React.useState(5)
 
     const [borderWidth, setBorderWidth] = React.useState({
-        Region: store.currentMap.graphics.region.borderWidth,
-        Legend: store.currentMap.graphics.legend.borderWidth,
+        Region: store.currentGraphics.region.borderWidth,
+        Legend: store.currentGraphics.legend.borderWidth,
     })
 
     const [selectAll, setSelectAll] = React.useState({

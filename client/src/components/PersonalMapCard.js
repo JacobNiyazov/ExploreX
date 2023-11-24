@@ -25,7 +25,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const handleCloseDelete = () => setOpenDelete(false);
 
   function handleEditClick (){
-    store.setCurrentEditMap(map, "EditMapScreen")
+    store.setCurrentEditMap("EditMapScreen")
   }
   const handleLikeToggle = () => {
     setLiked((prevLiked) => !prevLiked);
