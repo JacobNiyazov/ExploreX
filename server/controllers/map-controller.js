@@ -98,6 +98,7 @@ createMap = async (req,res) =>{
         graphics
             .save()
             .then(()=>{
+                //console.log(JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8")));
                 tempMap = {
                     title: "Map Example",
                     ownerUsername: body.ownerUsername,
@@ -120,6 +121,7 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                console.log("map id: " + map._id)
                                 //Show actual geojson data not ID or zipped
                                 graphic.geojson = geojsonData
                                 tempMap.graphics = graphic
@@ -195,11 +197,13 @@ getMapById = async (req, res) => {
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
-            graphics.geojson = JSON.parse(zlib.inflateSync(graphics.geojson).toString("utf-8"));
-            map.graphics = graphics;
+            tempMap = {...map}._doc;
+            tempMap.graphics = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
+            console.log(tempMap)
             console.log("correct user!");
-            return res.status(200).json({ success: true, map: map })
+            return res.status(200).json({ success: true, map: tempMap })
         }).catch((err) => {
+            console.log(err)
             return res.status(400).json({ success: false, error: err });
         })
     }).catch((err) => {
