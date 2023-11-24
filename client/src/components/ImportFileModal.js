@@ -11,12 +11,10 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import GlobalStoreContext from '../store';
 import { useNavigate } from 'react-router-dom';
 
-function ImportFileModal({open,onClose,openSelectPropModal}){
+function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileType,setFileType,mapType,setMapType}){
     const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
-    const [files, setFiles] = useState([]);
-    const [fileType, setFileType] = useState('');
-    const [mapType, setMapType] = useState('');
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -88,7 +86,7 @@ function ImportFileModal({open,onClose,openSelectPropModal}){
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
     }
-    async function handleCreateNewMap(mapType){
+    const handleNextPage = async () => {
         if(files.length === 0){
             alertModal("Try Again", "There were no files uploaded.");
         }
@@ -96,24 +94,13 @@ function ImportFileModal({open,onClose,openSelectPropModal}){
             alertModal("Try Again", "There were no map type set.");
         }
         else{
-            await store.createMap(files, mapType, fileType)
-                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
-            navigate("/editMap");
+            await store.createMapTemp(files, mapType, fileType).catch((err) => {
+                console.log(err)
+                alertModal("Try Again!", err.response.data.errorMessage)});
+            onClose();
+            openSelectPropModal();
         }
     }
-    // const handleNextPage = (mapType) => {
-    //     if(files.length === 0){
-    //         alertModal("Try Again", "There were no files uploaded.");
-    //     }
-    //     else if(mapType === ""){
-    //         alertModal("Try Again", "There were no map type set.");
-    //     }
-    //     else{
-    //         // onClose();
-    //         handleCreateNewMap(mapType);
-    //         // openSelectPropModal();
-    //     }
-    // }
 
         //
     function handleFileSelect(event){
@@ -221,7 +208,7 @@ function ImportFileModal({open,onClose,openSelectPropModal}){
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton onClick={() => handleCreateNewMap(mapType)}>
+                        <StyledButton onClick={() => handleNextPage()}>
                             Next
                         </StyledButton>
                     </Grid>

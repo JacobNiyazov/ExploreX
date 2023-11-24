@@ -332,11 +332,13 @@ function GlobalStoreContextProvider(props) {
         //     default:
         //         navigate("/login");
         // }
+        
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: currentPage,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
+                    currentMap: store.currentMap
                 }
             }
         );
@@ -406,18 +408,36 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.createMap = async (files, mapType, fileType) =>{
+    store.createMap = async (files, mapType, fileType, property) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
         let ownerUsername = auth.user.username;
         let publishDate = Date.now();
         // No need to create graphics create map takes care of this
-        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType);
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
         console.log(response.data)
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
                 payload: {
                     currentPage: dict["/editMap"],
+                    currentMap: response.data.map
+                }
+            })
+        }
+    }
+    store.createMapTemp = async (files, mapType, fileType) =>{
+        // We will instantiate data in the backend, so only fields that already have values are sent through
+        let ownerUsername = auth.user.username;
+        let publishDate = Date.now();
+        // No need to create graphics create map takes care of this
+        let property = null;
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
+        console.log(response.data)
+        if(response.data.success){
+            storeReducer({
+                type: GlobalStoreActionType.CREATE_MAP,
+                payload: {
+                    currentPage: store.currentPage,
                     currentMap: response.data.map
                 }
             })
@@ -589,19 +609,22 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
-    store.updateMapGraphics = (dotPoints=null, dotScale=null) =>{
-        async function updateGraphics(dotPoints=null, dotScale=null){
+    store.updateMapGraphics = (property=null, dotPoints=null, dotScale=null) =>{
+        async function updateGraphics(property=null, dotPoints=null, dotScale=null){
             let currentMap = store.currentMap;
-            console.log(store.currentMap)
-            console.log(store.currentMap._id)
             let graphics = currentMap.graphics;
-            console.log(dotPoints)
-            graphics['typeSpecific']['dotPoints'] = dotPoints;
-            graphics['typeSpecific']['dotScale'] = dotScale;
+            if(dotPoints !== null){
+                graphics['typeSpecific']['dotPoints'] = dotPoints;
+            }
+            if(dotScale !== null){
+                graphics['typeSpecific']['dotScale'] = dotScale;
+            }
+            if(property !== null){
+                graphics['typeSpecific']['property'] = property;
+            }
             try {
                 let res = await maps.updateMapById(currentMap._id, currentMap);
                 if(res.data.success){
-                    console.log(res.data.map)
                     storeReducer({
                         type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
                         payload: {
@@ -614,7 +637,7 @@ function GlobalStoreContextProvider(props) {
             }
             
         }
-        updateGraphics(dotPoints, dotScale);
+        updateGraphics(property, dotPoints, dotScale);
     }
    return (
     <GlobalStoreContext.Provider value={{
