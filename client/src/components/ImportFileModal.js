@@ -14,10 +14,7 @@ import { useNavigate } from 'react-router-dom';
 function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileType,setFileType,mapType,setMapType}){
     const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
-    const [files, setFiles] = useState([]);
     const [fileNames, setFileNames] = useState([]);
-    const [fileType, setFileType] = useState('');
-    const [mapType, setMapType] = useState('');
     const style = {
         position: 'absolute',
         top: '50%',
@@ -97,7 +94,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             alertModal("Try Again", "There were no map type set.");
         }
         else{
-            await store.createMap(files, mapType, fileType)
+            store.createMapTemp(files, mapType, fileType)
                 .then(()=> {
                     onClose();
                     openSelectPropModal();
