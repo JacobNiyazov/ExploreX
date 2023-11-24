@@ -74,7 +74,9 @@ function ProfileScreen(){
       waitForAuthCheck();
     }, [auth, navigate, store]);
 
-    
+    const [files, setFiles] = useState([]);
+    const [fileType, setFileType] = useState('');
+    const [mapType, setMapType] = useState('');
     const [openImport, setOpenImport] = useState(false);
     const handleOpenImport = () => setOpenImport(true);
     const handleCloseImport = () => setOpenImport(false);
@@ -117,8 +119,15 @@ function ProfileScreen(){
                 onClick = {handleOpenImport}>
                   <AddIcon></AddIcon>
                 </StyledButton>
-                <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}/>
-                <SelectPropModal open={openSelectPropModal} onClose={handleCloseSelectPropModal}/>
+                <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
+                  files={files}
+                  setFiles={setFiles}
+                  fileType={fileType}
+                  setFileType={setFileType}
+                  mapType={mapType}
+                  setMapType={setMapType}
+                  />
+                <SelectPropModal open={openSelectPropModal} onClose={handleCloseSelectPropModal} files={files} fileType={fileType} mapType={mapType}/>
             </Grid>
             <Grid item xs = {12}>
                 <StyledTypography2

@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Typography, Box, FormControl, InputLabel, Select, MenuItem, Button, Grid } from '@mui/material';
+import GlobalStoreContext from '../store';
+import { useNavigate } from 'react-router-dom';
 
-function SelectPropModal({ open, onClose }) {
+function SelectPropModal({ open, onClose, files, fileType, mapType }) {
     const [selectedProperty, setSelectedProperty] = useState('');
+    const { store } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
 
     const style = {
         position: 'absolute',
@@ -40,17 +44,31 @@ function SelectPropModal({ open, onClose }) {
             },
         },
     };
+    function alertModal(header, paragraph){
+        store.displayModal(<div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
+          </div>, false);
+    }
+    async function handleCreateNewMap(){
+        await store.updateMapGraphics(selectedProperty);
+        onClose();
+        store.setCurrentPage(store.currentPageType.editMapScreen);
+        navigate("/editMap");
+    }
 
 
     const handlePropertyChange = (event) => {
         setSelectedProperty(event.target.value);
     };
-
-    const handleCreateMap = () => {
-        // onCreate(selectedProperty);
-        onClose();
-    };
-    const properties = ['Population', 'Temperature', 'Elevation', 'Start with empty map'];
+    let properties = [];
+    if(store.currentMap){
+        let features = store.currentMap.graphics.geojson.features;
+        if(features.length > 0 && Object.keys(features[0].properties.length > 0)){
+            properties = Object.keys(features[0].properties);
+        }
+        properties.push('Start with empty map');
+    }
 
 
     return (
@@ -95,7 +113,7 @@ function SelectPropModal({ open, onClose }) {
                 </FormControl>
                 <Grid container spacing={2} justifyContent="flex-end">
                     <Grid item>
-                        <Button variant="contained" onClick={handleCreateMap} sx={{ mt: 2, bgcolor: '#FF76D6', '&:hover': { bgcolor: 'rgba(255, 118, 214, 0.9)' } }}>
+                        <Button disabled={selectedProperty === ""} variant="contained" onClick={handleCreateNewMap} sx={{ mt: 2, bgcolor: '#FF76D6', '&:hover': { bgcolor: 'rgba(255, 118, 214, 0.9)' } }}>
                             Create Map
                         </Button>
                     </Grid>

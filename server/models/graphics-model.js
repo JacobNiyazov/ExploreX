@@ -22,6 +22,9 @@ const GraphicsSchema = new Schema(
             color: {type:String, required: true},
             range:{type: Number, required: true},
             spikeColor: {type: String, required: true},
+            dotPoints: {type: [[Object]], required:false},
+            dotScale: {type: Number, required:false},
+            property: {type: mongoose.Schema.Types.Mixed, required:false},
         },
         region:{
             fillColor: {type: String, required: true},

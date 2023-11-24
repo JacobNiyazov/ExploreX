@@ -8,7 +8,7 @@ const headers = {
     'Content-Type': "multipart/form-data",
 }
 
-export const createMap = (ownerUsername, files, mapType, publishDate, fileType) => {
+export const createMap = (ownerUsername, files, mapType, publishDate, fileType, property) => {
     return maps.post(`/map/`, files,
     { params:
         // SPECIFY THE PAYLOAD
@@ -17,7 +17,8 @@ export const createMap = (ownerUsername, files, mapType, publishDate, fileType) 
         files: files,
         mapType: mapType, 
         publishDate: publishDate,
-        fileType: fileType}
+        fileType: fileType,
+        property:property},
     },  {headers:headers})
 }
 export const updateMapById = (id, map) =>{
