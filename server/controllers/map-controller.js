@@ -21,7 +21,7 @@ createMap = async (req,res) =>{
         geojsonData = Convert.convertKML(req.files[0])
     }
     else if(body.fileType == "shapefile"){
-        geojsonData = await Convert.convertShapeFile(req.files[1], req.files[0])
+        geojsonData = await Convert.convertShapeFile(req.files[0], req.files[1])
     }
     else{// check if native file type TODO
         geojsonData = Convert.convertJSON(req.files[0])

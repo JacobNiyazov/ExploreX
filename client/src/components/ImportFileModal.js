@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileType,setFileType,mapType,setMapType}){
     const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
-
+    const [fileNames, setFileNames] = useState([]);
     const style = {
         position: 'absolute',
         top: '50%',
@@ -94,11 +94,12 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             alertModal("Try Again", "There were no map type set.");
         }
         else{
-            await store.createMapTemp(files, mapType, fileType).catch((err) => {
-                console.log(err)
-                alertModal("Try Again!", err.response.data.errorMessage)});
-            onClose();
-            openSelectPropModal();
+            store.createMapTemp(files, mapType, fileType)
+                .then(()=> {
+                    onClose();
+                    openSelectPropModal();
+                })
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
         }
     }
 
@@ -109,6 +110,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             const formData = new FormData();
             formData.append('file', selectedFiles[0]);
             setFiles(formData)
+            setFileNames([selectedFiles[0].name])
             // check extension for json or kml
             // set the file name if its either
             const fileName = selectedFiles[0].name;
@@ -128,11 +130,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             }
         }
         else if (selectedFiles.length === 2) {
-            const formData = new FormData();
-            formData.append('file', selectedFiles[0]);
-            formData.append('file', selectedFiles[1]);
-            console.log(formData)
-            setFiles(formData);
+            
             // they must check to see if they are 
             //shp and dbf in here and if they are then display the file names
             const newFileNames = Array.from(selectedFiles).map(file => file.name);
@@ -146,6 +144,20 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             }
             else{
                 alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+            }
+            const formData = new FormData();
+            
+            // Accounting for selection ordering
+            setFiles(formData);
+            if (extension1 == "shp"){
+                setFileNames([file1, file2])
+                formData.append('file', selectedFiles[0]);
+                formData.append('file', selectedFiles[1]);
+            }
+            else{
+                setFileNames([file2, file1])
+                formData.append('file', selectedFiles[1]);
+                formData.append('file', selectedFiles[0]);
             }
         }
         else{
@@ -177,11 +189,11 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                         <VisuallyHiddenInput accept=".json,.shp,.dbf,.kml" type="file" onChange={handleFileSelect} multiple />
                         </Box>
                         {/* Display selected files */}
-                        {files.length > 0 && (
+                        {fileNames.length > 0 && (
                         <Box sx={{ color: 'white' }}>
-                            {files.map((file, index) => (
+                            {fileNames.map((file, index) => (
                             <Typography key={index}>
-                                {file.name}
+                                {file}
                             </Typography>
                             ))}
                         </Box>

@@ -97,6 +97,7 @@ const EditScreen = () => {
     if (loading) {
         return <div>Loading...</div>;
     }
+    console.log(store.currentPage)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>

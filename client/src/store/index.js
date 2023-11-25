@@ -18,7 +18,8 @@ export const GlobalStoreActionType = {
    SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP",
    DELETE_MAP: "DELETE_MAP",
    UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
-   CREATE_MAP: "CREATE_MAP"
+   CREATE_MAP: "CREATE_MAP",
+   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS"
 }
 
 let exampleMaps = {
@@ -333,6 +334,7 @@ function GlobalStoreContextProvider(props) {
         //         navigate("/login");
         // }
         
+        console.log("set page map: ", store.currentMap)
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
@@ -373,7 +375,7 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: dict[pageURL],
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
                 }
             });
         }
@@ -609,41 +611,38 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
-    store.updateMapGraphics = (property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
-        async function updateGraphics(property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null){
-            let currentMap = store.currentMap;
-            let graphics = currentMap.graphics;
-            if(dotPoints !== null){
-                graphics['typeSpecific']['dotPoints'] = dotPoints;
-            }
-            if(dotScale !== null){
-                graphics['typeSpecific']['dotScale'] = dotScale;
-            }
-            if(property !== null){
-                graphics['typeSpecific']['property'] = property;
-            }
-            if(spikeData !== null){
-                graphics['typeSpecific']['spikeData'] = spikeData;
-            }
-            if(spikeLegend !== null){
-                graphics['typeSpecific']['spikeLegend'] = spikeLegend;
-            }
-            try {
-                let res = await maps.updateMapById(currentMap._id, currentMap);
-                if(res.data.success){
-                    storeReducer({
-                        type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
-                        payload: {
-                            currentMap: res.data.map
-                        }});
-                }
-            }
-            catch (err) {
-                console.log(err)
-            }
-            
+    store.updateMapGraphics = async (property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
+        let currentMap = store.currentMap;
+        let graphics = currentMap.graphics;
+        if(dotPoints !== null){
+            graphics['typeSpecific']['dotPoints'] = dotPoints;
         }
-        updateGraphics(property, dotPoints, dotScale, spikeData, spikeLegend);
+        if(dotScale !== null){
+            graphics['typeSpecific']['dotScale'] = dotScale;
+        }
+        if(property !== null){
+            graphics['typeSpecific']['property'] = property;
+        }
+        if(spikeData !== null){
+            graphics['typeSpecific']['spikeData'] = spikeData;
+        }
+        if(spikeLegend !== null){
+            graphics['typeSpecific']['spikeLegend'] = spikeLegend;
+        }
+        try {
+            let res = await maps.updateMapById(currentMap._id, currentMap);
+            if(res.data.success){
+                storeReducer({
+                    type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
+                    payload: {
+                        currentMap: res.data.map
+                    }});
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+            
     }
    return (
     <GlobalStoreContext.Provider value={{
