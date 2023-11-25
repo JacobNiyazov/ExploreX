@@ -75,6 +75,8 @@ createMap = async (req,res) =>{
             dotPoints: null,
             dotScale: null,
             property: null,
+            spikeData: null,
+            spikeLegend: null
         }
     graphic.region = {
             fillColor: "#FFFFFF",

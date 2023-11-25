@@ -609,8 +609,8 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
-    store.updateMapGraphics = (property=null, dotPoints=null, dotScale=null) =>{
-        async function updateGraphics(property=null, dotPoints=null, dotScale=null){
+    store.updateMapGraphics = (property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
+        async function updateGraphics(property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null){
             let currentMap = store.currentMap;
             let graphics = currentMap.graphics;
             if(dotPoints !== null){
@@ -621,6 +621,12 @@ function GlobalStoreContextProvider(props) {
             }
             if(property !== null){
                 graphics['typeSpecific']['property'] = property;
+            }
+            if(spikeData !== null){
+                graphics['typeSpecific']['spikeData'] = spikeData;
+            }
+            if(spikeLegend !== null){
+                graphics['typeSpecific']['spikeLegend'] = spikeLegend;
             }
             try {
                 let res = await maps.updateMapById(currentMap._id, currentMap);
@@ -637,7 +643,7 @@ function GlobalStoreContextProvider(props) {
             }
             
         }
-        updateGraphics(property, dotPoints, dotScale);
+        updateGraphics(property, dotPoints, dotScale, spikeData, spikeLegend);
     }
    return (
     <GlobalStoreContext.Provider value={{

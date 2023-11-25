@@ -191,12 +191,18 @@ const MapEditInner = () =>{
         var scale = dotDensityData['scale'];
         delete dotDensityData['scale'];
         if ((store.currentMap.graphics.typeSpecific.dotPoints === null || store.currentMap.graphics.typeSpecific.dotScale === null)) {  
-            store.updateMapGraphics(null, dotDensityData['features'], scale);
+            store.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
         }
         return <DotDistMap dotDensityData={dotDensityData}/>
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap/>
+        var geojsonData = store.currentMap.graphics.geojson;
+        var spikeData = generateSpikeData(geojsonData, store.currentMap.graphics.typeSpecific.property);
+        var trianglePoints = drawSpikes(spikeData);
+        if ((store.currentMap.graphics.typeSpecific.spikeData === null || store.currentMap.graphics.typeSpecific.spikeLegend === null)) {  
+            store.updateMapGraphics(null, null, null, trianglePoints, null);
+        }
+        return <SpikeMap trianglePoints={trianglePoints}/>
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
