@@ -95,10 +95,13 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             alertModal("Try Again", "There were no map type set.");
         }
         else if(mapType === "Voronoi Map"){
-            await store.createMap(files, mapType, fileType)
+            store.createMap(files, mapType, fileType)
+                .then(()=>{
+                    onClose();
+                    navigate("/editMap");
+                })
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
-            onClose();
-            navigate("/editMap");
+            
         }
         else{
             store.createMapTemp(files, mapType, fileType)
@@ -113,7 +116,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
     function handleSetMapType(mapType){
         setMapType(mapType)
         if(mapType === "Voronoi Map"){
-            setButtonName('Create');
+            setButtonName('Create Map');
         }
         else{
             setButtonName('Next')

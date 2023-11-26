@@ -30,7 +30,6 @@ function convertJSON(jsonFile){
 function checkGeoJSON(json){
     if (
         json &&
-        Object.keys(json).length <= 3 &&
         json.type &&
         json.type === 'FeatureCollection' &&
         Array.isArray(json.features) &&
@@ -41,20 +40,15 @@ function checkGeoJSON(json){
             feature.geometry.type &&
             feature.geometry.coordinates &&
             feature.properties &&
-            Object.keys(feature).length === 3 &&
             Object.keys(feature.properties).length > 0 &&
             Object.keys(feature).every(key =>
-                ['type', 'geometry', 'properties'].includes(key)
+                ['type', 'geometry', 'properties', 'id'].includes(key)
             )
         )
     ) {
-        if(Object.keys(json).length === 3 && !json.bbox){
-            return false
-        }
         return true;
     }
 
-    console.log("or here")
     return false;
 }
 

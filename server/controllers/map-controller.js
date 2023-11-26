@@ -18,7 +18,6 @@ createMap = async (req,res) =>{
 
     console.log(body)
 
-    console.log(path.extname(req.files[0].originalname))
     //check file extension for accepted types
     ext = path.extname(req.files[0].originalname)
     if(ext != ".json" && ext != ".shp" && ext != ".kml" && req.files[1] && path.extname(req.files[1].originalname) != ".dbf"){
@@ -81,6 +80,12 @@ createMap = async (req,res) =>{
         const graphics = new Graphics(graphic)
         
         User.findOne({ _id: req.userId }).then( (user) => {
+            if(user.username !== body.ownerUsername){
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: 'Authentication Error, please log in again!'
+                })
+            }
             console.log("user found: " + JSON.stringify(user));
             
             graphics
@@ -232,7 +237,12 @@ createMap = async (req,res) =>{
         
         User.findOne({ _id: req.userId }).then( (user) => {
             console.log("user found: " + JSON.stringify(user));
-            
+            if(user.username !== body.ownerUsername){
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: 'Authentication Error, please log in again!'
+                })
+            }
             graphics
                 .save()
                 .then(()=>{
