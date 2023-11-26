@@ -3,7 +3,6 @@ import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
-import graphicsApi from '../store/graphics-request-api';
 import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});

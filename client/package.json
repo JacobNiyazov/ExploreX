@@ -13,6 +13,7 @@
     "@tmcw/togeojson": "^5.8.1",
     "@turf/turf": "^6.5.0",
     "axios": "^1.6.0",
+    "d3-delaunay": "^6.0.4",
     "dotenv": "^16.3.1",
     "fs": "^0.0.1-security",
     "install": "^0.13.0",

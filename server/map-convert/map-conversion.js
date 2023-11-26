@@ -1,5 +1,7 @@
 const togeojson = require("@tmcw/togeojson");
 var shapefile = require("shapefile");
+const Map = require('../models/map-model')
+const Graphics = require('../models/graphics-model')
 
 async function convertShapeFile(shpFile, dbfFile){
     /*const Readable = require('stream').Readable;
@@ -28,6 +30,7 @@ function convertJSON(jsonFile){
 function checkGeoJSON(json){
     if (
         json &&
+        Object.keys(json).length <= 3 &&
         json.type &&
         json.type === 'FeatureCollection' &&
         Array.isArray(json.features) &&
@@ -37,18 +40,86 @@ function checkGeoJSON(json){
             feature.geometry &&
             feature.geometry.type &&
             feature.geometry.coordinates &&
-            feature.properties
+            feature.properties &&
+            Object.keys(feature).length === 3 &&
+            Object.keys(feature.properties).length > 0 &&
+            Object.keys(feature).every(key =>
+                ['type', 'geometry', 'properties'].includes(key)
+            )
         )
     ) {
+        if(Object.keys(json).length === 3 && !json.bbox){
+            return false
+        }
         return true;
     }
 
+    console.log("or here")
     return false;
 }
 
+function checkVoronoiMap(json){
+    let polyCount = 0
+    let pointCount = 0
+
+    json.features.forEach(feature=>{
+        let type = feature.geometry.type
+        if(type === "Polygon" || type === "MultiPolygon"){
+            polyCount += 1
+        }
+        else if(type === "Point"){
+            pointCount+=1
+        }
+        else{
+            return "Voronoi Map only allows one Polygon/MultiPolygon and Point features in geojson file."
+        }
+    })
+
+    if(polyCount != 1){
+        return "Voronoi Map requires only one Polygon feature."
+    }
+    if(pointCount <= 0){
+        return "Voronoi Map requires atleast one Point"
+    }
+
+    return ""
+}
+
+function checkNativeFileType(json){
+    let tempMap = {...json}
+    // Variables a exported Native file would not have by default
+    tempMap.graphics = "65628f136d1ae1e57735a687"
+    tempMap.ownerUsername = "hello"
+    tempMap.publishDate = Date.now()
+    tempMap.reactions = {
+        comments:[],
+        likes:0,
+        dislikes:0
+    }
+
+    const map = new Map(tempMap)
+    const err = map.validateSync()
+    if(err){
+        return false
+    }
+
+    let tempGraphics = {...json.graphics};
+    tempGraphics.geojson = Buffer.from("hello there");
+    tempGraphics.ownerUsername = "hello"
+    const graphic = new Graphics(tempGraphics)
+    
+    const err2 = graphic.validateSync()
+    if(err2){
+        return false
+    }
+    
+    return true
+}
 module.exports = {
     convertKML,
     convertShapeFile,
     convertJSON,
-    checkGeoJSON
+    checkGeoJSON,
+    checkVoronoiMap,
+    checkNativeFileType
 };
