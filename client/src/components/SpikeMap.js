@@ -2,7 +2,8 @@ import { useContext, useEffect } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
-import * as turf from '@turf/turf'
+const turf = require('@turf/turf');
+
 
 const SpikeMap = () => {
 

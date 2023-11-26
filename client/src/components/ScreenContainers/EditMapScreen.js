@@ -13,32 +13,93 @@ const EditScreen = () => {
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
-
+    console.log("why: ",store.currentMap)
     useEffect(() => {
       const waitForAuthCheck = async () => {
-          if (auth.loggedIn === undefined) {
-              // Wait until authentication check is completed
-              await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-              waitForAuthCheck(); // Re-check status
-          } else {
-              if(!auth.loggedIn){
-                  store.setCurrentPage(store.currentPageType.login)
-                  navigate("/login");
-              }   
-              setLoading(false);
-              
+        if (auth.loggedIn === undefined) {
+          // Wait until authentication check is completed
+          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+          waitForAuthCheck(); // Re-check status
+        } else {
+          if (!auth.loggedIn) {
+            store.setCurrentPage(store.currentPageType.login);
+            navigate('/login');
           }
+          setLoading(false);
+        }
       };
   
       waitForAuthCheck();
     }, [auth, navigate, store]);
-    console.log(store.currentMap)
-    const [colors, setColors] = React.useState({
-        Text: store.currentMap.graphics.typeSpecific.color,
+    useEffect(() => {
+        const waitForCurrentMap = async () => {
+            while (loading) {
+                // Wait until currentMap is available
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            }
+            console.log('ELLO GOVNA', store.currentMap);
+        };
+
+        waitForCurrentMap();
+    }, [store, store.currentMap]);
+    const[colors,setColors] = useState({
+        Text: "#FFFFFF",
+        HeatMap: '#FFFFFF',
+        LegendFill: "#FFFFFF",
+        LegendBorder: "#FFFFFF",
+        RegionFill: "#FFFFFF",
+        RegionBorder: "#FFFFFF",
+        DotMap: '#FFFFFF',
+        SpikeMap: '#FFFFFF',
+        VoronoiMap: '#FFFFFF'
+    })
+    const [colorPicker, setColorPicker] = React.useState({
+        Text: true,
+        HeatMap: false,
+        LegendFill: true,
+        LegendBorder: true,
+        RegionFill: true,
+        RegionBorder: true,
+        DotMap: false,
+        SpikeMap: false,
+        VoronoiMap: false
+    })
+    const [anchors, setAnchors] = React.useState({
+        Text: null,
+        HeatMap: null,
+        LegendFill: null,
+        LegendBorder: null,
+        RegionFill: null,
+        RegionBorder: null,
+        DotMap: null,
+        SpikeMap: null,
+        VoronoiMap: null
+    })
+    const [font, setFont] = React.useState("Nova Square")
+    const [size, setSize] = React.useState({
+        Text: 12,
+        Region: 12,
+        DotMap: 12,
+        SpikeMap: 12,
+        VoronoiMap: 12
+    })
+    const [range, setRange] = React.useState(5)
+    const [borderWidth, setBorderWidth] = React.useState({
+        Region: 1,
+        Legend: 1,
+    })
+    const [selectAll, setSelectAll] = React.useState({
+        DotMap: false,
+        SpikeMap: false,
+        VoronoiMap: false
+    })
+    const [hideLegend, setHideLegend] = React.useState(false)
+    /*const [colors, setColors] = React.useState({
+        Text: store.currentGraphics.typeSpecific.color,
         HeatMap: '#FFFFFF',
         LegendFill: store.currentMap.graphics.legend.fillColor,
         LegendBorder: store.currentMap.graphics.legend.borderColor,
-        RegionFill: store.currentMap.graphics.region.fillColor,
+        RegionFill: store.currentMap.graphics.fillColor,
         RegionBorder: store.currentMap.graphics.region.borderColor,
         DotMap: '#FFFFFF',
         SpikeMap: '#FFFFFF',
@@ -92,11 +153,8 @@ const EditScreen = () => {
         VoronoiMap: false
     })
 
-    const [hideLegend, setHideLegend] = React.useState(false)
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const [hideLegend, setHideLegend] = React.useState(false)*/
+    
     console.log(store.currentPage)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (

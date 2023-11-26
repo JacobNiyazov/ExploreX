@@ -16,6 +16,7 @@ import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useNavigate } from 'react-router-dom';
+import maps from '../store/map-request-api';
 
 function PersonalMapCard({ map,id,likes,dislikes }) {
   const [liked, setLiked] = useState(false);
@@ -26,8 +27,15 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const handleCloseDelete = () => setOpenDelete(false);
   const navigate = useNavigate();
 
-  function handleEditClick (){
-    store.setCurrentEditMap(map, "EditMapScreen")
+
+  async function handleEditClick (){
+    let tempMap;
+    let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
+    if(response.data.success){
+      tempMap = response.data.map; 
+      console.log(tempMap)
+    }
+    store.setCurrentEditMap(tempMap, "EditMapScreen")
     navigate("/editMap")
   }
   const handleLikeToggle = () => {
