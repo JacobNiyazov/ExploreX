@@ -82,14 +82,20 @@ const HeatMap = ({ geojsonData, property }) => {
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {
-  if (!Array.isArray(polygonCoords) || polygonCoords.length !== 2) {
+  if (!Array.isArray(polygonCoords)) {
     console.error('Invalid polygon coordinates:', polygonCoords);
     return [];
   }
-
-  const [longitude, latitude] = polygonCoords;
-  return [[latitude, longitude, intensity]]; // [Latitude, Longitude, Intensity]
-  };
+  if(polygonCoords.length == 2){
+    const [longitude, latitude] = polygonCoords;
+    return [[latitude, longitude, intensity]]; // [Latitude, Longitude, Intensity]
+  }
+  else{
+    return polygonCoords[0].map((coord) => {
+      return [coord[1], coord[0], intensity]; // [Latitude, Longitude, Intensity]
+    });
+  }
+};
 
 
   return null;
