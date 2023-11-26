@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
@@ -11,21 +11,47 @@ import {
   Grid,
   Link,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(auth.loggedIn && auth.user !== null){
+                store.setCurrentPage(store.currentPageType.mapFeed)
+                navigate("/feed");
+            }   
+            setLoading(false);
+            
+        }
+    };
+
+    waitForAuthCheck();
+  }, [auth, navigate, store]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   const handleRecover = (e) => {
     auth.recoverPassword(email).then( 
       (val) => {
-        store.setCurrentPage(store.currentPageType.login);
-        store.displayModal(<div>
+        navigate("/login");
+        
+        store.setModal(<div>
           <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Woosh...</h4>
           <p style={{ margin: '5px 0', fontSize: '1rem' }}>Please check your email for a password recovery link.</p>
-        </div>, false);
+        </div>, store.currentPageType.login, false);
       })
     .catch(
       (error) => store.displayModal(<div>
@@ -34,12 +60,10 @@ const ForgotPasswordScreen = () => {
       </div>, false));
   };
 
-  const tempHandler = (e) => {
-    store.setCurrentPage(store.currentPageType.resetPasswordScreen);  
-  };
 
   const handleLogin = (e) => {
     store.setCurrentPage(store.currentPageType.login);  
+    navigate("/login");
   };
   
   return (
@@ -65,9 +89,6 @@ const ForgotPasswordScreen = () => {
 
               <Button style={launchStyle.button} onClick = {handleRecover} variant="contained">
                 Recover
-              </Button>
-              <Button style={launchStyle.button} onClick = {tempHandler} variant="contained">
-                temp password reset
               </Button>
               <Link style={launchStyle.forgot} onClick={handleLogin}>Return to Login</Link>
 

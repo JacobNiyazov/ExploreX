@@ -1,9 +1,9 @@
-import { createContext, useState, useContext } from 'react'
+import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
-import graphics from '../store/graphics-request-api'
+import graphicsApi from '../store/graphics-request-api';
 import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
@@ -18,7 +18,8 @@ export const GlobalStoreActionType = {
    SET_EDIT_SCREEN_MAP:"SET_EDIT_SCREEN_MAP",
    DELETE_MAP: "DELETE_MAP",
    UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
-   CREATE_MAP: "CREATE_MAP"
+   CREATE_MAP: "CREATE_MAP",
+   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS"
 }
 
 let exampleMaps = {
@@ -91,8 +92,20 @@ function GlobalStoreContextProvider(props) {
        modalConfirmButton: false,
        currentMap: exampleMaps.Map1,
        currentMaps: exampleMaps,
-       currentGraphics: null
    });
+   const dict = {
+    "/login": "Login",
+    "/register": "RegisterScreen",
+    "/faq" : "FAQScreen",
+    "/forgotPassword" : "ForgotPasswordScreen",
+    "/passwordReset" : "ResetPasswordScreen",
+    "/feed" : "MapFeed",
+    "/map" : "PublicMapView",
+    "/profile" : "ProfileScreen",
+    "/editAccount" : "EditAccountScreen",
+    "/editMap": "EditMapScreen"
+   }
+
 
    store.currentPageType = {
         login: "Login",
@@ -111,6 +124,7 @@ function GlobalStoreContextProvider(props) {
 
     const storeReducer = (action) => {
         const { type, payload } = action;
+        console.log(type)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -121,7 +135,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: false,
                     currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps,
-                    currentGraphics: store.currentGraphics 
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -132,7 +145,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: false,
                     currentMap: payload.currentMap,
                     currentMaps: exampleMaps,
-                    currentGraphics: payload.currentGraphics
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -143,7 +155,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap,
                     currentMaps: exampleMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -154,7 +165,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap,
                     currentMaps: exampleMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -165,7 +175,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: false,
                     currentMap: store.currentMap,
                     currentMaps: exampleMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
             case GlobalStoreActionType.DELETE_MAP: {       
@@ -175,7 +184,6 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     currentMap: null,
                     currentMaps: payload.currentMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
@@ -185,18 +193,24 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
-                    currentGraphics: store.currentGraphics
+                });
+            }
+            case GlobalStoreActionType.UPDATE_MAP_GRAPHICS: {       
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
                 });
             }
             case GlobalStoreActionType.CREATE_MAP:{
-                //console.log("create map in store: ", payload.currentMap)
                 return setStore({
                     currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
             default: {
@@ -207,7 +221,6 @@ function GlobalStoreContextProvider(props) {
                     modalConfirmButton: false,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
-                    currentGraphics: store.currentGraphics
                 });
             }
 
@@ -241,7 +254,7 @@ function GlobalStoreContextProvider(props) {
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("655e8bed93623445cef0fdbe")
+                    let response = await maps.getMapById("65605143b27302f331e6e009")
                     if(response.data.success){
                         console.log("response: ", response.data)
                         storeReducer({
@@ -284,109 +297,161 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }*/
+        // switch (currentPage) {
+        //     case store.currentPageType.login:
+        //         navigate("/login");
+        //         break
+        //     case store.currentPageType.mapFeed:
+        //     //   return (<MapFeed maps/>)
+        //         navigate("/feed")
+        //         break
+        //     case store.currentPageType.publicMapView:
+        //         navigate("/map")
+        //         break
+        //     //   return (<PublicMapView map={Map1} likes = {Map1.reactions.likes} dislikes = {Map1.reactions.dislikes} comments = {Map1.reactions.comments}/>)
+        //     case store.currentPageType.forgotPassScreen:
+        //         navigate("/forgotPassword");
+        //         break
+        //     case store.currentPageType.registerScreen:
+        //         navigate("/register");
+        //         break
+        //     case store.currentPageType.resetPasswordScreen:
+        //         navigate("/recover");
+        //         break
+        //     case store.currentPageType.faqScreen:
+        //         navigate("/FAQ");
+        //         break
+        //     case store.currentPageType.editMapScreen:
+        //         navigate("/editMap/")
+        //         break
+        //     case store.currentPageType.editAccScreen:
+        //         navigate("/editAccount");
+        //         break
+        //     case store.currentPageType.profileScreen:
+        //         navigate("/profile");
+        //         break
+        //     default:
+        //         navigate("/login");
+        // }
+        
+        console.log("set page map: ", store.currentMap)
         storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: currentPage,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
+                    currentMap: store.currentMap
                 }
             }
         );
     }
 
-    store.setCurrentEditMap = (currentPage) =>{
-        try{
-            console.log("currentPage: ", currentPage)
-            async function setCurrentMapToEdit(){
-                let response = await maps.getMapById("655e8bed93623445cef0fdbe");
-                console.log("what is response: ", response)
-                if(response.data.success){
-                    console.log("response graphics: ", response.data.map.graphics)
+    store.updatePageLink = (pageURL) => {
+        if(dict[pageURL] === "PublicMapView"){
+            async function getMap(){
+                try{
+                    let response = await maps.getMapById("65605143b27302f331e6e009")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
                         storeReducer({
-                            type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
-                                currentMap: response.data.map,
-                                currentPage: currentPage,
-                                currentGraphics: graphic.data.graphics
-                        
+                                currentPage: dict[pageURL],
+                                currentMaps: null,
+                                currentMap: response.data.map
                             }
-                        });
+                        }
+                        ); 
                     }
                 }
-                setCurrentMapToEdit();
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
         }
-        catch(err){
-            console.log("error: ", err.data);
+        else{
+            storeReducer({
+                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                payload: {
+                    currentPage: dict[pageURL],
+                    currentMaps: exampleMaps,
+                }
+            });
         }
     }
 
-    store.createMap = async (files, mapType) =>{
-        let fileType = ""
-        let stringGraphics = []
-        const getFileExtension = (filename) => filename.split(".").pop().toLowerCase();
+    const storeRef = useRef(store);
 
-        // Already confirmed extension types, 1 -> kml or json, 2 -> shapefile
-        // We will send the file as text to our backend where all the checking will be done.
-        // This enables us to do easy error checking
-        if(files.length == 1){
-            fileType = getFileExtension(files[0].name);
-            await new Promise((resolve, reject) => {
-                var fr = new FileReader();  
-                fr.onload = (event) => {
-                  resolve(stringGraphics.push(event.target.result))
-                };
-                fr.onerror = reject;
-                fr.readAsText(files[0]);
-            });
-        }
-        else{
-            fileType = "shapefile"
-            async function shapeBuffers(){
-                await new Promise((resolve, reject) => {
-                    // Two strings instead of one
-                    var fr = new FileReader();
-                    fr.onload = (event) => {
-                        resolve(stringGraphics.push(event.target.result));
-                    }
-                    if("shp" == getFileExtension(files[0].name)){
-                        fr.readAsArrayBuffer(files[0]);
-                    }
-                    else{
-                        fr.readAsArrayBuffer(files[1]);
-                    }
-                    fr.onerror = reject;
-                })
-                await new Promise((resolve, reject) => {
-                    // Two strings instead of one
-                    var fr = new FileReader();
-                    fr.onload = (event) => {
-                        resolve(stringGraphics.push(event.target.result));
-                    }
-                    if("shp" == getFileExtension(files[0].name)){
-                        fr.readAsArrayBuffer(files[1]);
-                    }
-                    else{
-                        fr.readAsArrayBuffer(files[0]);
-                    }
-                    fr.onerror = reject;
-                })
+    useEffect(() => {
+        const updateCurrentPage = () => {
+          const currentPage = window.location.pathname;
+          storeRef.current.updatePageLink(currentPage)
+        };
+    
+        window.addEventListener('popstate', updateCurrentPage);
+        window.addEventListener('DOMContentLoaded', updateCurrentPage);
+    
+        updateCurrentPage();
+    
+        return () => {
+          window.removeEventListener('popstate', updateCurrentPage);
+          window.removeEventListener('DOMContentLoaded', updateCurrentPage);
+        };
+      }, [storeRef]);
+
+    store.setCurrentEditMap = (currentPage) =>{
+        console.log("current Page: ", currentPage);
+        try{
+            async function setCurrentMapToEdit(){
+                let response = await maps.getMapById("65618c5da4295061e257189e");
+                console.log("map: ",response.data.map);
+                if(response.data.success){
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                        payload: {
+                            currentPage: dict["/editMap"],
+                            currentMap: response.data.map
+                        }
+                    })
+                }
             }
-            await shapeBuffers()
+            setCurrentMapToEdit();
         }
+        catch(err){
+            console.log("error: ", err)
+        }
+    }
 
+    store.createMap = async (files, mapType, fileType, property) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
         let ownerUsername = auth.user.username;
         let publishDate = Date.now();
-        console.log(stringGraphics)
         // No need to create graphics create map takes care of this
-        let response = await maps.createMap(ownerUsername, stringGraphics, mapType, publishDate, fileType);
-        console.log("RESPONSE: ",response.data)
-        if(response.data){
-            console.log("map in store: ",response.data.map)
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
+        if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
                 payload: {
-                    currentPage: "EditMapScreen",
+                    currentPage: dict["/editMap"],
+                    currentMap: response.data.map
+                }
+            })
+        }
+    }
+    store.createMapTemp = async (files, mapType, fileType) =>{
+        // We will instantiate data in the backend, so only fields that already have values are sent through
+        let ownerUsername = auth.user.username;
+        let publishDate = Date.now();
+        // No need to create graphics create map takes care of this
+        let property = null;
+        let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
+        console.log(response.data)
+        if(response.data.success){
+            storeReducer({
+                type: GlobalStoreActionType.CREATE_MAP,
+                payload: {
+                    currentPage: store.currentPage,
                     currentMap: response.data.map
                 }
             })
@@ -426,7 +491,6 @@ function GlobalStoreContextProvider(props) {
     store.updateUserInfo = function (username, email, bio, password) {
         async function asyncUpdateUser(username, email, bio, password) {
             try {
-                // const response = await api.editUserInfo('6556394afc995c6c2eac63a9', username, email, bio, password);
                 const response = await api.editUserInfo(auth.user._id, username, email, bio, password);
                 if (response.data.success) {
                     const successMessage = (
@@ -437,6 +501,7 @@ function GlobalStoreContextProvider(props) {
                     );
                     store.displayModal(successMessage, false);
                 }
+                auth.user = response.data.user;
             }
             catch (error){
                 if (error.response.data.errorMessage === "An account with this email address already exists." || error.response.data.errorMessage === "An account with this username already exists."){
@@ -509,7 +574,7 @@ function GlobalStoreContextProvider(props) {
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
         //let currentMap = map._id;
         //make the current map id a static value
-        let currentMap = "655adce3a7d58f312f06073b";
+        let currentMap = "655fe27a63706d4925d1340b"; 
         let author = auth.user.username;
         //console.log("curr and author: ", currentMap, author)
         async function reactToMap(){
@@ -553,14 +618,41 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
+    store.updateMapGraphics = async (property=null, dotPoints=null, dotScale=null) =>{
+        let currentMap = store.currentMap;
+        let graphics = currentMap.graphics;
+        if(dotPoints !== null){
+            graphics['typeSpecific']['dotPoints'] = dotPoints;
+        }
+        if(dotScale !== null){
+            graphics['typeSpecific']['dotScale'] = dotScale;
+        }
+        if(property !== null){
+            graphics['typeSpecific']['property'] = property;
+        }
+        try {
+            let res = await maps.updateMapById(currentMap._id, currentMap);
+            if(res.data.success){
+                storeReducer({
+                    type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
+                    payload: {
+                        currentMap: res.data.map
+                    }});
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+            
+    }
    return (
     <GlobalStoreContext.Provider value={{
         store
     }}>
         {props.children}
     </GlobalStoreContext.Provider>
-);
-}
+)};
+
 
 export default GlobalStoreContext;
 export { GlobalStoreContextProvider };

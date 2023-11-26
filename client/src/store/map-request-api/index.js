@@ -4,17 +4,22 @@ const maps = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL + '/api',
 })
 
-export const createMap = (ownerUsername, stringGraphics, mapType, publishDate, fileType) => {
-    console.log(stringGraphics)
-    return maps.post(`/map/`, {
+const headers = {
+    'Content-Type': "multipart/form-data",
+}
+
+export const createMap = (ownerUsername, files, mapType, publishDate, fileType, property) => {
+    return maps.post(`/map/`, files,
+    { params:
         // SPECIFY THE PAYLOAD
         //owner, stringGraphics, type, publishDate, fileType
-        ownerUsername: ownerUsername, 
-        stringGraphics: stringGraphics,
+        {ownerUsername: ownerUsername, 
+        files: files,
         mapType: mapType, 
         publishDate: publishDate,
-        fileType: fileType
-    })
+        fileType: fileType,
+        property:property},
+    },  {headers:headers})
 }
 export const updateMapById = (id, map) =>{
     return maps.put(`/map/${id}`,{

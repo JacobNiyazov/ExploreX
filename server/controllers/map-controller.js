@@ -2,38 +2,44 @@ const User = require('../models/user-model')
 const Map = require('../models/map-model')
 const Graphics = require('../models/graphics-model')
 const Convert = require('../map-convert/map-conversion')
-
+var zlib = require('zlib');
 
 
 createMap = async (req,res) =>{
-    const body = req.body;
-    console.log("createMap body: " + JSON.stringify(body));
+    const body = req.query;
     console.log("user id: " + req.userId)
-    console.log("graphics: " + JSON.stringify(body.stringGraphics[0]))
     if (!body) {
         return res.status(400).json({
             success: false,
-            error: 'You must provide a Map',
+            errorMessage: 'You must provide a Map File',
         })
     }
 
+    console.log(body)
     let geojsonData = {}
     if(body.fileType == "kml"){
-        geojsonData = Convert.convertKML(body.stringGraphics[0])
+        geojsonData = Convert.convertKML(req.files[0])
     }
     else if(body.fileType == "shapefile"){
-        geojsonData = Convert.convertShapeFile(body.stringGraphics[0], body.stringGraphics[1])
+        geojsonData = await Convert.convertShapeFile(req.files[0], req.files[1])
     }
     else{// check if native file type TODO
-        geojsonData = JSON.parse(body.stringGraphics[0])
+        geojsonData = Convert.convertJSON(req.files[0])
     }
 
-    console.log(geojsonData)
-
+    if(!Convert.checkGeoJSON(geojsonData)){
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+        })
+    }
 
     let graphic = {}
 
-    graphic.geojson = geojsonData
+    var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
+    var deflated= zlib.deflateSync(input);
+
+    graphic.geojson = deflated
     // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
     graphic.legend =
         {
@@ -66,6 +72,9 @@ createMap = async (req,res) =>{
             color: "#FFFFFF",
             range:3,
             spikeColor: "#FFFFFF",
+            dotPoints: null,
+            dotScale: null,
+            property: null,
         }
     graphic.region = {
             fillColor: "#FFFFFF",
@@ -79,6 +88,8 @@ createMap = async (req,res) =>{
             size: 12
         }
     graphic.ownerUsername = body.ownerUsername
+
+    console.log(graphic)
     
     const graphics = new Graphics(graphic)
     
@@ -88,6 +99,7 @@ createMap = async (req,res) =>{
         graphics
             .save()
             .then(()=>{
+                //console.log(JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8")));
                 tempMap = {
                     title: "Map Example",
                     ownerUsername: body.ownerUsername,
@@ -98,7 +110,7 @@ createMap = async (req,res) =>{
                     },
                     isPublic: false,
                     type: body.mapType,
-                    publishedDate: body.publishedDate,
+                    publishDate: body.publishedDate,
                 }
                 tempMap.graphics = graphics._id
                 const map = new Map(tempMap);
@@ -110,14 +122,20 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
+                                console.log("map id: " + map._id)
+                                //Show actual geojson data not ID or zipped
+                                graphic.geojson = geojsonData
                                 tempMap.graphics = graphic
+                                tempMap._id = map._id;
                                 return res.status(201).json({
+                                    success: true,
                                     map: tempMap
                                 })
                             })
                             .catch(error => {
                                 console.log(error)
                                 return res.status(400).json({
+                                    success:false,
                                     errorMessage: 'Map Not Created!'
                                 })
                             }) 
@@ -126,13 +144,15 @@ createMap = async (req,res) =>{
             }).catch((err) => {
                 console.log(err)
                 return res.status(400).json({
-                errorMessage: 'Map Not Created! Incorrect Graphics'
+                    success:false,
+                    errorMessage: 'Map Not Created. File Size too big.'
                 })
             });
     }).catch(error => {
         console.log(error)
         return res.status(400).json({
-            errorMessage: 'Map Not Created!'
+            success:false,
+            errorMessage: 'Authentication Error, please log in again!'
         })
     })
 }
@@ -158,7 +178,7 @@ deleteMap = async (req, res) =>{
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
-                        errorMessage: "authentication error" 
+                        errorMessage: "Authentication Error" 
                     });
                 }
             });
@@ -178,10 +198,14 @@ getMapById = async (req, res) => {
     Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
-            map.graphics = graphics;
+            tempMap = {...map}._doc;
+            tempMap.graphics = graphics;
+            tempMap.graphics.geojson = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
+            console.log(tempMap)
             console.log("correct user!");
-            return res.status(200).json({ success: true, map: map })
+            return res.status(200).json({ success: true, map: tempMap })
         }).catch((err) => {
+            console.log(err)
             return res.status(400).json({ success: false, error: err });
         })
     }).catch((err) => {
@@ -218,7 +242,7 @@ getUserMapIdPairs = async (req, res) => {
                             reactions: map.reactions,
                             graphics: map.graphics,
                             isPublic: map.isPublic,
-                            publishedDate: map.publishedDate,
+                            publishDate: map.publishDate,
                         };
                         pairs.push(pair);
                     }
@@ -255,7 +279,7 @@ getPublicMapIdPairs = async (req, res) => {
                     reactions: map.reactions,
                     graphics: map.graphics,
                     isPublic: map.isPublic,
-                    publishedDate: map.publishedDate,
+                    publishDate: map.publishDate,
                 };
                 pairs.push(pair);
             }
@@ -280,12 +304,11 @@ updateMapById = async (req, res) => {
         //console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
         User.findOne({ username: map.ownerUsername }).then((user) => {
-            console.log("user._id: " + user._id);
-            console.log("username: " + user.username);
-            console.log("req.userId: " + req.userId);
+            // console.log("user._id: " + user._id);
+            // console.log("username: " + user.username);
+            // console.log("req.userId: " + req.userId);
             if (user._id == req.userId) {
                 console.log("correct user!");
-                console.log("req.body.name: " + req.body.name);
 
                 map.title = body.map.title;
                 map.reactions = body.map.reactions;
@@ -294,11 +317,28 @@ updateMapById = async (req, res) => {
                 map
                     .save()
                     .then(() => {
-                        console.log("SUCCESS!!!");
-                        return res.status(200).json({
-                            success: true,
-                            id: map._id,
-                            message: 'Map updated!',
+                        var tempGraphics = {...body.map.graphics};
+                        var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
+                        var deflated= zlib.deflateSync(input);
+                        body.map.graphics.geojson = deflated;
+                        Graphics.findByIdAndUpdate(
+                            map.graphics,
+                            body.map.graphics,
+                            // { new: true }
+                        ).then(() => {
+                            let tempMap = {...map}._doc
+                            tempMap.graphics = tempGraphics;
+                            return res.status(200).json({
+                                success: true,
+                                map: tempMap,
+                                message: 'Map updated!',
+                            })
+                        }).catch(error => {
+                            console.log("Graphics FAILURE: " + JSON.stringify(error));
+                            return res.status(404).json({
+                                error,
+                                message: 'Map not updated!',
+                            })
                         })
                     })
                     .catch(error => {

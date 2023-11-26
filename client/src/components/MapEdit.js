@@ -3,10 +3,6 @@ import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
-import geojson from '../ExampleData/poland.geojson.json'
-import kmlFile from "../ExampleData/example1.kml"
-import shp from '../ExampleData/USA_adm0.shp'
-import dbf from "../ExampleData/USA_adm0.dbf"
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -15,12 +11,15 @@ import { Square } from "./StyleSheets/ColorSelectorStyles";
 import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
-import * as togeojson from "@tmcw/togeojson"
 import GlobalStoreContext from '../store/index.js';
-var shapefile = require("shapefile");
+import DotDistMap from './DotDistMap.js';
+import SpikeMap from './SpikeMap.js';
+import HeatMap from "./HeatMap.js";
+import * as turf from '@turf/turf'
 
-const MapEditInner = ({mapType}) =>{
+const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
+
     function getRandomShade(){
         // Generate random values for the red and green components
         const red = Math.floor(Math.random() * 256); // Random red value (0-255)
@@ -39,6 +38,7 @@ const MapEditInner = ({mapType}) =>{
     const map = useMap();
 
     function loadMap(geojson){
+        
         L.geoJSON(geojson, {
             onEachFeature: function (feature, layer) {
                 
@@ -94,7 +94,120 @@ const MapEditInner = ({mapType}) =>{
         loadShapefile()
     }
     */
-   loadMap(store.currentMap.graphics.geojson);
+    if(store.currentMap.type === "Dot Distribution Map"){
+        function calculateMedian(values) {
+            values.sort((a, b) => a - b);
+            var half = Math.floor(values.length / 2);
+            if (values.length % 2) {
+                return values[half];
+            }
+            return (values[half - 1] + values[half]) / 2.0;
+          }
+        
+          function getMedianPropertyValue(geojsonData, propertyKey) {
+            let propertyValues = geojsonData.features.map(feature => {
+                if(!(propertyKey in feature.properties)) return 0;
+                let value = feature.properties[propertyKey];
+                // Convert string numbers with commas to actual numbers
+                let numericValue = value ? Number(value.toString().replace(/,/g, '')) : 0;
+                return !isNaN(numericValue) ? numericValue : 0;
+            }).filter(v => v > 0); // Exclude non-numeric and zero values
+        
+            return calculateMedian(propertyValues);
+          }
+        
+          function convertToDotDensity(geojsonData, propertyKey) {
+            var points = [];
+            var medianValue = getMedianPropertyValue(geojsonData, propertyKey);
+            var scale = medianValue / 10;
+        
+            geojsonData.features.forEach(feature => {
+                try{
+                    if(!(propertyKey in feature.properties)) return 0;
+                    var value = feature.properties[propertyKey];
+                    // Convert string numbers with commas to actual numbers
+                    var numericValue = value ? Number(value.toString().replace(/,/g, '')) : 0;
+                    var count = 1;
+        
+                    if (!isNaN(numericValue) && numericValue > 0) {
+                        count = Math.ceil(numericValue / scale); // Use dynamic scale
+                    }
+        
+                    if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
+                        if (count === 1) {
+                            // Place a single point at the centroid for polygons
+                            var centroid = turf.centroid(feature);
+                            points.push({
+                                type: 'Feature',
+                                properties: feature.properties,
+                                geometry: centroid.geometry
+                            });
+                        } else {
+                            // Place multiple points randomly within the polygon
+                            for (var i = 0; i < count; i++) {
+                                var randomPoint = turf.randomPoint(1, { bbox: turf.bbox(feature) }).features[0];
+                                if (turf.booleanPointInPolygon(randomPoint, feature)) {
+                                    points.push(randomPoint);
+                                } else {
+                                    i--; // retry if the point is not in the polygon
+                                }
+                            }
+                        }
+                    } else if (feature.geometry.type === 'LineString' || feature.geometry.type === 'MultiLineString') {
+                        if (count === 1) {
+                            // Place a single point at the midpoint for lines
+                            var midpoint = turf.midpoint(turf.point(feature.geometry.coordinates[0]), turf.point(feature.geometry.coordinates[feature.geometry.coordinates.length - 1]));
+                            points.push({
+                                type: 'Feature',
+                                properties: feature.properties,
+                                geometry: midpoint.geometry
+                            });
+                        } else {
+                            // Place multiple points at regular intervals along the line
+                            var totalLength = turf.length(feature);
+                            var interval = totalLength / count;
+                            for (var j = 0; j < count; j++) {
+                                var pointOnLine = turf.along(feature, interval * j);
+                                points.push(pointOnLine);
+                            }
+                        }
+                    } else if (feature.geometry.type === 'Point') {
+                        // For point features, just use the existing point
+                        points.push(feature);
+                    }
+                }
+                catch(err){
+                    return 0;
+                }
+                
+            });
+        
+            return {
+                type: 'FeatureCollection',
+                features: points,
+                scale: scale
+            };
+          }
+        var geojsonData = store.currentMap.graphics.geojson;
+        var dotDensityData = convertToDotDensity(geojsonData, store.currentMap.graphics.typeSpecific.property);
+        var scale = dotDensityData['scale'];
+        delete dotDensityData['scale'];
+        if ((store.currentMap.graphics.typeSpecific.dotPoints === null || store.currentMap.graphics.typeSpecific.dotScale === null)) {  
+            store.updateMapGraphics(null, dotDensityData['features'], scale);
+        }
+        return <DotDistMap dotDensityData={dotDensityData}/>
+    }
+    else if(store.currentMap.type === "Spike Map"){
+        return <SpikeMap/>
+    }
+    else if(store.currentMap.type === "Heat Map"){
+        if(store.currentMap.graphics.geojson){
+            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property}/>
+        }
+    }
+    else{
+        loadMap(store.currentMap.graphics.geojson);
+    }
     return null;
 }
 
@@ -108,6 +221,7 @@ const MapEdit = ({
     hideLegend,
   }) =>{
     const test = "kml"
+    console.log(test)
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 
@@ -185,7 +299,7 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner mapType={test}/>
+                <MapEditInner />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 <ZoomControl position="bottomleft"/>
                 <ControlGrid>
