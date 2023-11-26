@@ -62,7 +62,7 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
         setSelectedProperty(event.target.value);
     };
     let properties = [];
-    if(store.currentMap){
+    if(store.currentMap && store.currentMap.graphics && store.currentMap.graphics.geojson && store.currentMap.graphics.geojson.features){
         let features = store.currentMap.graphics.geojson.features;
         if(features.length > 0 && Object.keys(features[0].properties.length > 0)){
             properties = Object.keys(features[0].properties);
