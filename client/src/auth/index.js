@@ -79,21 +79,22 @@ function AuthContextProvider(props) {
     }
 
     auth.getLoggedIn = async function () {
-        if(!auth.isGuest){
-            const response = await api.getLoggedIn();
-            if (response.status === 200) {
-                authReducer({
-                    type: AuthActionType.SET_LOGGED_IN,
-                    payload: {
-                        loggedIn: response.data.loggedIn,
-                        user: response.data.user
-                    }
-                });
-                return true
+        try {
+            if (!auth.isGuest) {
+                const response = await api.getLoggedIn();
+                if (response.status === 200) {
+                    authReducer({
+                        type: AuthActionType.SET_LOGGED_IN,
+                        payload: {
+                            loggedIn: response.data.loggedIn,
+                            user: response.data.user
+                        }
+                    });
+                }
             }
+        } catch (error) {
+            console.error("An error occurred while checking logged-in status:", error);
         }
-        return false
-
     }
     auth.guestLogin = async function (){
         authReducer({
@@ -102,71 +103,86 @@ function AuthContextProvider(props) {
         });
     }
     auth.registerUser = async function( email, username, password, passwordVerify) {
-        const response = await api.registerUser(email, username, password, passwordVerify);      
-        if (response.status === 200) {
-            authReducer({
-                type: AuthActionType.REGISTER_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            
-            // history.push("/login");
+        try {
+            const response = await api.registerUser(email, username, password, passwordVerify);
+            if (response.status === 200) {
+                authReducer({
+                    type: AuthActionType.REGISTER_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                });
+            }
+        } catch (error) {
+            throw(error)
         }
-        console.log(auth.loggedIn)
+        
     }
 
     auth.loginUser = async function(username, password) {
-        const response = await api.loginUser(username, password);
-        if (response.status === 200) {
-            console.log(response.data.user)
-            authReducer({
-                type: AuthActionType.LOGIN_USER,
-                payload: {
-                    user: response.data.user
-                }
-            })
-            localStorage.setItem('authToken', response.data.token)
-            // history.push("/");
+        try {
+            const response = await api.loginUser(username, password);
+            if (response.status === 200) {
+                console.log(response.data.user);
+                authReducer({
+                    type: AuthActionType.LOGIN_USER,
+                    payload: {
+                        user: response.data.user
+                    }
+                });
+                localStorage.setItem('authToken', response.data.token);
+                // history.push("/");
+            }
+        } catch (error) {
+            throw(error)
         }
+
+        
     }
 
     auth.logoutUser = async function() {
-        const response = await api.logoutUser();
-        if (response.status === 200) {
-            console.log("LOGGED")
-            authReducer( {
-                type: AuthActionType.LOGOUT_USER,
-                payload: null
-            })
-            // history.push("/");
+        try {
+            const response = await api.logoutUser();
+            if (response.status === 200) {
+                console.log("LOGGED");
+                authReducer({
+                    type: AuthActionType.LOGOUT_USER,
+                    payload: null
+                });
+                // history.push("/");
+            }
+        } catch (error) {
+            console.error("An error occurred during logout:", error);
         }
+
     }
 
     auth.recoverPassword = async function(email) {
-        const response = await api.recoverPassword(email);
-        //TODO Don't worry about these for now.
-        if (response.status === 200) {
+        try {
+            const response = await api.recoverPassword(email);
             authReducer( {
                 type: AuthActionType.LOGOUT_USER,
                 payload: null
             })
-            // history.push("/");
+        } catch (error) {
+            throw(error)
         }
+
 
     }
 
     auth.resetUserPassword = async function(userId, token, password) {
-        const response = await api.resetUserPassword(userId, token, password);
-        //TODO Don't worry about these for now.
-        if (response.status === 200) {
-            console.log("SUCCESS")
-            // authReducer( {
-            //     type: AuthActionType.LOGOUT_USER,
-            //     payload: null
-            // })
-            // history.push("/");
+        async function asyncResetUserPassword(userId, token, password) {
+            try {
+                const response = await api.resetUserPassword(userId, token, password);
+                if (response.status === 200) {
+                    console.log("SUCCESS");
+                }
+            } catch (error) {
+                console.error("An error occurred while resetting user password:", error);
+            }
         }
+        asyncResetUserPassword()
 
     }
 
