@@ -229,32 +229,11 @@ function GlobalStoreContextProvider(props) {
 
 
    store.setCurrentPage = (currentPage) => {
-       /*if(currentPage === "MapFeed"){
-            async function getMap(){
-                try{
-                    let response = await maps.getPublicMapPairs()
-                    if(response.data.success){
-                        storeReducer({
-                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                            payload: {
-                                currentPage: currentPage,
-                                currentMaps: response.data.idNamePairs,
-                                currentMap: null
-                            }
-                        }
-                        ); 
-                    }
-                }
-                catch(error){
-                    console.log("error: ", error )
-                }
-            }
-            getMap()
-        }*/
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
                     let response = await maps.getMapById("65605143b27302f331e6e009")
+                    console.log("ATTEMPTING GET MAP")
                     if(response.data.success){
                         console.log("response: ", response.data)
                         storeReducer({
@@ -274,65 +253,6 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }
-       /* else if(currentPage === "ProfileScreen"){
-            async function getMap(){
-                try{
-                    let response = await maps.getUserMapIdPairs(auth.user._id)
-                    if(response.data.success){
-                        console.log("profile!!!")
-                        storeReducer({
-                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                            payload: {
-                                currentPage: currentPage,
-                                currentMaps: response.data.idNamePairs,
-                                currentMap: null
-                            }
-                        }
-                        ); 
-                    }
-                }
-                catch(error){
-                    console.log("error: ", error )
-                }
-            }
-            getMap()
-        }*/
-        // switch (currentPage) {
-        //     case store.currentPageType.login:
-        //         navigate("/login");
-        //         break
-        //     case store.currentPageType.mapFeed:
-        //     //   return (<MapFeed maps/>)
-        //         navigate("/feed")
-        //         break
-        //     case store.currentPageType.publicMapView:
-        //         navigate("/map")
-        //         break
-        //     //   return (<PublicMapView map={Map1} likes = {Map1.reactions.likes} dislikes = {Map1.reactions.dislikes} comments = {Map1.reactions.comments}/>)
-        //     case store.currentPageType.forgotPassScreen:
-        //         navigate("/forgotPassword");
-        //         break
-        //     case store.currentPageType.registerScreen:
-        //         navigate("/register");
-        //         break
-        //     case store.currentPageType.resetPasswordScreen:
-        //         navigate("/recover");
-        //         break
-        //     case store.currentPageType.faqScreen:
-        //         navigate("/FAQ");
-        //         break
-        //     case store.currentPageType.editMapScreen:
-        //         navigate("/editMap/")
-        //         break
-        //     case store.currentPageType.editAccScreen:
-        //         navigate("/editAccount");
-        //         break
-        //     case store.currentPageType.profileScreen:
-        //         navigate("/profile");
-        //         break
-        //     default:
-        //         navigate("/login");
-        // }
         
         console.log("set page map: ", store.currentMap)
         storeReducer({

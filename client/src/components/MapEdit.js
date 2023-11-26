@@ -14,6 +14,7 @@ import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
 import SpikeMap from './SpikeMap.js';
+import ChloroplethMap from './ChloroplethMap.js';
 import * as turf from '@turf/turf'
 
 const MapEditInner = () =>{
@@ -97,6 +98,9 @@ const MapEditInner = () =>{
     }
     else if(store.currentMap.type === "Spike Map"){
         return <SpikeMap/>
+    }
+    else if(store.currentMap.type === "Chloropleth Map"){
+        return <ChloroplethMap/>
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
