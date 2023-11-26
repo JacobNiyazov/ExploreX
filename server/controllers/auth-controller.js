@@ -291,6 +291,7 @@ registerUser = async (req, res) => {
         // LOGIN THE USER
         const token = auth.signToken(savedUser._id);
         console.log("token:" + token);
+        console.log(newUser)
 
         await res.cookie("token", token, {
             httpOnly: true,
@@ -298,7 +299,7 @@ registerUser = async (req, res) => {
             sameSite: "none"
         }).status(200).json({
             success: true,
-            user: savedUser
+            user: newUser
         })
 
         console.log("token sent");

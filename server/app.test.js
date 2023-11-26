@@ -134,7 +134,7 @@ describe('Recover password tests', function(){
     const response = await request(app)
       .post(reqURL)
       .send({ email: 'nowaythisexists@gmail.com'});
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(401);
     expect(response.body).toEqual({
         success: false,
         errorMessage: "An account with this email address does not exist."
@@ -251,8 +251,15 @@ describe('Register user tests', function(){
     expect(response.body).toEqual({
       success: true,
       user: {
-          username: 'tester1234',
-          email: 'tester1234@gmail.com'            
+        username: 'tester1234',
+        email: 'tester1234@gmail.com',
+        bio: "I'm a new user!",
+        passwordHash: expect.any(String),
+        mapsOwned: [],
+        _id: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt:  expect.any(String),
+        __v: 0
       }
     });
   });
