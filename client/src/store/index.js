@@ -509,38 +509,52 @@ function GlobalStoreContextProvider(props) {
     store.deleteMap = (currentMap, currentPage) => {
         //get the id of the map we are removing 
 
-        let mapValues = Object.values(store.currentMaps)
-        let mapList = (
-        mapValues.filter((map) => (
-            map.title !== currentMap.title
-          ))
-      );
-      storeReducer({
-                    type: GlobalStoreActionType.DELETE_MAP,
-                    payload: {
-                        currentPage: currentPage,
-                        currentMaps: mapList
-                    },
-                });
+    //     let mapValues = Object.values(store.currentMaps)
+    //     let mapList = (
+    //     mapValues.filter((map) => (
+    //         map._id !== currentMap._id
+    //       ))
+    //   );
+    //   storeReducer({
+    //                 type: GlobalStoreActionType.DELETE_MAP,
+    //                 payload: {
+    //                     currentPage: currentPage,
+    //                     currentMaps: mapList
+    //                 },
+    //             });
       
-      /*let id = currentMap._id;
+      let id = currentMap._id;
       let userId = currentMap.author;
       async function processDelete(){
         let response = await maps.deleteMap(id);
+        console.log(response)
         if(response.data.success){
             console.log("we are making it in delete")
             // the return will be different depending on page
             if(store.currentPage === "ProfileScreen"){
-                let mapList = await maps.getUserMapIdPairs(userId);
-                if(mapList.data.success)
-                //mapList data may have to change later
+                // let mapList = await maps.getUserMapIdPairs(userId);
+                // if(mapList.data.success)
+                // //mapList data may have to change later
+                // storeReducer({
+                //     type: GlobalStoreActionType.DELETE_MAP,
+                //     payload: {
+                //         currentPage: currentPage,
+                //         currentMaps: mapList.data
+                //     },
+                // });
+                let mapValues = Object.values(store.currentMaps)
+                let mapList = (
+                mapValues.filter((map) => (
+                    map._id !== id
+                ))
+                );
                 storeReducer({
-                    type: GlobalStoreActionType.DELETE_MAP,
-                    payload: {
-                        currentPage: currentPage,
-                        currentMaps: mapList.data
-                    },
-                });
+                                type: GlobalStoreActionType.DELETE_MAP,
+                                payload: {
+                                    currentPage: currentPage,
+                                    currentMaps: mapList
+                                },
+                            });
             }
             else if(store.currentPage === "MapFeed"){
                 let mapList = await maps.getPublicMapIdPairs();
@@ -556,7 +570,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
       }
-      processDelete();*/
+      processDelete();
     };
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{

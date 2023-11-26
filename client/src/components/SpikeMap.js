@@ -9,24 +9,24 @@ const SpikeMap = () => {
   const { store } = useContext(GlobalStoreContext);
   const map = useMap();
 
-  // function getRepresentativeValues(geojsonData, propertyKey) {
-  //     // Extract the property values, parse them as numbers, and sort them
-  //     let values = geojsonData.features.map(feature => {
-  //         if(!(propertyKey in feature.properties)) return;
-  //         let value = feature.properties[propertyKey];
-  //         return Number(value.toString().replace(/,/g, ''));
-  //     }).filter(v => !isNaN(v)).sort((a, b) => a - b);
+  function getRepresentativeValues(geojsonData, propertyKey) {
+      // Extract the property values, parse them as numbers, and sort them
+      let values = geojsonData.features.map(feature => {
+          if(!(propertyKey in feature.properties)) return;
+          let value = feature.properties[propertyKey];
+          return Number(value.toString().replace(/,/g, ''));
+      }).filter(v => !isNaN(v)).sort((a, b) => a - b);
 
-  //     // Calculate quartiles
-  //     let minValue = values[0];
-  //     let firstQuartileValue = values[Math.round(values.length * 0.25)];
-  //     let medianValue = values[Math.round(values.length * 0.5)];
-  //     let thirdQuartileValue = values[Math.round(values.length * 0.75)];
-  //     let maxValue = values[values.length - 1];
+      // Calculate quartiles
+      let minValue = values[0];
+      let firstQuartileValue = values[Math.round(values.length * 0.25)];
+      let medianValue = values[Math.round(values.length * 0.5)];
+      let thirdQuartileValue = values[Math.round(values.length * 0.75)];
+      let maxValue = values[values.length - 1];
 
-  //     // Return an array with the min, 1st quartile, median, 3rd quartile, and max values
-  //     return [minValue, firstQuartileValue, medianValue, thirdQuartileValue, maxValue];
-  // }
+      // Return an array with the min, 1st quartile, median, 3rd quartile, and max values
+      return [minValue, firstQuartileValue, medianValue, thirdQuartileValue, maxValue];
+  }
 
   useEffect(() => {
     function calculateMedian(values) {
@@ -148,20 +148,24 @@ const SpikeMap = () => {
         }).addTo(spikeLayerGroup);   
       });
   
-      // L.geoJSON(geojsonData, {
-      //   style: function (feature) {
-      //       switch (feature.geometry.type) {
-      //           case 'Polygon':
-      //           case 'MultiPolygon':
-      //               return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-      //           case 'LineString':
-      //           case 'MultiLineString':
-      //               return { color: "#f55", weight: 2, opacity: 0.8 };
-      //           default:
-      //               return {};
-      //       }
-      //   }
-      // }).addTo(map);
+      L.geoJSON(geojsonData, {
+        style: function (feature) {
+            switch (feature.geometry.type) {
+                case 'Polygon':
+                case 'MultiPolygon':
+                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+                case 'LineString':
+                case 'MultiLineString':
+                    return { color: "#f55", weight: 2, opacity: 0.8 };
+                default:
+                    return {};
+            }
+        },
+        // Ensure that no default marker is created for point features
+        pointToLayer: function (feature, latlng) {
+          return null;
+        }
+      }).addTo(map);
       try{
         map.fitBounds(spikeLayerGroup.getBounds());
       }
@@ -170,9 +174,13 @@ const SpikeMap = () => {
       }
     }
     var geojsonData = store.currentMap.graphics.geojson;
-    var propertyKey = 'population';
+    var propertyKey = store.currentMap.graphics.typeSpecific.property;
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
+    var legend = getRepresentativeValues(geojsonData, propertyKey);
+    if(store.currentMap.graphics.typeSpecific.spikeData === null || store.currentMap.graphics.typeSpecific.spikeLegend === null){
+      store.updateMapGraphics(null, null, null, trianglePoints, legend);
+    }
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
