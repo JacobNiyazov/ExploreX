@@ -15,6 +15,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
     const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
     const [fileNames, setFileNames] = useState([]);
+    const [buttonName, setButtonName] = useState('Next')
     const style = {
         position: 'absolute',
         top: '50%',
@@ -93,6 +94,15 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
         else if(mapType === ""){
             alertModal("Try Again", "There were no map type set.");
         }
+        else if(mapType === "Voronoi Map"){
+            store.createMap(files, mapType, fileType)
+                .then(()=>{
+                    onClose();
+                    navigate("/editMap");
+                })
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
+            
+        }
         else{
             store.createMapTemp(files, mapType, fileType)
                 .then(()=> {
@@ -100,6 +110,16 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                     openSelectPropModal();
                 })
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+        }
+    }
+
+    function handleSetMapType(mapType){
+        setMapType(mapType)
+        if(mapType === "Voronoi Map"){
+            setButtonName('Create Map');
+        }
+        else{
+            setButtonName('Next')
         }
     }
 
@@ -209,7 +229,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                                 defaultValue="Heat"
                                 name="radio-buttons-group"
                                 value = {mapType}
-                                onChange = {(e) => setMapType(e.target.value)}
+                                onChange = {(e) => handleSetMapType(e.target.value)}
                             >
                                 <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
@@ -221,7 +241,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
                         <StyledButton onClick={() => handleNextPage()}>
-                            Next
+                            {buttonName}
                         </StyledButton>
                     </Grid>
                 </Grid>

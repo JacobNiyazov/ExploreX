@@ -15,6 +15,7 @@ import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
 import SpikeMap from './SpikeMap.js';
 import ChloroplethMap from './ChloroplethMap.js';
+import VoronoiMap from './VoronoiMap.js';
 import * as turf from '@turf/turf'
 
 const MapEditInner = () =>{
@@ -70,29 +71,6 @@ const MapEditInner = () =>{
         map.fitBounds(L.geoJSON(geojson).getBounds());
     }
 
-    // Function to check the file extension and determine the file type
-        
-    /*if (mapType === 'kml'){
-        fetch(kmlFile)
-        .then((res) => res.text())
-        .then((text) => {
-            const DOMParser = require("xmldom").DOMParser;
-            let geojson = togeojson.kml(new DOMParser().parseFromString(text, "text/xml"));
-            console.log(geojson)
-            loadMap(geojson);
-        })
-    }
-    else if(mapType === 'geojson'){
-        loadMap(geojson);
-    }
-    else if(mapType === 'shapefile'){
-        const loadShapefile = async () => {
-            let geojson = await shapefile.read(shp, dbf);
-            loadMap(geojson)
-        }
-        loadShapefile()
-    }
-    */
     if(store.currentMap.type === "Dot Distribution Map"){
         return <DotDistMap/>
     }
@@ -101,6 +79,9 @@ const MapEditInner = () =>{
     }
     else if(store.currentMap.type === "Chloropleth Map"){
         return <ChloroplethMap/>
+    }
+    else if(store.currentMap.type === "Voronoi Map"){
+        return <VoronoiMap />
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
@@ -117,8 +98,6 @@ const MapEdit = ({
     selectAll,
     hideLegend,
   }) =>{
-    const test = "kml"
-    console.log(test)
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
 

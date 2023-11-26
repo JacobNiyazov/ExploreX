@@ -2,6 +2,7 @@ const User = require('../models/user-model')
 const Map = require('../models/map-model')
 const Graphics = require('../models/graphics-model')
 const Convert = require('../map-convert/map-conversion')
+const path = require("path");
 var zlib = require('zlib');
 const mongoose = require('mongoose');
 
@@ -16,6 +17,16 @@ createMap = async (req,res) =>{
     }
 
     console.log(body)
+
+    //check file extension for accepted types
+    ext = path.extname(req.files[0].originalname)
+    if(ext != ".json" && ext != ".shp" && ext != ".kml" && req.files[1] && path.extname(req.files[1].originalname) != ".dbf"){
+        return res.status(400).json({
+            success: false,
+            errorMessage: 'Provided files are of the incorrect type. Only .json, .kml, .shp, and .dbf files!',
+        })
+    }
+    
     let geojsonData = {}
     if(body.fileType == "kml"){
         geojsonData = Convert.convertKML(req.files[0])
@@ -23,140 +34,275 @@ createMap = async (req,res) =>{
     else if(body.fileType == "shapefile"){
         geojsonData = await Convert.convertShapeFile(req.files[0], req.files[1])
     }
-    else{// check if native file type TODO
+    else{
         geojsonData = Convert.convertJSON(req.files[0])
     }
 
-    if(!Convert.checkGeoJSON(geojsonData)){
-        return res.status(400).json({
-            success: false,
-            errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+    // deal with native file vs converting shape, kml, geojson
+    if(Convert.checkNativeFileType(geojsonData)){
+        let nativeFile = {...geojsonData}
+        let tempMap = {...geojsonData}
+        let geojson = {...nativeFile.graphics.geojson};
+
+
+        if(!Convert.checkGeoJSON(geojson)){
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+            })
+        }
+
+        // Check geojson for specific format for type if needed
+        if(body.mapType == "Voronoi Map"){
+            let message = Convert.checkVoronoiMap(geojson)
+            if(message != ""){
+                return res.status(400).json({
+                    success: false,
+                    errorMessage: message,
+                })
+            }
+        }
+
+        if(body.mapType !== body.mapType){
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Provided Native map type was: ' + body.mapType + ". Selected map tap was: " + body.mapType,
+            })
+        }
+
+        let graphic = {...nativeFile.graphics}
+        var input = new Buffer.from(JSON.stringify(geojson), 'utf8')
+        var deflated= zlib.deflateSync(input);
+
+        graphic.geojson = deflated
+        graphic.ownerUsername = body.ownerUsername
+
+        const graphics = new Graphics(graphic)
+        
+        User.findOne({ _id: req.userId }).then( (user) => {
+            if(user.username !== body.ownerUsername){
+                return res.status(400).json({
+                    success:false,
+                    errorMessage: 'Authentication Error, please log in again!'
+                })
+            }
+            console.log("user found: " + JSON.stringify(user));
+            
+            graphics
+                .save()
+                .then(()=>{
+                    // Give file values it wouldn't be exported with
+                    nativeFile.graphics = graphics._id
+                    nativeFile.ownerUsername = user.username
+                    nativeFile.publishDate = Date.now()
+                    nativeFile.reactions = {
+                        comments:[],
+                        likes:0,
+                        dislikes:0,
+                    }
+                    nativeFile.mapType = body.mapType
+
+                    const map = new Map(nativeFile);
+                    
+                    user.mapsOwned.push(map._id);
+                    user
+                        .save()
+                        .then(() => {
+                            map
+                                .save()
+                                .then(() => {
+                                    console.log("map id: " + map._id)
+                                    //Show actual geojson data not ID or zipped
+                                    tempMap.ownerUsername = user.username
+                                    tempMap.publishDate = Date.now()
+                                    tempMap.reactions = {
+                                        comments:[],
+                                        likes:0,
+                                        dislikes:0,
+                                    }
+                                    tempMap.mapType = body.mapType
+                                    tempMap._id = map._id
+                                    return res.status(201).json({
+                                        success: true,
+                                        map: tempMap
+                                    })
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    return res.status(400).json({
+                                        success:false,
+                                        errorMessage: 'Map Not Created!'
+                                    })
+                                }) 
+                        })
+                    
+                }).catch((err) => {
+                    console.log(err)
+                    return res.status(400).json({
+                        success:false,
+                        errorMessage: 'Map Not Created. File Size too big or wrong format.'
+                    })
+                });
+        }).catch(error => {
+            console.log(error)
+            return res.status(400).json({
+                success:false,
+                errorMessage: 'Authentication Error, please log in again!'
+            })
         })
     }
 
-    let graphic = {}
+    //Convert other file types.
+    else{
 
-    var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
-    var deflated= zlib.deflateSync(input);
-
-    graphic.geojson = deflated
-    // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
-    graphic.legend =
-        {
-            hideLegend: false,
-            fillColor: "#FFFFFF",
-            borderColor: "#FFFFFF",
-            borderWidth: 1,
-            title: "Example Title",
-            fields:[
-            {
-                fieldColor:"#FF0000",
-                fieldText:"Field 1"
-            },
-            {
-                fieldColor:"#000000",
-                fieldText:"Field 2"
-            },
-            {
-                fieldColor:"#FFFFFF",
-                fieldText:"Field 3"
-            },
-            ]
+        if(!Convert.checkGeoJSON(geojsonData)){
+            return res.status(400).json({
+                success: false,
+                errorMessage: 'Provided file is not correctly formatted or incorrectly converted. Please try another file!',
+            })
         }
 
-    graphic.typeSpecific =
-        {
-            selectAll: false,
-            size: 0,
-            dotColor: "#000000",
-            color: "#FFFFFF",
-            range:3,
-            spikeColor: "#FFFFFF",
-            dotPoints: null,
-            dotScale: null,
-            property: null,
-            spikeData: null,
+
+        // Check geojson for specific format for type if needed
+        if(body.mapType == "Voronoi Map"){
+            let message = Convert.checkVoronoiMap(geojsonData)
+            if(message != ""){
+                return res.status(400).json({
+                    success: false,
+                    errorMessage: message,
+                })
+            }
+        }
+
+        let graphic = {}
+
+        var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
+        var deflated= zlib.deflateSync(input);
+
+        graphic.geojson = deflated
+        // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
+        graphic.legend =
+            {
+                hideLegend: false,
+                fillColor: "#FFFFFF",
+                borderColor: "#FFFFFF",
+                borderWidth: 1,
+                title: "Example Title",
+                fields:[
+                {
+                    fieldColor:"#FF0000",
+                    fieldText:"Field 1"
+                },
+                {
+                    fieldColor:"#000000",
+                    fieldText:"Field 2"
+                },
+                {
+                    fieldColor:"#FFFFFF",
+                    fieldText:"Field 3"
+                },
+                ]
+            }
+
+        graphic.typeSpecific =
+            {
+                selectAll: false,
+                size: 0,
+                dotColor: "#000000",
+                color: "#FFFFFF",
+                range:3,
+                spikeColor: "#FFFFFF",
+                dotPoints: null,
+                dotScale: null,
+                property: null,
+                spikeData: null,
             spikeLegend: null
         }
-    graphic.region = {
-            fillColor: "#FFFFFF",
-            borderColor: "#FFFFFF",
-            borderWidth: 1,
-            size: 12
-        }
-    graphic.text = {
-            color: "#FFFFFF",
-            font: "Nova Square",
-            size: 12
-        }
-    graphic.ownerUsername = body.ownerUsername
+        graphic.region = {
+                fillColor: "#FFFFFF",
+                borderColor: "#FFFFFF",
+                borderWidth: 1,
+                size: 12
+            }
+        graphic.text = {
+                color: "#FFFFFF",
+                font: "Nova Square",
+                size: 12
+            }
+        graphic.ownerUsername = body.ownerUsername
 
-    console.log(graphic)
-    
-    const graphics = new Graphics(graphic)
-    
-    User.findOne({ _id: req.userId }).then( (user) => {
-        console.log("user found: " + JSON.stringify(user));
+        console.log(graphic)
         
-        graphics
-            .save()
-            .then(()=>{
-                //console.log(JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8")));
-                tempMap = {
-                    title: "Map Example",
-                    ownerUsername: body.ownerUsername,
-                    reactions:{
-                        comments:[],
-                    likes:0,
-                    dislikes:0,
-                    },
-                    isPublic: false,
-                    type: body.mapType,
-                    publishDate: body.publishedDate,
-                }
-                tempMap.graphics = graphics._id
-                const map = new Map(tempMap);
-                
-                user.mapsOwned.push(map._id);
-                user
-                    .save()
-                    .then(() => {
-                        map
-                            .save()
-                            .then(() => {
-                                console.log("map id: " + map._id)
-                                //Show actual geojson data not ID or zipped
-                                graphic.geojson = geojsonData
-                                tempMap.graphics = graphic
-                                tempMap._id = map._id;
-                                return res.status(201).json({
-                                    success: true,
-                                    map: tempMap
-                                })
-                            })
-                            .catch(error => {
-                                console.log(error)
-                                return res.status(400).json({
-                                    success:false,
-                                    errorMessage: 'Map Not Created!'
-                                })
-                            }) 
-                    })
-                
-            }).catch((err) => {
-                console.log(err)
+        const graphics = new Graphics(graphic)
+        
+        User.findOne({ _id: req.userId }).then( (user) => {
+            console.log("user found: " + JSON.stringify(user));
+            if(user.username !== body.ownerUsername){
                 return res.status(400).json({
                     success:false,
-                    errorMessage: 'Map Not Created. File Size too big.'
+                    errorMessage: 'Authentication Error, please log in again!'
                 })
-            });
-    }).catch(error => {
-        console.log(error)
-        return res.status(400).json({
-            success:false,
-            errorMessage: 'Authentication Error, please log in again!'
+            }
+            graphics
+                .save()
+                .then(()=>{
+                    //console.log(JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8")));
+                    tempMap = {
+                        title: "Map Example",
+                        ownerUsername: body.ownerUsername,
+                        reactions:{
+                            comments:[],
+                        likes:0,
+                        dislikes:0,
+                        },
+                        isPublic: false,
+                        type: body.mapType,
+                        publishDate: body.publishedDate,
+                    }
+                    tempMap.graphics = graphics._id
+                    const map = new Map(tempMap);
+                    
+                    user.mapsOwned.push(map._id);
+                    user
+                        .save()
+                        .then(() => {
+                            map
+                                .save()
+                                .then(() => {
+                                    console.log("map id: " + map._id)
+                                    //Show actual geojson data not ID or zipped
+                                    graphic.geojson = geojsonData
+                                    tempMap.graphics = graphic
+                                    tempMap._id = map._id;
+                                    return res.status(201).json({
+                                        success: true,
+                                        map: tempMap
+                                    })
+                                })
+                                .catch(error => {
+                                    console.log(error)
+                                    return res.status(400).json({
+                                        success:false,
+                                        errorMessage: 'Map Not Created!'
+                                    })
+                                }) 
+                        })
+                    
+                }).catch((err) => {
+                    console.log(err)
+                    return res.status(400).json({
+                        success:false,
+                        errorMessage: 'Map Not Created. File Size too big.'
+                    })
+                });
+        }).catch(error => {
+            console.log(error)
+            return res.status(400).json({
+                success:false,
+                errorMessage: 'Authentication Error, please log in again!'
+            })
         })
-    })
+    }
 }
 deleteMap = async (req, res) =>{
     console.log("delete Map with id: " + JSON.stringify(req.params.id));
@@ -207,7 +353,8 @@ getMapById = async (req, res) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
             tempMap = {...map}._doc;
-            tempMap.graphics = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
+            tempMap.graphics = graphics
+            tempMap.graphics.geojson = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
             console.log(tempMap)
             console.log("correct user!");
             return res.status(200).json({ success: true, map: tempMap })
