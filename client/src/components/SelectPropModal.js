@@ -44,12 +44,12 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
             },
         },
     };
-    function alertModal(header, paragraph){
+    /*function alertModal(header, paragraph){
         store.displayModal(<div>
             <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
           </div>, false);
-    }
+    }*/
     async function handleCreateNewMap(){
         await store.updateMapGraphics(selectedProperty);
         onClose(selectedProperty);

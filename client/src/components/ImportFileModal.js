@@ -169,7 +169,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             
             // Accounting for selection ordering
             setFiles(formData);
-            if (extension1 == "shp"){
+            if (extension1 === "shp"){
                 setFileNames([file1, file2])
                 formData.append('file', selectedFiles[0]);
                 formData.append('file', selectedFiles[1]);

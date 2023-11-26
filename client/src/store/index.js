@@ -90,7 +90,7 @@ function GlobalStoreContextProvider(props) {
        modalOpen: false,
        modalConfirmButton: false,
        currentMap: exampleMaps.Map1,
-       currentMaps: exampleMaps
+       currentMaps: exampleMaps,
    });
    const dict = {
     "/login": "Login",
@@ -133,7 +133,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     currentMap: payload.currentMap,
-                    currentMaps: payload.currentMaps
+                    currentMaps: payload.currentMaps,
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -143,7 +143,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     currentMap: payload.currentMap,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -153,7 +153,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -163,7 +163,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -173,7 +173,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps
+                    currentMaps: exampleMaps,
                 });
             }
             case GlobalStoreActionType.DELETE_MAP: {       
@@ -219,7 +219,7 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     currentMap: store.currentMap,
-                    currentMaps: store.currentMaps
+                    currentMaps: store.currentMaps,
                 });
             }
 
@@ -319,14 +319,27 @@ function GlobalStoreContextProvider(props) {
         };
       }, [storeRef]);
 
-    store.setCurrentEditMap = (currentMap, currentPage) =>{
-        storeReducer({
-            type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
-            payload: {
-                currentMap: currentMap,
-                currentPage: currentPage,
+    store.setCurrentEditMap = (currentPage) =>{
+        console.log("current Page: ", currentPage);
+        try{
+            async function setCurrentMapToEdit(){
+                let response = await maps.getMapById("65618c5da4295061e257189e");
+                console.log("map: ",response.data.map);
+                if(response.data.success){
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                        payload: {
+                            currentPage: dict["/editMap"],
+                            currentMap: response.data.map
+                        }
+                    })
+                }
             }
-        });
+            setCurrentMapToEdit();
+        }
+        catch(err){
+            console.log("error: ", err)
+        }
     }
 
     store.createMap = async (files, mapType, fileType, property) =>{
@@ -335,7 +348,6 @@ function GlobalStoreContextProvider(props) {
         let publishDate = Date.now();
         // No need to create graphics create map takes care of this
         let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
-        console.log(response.data)
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
@@ -443,7 +455,7 @@ function GlobalStoreContextProvider(props) {
     //             });
       
       let id = currentMap._id;
-      let userId = currentMap.author;
+      //let userId = currentMap.author;
       async function processDelete(){
         let response = await maps.deleteMap(id);
         console.log(response)
@@ -502,19 +514,14 @@ function GlobalStoreContextProvider(props) {
             // get all the maps based on page
             let map = await maps.getMapById(currentMap);
             if(map.data.success){
-                console.log("RAHHHHHHH")
                 let tempMap = {...map.data.map}
-                console.log("map: ",tempMap)
                 tempMap.reactions.likes = like;
                 tempMap.reactions.dislikes = dislike;
                 if (comment){
                     tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
                 }
-                console.log("map reactions: ",tempMap.reactions)
                 let update = await maps.updateMapById(currentMap,tempMap);
-                console.log("update: ", update.data)
                 if(update.data.success){
-                    console.log("yay!")
                     storeReducer({
                         type: GlobalStoreActionType.UPDATE_MAP_REACTION,
                         payload: {

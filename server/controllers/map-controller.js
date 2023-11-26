@@ -353,7 +353,7 @@ getMapById = async (req, res) => {
         console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
             tempMap = {...map}._doc;
-            tempMap.graphics = graphics
+            tempMap.graphics = graphics;
             tempMap.graphics.geojson = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
             console.log(tempMap)
             console.log("correct user!");

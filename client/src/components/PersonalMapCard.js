@@ -27,7 +27,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const navigate = useNavigate();
 
   function handleEditClick (){
-    store.setCurrentEditMap(map, "EditMapScreen")
+    store.setCurrentEditMap("EditMapScreen")
     navigate("/editMap")
   }
   const handleLikeToggle = () => {
