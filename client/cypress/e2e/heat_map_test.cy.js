@@ -14,7 +14,7 @@ describe('Heat Map Tests', () => {
       cy.get('[data-testid="AccountCircleIcon"]').click();
       cy.get('[data-testid="My Profile"]').click();
       cy.get('[data-testid="AddIcon"]').click();
-      cy.get(':nth-child(2) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
+      cy.get(':nth-child(1) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
   
       cy.fixture(fileName).then(fileContent => {
           const blob = new Blob([JSON.stringify(fileContent)], { type: 'application/json' });
@@ -35,7 +35,7 @@ describe('Heat Map Tests', () => {
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
       cy.get('body').click();
       cy.get('body').click();
-      cy.get('#\\:r5\\: > [tabindex="0"]').click();
+      cy.get('[data-value="population"]').click();
       cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root > .MuiButtonBase-root').click();
       cy.get('#\\:r7\\:-label').should('be.visible');
       /* ==== End Cypress Studio ==== */
@@ -50,7 +50,7 @@ describe('Heat Map Tests', () => {
       cy.get('[data-testid="AccountCircleIcon"]').click();
       cy.get('[data-testid="My Profile"]').click();
       cy.get('[data-testid="AddIcon"]').click();
-      cy.get(':nth-child(2) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
+      cy.get(':nth-child(1) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
   
       /* ==== Generated with Cypress Studio ==== */
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
