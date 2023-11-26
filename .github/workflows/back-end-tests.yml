@@ -30,7 +30,7 @@ jobs:
         run: |
           cd ./server
           npm ci
-          npm test &
+          npm test
 
   deploy:
     name: Deploy
