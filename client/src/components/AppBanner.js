@@ -142,6 +142,7 @@ function AppBanner() {
             aria-controls={isMenuOpen ? 'account-menu' : undefined}
             aria-haspopup="true"
             onClick={handleAccountMenuOpen}
+            data-testid= "AccountCircleIcon"
           >
             <AccountCircle />
           </UserIconButton>

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
@@ -8,7 +8,7 @@ import { Box, Typography } from '@mui/material';
 
 const VoronoiMap = () => {
 
-    function getRandomShade(){
+    /*function getRandomShade(){
         // Generate random values for the red and green components
         const red = Math.floor(Math.random() * 256); // Random red value (0-255)
         const green = Math.floor(Math.random() * 128); // Random green value (0-127)
@@ -21,7 +21,7 @@ const VoronoiMap = () => {
         const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
       
         return color;
-    }
+    }*/
     // Format geojson: 1 Polygon/Multipolygon and points
     // Polygon will be used as the bounding of the voronoi map
     const { store } = useContext(GlobalStoreContext);
@@ -32,14 +32,14 @@ const VoronoiMap = () => {
 
     // Get polygon inside geojson, should only have one
     const polygon = geojson.features.filter(feature=>{
-        return feature.geometry.type == "Polygon" || feature.geometry.type == "MultiPolygon"
+        return feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"
     })
 
     let polygonGeo = {"type": "FeatureCollection", "features":[polygon[0]]}
     options.bbox = turf.bbox(polygonGeo)
 
     const geoPoints = geojson.features.filter(feature=>{
-        return feature.geometry.type == "Point"
+        return feature.geometry.type === "Point"
     })
     let points = {"type": "FeatureCollection", "features": geoPoints}
 

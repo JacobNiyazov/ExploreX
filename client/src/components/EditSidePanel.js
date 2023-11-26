@@ -36,7 +36,7 @@ const EditSidePanel = ({
     const handleFont= (event, label) => {
         setFont(event.target.value)
     }
-    const [title, setTitle] = useState(store.currentMap.title)
+    const [title, setTitle] = useState("Example Map")
     
     const handleTitle= (event) => {
         setTitle(event.target.value)

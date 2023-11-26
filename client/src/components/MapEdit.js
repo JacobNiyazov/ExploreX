@@ -14,9 +14,9 @@ import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
 import SpikeMap from './SpikeMap.js';
+import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
-import * as turf from '@turf/turf'
 
 const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
@@ -39,6 +39,7 @@ const MapEditInner = () =>{
     const map = useMap();
 
     function loadMap(geojson){
+        
         L.geoJSON(geojson, {
             onEachFeature: function (feature, layer) {
                 
@@ -76,6 +77,11 @@ const MapEditInner = () =>{
     }
     else if(store.currentMap.type === "Spike Map"){
         return <SpikeMap/>
+    }
+    else if(store.currentMap.type === "Heat Map"){
+        if(store.currentMap.graphics.geojson){
+            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property}/>
+        }
     }
     else if(store.currentMap.type === "Chloropleth Map"){
         return <ChloroplethMap/>
