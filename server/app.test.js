@@ -1,6 +1,7 @@
 const {app, server} = require('./app.js'); 
 const mongoose = require("mongoose");
 const request = require('supertest');
+const path = require('path');
 
 const generateDummyMap = () => {
   return {
@@ -394,34 +395,63 @@ describe('Register user tests', function(){
 });
 
 describe('Edit Account details tests', function(){
+  // let token = ""
+  // it('Login dummy user', async () => {
+  //   const response = await request(app)
+  //     .post('/auth/login')
+  //     .send({username: "testBack", password: "password"});
+
+  //   expect(response.status).toBe(200);
+  //   token = response.headers['set-cookie']
+  // })
   it('should test successful PUT /user/editAccount/${id}', async() =>{
     let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
     let response = await request(app)
-      .put(reqURL)
+      .put(reqURL).set("Cookie", token)
       .send({ username: 'backtest', email: 'bt1@yahoo.com', bio:'', password:'password'});
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
         success: true,
         id: expect.any(String),
-        message: 'User details updated successfully!'
+        message: 'User details updated successfully!',
+        user: {
+          "__v": expect.any(Number),
+          "_id": '65579dea673cb2142388bd46',
+          "bio": "",
+          "createdAt": expect.any(String),
+          "email": "bt1@yahoo.com",
+          "mapsOwned": expect.any(Array),
+          "passwordHash": expect.any(String),
+          "updatedAt": expect.any(String),
+          "username": "backtest"}
     });
     response = await request(app)
-      .put(reqURL)
+      .put(reqURL).set("Cookie", token)
       .send({ username: 'testBack', email: 'bt2@yahoo.com', bio:'', password:'password'});
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({
         success: true,
         id: expect.any(String),
-        message: 'User details updated successfully!'
+        message: 'User details updated successfully!',
+        user: {
+          "__v": expect.any(Number),
+          "_id": '65579dea673cb2142388bd46',
+          "bio": "",
+          "createdAt": expect.any(String),
+          "email": "bt2@yahoo.com",
+          "mapsOwned": expect.any(Array),
+          "passwordHash": expect.any(String),
+          "updatedAt": expect.any(String),
+          "username": "testBack"}
     });
   });
 
   it('should test PUT /user/editAccount/${id} with non-unique email', async() =>{
     let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
     const response = await request(app)
-      .put(reqURL)
+      .put(reqURL).set("Cookie", token)
       .send({ username: 'cascacdd', email: 'explorer@gmail.com', bio:'', password:'password'});
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
@@ -434,7 +464,7 @@ describe('Edit Account details tests', function(){
   it('should test PUT /user/editAccount/${id} with non-unique username', async() =>{
     let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
     const response = await request(app)
-      .put(reqURL)
+      .put(reqURL).set("Cookie", token)
       .send({ username: 'explorer', email: 'dsfsdvsd@yahoo.com', bio:'', password:'password'});
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
@@ -442,6 +472,107 @@ describe('Edit Account details tests', function(){
         errorMessage: "An account with this username already exists."
     });
   });
+
+
+});
+
+describe('Create Map tests', function(){
+  // let token = ""
+  // it('Login dummy user', async () => {
+  //   const response = await request(app)
+  //     .post('/auth/login')
+  //     .send({username: "testBack", password: "password"});
+
+  //   expect(response.status).toBe(200);
+  //   token = response.headers['set-cookie']
+  // })
+
+  it('should test successful POST /api/map/', async() =>{
+    let reqURL = '/api/map'
+    let query = {
+      'ownerUsername': 'testBack',
+      'mapType': 'Dot Distribution Map',
+      'publishDate': Date.now(),
+      'fileType': 'geojson',
+      'property': 'id'
+    }
+    let response = await request(app).post(reqURL).set("Cookie", token)
+    .query(query)
+    .attach('file', path.resolve(__dirname, './ExampleData/poland.geojson.json'))
+    .expect(201) // Adjust according to the expected response status
+    .then(response => {
+      expect(response.body.map.type).toBe('Dot Distribution Map');
+    });
+  });
+  it('should test successful POST /api/map/', async() =>{
+    let reqURL = '/api/map'
+    let query = {
+      'ownerUsername': 'testBack',
+      'mapType': 'Spike Map',
+      'publishDate': Date.now(),
+      'fileType': 'geojson',
+      'property': 'id'
+    }
+    let response = await request(app).post(reqURL).set("Cookie", token)
+    .query(query)
+    .attach('file', path.resolve(__dirname, './ExampleData/poland.geojson.json'))
+    .expect(201) // Adjust according to the expected response status
+    .then(response => {
+      expect(response.body.map.type).toBe('Spike Map');
+    });
+  });
+  it('should test successful POST /api/map/', async() =>{
+    let reqURL = '/api/map'
+    let query = {
+      'ownerUsername': 'testBack',
+      'mapType': 'Voronoi Map',
+      'publishDate': Date.now(),
+      'fileType': 'geojson',
+      'property': 'id'
+    }
+    let response = await request(app).post(reqURL).set("Cookie", token)
+    .query(query)
+    .attach('file', path.resolve(__dirname, './ExampleData/poland.geojson.json'))
+    .expect(201) // Adjust according to the expected response status
+    .then(response => {
+      expect(response.body.map.type).toBe('Voronoi Map');
+    });
+  });
+  it('should test successful POST /api/map/', async() =>{
+    let reqURL = '/api/map'
+    let query = {
+      'ownerUsername': 'testBack',
+      'mapType': 'Heat Map',
+      'publishDate': Date.now(),
+      'fileType': 'geojson',
+      'property': 'id'
+    }
+    let response = await request(app).post(reqURL).set("Cookie", token)
+    .query(query)
+    .attach('file', path.resolve(__dirname, './ExampleData/poland.geojson.json'))
+    .expect(201) // Adjust according to the expected response status
+    .then(response => {
+      expect(response.body.map.type).toBe('Heat Map');
+    });
+  });
+  it('should test successful POST /api/map/', async() =>{
+    let reqURL = '/api/map'
+    let query = {
+      'ownerUsername': 'testBack',
+      'mapType': 'Choropleth Map',
+      'publishDate': Date.now(),
+      'fileType': 'geojson',
+      'property': 'id'
+    }
+    let response = await request(app).post(reqURL).set("Cookie", token)
+    .query(query)
+    .attach('file', path.resolve(__dirname, './ExampleData/poland.geojson.json'))
+    .expect(201) // Adjust according to the expected response status
+    .then(response => {
+      expect(response.body.map.type).toBe('Choropleth Map');
+    });
+  });
+  
 
 
   afterAll(async ()=>{

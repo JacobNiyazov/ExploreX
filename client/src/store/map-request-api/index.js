@@ -30,7 +30,7 @@ export const getMapById = (id) =>maps.get(`/map/${id}`)
 
 export const getUserMapIdPairs = (id) =>maps.get('/usermapidpairs')
 
-export const deleteMap = (id) => {maps.delete(`/map/${id}`)}
+export const deleteMap = (id) => maps.delete(`/map/${id}`)
 export const getPublicMapPairs = ()=>maps.get(`/publicmapidpairs`)
 
 

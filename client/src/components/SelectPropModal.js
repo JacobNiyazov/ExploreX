@@ -52,7 +52,7 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
     }
     async function handleCreateNewMap(){
         await store.updateMapGraphics(selectedProperty);
-        onClose();
+        onClose(selectedProperty);
         store.setCurrentPage(store.currentPageType.editMapScreen);
         navigate("/editMap");
     }

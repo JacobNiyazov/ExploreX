@@ -82,7 +82,11 @@ function ProfileScreen(){
     const handleCloseImport = () => setOpenImport(false);
     const [openSelectPropModal, setOpenSelectPropModal] = useState(false);
     const handleOpenSelectPropModal = () => setOpenSelectPropModal(true);
-    const handleCloseSelectPropModal = () => setOpenSelectPropModal(false);
+    const handleCloseSelectPropModal = async (selectedProperty) => {
+      if(!(typeof selectedProperty === "string")){
+        await store.deleteMap(store.currentMap, store.currentPage);
+      }
+      setOpenSelectPropModal(false)};
     /*const [openUpload, setOpenUpload] = useState(false);
     const handleOpenUpload = () => setOpenUpload(true);
     const handleCloseUpload = () => setOpenUpload(false);

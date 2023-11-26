@@ -4,7 +4,7 @@ const Graphics = require('../models/graphics-model')
 const Convert = require('../map-convert/map-conversion')
 const path = require("path");
 var zlib = require('zlib');
-
+const mongoose = require('mongoose');
 
 createMap = async (req,res) =>{
     const body = req.query;
@@ -210,7 +210,9 @@ createMap = async (req,res) =>{
                 dotPoints: null,
                 dotScale: null,
                 property: null,
-            }
+                spikeData: null,
+            spikeLegend: null
+        }
         graphic.region = {
                 fillColor: "#FFFFFF",
                 borderColor: "#FFFFFF",
@@ -306,15 +308,21 @@ deleteMap = async (req, res) =>{
                 if (user._id == req.userId) {
                     console.log("correct user!");
                     Map.findOneAndDelete({ _id: req.params.id }).then(() => {
+                        console.log("map deleted");
                         Graphics.findOneAndDelete({ _id: map.graphics }).then(() => {
-                            return res.status(200).json({ success: true });
+                            console.log("graphics deleted");
+                            user.mapsOwned.pull(new mongoose.Types.ObjectId(req.params.id));
+                            user.save().then(() => {
+                                return res.status(200).json({ success: true });
+                            }).catch(err => console.log(err));
+                        
                         }).catch(err => console.log(err))
                     }).catch(err => console.log(err))
                 }
                 else {
                     console.log("incorrect user!");
                     return res.status(400).json({ 
-                        errorMessage: "Authentication Error" 
+                        errorMessage: "Authentication Error"
                     });
                 }
             });
