@@ -149,9 +149,6 @@ const DotDistMap = () => {
         console.log(err)
       }
     }
-    console.log("ONE", store.currentMap)
-    console.log(storeRef.currentMap)
-
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
