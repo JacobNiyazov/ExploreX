@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
@@ -6,6 +6,7 @@ import GlobalStoreContext from '../store/index.js';
 const ChloroplethMap = () => {
 
     const { store } = useContext(GlobalStoreContext);
+    const storeRef = useRef(store);
     const map = useMap();
 
     useEffect(() => {
@@ -88,18 +89,18 @@ const ChloroplethMap = () => {
                   usedColors.add(color)
                   counter = counter + 1;
                 }
-                coloring[feature.properties[store.currentMap.graphics.typeSpecific.property]] = color;
+                coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
 
               }
-              else if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
-                  currentNum = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+              else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
+                  currentNum = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
                   if (currentNum === null){
                     flag = true;
 
                   }
               }
               else{
-                  currentNum = feature.properties[store.currentMap.graphics.typeSpecific.property];
+                  currentNum = feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property];
               }
               chloroData.push(currentNum)
             })
@@ -113,13 +114,13 @@ const ChloroplethMap = () => {
                     let fillColor;
                     let propertyValue;
                     if (flag){
-                      fillColor = coloring[feature.properties[store.currentMap.graphics.typeSpecific.property]];;
+                      fillColor = coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]];;
                     }
-                    else if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
-                        propertyValue = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+                    else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
+                        propertyValue = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
                     }
                     else{
-                        propertyValue = feature.properties[store.currentMap.graphics.typeSpecific.property];
+                        propertyValue = feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property];
                     }
                     if (!flag){
                       fillColor = getColor(propertyValue, coloring);
@@ -146,7 +147,7 @@ const ChloroplethMap = () => {
                 console.log(err)
             }
         }
-        var geojsonData = store.currentMap.graphics.geojson;
+        var geojsonData = storeRef.current.currentMap.graphics.geojson;
         // console.log(geojsonData)
 
         updateLayers(geojsonData)
@@ -154,7 +155,7 @@ const ChloroplethMap = () => {
         return () => {
             chloroLayerGroup.remove();
           };
-    }, [map, store.currentMap.graphics.geojson, store.currentMap.graphics.typeSpecific.property]);
+    }, [map, storeRef]);
 
     return null;    
 }
