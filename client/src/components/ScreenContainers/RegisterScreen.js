@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
@@ -10,6 +10,8 @@ import {
   Container,
   Grid,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -18,13 +20,44 @@ const RegisterScreen = () => {
 
   const { auth } = useContext(AuthContext);
   const { store } = useContext(GlobalStoreContext);
+  const [loading, setLoading] = useState(true);
 
-  
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(auth.loggedIn && auth.user !== null){
+                store.setCurrentPage(store.currentPageType.mapFeed)
+                navigate("/feed");
+            }   
+            setLoading(false);
+            
+        }
+    };
+
+    waitForAuthCheck();
+  }, [auth, navigate, store]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   const handleRegister = (e) => {
     e.preventDefault();
     //alert(email + " " + username  + " " + password + " " + confirmPassword)
     auth.registerUser(email, username,password,confirmPassword)
-    .then((val) => store.setCurrentPage(store.currentPageType.login))
+    .then((val) => {
+      navigate("/feed");
+
+      store.setModal(<div>
+        <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem' }}>Not sure where to get started? Check out the FAQ found in the profile menu!</p>
+      </div>, store.currentPageType.mapFeed, false);
+    })
     .catch(
       (error) => {
         store.displayModal(<div>

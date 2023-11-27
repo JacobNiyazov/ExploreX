@@ -1,4 +1,4 @@
-import React, {useState,useContext} from 'react';
+import React, {useState,useContext, useEffect} from 'react';
 import Grid from '@mui/material/Grid';
 import { StyledButton, StyledTypography,StyledTypography2 } from '../StyleSheets/ProfileScreenStyles';
 import ImportFileModal from '../ImportFileModal';
@@ -12,6 +12,9 @@ import PropTypes from 'prop-types';
 //import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
 import AddIcon from '@mui/icons-material/Add';
+import { AuthContext } from '../../auth'
+import { useNavigate } from 'react-router-dom';
+import SelectPropModal from '../SelectPropModal';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -47,10 +50,43 @@ function CustomTabPanel(props) {
   }
 function ProfileScreen(){
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+      const waitForAuthCheck = async () => {
+          if (auth.loggedIn === undefined) {
+              // Wait until authentication check is completed
+              await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+              waitForAuthCheck(); // Re-check status
+          } else {
+              if(!auth.loggedIn){
+                  store.setCurrentPage(store.currentPageType.login)
+                  navigate("/login");
+              }   
+              setLoading(false);
+              
+          }
+      };
+  
+      waitForAuthCheck();
+    }, [auth, navigate, store]);
+
+    const [files, setFiles] = useState([]);
+    const [fileType, setFileType] = useState('');
+    const [mapType, setMapType] = useState('');
     const [openImport, setOpenImport] = useState(false);
     const handleOpenImport = () => setOpenImport(true);
     const handleCloseImport = () => setOpenImport(false);
-
+    const [openSelectPropModal, setOpenSelectPropModal] = useState(false);
+    const handleOpenSelectPropModal = () => setOpenSelectPropModal(true);
+    const handleCloseSelectPropModal = async (selectedProperty) => {
+      if(!(typeof selectedProperty === "string")){
+        await store.deleteMap(store.currentMap, store.currentPage);
+      }
+      setOpenSelectPropModal(false)};
     /*const [openUpload, setOpenUpload] = useState(false);
     const handleOpenUpload = () => setOpenUpload(true);
     const handleCloseUpload = () => setOpenUpload(false);
@@ -66,13 +102,17 @@ function ProfileScreen(){
       setValue(newValue);
     };
     let mapValues = ""
+    console.log("what is in current maps: ", store.currentMaps)
     if (store.currentMaps) {
       mapValues = Object.values(store.currentMaps);
     }
     const drafts = mapValues.filter((map) => !map.isPublic);
     const posted = mapValues.filter((map) => map.isPublic);
-    
-    return(
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+    if (store.currentPage === store.currentPageType.profileScreen){
+      return (
         <Grid container spacing = {2}>
             <Grid item xs = {10}>
                 <StyledTypography>
@@ -84,7 +124,15 @@ function ProfileScreen(){
                 onClick = {handleOpenImport}>
                   <AddIcon></AddIcon>
                 </StyledButton>
-                <ImportFileModal open={openImport} onClose={handleCloseImport}/>
+                <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
+                  files={files}
+                  setFiles={setFiles}
+                  fileType={fileType}
+                  setFileType={setFileType}
+                  mapType={mapType}
+                  setMapType={setMapType}
+                  />
+                <SelectPropModal open={openSelectPropModal} onClose={handleCloseSelectPropModal} files={files} fileType={fileType} mapType={mapType}/>
             </Grid>
             <Grid item xs = {12}>
                 <StyledTypography2
@@ -126,6 +174,10 @@ function ProfileScreen(){
                 </Box>
             </Grid> 
         </Grid>
-    );
+     );
+    }
+    else{
+      return <div></div>
+    }
 }
 export default ProfileScreen;

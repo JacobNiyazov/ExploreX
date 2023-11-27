@@ -1,19 +1,27 @@
-import {Modal} from '@mui/material';
+import React, { useState, useContext } from 'react';
+import {Modal, Typography} from '@mui/material';
 import {Box} from '@mui/material';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import { Button } from '@mui/material';
 import {Grid} from '@mui/material';
-import { StyledButton, StyledCloud, DescriptionText, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
+import { StyledButton, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
+import styled from '@emotion/styled';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import GlobalStoreContext from '../store';
+import { useNavigate } from 'react-router-dom';
 
-function ImportFileModal({open,onClose}){
+function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileType,setFileType,mapType,setMapType}){
+    const { store } = useContext(GlobalStoreContext);
+    const navigate = useNavigate();
+    const [fileNames, setFileNames] = useState([]);
+    const [buttonName, setButtonName] = useState('Next')
     const style = {
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: 600,
+        width: 700,
         bgcolor: '#242526',
         border: '2px solid #000',
         boxShadow: 24,
@@ -29,6 +37,153 @@ function ImportFileModal({open,onClose}){
         justifyContent:"center", 
         alignItems:"center"
     }
+    const VisuallyHiddenInput = styled('input')({
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+      });
+      
+    const fileTypesStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '30px',
+        color: 'white',
+        backgroundColor: 'rgba(255, 118, 214, 0.8)',
+        fontSize: '1.2rem',
+        border: '2px dashed black',
+        borderRadius: '10px',
+        cursor: 'pointer',
+        margin: '20px 0',
+        '&:hover': {
+            backgroundColor: 'rgba(255, 118, 214, 0.7)',
+        },
+        width: '100%',
+        maxWidth: '500px',
+        boxSizing: 'border-box',
+    };
+    const uploadIconStyle = {
+        marginRight: '10px',
+      };
+    const headerTextStyle = {
+        color: 'white',
+        marginBottom: '10px',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        fontSize: '1.25rem',
+      };
+    function getFileExtension(filename){
+        return filename.split(".").pop().toLowerCase();
+    }
+    function alertModal(header, paragraph){
+        store.displayModal(<div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
+          </div>, false);
+    }
+    const handleNextPage = async () => {
+        if(files.length === 0){
+            alertModal("Try Again", "There were no files uploaded.");
+        }
+        else if(mapType === ""){
+            alertModal("Try Again", "There were no map type set.");
+        }
+        else if(mapType === "Voronoi Map"){
+            store.createMap(files, mapType, fileType)
+                .then(()=>{
+                    onClose();
+                    navigate("/editMap");
+                })
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
+            
+        }
+        else{
+            store.createMapTemp(files, mapType, fileType)
+                .then(()=> {
+                    onClose();
+                    openSelectPropModal();
+                })
+                .catch((err) => alertModal("Try Again!", err.response.data.errorMessage));
+        }
+    }
+
+    function handleSetMapType(mapType){
+        setMapType(mapType)
+        if(mapType === "Voronoi Map"){
+            setButtonName('Create Map');
+        }
+        else{
+            setButtonName('Next')
+        }
+    }
+
+        //
+    function handleFileSelect(event){
+        const selectedFiles = event.target.files;
+        if(selectedFiles.length === 1){
+            const formData = new FormData();
+            formData.append('file', selectedFiles[0]);
+            setFiles(formData)
+            setFileNames([selectedFiles[0].name])
+            // check extension for json or kml
+            // set the file name if its either
+            const fileName = selectedFiles[0].name;
+            const extension = getFileExtension(fileName);
+
+            
+            // i have to pass the map type to mapEdit
+            // also have to handle setting the page to editMapScreen
+            if (extension === 'json') {
+                setFileType("geojson");
+            }
+            else if (extension === 'kml') {
+                setFileType("kml");
+            }
+            else {
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+            }
+        }
+        else if (selectedFiles.length === 2) {
+            
+            // they must check to see if they are 
+            //shp and dbf in here and if they are then display the file names
+            const newFileNames = Array.from(selectedFiles).map(file => file.name);
+            const file1 = newFileNames[0];
+            const file2 = newFileNames[1];
+            const extension1 = getFileExtension(file1);
+            const extension2 = getFileExtension(file2);
+            if((extension1 === "shp" && extension2 === "dbf") || 
+            (extension1 === "dbf" && extension2 === "shp")){
+                setFileType("shapefile");
+            }
+            else{
+                alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+            }
+            const formData = new FormData();
+            
+            // Accounting for selection ordering
+            setFiles(formData);
+            if (extension1 === "shp"){
+                setFileNames([file1, file2])
+                formData.append('file', selectedFiles[0]);
+                formData.append('file', selectedFiles[1]);
+            }
+            else{
+                setFileNames([file2, file1])
+                formData.append('file', selectedFiles[1]);
+                formData.append('file', selectedFiles[0]);
+            }
+        }
+        else{
+            alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
+        }
+    }
     return (     
         <Modal
             data-testid="import-modal"
@@ -39,57 +194,54 @@ function ImportFileModal({open,onClose}){
         >
           <Box sx={style}>
           <Grid container spacing = {2}>
-                    <Grid item xs = {5}>
-                        <DescriptionText id="modal-modal-title" variant="h6" component="h2">
-                            Import a vector file below!
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            Accepted files:
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - Shapefile/DBF
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - KML
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - GeoJSON
-                        </DescriptionText>
-                        <DescriptionText id = "modal-modal-description">
-                            - Native File Type
-                        </DescriptionText>
-                        <Grid container spacing={2}>
-                            <Grid item xs = {4}>
-                                <Button>
-                                    <StyledCloud></StyledCloud>
-                                </Button>
-                            </Grid>
-                            <Grid item xs = {8}>
-                                <DescriptionText sx= {{ paddingTop: "5vh"}}>name_of_file.json</DescriptionText>
-                            </Grid>
-                        </Grid>
+                    <Grid item xs = {6}>
+                        {/* File upload section */}
+                        <Typography variant="h6" component="h2" sx={headerTextStyle}>
+                        Import a vector file below!
+                        </Typography>
+                        {/* File types label */}
+                        <Box sx={fileTypesStyle} component="label">
+                        <CloudUploadIcon sx={uploadIconStyle} /> {/* Upload icon */}
+                        Click to upload
+                        <Typography variant="body2" component="div" sx={{ marginTop: '10px' }}>
+                        .JSON, .SHP/.DBF, .KML
+                        </Typography>
+                        <VisuallyHiddenInput accept=".json,.shp,.dbf,.kml" type="file" onChange={handleFileSelect} multiple />
+                        </Box>
+                        {/* Display selected files */}
+                        {fileNames.length > 0 && (
+                        <Box sx={{ color: 'white' }}>
+                            {fileNames.map((file, index) => (
+                            <Typography key={index}>
+                                {file}
+                            </Typography>
+                            ))}
+                        </Box>
+                        )}
                     </Grid>
                     <Grid item xs = {1} sx = {line}></Grid>
-                    <Grid item xs = {5}>
+                    <Grid item xs = {4}>
                         <FormControl>
-                        <StyledFormLabel id="demo-radio-buttons-group-label" >Select a type of map:
+                        <StyledFormLabel id="demo-radio-buttons-group-label" >Select a map type:
                         </StyledFormLabel>
                             <RadioGroup
                                 aria-labelledby="demo-radio-buttons-group-label"
                                 defaultValue="Heat"
                                 name="radio-buttons-group"
+                                value = {mapType}
+                                onChange = {(e) => handleSetMapType(e.target.value)}
                             >
-                                <FormControlLabel sx = {{color:"white"}} value = "Heat" control={<StyledRadio/>} label="Heat Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Dot"control={<StyledRadio/>} label="Dot Distribution Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth"control={<StyledRadio/>} label="Chloropleth Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi" control={<StyledRadio/>} label="Voronoi Map" />
-                                <FormControlLabel sx = {{color:"white"}}value = "Spike" control={<StyledRadio/>} label="Spike Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth Map"control={<StyledRadio/>} label="Chloropleth Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Voronoi Map" control={<StyledRadio/>} label="Voronoi Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Spike Map" control={<StyledRadio/>} label="Spike Map" />
                             </RadioGroup>
                         </FormControl>
                     </Grid>
                     <Grid item xs = {12} sx = {center}>
-                        <StyledButton >
-                            Create Map
+                        <StyledButton onClick={() => handleNextPage()}>
+                            {buttonName}
                         </StyledButton>
                     </Grid>
                 </Grid>

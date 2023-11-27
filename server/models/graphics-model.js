@@ -3,18 +3,7 @@ const Schema = mongoose.Schema
 
 const GraphicsSchema = new Schema(
     {
-        geojson: {
-            type: {type:String, required: true},
-            features: [{
-                type: {type: String, required: true},
-                geometry: {
-                    type: {type: String, required: true},
-                    coordinates:{type: Object, required: true},
-                },
-                properties: {type: Object, required: true},
-                id: {type: Number}
-            }],
-        },
+        geojson: {type:Buffer, required: true},
         legend:{
             hideLegend: {type: Boolean, required: true},
             fillColor: {type: String, required: true},
@@ -33,6 +22,22 @@ const GraphicsSchema = new Schema(
             color: {type:String, required: true},
             range:{type: Number, required: true},
             spikeColor: {type: String, required: true},
+            dotPoints: {type: [[Object]], required:false},
+            dotScale: {type: Number, required:false},
+            property: {type: mongoose.Schema.Types.Mixed, required:false},
+            spikeData: {type: [[Object]], required:false},
+            spikeLegend: {type: [Number], required:false}
+        },
+        region:{
+            fillColor: {type: String, required: true},
+            borderColor: {type: String, required:true},
+            borderWidth: {type: Number, required:true},
+            size: {type: Number, required: true},
+        },
+        text:{
+            color: {type: String, required: true},
+            size: {type: Number, required: true},
+            font: {type: String, required: true}
         },
         ownerUsername:{type: String, required: true},
     }

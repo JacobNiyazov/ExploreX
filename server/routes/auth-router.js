@@ -9,7 +9,7 @@ router.post('/login', AuthController.loginUser)
 router.post('/forgotPassword', AuthController.recoverPassword)
 router.post('/resetPassword', AuthController.resetUserPassword)
 // router.put('/editAccount/:id', auth.verify, AuthController.editUserAccount)
-// router.get('/logout', AuthController.logoutUser)
+router.get('/logout', AuthController.logoutUser)
 router.delete('/deleteAccount', AuthController.deleteUserAccount);
 router.get('/loggedIn', AuthController.getLoggedIn)
 

@@ -40,11 +40,13 @@ async function editUserAccount(req, res) {
 			data,
 			{ new: true }
 		);
+		console.log(updatedUser)
 
 		if (updatedUser){
 			return res.status(200).json({
 				success: true,
 				id: updatedUser._id,
+				user: updatedUser,
 				message: 'User details updated successfully!',
 			})
 		}

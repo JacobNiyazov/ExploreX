@@ -8,11 +8,19 @@ export const StyledButton = styled(Button)({
     backgroundColor: "#FF76D6",
     color: "black",
     fontSize: "2vh",
-    marginTop: "3vh",
+    marginTop: "2vh",
     "&:hover": {
         backgroundColor: "#ffd0d7"
     }
 });
+export const StyledImportButton = styled(Button)({
+    backgroundColor:"#FF76D6", 
+    color: "black", 
+    marginTop: "4vh", 
+    "&:hover": {
+        backgroundColor: "#ffd0d7"
+    }  
+})
 export const StyledCloud = styled(CloudUploadIcon)({
     fontSize:"5vh",  
     color:"#FF76D6",
@@ -23,7 +31,7 @@ export const DescriptionText = styled(Typography)({
 })
 export const StyledFormLabel = styled(FormLabel)({
     color:"white",
-    '&.Mui-focused': {color: "pink",}
+    '&.Mui-focused': {color: "white",}
 })
 export const StyledRadio = styled(Radio)({
     color: "white",

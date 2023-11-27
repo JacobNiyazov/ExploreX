@@ -19,7 +19,10 @@ jobs:
           echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
-          echo JWT_SECRET=${{secrets.JWT_SECRET}} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+          echo REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} >> .env
           
 
       - name: create env file client
@@ -45,7 +48,7 @@ jobs:
           working-directory: ./client  # Actions start at root, our front end is in client
           build: npm run build
           start: npm start
-          record: false # Use record : true to debug 
+          record: true # Use record : true to debug 
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY}}

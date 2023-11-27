@@ -4,17 +4,22 @@ const maps = axios.create({
     baseURL: process.env.REACT_APP_SERVER_URL + '/api',
 })
 
-export const createMap = (title, ownerUsername, reactions, graphics, isPublic, type, publishDate) => {
-    return maps.post(`/map/`, {
+const headers = {
+    'Content-Type': "multipart/form-data",
+}
+
+export const createMap = (ownerUsername, files, mapType, publishDate, fileType, property) => {
+    return maps.post(`/map/`, files,
+    { params:
         // SPECIFY THE PAYLOAD
-        title:title,
-        ownerUsername: ownerUsername, 
-        reactions: reactions,
-        graphics: graphics,
-        isPublic: isPublic, 
-        type: type, 
-        publishDate: publishDate
-    })
+        //owner, stringGraphics, type, publishDate, fileType
+        {ownerUsername: ownerUsername, 
+        files: files,
+        mapType: mapType, 
+        publishDate: publishDate,
+        fileType: fileType,
+        property:property},
+    },  {headers:headers})
 }
 export const updateMapById = (id, map) =>{
     return maps.put(`/map/${id}`,{
@@ -25,7 +30,7 @@ export const getMapById = (id) =>maps.get(`/map/${id}`)
 
 export const getUserMapIdPairs = (id) =>maps.get('/usermapidpairs')
 
-export const deleteMap = (id) => {maps.delete(`/map/${id}`)}
+export const deleteMap = (id) => maps.delete(`/map/${id}`)
 export const getPublicMapPairs = ()=>maps.get(`/publicmapidpairs`)
 
 

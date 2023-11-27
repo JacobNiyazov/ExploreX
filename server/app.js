@@ -17,7 +17,7 @@ const corsOptions = {
 }
 
 app.use(cors(corsOptions));
-app.use(express.json({ extended: true, limit: '50mb' }))
+app.use(express.json({ extended: true, limit: '100mb' }))
 app.use(cookieParser())
 
 const PORT = process.env.PORT || 8000
@@ -30,8 +30,6 @@ const mapRouter = require('./routes/map-router');
 app.use('/api', mapRouter)
 //const mapTestRouter = require('.routes/map-test-router')
 //app.use('/api', mapTestRouter)
-const graphicsRouter = require('./routes/graphics-router');
-app.use('/api', graphicsRouter)
 
 // INITIALIZE OUR DATABASE OBJECT
 const db = require('./db')

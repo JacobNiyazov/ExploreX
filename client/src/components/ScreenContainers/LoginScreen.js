@@ -1,8 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
+import { useNavigate } from 'react-router-dom';
+
 
 import {
   Typography,
@@ -16,13 +18,41 @@ const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+        } else {
+            if(auth.loggedIn && auth.user !== null){
+                store.setCurrentPage(store.currentPageType.mapFeed)
+                navigate("/feed");
+            }   
+            setLoading(false);
+            
+        }
+    };
+
+    waitForAuthCheck();
+  }, [auth, navigate, store]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   const handleLogin = (e) => {
     e.preventDefault();
     auth.loginUser(username,password)
     .then( 
-      (val) => store.setCurrentPage(store.currentPageType.mapFeed))
+      (val) => {
+        store.setCurrentPage(store.currentPageType.mapFeed)
+        navigate("/feed")
+      })
     .catch(
       (error) => store.displayModal(<div>
         <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
@@ -33,10 +63,13 @@ const LoginScreen = () => {
 
   const handleForgot = (e) => {
     store.setCurrentPage(store.currentPageType.forgotPassScreen);
+    navigate("/forgotPassword")
+
   };
 
   const handleEnterGuest = (event) => {
     store.setCurrentPage(store.currentPageType.mapFeed);
+    navigate("/feed");
     auth.guestLogin();
   };
   
