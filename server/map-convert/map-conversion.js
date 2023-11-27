@@ -79,6 +79,30 @@ function checkVoronoiMap(json){
     return ""
 }
 
+function checkChloroplethMap(json){
+    let polyCount = 0
+    let pointCount = 0
+
+    json.features.forEach(feature=>{
+        let type = feature.geometry.type
+        if(type === "Polygon" || type === "MultiPolygon"){
+            polyCount += 1
+        }
+        else if(type === "Point"){
+            pointCount+=1
+        }
+        else{
+            return "Chloropleth Map only allows Polygon/MultiPolygon features in geojson file."
+        }
+    })
+
+    if(polyCount <= 0){
+        return "Chloropleth Map requires at least one Polygon feature."
+    }
+
+    return ""
+}
+
 function checkNativeFileType(json){
     let tempMap = {...json}
     // Variables a exported Native file would not have by default
@@ -115,5 +139,6 @@ module.exports = {
     convertJSON,
     checkGeoJSON,
     checkVoronoiMap,
+    checkChloroplethMap,
     checkNativeFileType
 };

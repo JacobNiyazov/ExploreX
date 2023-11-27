@@ -53,7 +53,7 @@ describe('Chloropleth Map Tests', () => {
       cy.get('[data-testid="AccountCircleIcon"]').click();
       cy.get('[data-testid="My Profile"]').click();
       cy.get('[data-testid="AddIcon"]').click();
-      cy.get(':nth-child(2) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
+      cy.get(':nth-child(3) > .MuiButtonBase-root > .PrivateSwitchBase-input').check();
   
       /* ==== Generated with Cypress Studio ==== */
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();

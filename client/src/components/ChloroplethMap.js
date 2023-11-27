@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
@@ -6,10 +6,18 @@ import GlobalStoreContext from '../store/index.js';
 const ChloroplethMap = () => {
 
     const { store } = useContext(GlobalStoreContext);
+    const storeRef = useRef(store);
     const map = useMap();
 
     useEffect(() => {
-        console.log("ASD")
+        function generateColor(usedColors) {
+          let newColor;
+          do {
+              newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+          } while (usedColors.has(newColor)); // Check if the color is already used
+        
+          return newColor;
+        }
         function convertStringToNumber(inputString) {
             const editedString = inputString.replace(/,/g, '').replace(/%/g, '');
             let isNegative = false;
@@ -29,7 +37,6 @@ const ChloroplethMap = () => {
             }
           
             if (!isNaN(result)) {
-                console.log(result)
               return result;
             } else {
               console.log("ERROR", inputString)
@@ -69,29 +76,56 @@ const ChloroplethMap = () => {
             chloroLayerGroup.clearLayers();
             let currentNum = 0;
             let chloroData = [];
+            let flag = false;
+            let coloring = []
+            let counter = 0;
+            let color;
+            const usedColors = new Set();
+            
             geojsonData.features.forEach(feature => {
-                if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
-                    currentNum = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+              if (flag){
+                if (counter < 10){
+                  color = generateColor(usedColors);
+                  usedColors.add(color)
+                  counter = counter + 1;
                 }
-                else{
-                    currentNum = feature.properties[store.currentMap.graphics.typeSpecific.property];
-                }
-                chloroData.push(currentNum)
-            })
+                coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
 
-            let coloring = generateColorRanges(chloroData) 
-            console.log(coloring)
+              }
+              else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
+                  currentNum = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
+                  if (currentNum === null){
+                    flag = true;
+
+                  }
+              }
+              else{
+                  currentNum = feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property];
+              }
+              chloroData.push(currentNum)
+            })
+            if (!flag){
+              coloring = generateColorRanges(chloroData) 
+            }
+            console.log("COLORING IS", coloring)
             
             L.geoJSON(geojsonData, {
                 style: (feature) => {
+                    let fillColor;
                     let propertyValue;
-                    if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
-                        propertyValue = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+                    if (flag){
+                      fillColor = coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]];;
+                    }
+                    else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
+                        propertyValue = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
                     }
                     else{
-                        propertyValue = feature.properties[store.currentMap.graphics.typeSpecific.property];
+                        propertyValue = feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property];
                     }
-                    const fillColor = getColor(propertyValue, coloring);
+                    if (!flag){
+                      fillColor = getColor(propertyValue, coloring);
+                    }
+
                   
                     return {
                       fillColor,
@@ -101,6 +135,9 @@ const ChloroplethMap = () => {
                       fillOpacity: 0.7,
                     };
                 },
+                pointToLayer: function (feature, latlng) {
+                  return null;
+                }
               }).addTo(chloroLayerGroup);
 
             try{
@@ -110,15 +147,15 @@ const ChloroplethMap = () => {
                 console.log(err)
             }
         }
-        var geojsonData = store.currentMap.graphics.geojson;
-        console.log(geojsonData)
+        var geojsonData = storeRef.current.currentMap.graphics.geojson;
+        // console.log(geojsonData)
 
         updateLayers(geojsonData)
         
         return () => {
             chloroLayerGroup.remove();
           };
-    }, [map, store.currentMap.graphics.geojson, store.currentMap.graphics.typeSpecific.property]);
+    }, [map, storeRef]);
 
     return null;    
 }

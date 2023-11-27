@@ -18,6 +18,11 @@ jobs:
           echo MONGODB_URI='${{ secrets.MONGODB_URI }}' >> .env
           echo PORT=${{ secrets.PORT }} >> .env
           echo CLIENT_URL=${{ secrets.CLIENT_URL }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo CLIENT_ID=${{ secrets.CLIENT_ID }} >> .env
+          echo CLIENT_SECRET=${{ secrets.CLIENT_SECRET }} >> .env
+          echo REFRESH_TOKEN=${{ secrets.REFRESH_TOKEN }} >> .env
+
 
       - name: create env file client
         run: |

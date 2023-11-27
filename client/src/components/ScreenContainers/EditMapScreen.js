@@ -37,11 +37,10 @@ const EditScreen = () => {
                 // Wait until currentMap is available
                 await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
             }
-            console.log('ELLO GOVNA', store.currentMap);
         };
 
         waitForCurrentMap();
-    }, [store, store.currentMap]);
+    }, [store, store.currentMap, loading]);
     const[colors,setColors] = useState({
         Text: "#FFFFFF",
         HeatMap: '#FFFFFF',
