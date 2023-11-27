@@ -9,8 +9,31 @@ import "leaflet.heat";
 const HeatMap = ({ geojsonData, property }) => {
   const map = useMap();
 
+  
   useEffect(() => {
     // Extract coordinates and create a heat map layer
+     // Helper function to extract coordinates from a Polygon based on a property
+    const extractCoordsFromFeature = (feature, property) => {
+      const propertyValue = feature.properties[property];
+
+      // Skip features without the selected property or with non-numeric property values
+      if (propertyValue === undefined || propertyValue === null || isNaN(propertyValue)) {
+        return [];
+      }
+
+      const intensity = parseFloat(propertyValue);
+
+      // Handle MultiPolygon geometries
+      if (feature.geometry.type === "MultiPolygon") {
+        return feature.geometry.coordinates.flatMap((polygonCoords) =>
+          extractCoordsFromPolygon(polygonCoords, intensity)
+        );
+      }
+
+      // Handle Polygon geometries
+      return extractCoordsFromPolygon(feature.geometry.coordinates, intensity);
+    };
+
     const heatPoints = geojsonData.features.flatMap((feature) => {
       return extractCoordsFromFeature(feature, property);
     });
@@ -58,35 +81,13 @@ const HeatMap = ({ geojsonData, property }) => {
     });
   }, [geojsonData, map, property]);
 
-  // Helper function to extract coordinates from a Polygon based on a property
-  const extractCoordsFromFeature = (feature, property) => {
-    const propertyValue = feature.properties[property];
-
-    // Skip features without the selected property or with non-numeric property values
-    if (propertyValue === undefined || propertyValue === null || isNaN(propertyValue)) {
-      return [];
-    }
-
-    const intensity = parseFloat(propertyValue);
-
-    // Handle MultiPolygon geometries
-    if (feature.geometry.type === "MultiPolygon") {
-      return feature.geometry.coordinates.flatMap((polygonCoords) =>
-        extractCoordsFromPolygon(polygonCoords, intensity)
-      );
-    }
-
-    // Handle Polygon geometries
-    return extractCoordsFromPolygon(feature.geometry.coordinates, intensity);
-  };
-
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {
   if (!Array.isArray(polygonCoords)) {
     console.error('Invalid polygon coordinates:', polygonCoords);
     return [];
   }
-  if(polygonCoords.length == 2){
+  if(polygonCoords.length === 2){
     const [longitude, latitude] = polygonCoords;
     return [[latitude, longitude, intensity]]; // [Latitude, Longitude, Intensity]
   }

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
@@ -7,6 +7,7 @@ import * as turf from '@turf/turf'
 const DotDistMap = () => {
 
   const { store } = useContext(GlobalStoreContext);
+  const storeRef = useRef(store);
   const map = useMap();
 
   useEffect(() => {
@@ -148,20 +149,20 @@ const DotDistMap = () => {
         console.log(err)
       }
     }
-    var geojsonData = store.currentMap.graphics.geojson;
-    var propertyKey = store.currentMap.graphics.typeSpecific.property;
+    var geojsonData = storeRef.currentMap.graphics.geojson;
+    var propertyKey = storeRef.currentMap.graphics.typeSpecific.property;
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
-    if(store.currentMap.graphics.typeSpecific.dotPoints === null || store.currentMap.graphics.typeSpecific.dotScale === null){
-      store.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
+    if(storeRef.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.currentMap.graphics.typeSpecific.dotScale === null){
+      storeRef.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
     }
     updateLayers(geojsonData, dotDensityData);
 
     return () => {
       dotsLayerGroup.remove();
     };
-  }, [map, store.currentMap.graphics.geojson]);
+  }, [map, storeRef]);
 
   return null;
 }
