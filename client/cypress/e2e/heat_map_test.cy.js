@@ -34,6 +34,8 @@ describe('Heat Map Tests', () => {
       });
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
       cy.get('body').click();
+      cy.wait(500);
+
       cy.get('body').click();
       cy.get('[data-value="population"]').click();
       cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root > .MuiButtonBase-root').click();
@@ -74,6 +76,8 @@ describe('Heat Map Tests', () => {
       });
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
       cy.get('body').click();
+      cy.wait(500);
+
       /* ==== Generated with Cypress Studio ==== */
       cy.get('body').click();
       cy.get('[data-value="Start with empty map"]').click();
