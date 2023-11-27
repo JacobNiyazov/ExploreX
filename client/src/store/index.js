@@ -226,7 +226,6 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-
    store.setCurrentPage = (currentPage) => {
         if(currentPage === "PublicMapView"){
             async function getMap(){
@@ -303,7 +302,7 @@ function GlobalStoreContextProvider(props) {
     const storeRef = useRef(store);
 
     useEffect(() => {
-        const updateCurrentPage = () => {
+    const updateCurrentPage = () => {
           const currentPage = window.location.pathname;
           storeRef.current.updatePageLink(currentPage)
         };

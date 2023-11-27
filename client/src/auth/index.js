@@ -159,11 +159,13 @@ function AuthContextProvider(props) {
 
     auth.recoverPassword = async function(email) {
         try {
-            //const response = await api.recoverPassword(email);
-            authReducer( {
-                type: AuthActionType.LOGOUT_USER,
-                payload: null
-            })
+            const response = await api.recoverPassword(email);
+            if (response.status === 200) {
+                authReducer( {
+                    type: AuthActionType.LOGOUT_USER,
+                    payload: null
+                })
+            }
         } catch (error) {
             throw(error)
         }

@@ -149,13 +149,16 @@ const DotDistMap = () => {
         console.log(err)
       }
     }
-    var geojsonData = storeRef.currentMap.graphics.geojson;
-    var propertyKey = storeRef.currentMap.graphics.typeSpecific.property;
+    console.log("ONE", store.currentMap)
+    console.log(storeRef.currentMap)
+
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
-    if(storeRef.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.currentMap.graphics.typeSpecific.dotScale === null){
-      storeRef.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
+    if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
+      storeRef.current.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
     }
     updateLayers(geojsonData, dotDensityData);
 

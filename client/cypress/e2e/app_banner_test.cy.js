@@ -35,7 +35,11 @@ describe('App Banner Tests', () => {
     cy.get('[data-testid="user-icon"]').click();
     cy.get('[data-testid="FAQ"]').click();
     cy.get(':nth-child(2) > :nth-child(3) > #faq4-header > .MuiAccordionSummary-content > .MuiTypography-root').should('have.text', 'More questions?');
-    cy.get('[data-testid="AccountCircleIcon"]').click();
+
+    // cy.get('form > .MuiTypography-h5').should('have.text', 'Welcome, Map Lovers!');
+    /* ==== End Cypress Studio ==== */
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get('[data-testid="AccountCircleIcon"]').eq(0).click();
     cy.get('.MuiList-root > :nth-child(5)').click();
     cy.get('form > .MuiTypography-h5').should('have.text', 'Welcome, Map Lovers!');
     /* ==== End Cypress Studio ==== */

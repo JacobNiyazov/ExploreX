@@ -175,12 +175,12 @@ const SpikeMap = () => {
         console.log(err)
       }
     }
-    var geojsonData = storeRef.currentMap.graphics.geojson;
-    var propertyKey = storeRef.currentMap.graphics.typeSpecific.property;
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
-    if(storeRef.currentMap.graphics.typeSpecific.spikeData === null || storeRef.currentMap.graphics.typeSpecific.spikeLegend === null){
+    if(storeRef.current.currentMap.graphics.typeSpecific.spikeData === null || storeRef.current.currentMap.graphics.typeSpecific.spikeLegend === null){
       storeRef.updateMapGraphics(null, null, null, trianglePoints, legend);
     }
     updateLayers(geojsonData, trianglePoints);
