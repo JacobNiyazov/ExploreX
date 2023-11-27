@@ -174,6 +174,16 @@ createMap = async (req,res) =>{
             }
         }
 
+        if(body.mapType == "Chloropleth Map"){
+            let message = Convert.checkChloroplethMap(geojsonData)
+            if(message != ""){
+                return res.status(400).json({
+                    success: false,
+                    errorMessage: message,
+                })
+            }
+        }
+
         let graphic = {}
 
         var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')

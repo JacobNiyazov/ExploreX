@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
@@ -8,12 +8,13 @@ const turf = require('@turf/turf');
 const SpikeMap = () => {
 
   const { store } = useContext(GlobalStoreContext);
+  const storeRef = useRef(store);
   const map = useMap();
 
   function getRepresentativeValues(geojsonData, propertyKey) {
       // Extract the property values, parse them as numbers, and sort them
       let values = geojsonData.features.map(feature => {
-          if(!(propertyKey in feature.properties)) return;
+          if(!(propertyKey in feature.properties)) return 0;
           let value = feature.properties[propertyKey];
           return Number(value.toString().replace(/,/g, ''));
       }).filter(v => !isNaN(v)).sort((a, b) => a - b);
@@ -174,20 +175,20 @@ const SpikeMap = () => {
         console.log(err)
       }
     }
-    var geojsonData = store.currentMap.graphics.geojson;
-    var propertyKey = store.currentMap.graphics.typeSpecific.property;
+    var geojsonData = storeRef.currentMap.graphics.geojson;
+    var propertyKey = storeRef.currentMap.graphics.typeSpecific.property;
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
-    if(store.currentMap.graphics.typeSpecific.spikeData === null || store.currentMap.graphics.typeSpecific.spikeLegend === null){
-      store.updateMapGraphics(null, null, null, trianglePoints, legend);
+    if(storeRef.currentMap.graphics.typeSpecific.spikeData === null || storeRef.currentMap.graphics.typeSpecific.spikeLegend === null){
+      storeRef.updateMapGraphics(null, null, null, trianglePoints, legend);
     }
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
       spikeLayerGroup.remove();
     };
-  }, [map, store.currentMap.graphics.geojson]);
+  }, [map, storeRef ]);
 
   return null;
 }

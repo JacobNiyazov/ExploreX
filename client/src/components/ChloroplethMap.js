@@ -9,7 +9,14 @@ const ChloroplethMap = () => {
     const map = useMap();
 
     useEffect(() => {
-        console.log("ASD")
+        function generateColor(usedColors) {
+          let newColor;
+          do {
+              newColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+          } while (usedColors.has(newColor)); // Check if the color is already used
+        
+          return newColor;
+        }
         function convertStringToNumber(inputString) {
             const editedString = inputString.replace(/,/g, '').replace(/%/g, '');
             let isNegative = false;
@@ -29,7 +36,6 @@ const ChloroplethMap = () => {
             }
           
             if (!isNaN(result)) {
-                console.log(result)
               return result;
             } else {
               console.log("ERROR", inputString)
@@ -69,29 +75,56 @@ const ChloroplethMap = () => {
             chloroLayerGroup.clearLayers();
             let currentNum = 0;
             let chloroData = [];
+            let flag = false;
+            let coloring = []
+            let counter = 0;
+            let color;
+            const usedColors = new Set();
+            
             geojsonData.features.forEach(feature => {
-                if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
-                    currentNum = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+              if (flag){
+                if (counter < 10){
+                  color = generateColor(usedColors);
+                  usedColors.add(color)
+                  counter = counter + 1;
                 }
-                else{
-                    currentNum = feature.properties[store.currentMap.graphics.typeSpecific.property];
-                }
-                chloroData.push(currentNum)
-            })
+                coloring[feature.properties[store.currentMap.graphics.typeSpecific.property]] = color;
 
-            let coloring = generateColorRanges(chloroData) 
-            console.log(coloring)
+              }
+              else if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
+                  currentNum = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
+                  if (currentNum === null){
+                    flag = true;
+
+                  }
+              }
+              else{
+                  currentNum = feature.properties[store.currentMap.graphics.typeSpecific.property];
+              }
+              chloroData.push(currentNum)
+            })
+            if (!flag){
+              coloring = generateColorRanges(chloroData) 
+            }
+            console.log("COLORING IS", coloring)
             
             L.geoJSON(geojsonData, {
                 style: (feature) => {
+                    let fillColor;
                     let propertyValue;
-                    if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
+                    if (flag){
+                      fillColor = coloring[feature.properties[store.currentMap.graphics.typeSpecific.property]];;
+                    }
+                    else if(typeof(feature.properties[store.currentMap.graphics.typeSpecific.property]) === 'string'){
                         propertyValue = convertStringToNumber(feature.properties[store.currentMap.graphics.typeSpecific.property]);
                     }
                     else{
                         propertyValue = feature.properties[store.currentMap.graphics.typeSpecific.property];
                     }
-                    const fillColor = getColor(propertyValue, coloring);
+                    if (!flag){
+                      fillColor = getColor(propertyValue, coloring);
+                    }
+
                   
                     return {
                       fillColor,
@@ -101,6 +134,9 @@ const ChloroplethMap = () => {
                       fillOpacity: 0.7,
                     };
                 },
+                pointToLayer: function (feature, latlng) {
+                  return null;
+                }
               }).addTo(chloroLayerGroup);
 
             try{
@@ -111,7 +147,7 @@ const ChloroplethMap = () => {
             }
         }
         var geojsonData = store.currentMap.graphics.geojson;
-        console.log(geojsonData)
+        // console.log(geojsonData)
 
         updateLayers(geojsonData)
         
