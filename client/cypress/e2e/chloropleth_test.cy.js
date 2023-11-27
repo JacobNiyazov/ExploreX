@@ -33,6 +33,8 @@ describe('Chloropleth Map Tests', () => {
       });
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
       cy.get('body').click();
+      cy.wait(500);
+
       cy.get('body').click();
 
       /* ==== End Cypress Studio ==== */
@@ -77,6 +79,8 @@ describe('Chloropleth Map Tests', () => {
       });
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click();
       cy.get('body').click();
+      cy.wait(500);
+
       /* ==== Generated with Cypress Studio ==== */
       cy.get('body').click();
       cy.get('[data-value="Start with empty map"]').click();

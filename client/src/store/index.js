@@ -322,7 +322,7 @@ function GlobalStoreContextProvider(props) {
         console.log("current Page: ", currentPage);
         try{
             async function setCurrentMapToEdit(){
-                let response = await maps.getMapById("65618c5da4295061e257189e");
+                let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
                 console.log("map: ",response.data.map);
                 if(response.data.success){
                     storeReducer({
