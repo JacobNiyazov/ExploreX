@@ -104,7 +104,7 @@ const LoginScreen = () => {
             </Grid>
             <Grid style={launchStyle.button_container} item xs={12}>
               <Button style={launchStyle.button} onClick= {handleLogin} variant="contained" color="primary" data-testid="login-button">
-                Sign in
+                Log in
               </Button>
               <Button style={launchStyle.button} onClick={ handleEnterGuest } variant="contained" color="secondary" data-testid="guest-button">
                 Log in as guest
