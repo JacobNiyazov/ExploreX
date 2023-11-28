@@ -601,6 +601,7 @@ function GlobalStoreContextProvider(props) {
     store.updateMapGraphics = async (property=null, imageBuffer=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
         let currentMap = store.currentMap;
         let graphics = currentMap.graphics;
+        console.log(imageBuffer)
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
         }

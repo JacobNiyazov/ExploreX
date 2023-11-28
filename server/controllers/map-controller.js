@@ -485,6 +485,7 @@ updateMapById = async (req, res) => {
                         var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
                         var deflated= zlib.deflateSync(input);
                         body.map.graphics.geojson = deflated;
+                        console.log("graphics print" + body.map.graphics.typeSpecific.imageBuffer)
                         Graphics.findByIdAndUpdate(
                             map.graphics,
                             body.map.graphics,

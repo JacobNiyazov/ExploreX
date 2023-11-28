@@ -152,6 +152,10 @@ const DotDistMap = () => {
             return;
           }
           // Convert canvas to data URL and update state
+          if(storeRef.current.currentMap.graphics.typeSpecific.imageBuffer === null && canvas.toDataURL()){
+            console.log(canvas.toDataURL())
+            storeRef.current.updateMapGraphics(null, canvas.toDataURL(), dotDensityData['features'], scale, null, null);
+          }
           setMapImage(canvas.toDataURL());
       });
       }
@@ -165,13 +169,11 @@ const DotDistMap = () => {
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
-      if(mapImage){
-        storeRef.current.updateMapGraphics(null, mapImage, dotDensityData['features'], scale, null, null);
-      }else{
-        storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);
-      }
+      storeRef.current.updateMapGraphics(null, mapImage, dotDensityData['features'], scale, null, null);
+
     }
     updateLayers(geojsonData, dotDensityData);
+    
 
     return () => {
       dotsLayerGroup.remove();
