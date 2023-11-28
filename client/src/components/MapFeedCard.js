@@ -48,7 +48,7 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
     <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
       <StyledCardMedia as={CardMedia}
         component="img"
-        alt={`${map.title} by ${map.author}`}
+        alt={`${map.title} by ${map.ownerUsername}`}
         image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
       />
       <StyledCardContent as={CardContent}>
@@ -58,7 +58,7 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
               {map.title}
             </TitleTypography>
             <AuthorTypography variant="body2" component="div">
-              by {map.author}
+              by {map.ownerUsername}
             </AuthorTypography>
             </TextContainer>
             <StyledBox>
