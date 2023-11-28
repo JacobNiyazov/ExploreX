@@ -122,7 +122,7 @@ function ProfileScreen(){
             <Grid item xs = {2}>
                 <StyledButton data-testid="import-button"
                 onClick = {handleOpenImport}>
-                  <AddIcon></AddIcon>
+                  Create Map
                 </StyledButton>
                 <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
                   files={files}

@@ -1,10 +1,12 @@
 import React, {useContext, useState, useEffect} from 'react';
 import MapFeedCard from '../MapFeedCard';
 import { Grid } from '@mui/material';
-import { StyledMapFeed } from '../StyleSheets/MapFeedStyles';
+import { StyledMapFeed, StyledCreateButton, HeaderBar } from '../StyleSheets/MapFeedStyles';
 import { GlobalStoreContext } from '../../store';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import SelectPropModal from '../SelectPropModal';
+import ImportFileModal from '../ImportFileModal';
 
 //import ImportFileModal from '../ImportFileModal';
 //import { StyledButton } from '../StyleSheets/ProfileScreenStyles';
@@ -35,6 +37,20 @@ const MapFeed = () => {
     waitForAuthCheck();
   }, [auth, navigate, store]);
 
+  const [files, setFiles] = useState([]);
+  const [fileType, setFileType] = useState('');
+  const [mapType, setMapType] = useState('');
+  const [openImport, setOpenImport] = useState(false);
+  const handleOpenImport = () => setOpenImport(true);
+  const handleCloseImport = () => setOpenImport(false);
+  const [openSelectPropModal, setOpenSelectPropModal] = useState(false);
+  const handleOpenSelectPropModal = () => setOpenSelectPropModal(true);
+  const handleCloseSelectPropModal = async (selectedProperty) => {
+    if(!(typeof selectedProperty === "string")){
+      await store.deleteMap(store.currentMap, store.currentPage);
+    }
+    setOpenSelectPropModal(false)};
+
   let mapValues = "";
 
   if (loading) {
@@ -45,18 +61,32 @@ const MapFeed = () => {
   }
   if (store.currentPage === store.currentPageType.mapFeed){
     return (
-      <StyledMapFeed>
-        {mapValues.length !== 0 && (
-          <Grid container spacing={4} direction="column">
-            {mapValues.map((map, index) => (
-              <Grid item key={index} xs={12}>
-                {console.log("MAP BEFORE PASS: ",map)}
-                <MapFeedCard id={`map-feed-card-${index}`} map={map} likes={map.reactions.likes} dislikes={map.reactions.dislikes} />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </StyledMapFeed>
+      <div>
+        <HeaderBar>
+          <StyledCreateButton onClick = {handleOpenImport}>Create Map</StyledCreateButton>
+        </HeaderBar>
+        <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
+          files={files}
+          setFiles={setFiles}
+          fileType={fileType}
+          setFileType={setFileType}
+          mapType={mapType}
+          setMapType={setMapType}
+          />
+        <SelectPropModal open={openSelectPropModal} onClose={handleCloseSelectPropModal} files={files} fileType={fileType} mapType={mapType}/>    
+        <StyledMapFeed>
+          {mapValues.length !== 0 && (
+            <Grid container spacing={4} direction="column">
+              {mapValues.map((map, index) => (
+                <Grid item key={index} xs={12}>
+                  {console.log("MAP BEFORE PASS: ",map)}
+                  <MapFeedCard id={`map-feed-card-${index}`} map={map} likes={map.reactions.likes} dislikes={map.reactions.dislikes} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </StyledMapFeed>
+      </div>
     );
   }
   else{

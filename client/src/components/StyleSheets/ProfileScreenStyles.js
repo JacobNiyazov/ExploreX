@@ -14,8 +14,8 @@ export const StyledTypography2 = styled(Typography)({
 export const StyledButton = styled(Button)({
     backgroundColor: "#f57fd9",
     color: "black",
-    width:"1vw",
-    height:"4.5vh",
+    width:"8vw",
+    height:"5vh",
     padding: "1vh",
     marginLeft: "7vw",
     marginTop: "3vh",

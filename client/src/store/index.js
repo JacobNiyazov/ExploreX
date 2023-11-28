@@ -487,16 +487,22 @@ function GlobalStoreContextProvider(props) {
                             });
             }
             else if(store.currentPage === "MapFeed"){
-                let mapList = await maps.getPublicMapIdPairs();
-                if(mapList.data.success){
-                    storeReducer({
-                        type: GlobalStoreActionType.DELETE_MAP,
-                        payload: {
-                            currentPage: currentPage,
-                            currentMaps: mapList.data
-                        },
-                    });
+                try{
+                    let mapList = await maps.getPublicMapIdPairs();
+                    if(mapList.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.DELETE_MAP,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: mapList.data
+                            },
+                        });
+                    }
                 }
+                catch (err){
+                    console.log(err)
+                }
+                
             }
         }
       }
