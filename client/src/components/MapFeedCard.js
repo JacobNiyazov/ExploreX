@@ -41,7 +41,7 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
   };
   const handleOpenMap = () => {
     store.setCurrentPage(store.currentPageType.publicMapView, map);
-    navigate("/map");
+    navigate(`/map?id=${map._id}`);
   };
   console.log("map owner: ", map)
   return (

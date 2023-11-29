@@ -98,7 +98,8 @@ export const StyledCreateButton = styled(Button)({
   margin: "auto",
   borderRadius:"3vh",
   "&:hover": {
-      backgroundColor: "#ff24bd",
+      backgroundColor: "#f57fd9",
+      opacity:"0.9",
   }
 });
 export const HeaderBar = styled('div')({

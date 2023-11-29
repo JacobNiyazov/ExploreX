@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
@@ -120,6 +121,8 @@ function GlobalStoreContextProvider(props) {
     }
 
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
+
 
     const storeReducer = (action) => {
         const { type, payload } = action;
@@ -226,11 +229,11 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-   store.setCurrentPage = (currentPage) => {
+   store.setCurrentPage = (currentPage, map=null) => {
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("65605143b27302f331e6e009")
+                    let response = await maps.getMapById(map._id)
                     console.log("ATTEMPTING GET MAP")
                     if(response.data.success){
                         console.log("response: ", response.data)
@@ -238,7 +241,7 @@ function GlobalStoreContextProvider(props) {
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
                                 currentPage: currentPage,
-                                currentMaps: null,
+                                currentMaps: store.currentMaps,
                                 currentMap: response.data.map
                             }
                         }
@@ -285,22 +288,28 @@ function GlobalStoreContextProvider(props) {
         );
     }
 
-    store.updatePageLink = (pageURL) => {
+    store.updatePageLink = (pageURL, id) => {
         if(dict[pageURL] === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("65605143b27302f331e6e009")
+                    let response = await maps.getMapById(id);
                     if(response.data.success){
                         console.log("response: ", response.data)
-                        storeReducer({
-                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                            payload: {
-                                currentPage: dict[pageURL],
-                                currentMaps: null,
-                                currentMap: response.data.map
+                        if(response.data.map.isPublic){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                                payload: {
+                                    currentPage: dict[pageURL],
+                                    currentMaps: store.currentMaps,
+                                    currentMap: response.data.map
+                                }
                             }
+                            ); 
                         }
-                        ); 
+                        else{
+                            store.setCurrentPage(store.currentPageType.mapFeed);
+                            navigate("/feed");
+                        }
                     }
                 }
                 catch(error){
@@ -346,7 +355,9 @@ function GlobalStoreContextProvider(props) {
     useEffect(() => {
     const updateCurrentPage = () => {
           const currentPage = window.location.pathname;
-          storeRef.current.updatePageLink(currentPage)
+          const queryParams = new URLSearchParams(window.location.search);
+          const id = queryParams.get('id');
+          storeRef.current.updatePageLink(currentPage, id);
         };
     
         window.addEventListener('popstate', updateCurrentPage);

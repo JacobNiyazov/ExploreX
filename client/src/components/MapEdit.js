@@ -105,7 +105,7 @@ const MapEdit = ({
     hideLegend,
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
-    const [baseMap, setBaseMap] = useState(false)
+    const [baseMap, setBaseMap] = useState(false);
 
     const [legendColor, setLegendColor] = useState({
         label1: "#FF0000",
