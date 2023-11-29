@@ -30,7 +30,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
 
   async function handleEditClick (){
     let tempMap;
-    let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
+    let response = await maps.getMapById(map._id);
     if(response.data.success){
       tempMap = response.data.map; 
       console.log(tempMap)

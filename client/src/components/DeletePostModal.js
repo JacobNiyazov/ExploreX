@@ -13,6 +13,7 @@ function DeletePostModal({map,open,onClose}){
     function handleDeleteClick () {
         console.log("delete map from list: ", map)
         store.deleteMap(map, "ProfileScreen",store.currentMaps)
+        onClose()
       }
     const style = {
         position: 'absolute',
