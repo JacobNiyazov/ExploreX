@@ -80,7 +80,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const isPost = id.includes('post');
   return (
     <Card sx={card} data-testid={id}>
-      <CardHeader title="map test" subheader="team pink" />
+      <CardHeader title={map.title} subheader={map.ownerUsername} />
       <CardMedia
         component="img"
         height="160vh"

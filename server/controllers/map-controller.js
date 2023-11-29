@@ -381,9 +381,9 @@ getUserMapIdPairs = async (req, res) => {
     User.findOne({ _id: req.userId }).then((user) => {
         console.log("find user with id " + req.userId);
         async function asyncFindMap(username) {
-            console.log("find all Playlists owned by " + username);
-            console.log("Title parameter: " + req.query.title);
-            Map.find({ ownerUsername: username, title: {"$regex": req.query.title, "$options": "i"} }).then((maps) => {
+            console.log("find all maps owned by " + username);
+            //console.log("Title parameter: " + req.query.title);
+            Map.find({ ownerUsername: username}).then((maps) => {
                 console.log("found Maps: " + JSON.stringify(maps));
                 if (!maps) {
                     console.log("!maps.length");

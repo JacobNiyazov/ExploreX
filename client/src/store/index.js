@@ -251,6 +251,30 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }
+        else if(currentPage === "ProfileScreen"){
+            async function getMap(){
+                try{
+                    let response = await maps.getUserMapIdPairs()
+                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
+                            }
+                        }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
         
         console.log("set page map: ", store.currentMap)
         storeReducer({
