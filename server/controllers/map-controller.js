@@ -16,8 +16,6 @@ createMap = async (req,res) =>{
         })
     }
 
-    console.log(body)
-
     //check file extension for accepted types
     ext = path.extname(req.files[0].originalname)
     if(ext != ".json" && ext != ".shp" && ext != ".kml" && req.files[1] && path.extname(req.files[1].originalname) != ".dbf"){
@@ -242,7 +240,6 @@ createMap = async (req,res) =>{
             }
         graphic.ownerUsername = body.ownerUsername
 
-        console.log(graphic)
         
         const graphics = new Graphics(graphic)
         
@@ -423,7 +420,6 @@ getUserMapIdPairs = async (req, res) => {
 getPublicMapIdPairs = async (req, res) => {
     console.log("getPublicMapIdPairs:");
     Map.find({ isPublic : true }).then((maps) => {
-        console.log("found Maps: " + JSON.stringify(maps));
         if (!maps) {
             console.log("!maps.length");
             return res
@@ -436,11 +432,13 @@ getPublicMapIdPairs = async (req, res) => {
             let pairs = [];
             for (let key in maps) {
                 let map = maps[key];
-                // let decompressedImage = null;
-                // if(map.imageBuffer){
-                //     decompressedImage = zlib.inflateSyncmap.imageBuffer)
-                //     // decompressedImage = 
-                // }
+                let decompressedImage = null;
+                if(map.imageBuffer){
+                    decompressedImage = Buffer.from(map.imageBuffer, 'base64');
+                    decompressedImage = zlib.inflateSync(decompressedImage)
+                    decompressedImage = decompressedImage.toString('utf8');
+                    // decompressedImage = 
+                }
 
                 let pair = {
                     _id: map._id,
@@ -450,7 +448,7 @@ getPublicMapIdPairs = async (req, res) => {
                     graphics: map.graphics,
                     isPublic: map.isPublic,
                     publishDate: map.publishDate,
-                    imageBuffer: map.imageBuffer
+                    imageBuffer: decompressedImage
                 };
                 pairs.push(pair);
             }
@@ -479,18 +477,27 @@ updateMapById = async (req, res) => {
             // console.log("username: " + user.username);
             // console.log("req.userId: " + req.userId);
             if (user._id == req.userId) {
+                console.log(req.body.map)
+
                 console.log("correct user!");
 
+                console.log(map)
+
                 map.title = body.map.title;
+                console.log(body.map.title)
+
                 // map.reactions = body.map.reactions;
+                // console.log(map.reactions)
+                // console.log(body.map.reactions)
+                // console.log(map.reactions == body.map.reactions)
 
                 // let temp = map.imageBuffer;
-                // map.imageBuffer =  zlib.deflateSync(new Buffer.from(body.map.imageBuffer, 'base64'));
+                map.imageBuffer =  zlib.deflateSync(body.map.imageBuffer).toString('base64');
                 
                 // let temp2 = zlib.inflateSync(Buffer.from(graphics.geojson)).toString("base64")
 
                 // console.log(temp == temp2)
-                map.imageBuffer = body.map.imageBuffer
+                // map.imageBuffer = body.map.imageBuffer
                 if(body.map.publishDate)
                     map.publishDate = body.map.publishDate;
                 map
