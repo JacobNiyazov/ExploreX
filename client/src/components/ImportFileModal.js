@@ -96,9 +96,10 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
         }
         else if(mapType === "Voronoi Map"){
             store.createMap(files, mapType, fileType)
-                .then(()=>{
+                .then((map)=>{
                     onClose();
-                    navigate("/editMap");
+                    console.log(map)
+                    navigate(`/editMap?id=${map._id}`)
                 })
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
             

@@ -485,6 +485,8 @@ function GlobalStoreContextProvider(props) {
                 }
             })
         }
+
+        return response.data.map
     }
     store.createMapTemp = async (files, mapType, fileType) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
