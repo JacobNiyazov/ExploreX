@@ -197,6 +197,7 @@ const MapEdit = ({
         } else {
           console.error('MapContainer element not found');
         }
+        //console.log("set photo")
         setPhoto(true);
 
       };

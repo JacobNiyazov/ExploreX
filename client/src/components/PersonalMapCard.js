@@ -88,14 +88,16 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
     console.log("personal map: ",map.imageBuffer)
     temp = map.imageBuffer
   }
+
   return (
     <Card sx={card} data-testid={id}>
       <CardHeader title={map.title} subheader={map.ownerUsername} />
       <div>
         <CardMedia
+          key = {map.imageBuffer}
           component="img"
           height="160vh"
-          image={ map.imageBuffer ? temp : null }
+          image={ map.imageBuffer ? temp : "https://img.freepik.com/premium-photo/map-world-pastel-pink-background_60487-2207.jpg" }
           alt="map test"
           onClick = {handlePostClick}
         />

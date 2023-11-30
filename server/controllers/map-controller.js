@@ -396,6 +396,14 @@ getUserMapIdPairs = async (req, res) => {
                     let pairs = [];
                     for (let key in maps) {
                         let map = maps[key];
+                        let decompressedImage = null;
+                        if(map.imageBuffer){
+                            decompressedImage = Buffer.from(map.imageBuffer, 'base64');
+                            decompressedImage = zlib.inflateSync(decompressedImage)
+                            decompressedImage = decompressedImage.toString('utf8');
+                            // decompressedImage = 
+                        }
+        
                         let pair = {
                             _id: map._id,
                             title: map.title,
@@ -404,6 +412,7 @@ getUserMapIdPairs = async (req, res) => {
                             graphics: map.graphics,
                             isPublic: map.isPublic,
                             publishDate: map.publishDate,
+                            imageBuffer: decompressedImage
                         };
                         pairs.push(pair);
                     }
