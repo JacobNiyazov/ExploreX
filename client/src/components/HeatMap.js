@@ -76,7 +76,7 @@ const HeatMap = ({ geojsonData, property }) => {
     // Remove default border styles for each region
     map.eachLayer((layer) => {
       if (layer.setStyle) {
-        layer.setStyle({ fillOpacity: 0, color: 'transparent' });
+        layer.setStyle({color:"pink" });
       }
     });
   }, [geojsonData, map, property]);

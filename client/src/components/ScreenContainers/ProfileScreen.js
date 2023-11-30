@@ -156,7 +156,7 @@ function ProfileScreen(){
                     <CustomTabPanel value={value} index={0}>
                       <Grid id="map-cards" container spacing={1}>
                         {posted.map((map, index) => (
-                          <Grid item key={index} xs={3}>
+                          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <PersonalMapCard id={`map-posted-${index}`} map={map} likes = {map.reactions.likes} dislikes={map.reactions.dislikes}/>
                           </Grid>
                         ))}
@@ -165,7 +165,7 @@ function ProfileScreen(){
                     <CustomTabPanel value={value} index={1}>
                       <Grid id="map-cards" container spacing={1}>
                         {drafts.map((map, index) => (
-                          <Grid item key={index} xs={3}>
+                          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <PersonalMapCard data-testid = {`map-draft-${index}`} id={`map-draft-${index}`} map={map}/>
                           </Grid>
                         ))}

@@ -19,6 +19,7 @@ export const StyledButton = styled(Button)({
     padding: "1vh",
     marginLeft: "7vw",
     marginTop: "3vh",
+    fontSize: "1.7vh",
     borderRadius:"3vh",
     "&:hover": {
         backgroundColor: "#ffd0d7"

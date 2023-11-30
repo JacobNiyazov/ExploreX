@@ -72,10 +72,15 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
     }
   };
   const card = {
-    height: '34vh',
-    maxWidth: '23vw',
+    width: '23vw',
     marginTop: '5vh',
     borderRadius: '2.5vh',
+    display: "flex",
+    flexDirection:"column"
+  };
+  const actions = {
+    display: 'flex',
+    padding: '1vh',
   };
   const isPost = id.includes('post');
   return (
@@ -88,7 +93,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
         alt="map test"
         onClick = {handlePostClick}
       />
-      <CardActions disableSpacing>
+      <CardActions disableSpacing sx = {actions}>
         {isPost ? (
           <>
             <ToggleButton data-testid = "like-button" value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none', display:'none' }}>
@@ -106,7 +111,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
               data-testid="delete-button"
               onClick = {handleOpenDelete}
             >
-              <DeleteIcon sx={{color:"#FF76D6"}}/>
+              <DeleteIcon sx={{color:"#FF76D6",maxHeight: "4vh"}}/>
             </Button>
             <DeletePostModal
                 open={openDelete} 
@@ -117,7 +122,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
               data-testid="edit-button"
               onClick={handleEditClick}
             >
-              <ModeEditIcon sx={{color:"#FF76D6"}}/>
+              <ModeEditIcon sx={{color:"#FF76D6",maxHeight: "4vh"}}/>
             </Button>
           </>
         )}
