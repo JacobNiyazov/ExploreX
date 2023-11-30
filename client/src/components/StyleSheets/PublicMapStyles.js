@@ -17,7 +17,7 @@ export const StyledCard = styled(Card)({
 
 export const StyledCardMedia = styled(CardMedia)({
   height: '60vh', // 60% of the viewport height
-  width: '100%', // full width of the card
+  width: '85vh', // full width of the card
   objectFit: 'contain', // to make sure the image is fully visible
   padding: 10,
   marginTop: 10,

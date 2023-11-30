@@ -155,7 +155,7 @@ const DotDistMap = () => {
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
-      storeRef.current.updateMapGraphics(null, dotDensityData['features'], scale, null, null);
+      storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);
     }
     updateLayers(geojsonData, dotDensityData);
 

@@ -83,13 +83,17 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
     padding: '1vh',
   };
   const isPost = id.includes('post');
+  let temp;
+  if (map.imageBuffer){
+    temp = map.imageBuffer
+  }
   return (
     <Card sx={card} data-testid={id}>
       <CardHeader title={map.title} subheader={map.ownerUsername} />
       <CardMedia
         component="img"
         height="160vh"
-        image="https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"
+        image={ map.imageBuffer ? temp : null}
         alt="map test"
         onClick = {handlePostClick}
       />

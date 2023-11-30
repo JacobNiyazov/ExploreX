@@ -19,6 +19,8 @@ const MapSchema = new Schema(
         isPublic:{type: Boolean},
         type: {type: String, required: true},
         publishDate:{type: Date, default: new Date()},
+        imageBuffer: {type: String, required:false},
+
     }
 )
 module.exports = mongoose.model('Map', MapSchema)

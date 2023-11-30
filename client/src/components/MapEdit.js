@@ -1,7 +1,8 @@
-import { useState, React, useContext} from "react";
+import { useState, React, useContext, useEffect, useRef} from "react";
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
+import domtoimage from 'dom-to-image';
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
@@ -106,6 +107,10 @@ const MapEdit = ({
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
+    const [photo, setPhoto] = useState(false)
+    const { store } = useContext(GlobalStoreContext);
+
+
 
     const [legendColor, setLegendColor] = useState({
         label1: "#FF0000",
@@ -167,14 +172,62 @@ const MapEdit = ({
             [label]: event.target.value
         })
     }
-    
+
+    const mapContainerRef = useRef(null);
+    const captureMapAsImage = async () => {
+        // Get the MapContainer element by its ID or other means
+        // await new Promise((resolve) => setTimeout(resolve, 2000)); // Adjust time as needed
+        const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
+        console.log(mapContainer)
+        if (mapContainer) {
+          // Use dom-to-image to convert the MapContainer element to an image
+          domtoimage.toPng(mapContainer, {
+            width: mapContainer.clientWidth * 1,
+            height: mapContainer.clientHeight * 1,
+          })
+            .then(async function (dataUrl) {
+              // 'dataUrl' now contains the image data in base64 format
+              // You can send this dataUrl to the backend or use it as needed
+              store.updateMapGraphics(null, dataUrl)
+            })
+            .catch(function (error) {
+              // Handle any errors that occurred during image conversion
+              console.error('Error capturing screenshot:', error);
+            });
+        } else {
+          console.error('MapContainer element not found');
+        }
+        setPhoto(true);
+
+      };
+
+      useEffect(() => {
+        const waitForMapLoad = async () => {
+            if (!mapContainerRef.current) {
+                // Wait until authentication check is completed
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+                waitForMapLoad(); // Re-check status
+            } else {
+                if(!photo){
+                    console.log("HERE")
+                    // setPhoto(true)   
+                    captureMapAsImage()
+
+                }
+            }
+        }
+
+        waitForMapLoad();
+      }, []);
+
 
     return(
         <Grid item xs = {8}>
-            <MapContainer center={[0,0]} zoom={3} style={{ height: '100%'}} zoomControl={false}>
+
+            <MapContainer center={[0,0]} zoom={3} style={{ height: '100%'}} zoomControl={false} id = 'map-container' ref ={mapContainerRef}>
                 {
                     baseMap ?
-                    <TileLayer
+                    <TileLayer 
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 
@@ -183,103 +236,112 @@ const MapEdit = ({
                 }
                 <MapEditInner />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
-                <ZoomControl position="bottomleft"/>
-                <ControlGrid>
-                    <UndoRedoContainer>
-                        <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
-                            <UndoContainer>
-                                <IconButton sx={{color: "#000000"}}>
-                                    <UndoIcon fontSize='large'/>
-                                </IconButton>
-                                <Typography>Undo</Typography>
-                            </UndoContainer>
-                            <RedoContainer>
-                                <IconButton sx={{color: "#000000"}}>
-                                <RedoIcon fontSize='large' /> 
-                                </IconButton>
-                                <Typography>Redo</Typography>
-                            </RedoContainer>
-                        </Box>
-                    </UndoRedoContainer>
-                    <BaseMapContainer>
-                        <BaseMapBlur>
-                            <BaseMapSwitch onChange={handleBaseMap}></BaseMapSwitch>
-                            <Typography>Base Map</Typography>
-                        </BaseMapBlur>
-                    </BaseMapContainer>
-                    <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}}>
-                        <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
-                        <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
-                            <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
-                            <Popover 
-                                open={Boolean(legendAnchors.label1)} 
-                                onClose={()=>handleClose("label1")}
-                                anchorEl={legendAnchors.label1} 
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}>
-                                <ChromePicker
-                                    color={legendColor !== null && legendColor.label1}
-                                    onChange={(e)=>handleNewColor(e, "label1")}
-                                    disableAlpha
-                                    renderers={false}
-                                />
-                            </Popover>
-                        </Box>
-                        <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label2, '&:hover':{backgroundColor: legendColor.label2}}} onClick={(e) => handleLegendClick(e, "label2")}></Square>
-                            <LegendTextField variant="standard" value={legendText.label2} onChange={(e) => handleTextChange(e, "label2")}></LegendTextField>
-                            <Popover 
-                                open={Boolean(legendAnchors.label2)} 
-                                onClose={()=>handleClose("label2")}
-                                anchorEl={legendAnchors.label2} 
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}>
-                                <ChromePicker
-                                    color={legendColor !== null && legendColor.label2}
-                                    onChange={(e)=>handleNewColor(e,"label2")}
-                                    disableAlpha
-                                    renderers={false}
-                                />
-                            </Popover>
-                        </Box>
-                        <Box sx={{display:'flex', alignItems: 'center'}}>
-                            <Square sx={{backgroundColor: legendColor.label3, '&:hover':{backgroundColor: legendColor.label3}}} onClick={(e) => handleLegendClick(e, "label3")}></Square>
-                            <LegendTextField variant="standard" value={legendText.label3} onChange={(e) => handleTextChange(e, "label3")}></LegendTextField>
-                            <Popover 
-                                open={Boolean(legendAnchors.label3)} 
-                                onClose={()=>handleClose("label3")}
-                                anchorEl={legendAnchors.label3} 
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left',
-                                }}>
-                                <ChromePicker
-                                    color={legendColor !== null && legendColor.label3}
-                                    onChange={(e)=>handleNewColor(e,"label3")}
-                                    disableAlpha
-                                    renderers={false}
-                                />
-                            </Popover>
-                        </Box>
-                    </LegendContainer>
-                </ControlGrid>
+                {
+                    photo ?
+                    <ZoomControl position="bottomleft" />
+                    :null
+                }
+                {
+                    photo ?
+                        <ControlGrid>
+                        <UndoRedoContainer>
+                            <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
+                                <UndoContainer>
+                                    <IconButton sx={{color: "#000000"}}>
+                                        <UndoIcon fontSize='large'/>
+                                    </IconButton>
+                                    <Typography>Undo</Typography>
+                                </UndoContainer>
+                                <RedoContainer>
+                                    <IconButton sx={{color: "#000000"}}>
+                                    <RedoIcon fontSize='large' /> 
+                                    </IconButton>
+                                    <Typography>Redo</Typography>
+                                </RedoContainer>
+                            </Box>
+                        </UndoRedoContainer>
+                        <BaseMapContainer >
+                            <BaseMapBlur>
+                                <BaseMapSwitch onChange={handleBaseMap}></BaseMapSwitch>
+                                <Typography>Base Map</Typography>
+                            </BaseMapBlur>
+                        </BaseMapContainer>
+                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} >
+                            <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
+                            <Box sx={{display:'flex', alignItems: 'center'}}>
+                                <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
+                                <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
+                                <Popover 
+                                    open={Boolean(legendAnchors.label1)} 
+                                    onClose={()=>handleClose("label1")}
+                                    anchorEl={legendAnchors.label1} 
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}>
+                                    <ChromePicker
+                                        color={legendColor !== null && legendColor.label1}
+                                        onChange={(e)=>handleNewColor(e, "label1")}
+                                        disableAlpha
+                                        renderers={false}
+                                    />
+                                </Popover>
+                            </Box>
+                            <Box sx={{display:'flex', alignItems: 'center'}}>
+                                <Square sx={{backgroundColor: legendColor.label2, '&:hover':{backgroundColor: legendColor.label2}}} onClick={(e) => handleLegendClick(e, "label2")}></Square>
+                                <LegendTextField variant="standard" value={legendText.label2} onChange={(e) => handleTextChange(e, "label2")}></LegendTextField>
+                                <Popover 
+                                    open={Boolean(legendAnchors.label2)} 
+                                    onClose={()=>handleClose("label2")}
+                                    anchorEl={legendAnchors.label2} 
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}>
+                                    <ChromePicker
+                                        color={legendColor !== null && legendColor.label2}
+                                        onChange={(e)=>handleNewColor(e,"label2")}
+                                        disableAlpha
+                                        renderers={false}
+                                    />
+                                </Popover>
+                            </Box>
+                            <Box sx={{display:'flex', alignItems: 'center'}}>
+                                <Square sx={{backgroundColor: legendColor.label3, '&:hover':{backgroundColor: legendColor.label3}}} onClick={(e) => handleLegendClick(e, "label3")}></Square>
+                                <LegendTextField variant="standard" value={legendText.label3} onChange={(e) => handleTextChange(e, "label3")}></LegendTextField>
+                                <Popover 
+                                    open={Boolean(legendAnchors.label3)} 
+                                    onClose={()=>handleClose("label3")}
+                                    anchorEl={legendAnchors.label3} 
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'left',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}>
+                                    <ChromePicker
+                                        color={legendColor !== null && legendColor.label3}
+                                        onChange={(e)=>handleNewColor(e,"label3")}
+                                        disableAlpha
+                                        renderers={false}
+                                    />
+                                </Popover>
+                            </Box>
+                        </LegendContainer>
+                    </ControlGrid>
+                    :null
+                }
+                
             
             </MapContainer>
         </Grid>

@@ -49,6 +49,7 @@ export const AuthorTypography = styled('div')({
 
 export const StyledCardMedia = styled('div')({
   height: '200px',  // Adjusted height for image section
+  
 });
 
 export const StyledCardContent = styled('div')({
@@ -98,9 +99,8 @@ export const StyledCreateButton = styled(Button)({
   margin: "auto",
   borderRadius:"3vh",
   "&:hover": {
-      backgroundColor: "#000",
-      color:'#ff24bd',
-      border: '1px solid #ff24bd',
+      backgroundColor: "#f57fd9",
+      opacity:"0.9",
   }
 });
 export const HeaderBar = styled('div')({
