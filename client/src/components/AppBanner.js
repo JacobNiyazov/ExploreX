@@ -48,10 +48,19 @@ function AppBanner() {
   };
 
   const handleLogin = (e) => {
-    auth.logoutUser();
-    store.setCurrentPage(store.currentPageType.login);
-    navigate("/login");
-    handleAccountMenuClose();
+    auth.logoutUser()
+    .then( 
+      (val) => {
+        store.setCurrentPage(store.currentPageType.login);
+        navigate("/login");
+        handleAccountMenuClose();
+      })
+    .catch(
+      (error) => store.displayModal(<div>
+        <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
+      </div>, false));
+
   };
 
   const handleFAQOption = () => {
