@@ -77,7 +77,6 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const isPost = id.includes('post');
   let temp;
   if (map.imageBuffer){
-    console.log("personal map: ",map.imageBuffer)
     temp = map.imageBuffer
   }
 

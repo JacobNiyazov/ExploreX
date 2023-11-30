@@ -370,6 +370,30 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }
+        else if(dict[pageURL] === "ProfileScreen"){
+            async function getMap(){
+                try{
+                    let response = await maps.getUserMapIdPairs()
+                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: dict[pageURL],
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
+                            }
+                        }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
         else if(dict[pageURL] === "MapFeed"){
             async function getMapPairs(){
                 try{
