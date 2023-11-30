@@ -100,6 +100,7 @@ createMap = async (req,res) =>{
                         likes:0,
                         dislikes:0,
                     }
+                    nativeFile.imageBuffer = ""
                     nativeFile.mapType = body.mapType
 
                     const map = new Map(nativeFile);
@@ -227,7 +228,6 @@ createMap = async (req,res) =>{
                 property: null,
                 spikeData: null,
                 spikeLegend: null,
-                imageBuffer: null
         }
         graphic.region = {
                 fillColor: "#FFFFFF",
@@ -263,8 +263,8 @@ createMap = async (req,res) =>{
                         ownerUsername: body.ownerUsername,
                         reactions:{
                             comments:[],
-                        likes:0,
-                        dislikes:0,
+                            likes:0,
+                            dislikes:0,
                         },
                         isPublic: false,
                         type: body.mapType,
@@ -436,6 +436,12 @@ getPublicMapIdPairs = async (req, res) => {
             let pairs = [];
             for (let key in maps) {
                 let map = maps[key];
+                // let decompressedImage = null;
+                // if(map.imageBuffer){
+                //     decompressedImage = zlib.inflateSyncmap.imageBuffer)
+                //     // decompressedImage = 
+                // }
+
                 let pair = {
                     _id: map._id,
                     title: map.title,
@@ -444,6 +450,7 @@ getPublicMapIdPairs = async (req, res) => {
                     graphics: map.graphics,
                     isPublic: map.isPublic,
                     publishDate: map.publishDate,
+                    imageBuffer: map.imageBuffer
                 };
                 pairs.push(pair);
             }
@@ -475,7 +482,15 @@ updateMapById = async (req, res) => {
                 console.log("correct user!");
 
                 map.title = body.map.title;
-                map.reactions = body.map.reactions;
+                // map.reactions = body.map.reactions;
+
+                // let temp = map.imageBuffer;
+                // map.imageBuffer =  zlib.deflateSync(new Buffer.from(body.map.imageBuffer, 'base64'));
+                
+                // let temp2 = zlib.inflateSync(Buffer.from(graphics.geojson)).toString("base64")
+
+                // console.log(temp == temp2)
+                map.imageBuffer = body.map.imageBuffer
                 if(body.map.publishDate)
                     map.publishDate = body.map.publishDate;
                 map
@@ -485,7 +500,6 @@ updateMapById = async (req, res) => {
                         var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
                         var deflated= zlib.deflateSync(input);
                         body.map.graphics.geojson = deflated;
-                        console.log("graphics print" + body.map.graphics.typeSpecific.imageBuffer)
                         Graphics.findByIdAndUpdate(
                             map.graphics,
                             body.map.graphics,
@@ -507,7 +521,7 @@ updateMapById = async (req, res) => {
                         })
                     })
                     .catch(error => {
-                        console.log("FAILURE: " + JSON.stringify(error));
+                        console.log("FAILURE1: " + JSON.stringify(error));
                         return res.status(404).json({
                             error,
                             message: 'Map not updated!',
@@ -528,7 +542,7 @@ updateMapById = async (req, res) => {
                         })
                     })
                     .catch(error => {
-                        console.log("FAILURE: " + JSON.stringify(error));
+                        console.log("FAILURE2: " + JSON.stringify(error));
                         return res.status(404).json({
                             error,
                             message: 'Map not updated!',
@@ -536,7 +550,7 @@ updateMapById = async (req, res) => {
                     })
             }
         }).catch((err) => {
-            console.log("FAILURE: " + JSON.stringify(err));
+            console.log("FAILURE3: " + JSON.stringify(err));
             return res.status(404).json({
                 err,
                 message: 'Map not updated!',

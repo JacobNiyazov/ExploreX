@@ -598,10 +598,13 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
-    store.updateMapGraphics = async (property=null, imageBuffer=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
         let currentMap = store.currentMap;
+        if(imageBuffer !== null){
+            store.currentMap.imageBuffer = imageBuffer;
+            
+        }
         let graphics = currentMap.graphics;
-        console.log(imageBuffer)
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
         }
@@ -616,9 +619,6 @@ function GlobalStoreContextProvider(props) {
         }
         if(spikeLegend !== null){
             graphics['typeSpecific']['spikeLegend'] = spikeLegend;
-        }
-        if(imageBuffer !== null){
-            graphics['typeSpecific']['imageBuffer'] = imageBuffer;
         }
         try {
             let res = await maps.updateMapById(currentMap._id, currentMap);

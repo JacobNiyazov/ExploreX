@@ -1,7 +1,6 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
-import leafletImage from 'leaflet-image';
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 
@@ -10,7 +9,6 @@ const DotDistMap = () => {
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
-  const [mapImage, setMapImage] = useState(null);
 
   useEffect(() => {
     function calculateMedian(values) {
@@ -146,18 +144,6 @@ const DotDistMap = () => {
       }).addTo(map);
       try{
         map.fitBounds(dotsLayerGroup.getBounds());
-        leafletImage(map, function(err, canvas) {
-          if (err) {
-            console.error("Error capturing map image:", err);
-            return;
-          }
-          // Convert canvas to data URL and update state
-          if(storeRef.current.currentMap.graphics.typeSpecific.imageBuffer === null && canvas.toDataURL()){
-            console.log(canvas.toDataURL())
-            storeRef.current.updateMapGraphics(null, canvas.toDataURL(), dotDensityData['features'], scale, null, null);
-          }
-          setMapImage(canvas.toDataURL());
-      });
       }
       catch (err){
         console.log(err)
@@ -169,11 +155,9 @@ const DotDistMap = () => {
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
-      storeRef.current.updateMapGraphics(null, mapImage, dotDensityData['features'], scale, null, null);
-
+      storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);
     }
     updateLayers(geojsonData, dotDensityData);
-    
 
     return () => {
       dotsLayerGroup.remove();

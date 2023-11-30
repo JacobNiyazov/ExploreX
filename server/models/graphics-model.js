@@ -27,8 +27,6 @@ const GraphicsSchema = new Schema(
             property: {type: mongoose.Schema.Types.Mixed, required:false},
             spikeData: {type: [[Object]], required:false},
             spikeLegend: {type: [Number], required:false},
-            imageBuffer: {type: Buffer, required:false}
-
         },
         region:{
             fillColor: {type: String, required: true},

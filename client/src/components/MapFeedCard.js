@@ -43,13 +43,17 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
     store.setCurrentPage(store.currentPageType.publicMapView, map);
     navigate("/map");
   };
+  let temp;
   console.log("map owner: ", map)
+  if (map.imageBuffer){
+    temp = map.imageBuffer
+  }
   return (
     <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
       <StyledCardMedia as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.ownerUsername}`}
-        image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
+        image={ map.imageBuffer ? temp : null}
       />
       <StyledCardContent as={CardContent}>
         <ContentContainer>

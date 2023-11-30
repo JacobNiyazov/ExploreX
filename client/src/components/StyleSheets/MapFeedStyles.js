@@ -49,6 +49,7 @@ export const AuthorTypography = styled('div')({
 
 export const StyledCardMedia = styled('div')({
   height: '200px',  // Adjusted height for image section
+  
 });
 
 export const StyledCardContent = styled('div')({

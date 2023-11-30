@@ -181,7 +181,7 @@ const SpikeMap = () => {
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
     if(storeRef.current.currentMap.graphics.typeSpecific.spikeData === null || storeRef.current.currentMap.graphics.typeSpecific.spikeLegend === null){
-      storeRef.current.updateMapGraphics(null, null, null, trianglePoints, legend);
+      storeRef.current.updateMapGraphics(null, null, null, null, trianglePoints, legend);
     }
     updateLayers(geojsonData, trianglePoints);
 
