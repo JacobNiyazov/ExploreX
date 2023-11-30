@@ -561,6 +561,35 @@ function GlobalStoreContextProvider(props) {
         );
     };
 
+    store.searchSubmit = async (searchInput, searchType) => {
+        try{
+            let mapList = await maps.getPublicMapIdPairs();
+            if(mapList.data.success){
+                let filteredMaps;
+                if(searchInput === ""){
+                    filteredMaps = mapList.data.idNamePairs;
+                }
+                else{
+                    let field = 'ownerUsername';
+                    if(searchType === 'map') field = 'title';
+                    if(searchType === 'type') field = 'type';
+                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase() === searchInput.trim().toLowerCase());
+                }
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                    payload: {
+                        currentPage: store.currentPageType.mapFeed,
+                        currentMaps: filteredMaps
+                    },
+                });
+                navigate('/feed');
+            }
+        }
+        catch (err){
+            console.log(err)
+        }
+    }
+
     store.updateUserInfo = function (username, email, bio, password) {
         async function asyncUpdateUser(username, email, bio, password) {
             try {
@@ -649,7 +678,7 @@ function GlobalStoreContextProvider(props) {
                             type: GlobalStoreActionType.DELETE_MAP,
                             payload: {
                                 currentPage: currentPage,
-                                currentMaps: mapList.data
+                                currentMaps: mapList.data.idNamePairs
                             },
                         });
                     }
@@ -717,6 +746,7 @@ function GlobalStoreContextProvider(props) {
             store.currentMap.imageBuffer = imageBuffer;
             
         }
+        console.log(property)
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;

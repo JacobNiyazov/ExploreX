@@ -132,6 +132,12 @@ const PublicMapView = () => {
           return null;
         }
       }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(dotLayer).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
       dotLayer.bringToFront();
   
       return () => {
@@ -175,6 +181,12 @@ const PublicMapView = () => {
           return null;
         }
       }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
       spikeFeatureGroup.bringToFront();
   
       return () => {

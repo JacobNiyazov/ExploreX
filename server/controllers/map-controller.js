@@ -457,6 +457,7 @@ getPublicMapIdPairs = async (req, res) => {
                     graphics: map.graphics,
                     isPublic: map.isPublic,
                     publishDate: map.publishDate,
+                    type: map.type,
                     imageBuffer: decompressedImage
                 };
                 pairs.push(pair);
