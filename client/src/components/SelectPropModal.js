@@ -53,8 +53,8 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
     async function handleCreateNewMap(){
         await store.updateMapGraphics(selectedProperty);
         onClose(selectedProperty);
-        store.setCurrentPage(store.currentPageType.editMapScreen);
-        navigate("/editMap");
+        store.setCurrentPage(store.currentPageType.editMapScreen, store.currentMap);
+        navigate(`/editMap?id=${store.currentMap._id}`)
     }
 
 

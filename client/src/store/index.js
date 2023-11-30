@@ -299,17 +299,45 @@ function GlobalStoreContextProvider(props) {
             }
             getMapPairs();
         }
-        
-        console.log("set page map: ", store.currentMap)
-        storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                payload: {
-                    currentPage: currentPage,
-                    currentMaps: store.currentMaps,
-                    currentMap: store.currentMap
+        else if(currentPage === "EditMapScreen"){
+            async function getMap(){
+                try{
+                    async function setCurrentMapToEdit(){
+                        let response = await maps.getMapById(map._id);
+                        console.log("map: ",response.data.map);
+                        if(response.data.success){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                                payload: {
+                                    currentPage: currentPage,
+                                    currentMap: response.data.map,
+                                    currentMaps: store.currentMaps
+                                }
+                            })
+                        }
+                    }
+                    setCurrentMapToEdit();
+                }
+                catch(err){
+                    console.log("error: ", err)
                 }
             }
-        );
+            getMap()
+        }
+        else{
+            console.log("set page map: ", store.currentMap, currentPage)
+            storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                    payload: {
+                        currentPage: currentPage,
+                        currentMaps: store.currentMaps,
+                        currentMap: store.currentMap
+                    }
+                }
+            );
+        }
+        
+        
     }
 
     store.updatePageLink = (pageURL, id) => {
@@ -362,6 +390,30 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             getMapPairs();
+        }
+        else if(dict[pageURL] === "EditMapScreen"){
+            async function getMap(){
+                try{
+                    async function setCurrentMapToEdit(){
+                        let response = await maps.getMapById(id);
+                        console.log("map: ",response.data.map);
+                        if(response.data.success){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                                payload: {
+                                    currentPage: dict[pageURL],
+                                    currentMap: response.data.map
+                                }
+                            })
+                        }
+                    }
+                    await setCurrentMapToEdit();
+                }
+                catch(err){
+                    console.log("error: ", err)
+                }
+            }
+            getMap()
         }
         else{
             storeReducer({
@@ -433,6 +485,8 @@ function GlobalStoreContextProvider(props) {
                 }
             })
         }
+
+        return response.data.map
     }
     store.createMapTemp = async (files, mapType, fileType) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
