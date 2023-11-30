@@ -75,8 +75,8 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
     width: '23vw',
     marginTop: '5vh',
     borderRadius: '2.5vh',
-    display: "flex",
-    flexDirection:"column"
+    //display: "flex",
+    //flexDirection:"column"
   };
   const actions = {
     display: 'flex',
@@ -85,18 +85,21 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   const isPost = id.includes('post');
   let temp;
   if (map.imageBuffer){
+    console.log("personal map: ",map.imageBuffer)
     temp = map.imageBuffer
   }
   return (
     <Card sx={card} data-testid={id}>
       <CardHeader title={map.title} subheader={map.ownerUsername} />
-      <CardMedia
-        component="img"
-        height="160vh"
-        image={ map.imageBuffer ? temp : null}
-        alt="map test"
-        onClick = {handlePostClick}
-      />
+      <div>
+        <CardMedia
+          component="img"
+          height="160vh"
+          image={ map.imageBuffer ? temp : null }
+          alt="map test"
+          onClick = {handlePostClick}
+        />
+      </div>
       <CardActions disableSpacing sx = {actions}>
         {isPost ? (
           <>

@@ -178,7 +178,7 @@ const MapEdit = ({
         // Get the MapContainer element by its ID or other means
         // await new Promise((resolve) => setTimeout(resolve, 2000)); // Adjust time as needed
         const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
-        console.log(mapContainer)
+        console.log("map container: ",mapContainer)
         if (mapContainer) {
           // Use dom-to-image to convert the MapContainer element to an image
           domtoimage.toPng(mapContainer, {
