@@ -29,14 +29,8 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
 
 
   async function handleEditClick (){
-    let tempMap;
-    let response = await maps.getMapById(map._id);
-    if(response.data.success){
-      tempMap = response.data.map; 
-      console.log(tempMap)
-    }
-    store.setCurrentEditMap(tempMap, "EditMapScreen")
-    navigate("/editMap")
+    store.setCurrentPage("EditMapScreen", map)
+    navigate(`/editMap?id=${map._id}`)
   }
   const handleLikeToggle = () => {
     setLiked((prevLiked) => !prevLiked);
@@ -65,10 +59,8 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
       store.setCurrentPage(store.currentPageType.publicMapView);
       navigate("/map");
     } else {
-      store.setCurrentEditMap(map, "EditMapScreen");
-      navigate("/editMap")
-
-
+      store.setCurrentPage("EditMapScreen", map)
+      navigate(`/editMap?id=${map._id}`)
     }
   };
   const card = {
