@@ -56,8 +56,14 @@ const MapFeed = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  if (store.currentMaps.length !== 0) {
+  if (store.currentMaps && store.currentMaps.length !== 0) {
     mapValues = Object.values(store.currentMaps);
+    mapValues.sort((a, b) => {
+      let dateA = new Date(a.publishDate);
+      let dateB = new Date(b.publishDate);
+    
+      return dateB - dateA;
+    });
   }
   if (store.currentPage === store.currentPageType.mapFeed){
     return (
