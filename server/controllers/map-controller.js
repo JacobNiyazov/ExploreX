@@ -95,8 +95,8 @@ createMap = async (req,res) =>{
                     nativeFile.publishDate = Date.now()
                     nativeFile.reactions = {
                         comments:[],
-                        likes:0,
-                        dislikes:0,
+                        likes:[],
+                        dislikes:[],
                     }
                     nativeFile.imageBuffer = ""
                     nativeFile.mapType = body.mapType
@@ -116,8 +116,8 @@ createMap = async (req,res) =>{
                                     tempMap.publishDate = Date.now()
                                     tempMap.reactions = {
                                         comments:[],
-                                        likes:0,
-                                        dislikes:0,
+                                        likes:[],
+                                        dislikes:[],
                                     }
                                     tempMap.mapType = body.mapType
                                     tempMap._id = map._id
@@ -260,8 +260,8 @@ createMap = async (req,res) =>{
                         ownerUsername: body.ownerUsername,
                         reactions:{
                             comments:[],
-                            likes:0,
-                            dislikes:0,
+                            likes:[],
+                            dislikes:[],
                         },
                         isPublic: false,
                         type: body.mapType,
@@ -496,9 +496,9 @@ updateMapById = async (req, res) => {
                 map.title = body.map.title;
                 console.log(body.map.title)
 
-                // map.reactions = body.map.reactions;
+                map.reactions = body.map.reactions;
                 // console.log(map.reactions)
-                // console.log(body.map.reactions)
+                //console.log(body.map.reactions)
                 // console.log(map.reactions == body.map.reactions)
 
                 // let temp = map.imageBuffer;

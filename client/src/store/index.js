@@ -652,30 +652,34 @@ function GlobalStoreContextProvider(props) {
     };
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
-        //let currentMap = map._id;
-        //make the current map id a static value
-        let currentMap = "655fe27a63706d4925d1340b"; 
+        let currentMap = map._id;
+        console.log("this is map were updating: ",map)
+        console.log("this is likes: ",like)
         let author = auth.user.username;
-        //console.log("curr and author: ", currentMap, author)
         async function reactToMap(){
             // get all the maps based on page
-            let map = await maps.getMapById(currentMap);
-            if(map.data.success){
-                let tempMap = {...map.data.map}
-                tempMap.reactions.likes = like;
-                tempMap.reactions.dislikes = dislike;
-                if (comment){
-                    tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
+            try{
+                let map = await maps.getMapById(currentMap);
+                if(map.data.success){
+                    let tempMap = {...map.data.map}
+                    tempMap.reactions.likes = like;
+                    tempMap.reactions.dislikes = dislike;
+                    if (comment){
+                        tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
+                    }
+                    let update = await maps.updateMapById(currentMap,tempMap);
+                    if(update.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.UPDATE_MAP_REACTION,
+                            payload: {
+                                currentMap: tempMap
+                            }})
+                        
+                    }
                 }
-                let update = await maps.updateMapById(currentMap,tempMap);
-                if(update.data.success){
-                    storeReducer({
-                        type: GlobalStoreActionType.UPDATE_MAP_REACTION,
-                        payload: {
-                            currentMap: tempMap
-                        }})
-                    
-                }
+            }
+            catch(err){
+                console.log("update reactions failed: ",err)
             }
         }
         reactToMap()

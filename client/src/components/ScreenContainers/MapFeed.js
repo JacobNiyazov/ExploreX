@@ -86,7 +86,7 @@ const MapFeed = () => {
               {mapValues.map((map, index) => (
                 <Grid item key={index} xs={12}>
                   {console.log("MAP BEFORE PASS: ",map)}
-                  <MapFeedCard id={`map-feed-card-${index}`} map={map} likes={map.reactions.likes} dislikes={map.reactions.dislikes} />
+                  <MapFeedCard id={`map-feed-card-${index}`} map={map}/>
                 </Grid>
               ))}
             </Grid>
