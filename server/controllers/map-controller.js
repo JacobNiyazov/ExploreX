@@ -266,6 +266,7 @@ createMap = async (req,res) =>{
                         isPublic: false,
                         type: body.mapType,
                         publishDate: body.publishedDate,
+                        imageBuffer: ""
                     }
                     tempMap.graphics = graphics._id
                     const map = new Map(tempMap);
@@ -570,6 +571,7 @@ updateMapById = async (req, res) => {
             return res.status(404).json({
                 err,
                 message: 'Map not updated!',
+                mapBuffer: map
             })
         });
     }).catch((err) =>{
