@@ -364,6 +364,13 @@ getMapById = async (req, res) => {
             tempMap = {...map}._doc;
             tempMap.graphics = {...graphics}._doc
             tempMap.graphics.geojson = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
+            if(tempMap.imageBuffer){
+                decompressedImage = Buffer.from(map.imageBuffer, 'base64');
+                decompressedImage = zlib.inflateSync(decompressedImage)
+                decompressedImage = decompressedImage.toString('utf8');
+                tempMap.imageBuffer = decompressedImage;
+            }
+
             console.log("correct user!");
             return res.status(200).json({ success: true, map: tempMap })
         }).catch((err) => {
@@ -526,6 +533,7 @@ updateMapById = async (req, res) => {
                         ).then(() => {
                             let tempMap = {...map}._doc
                             tempMap.graphics = tempGraphics;
+                            tempMap.imageBuffer = body.map.imageBuffer
                             return res.status(200).json({
                                 success: true,
                                 map: tempMap,
