@@ -169,7 +169,7 @@ const SpikeMap = () => {
         }
       }).addTo(map);
       try{
-        map.fitBounds(spikeLayerGroup.getBounds());
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
       catch (err){
         console.log(err)

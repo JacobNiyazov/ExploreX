@@ -458,6 +458,7 @@ getPublicMapIdPairs = async (req, res) => {
                     graphics: map.graphics,
                     isPublic: map.isPublic,
                     publishDate: map.publishDate,
+                    type: map.type,
                     imageBuffer: decompressedImage
                 };
                 pairs.push(pair);
@@ -503,6 +504,7 @@ updateMapById = async (req, res) => {
 
                 // let temp = map.imageBuffer;
                 map.imageBuffer =  zlib.deflateSync(body.map.imageBuffer).toString('base64');
+                map.isPublic = body.map.isPublic;
                 
                 // let temp2 = zlib.inflateSync(Buffer.from(graphics.geojson)).toString("base64")
 

@@ -22,67 +22,6 @@ export const GlobalStoreActionType = {
    UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS"
 }
 
-// let exampleMaps = {
-//     Map1: {
-//         title: 'Voronoi Map Example',
-//         author: 'Author 1',
-//         reactions:{
-//             likes: 10,
-//             dislikes: 2,
-//             comments: {sampleComments},
-//         },
-//         type: "Voronoi Map",
-//         isPublic: false,
-//         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-//       },
-//     Map2: {
-//         title: 'Heat Map Example',
-//         author: 'Author 2',
-//         reactions:{
-//             likes: 34,
-//             dislikes: 55,
-//             comments: {sampleComments},
-//         },
-//         type: "Heat Map",
-//         isPublic: false,
-//         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-//       },
-//     Map3: {
-//         title: 'Dot Map Example',
-//         author: 'Author 2',
-//         reactions:{
-//             likes: 0,
-//             dislikes: 8,
-//             comments: {sampleComments},
-//         },
-//         type: "Dot Map",
-//         isPublic: true,
-//         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-//       },
-//     Map4: {
-//         title: 'Spike Map Example',
-//         author: 'Author 2',
-//         reactions:{
-//             likes: 2,
-//             dislikes: 100,
-//             comments: {sampleComments},
-//         },
-//         type: "Spike Map",
-//         isPublic: true,
-//         imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-//       },
-//     Map5:{
-//         title: 'Choropleth Map Example',
-//         author: 'Author 2',
-//         reactions:{
-//             likes: 20,
-//             dislikes: 8,
-//             comments: {sampleComments},
-//         },
-//         isPublic: true,
-//         type: "Choropleth Map"
-//     }
-// }
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
@@ -90,6 +29,7 @@ function GlobalStoreContextProvider(props) {
        modalMessage: "Blah",
        modalOpen: false,
        modalConfirmButton: false,
+       modalAction: "",
        currentMap: null,
        currentMaps: [],
    });
@@ -106,6 +46,9 @@ function GlobalStoreContextProvider(props) {
     "/editMap": "EditMapScreen"
    }
 
+   store.modalActionTypes = {
+        publish: "Publish",
+   }
 
    store.currentPageType = {
         login: "Login",
@@ -135,6 +78,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps,
                 });
@@ -145,6 +89,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });  
@@ -155,6 +100,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
+                    modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -165,6 +111,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
+                    modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -175,6 +122,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -184,6 +132,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: null,
                     currentMaps: payload.currentMaps,
                 });
@@ -193,6 +143,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -202,6 +154,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -211,6 +165,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -221,6 +177,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -531,12 +488,13 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.displayModal = (modalMessage, confirmButton=true) => {
+    store.displayModal = (modalMessage, confirmButton=true, modalAction="") => {
         storeReducer({
                 type: GlobalStoreActionType.DISPLAY_MODAL,
                 payload: {
                     modalMessage: modalMessage,
                     confirmButton: confirmButton,
+                    modalAction: modalAction
                 }
             }
         );
@@ -560,6 +518,35 @@ function GlobalStoreContextProvider(props) {
             }
         );
     };
+
+    store.searchSubmit = async (searchInput, searchType) => {
+        try{
+            let mapList = await maps.getPublicMapIdPairs();
+            if(mapList.data.success){
+                let filteredMaps;
+                if(searchInput === ""){
+                    filteredMaps = mapList.data.idNamePairs;
+                }
+                else{
+                    let field = 'ownerUsername';
+                    if(searchType === 'map') field = 'title';
+                    if(searchType === 'type') field = 'type';
+                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase() === searchInput.trim().toLowerCase());
+                }
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                    payload: {
+                        currentPage: store.currentPageType.mapFeed,
+                        currentMaps: filteredMaps
+                    },
+                });
+                navigate('/feed');
+            }
+        }
+        catch (err){
+            console.log(err)
+        }
+    }
 
     store.updateUserInfo = function (username, email, bio, password) {
         async function asyncUpdateUser(username, email, bio, password) {
@@ -649,7 +636,7 @@ function GlobalStoreContextProvider(props) {
                             type: GlobalStoreActionType.DELETE_MAP,
                             payload: {
                                 currentPage: currentPage,
-                                currentMaps: mapList.data
+                                currentMaps: mapList.data.idNamePairs
                             },
                         });
                     }
@@ -717,6 +704,7 @@ function GlobalStoreContextProvider(props) {
             store.currentMap.imageBuffer = imageBuffer;
             
         }
+        console.log(property)
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
@@ -741,6 +729,37 @@ function GlobalStoreContextProvider(props) {
                     payload: {
                         currentMap: res.data.map
                     }});
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+            
+    }
+    store.publishMap = async (map) =>{
+        console.log(map)
+
+        if(!map){
+            if(!store.currentMap) return;
+            else map = store.currentMap;
+        }
+        try {
+            map.isPublic = true;
+            let res = await maps.updateMapById(map._id, map);
+            if(res.data.success){
+                let mapList = await maps.getPublicMapIdPairs();
+                if(mapList.data.success){
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                        payload: {
+                            currentPage: store.currentPageType.publicMapView,
+                            currentMaps: mapList.data.idNamePairs,
+                            currentMap: res.data.map
+                        }
+                    }
+                    ); 
+                    navigate(`/map?id=${res.data.map._id}`);
+                }
             }
         }
         catch (err) {

@@ -102,18 +102,22 @@ const PublicMapView = () => {
  
     useEffect(() => {
       leafletMap.invalidateSize();
-      const dotLayer = L.geoJSON(typeData, {
-        pointToLayer: function (feature, latlng) {
-          return L.circleMarker(latlng, {
-              radius: 3,
-              fillColor: "#ff24bd",
-              color: "#000",
-              weight: 1,
-              opacity: 1,
-              fillOpacity: 0.8
-          })
-        },
-      }).addTo(leafletMap);
+      let dotLayer;
+      if(typeData.features){
+        dotLayer = L.geoJSON(typeData, {
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+                radius: 3,
+                fillColor: "#ff24bd",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            })
+          },
+        }).addTo(leafletMap);
+      }
+      
       const regionLayer = L.geoJSON(regionData, {
         style: function (feature) {
             switch (feature.geometry.type) {
@@ -132,10 +136,16 @@ const PublicMapView = () => {
           return null;
         }
       }).addTo(leafletMap);
-      dotLayer.bringToFront();
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+      if(typeData.features) dotLayer.bringToFront();
   
       return () => {
-        dotLayer.remove();
+        if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
     }, [typeData, regionData, leafletMap]);
@@ -144,19 +154,21 @@ const PublicMapView = () => {
   };
   const SpikeLayer = ({ typeData, regionData }) => {
     const leafletMap = useMap();
-    console.log(typeData)
  
     useEffect(() => {
       leafletMap.invalidateSize();
-      const spikeFeatureGroup = L.featureGroup().addTo(leafletMap);
-      typeData.forEach(spike => {
-        const spikeLayer = L.polygon(spike.map(point => [point.lat, point.lng]), {
-          color: '#ff24bd',
-          fillColor: '#ff24bd',
-          fillOpacity: 0.1  // Reduced opacity for more transparency
+      let spikeFeatureGroup; 
+      if(typeData.features){
+        spikeFeatureGroup = L.featureGroup().addTo(leafletMap);
+        typeData.forEach(spike => {
+          const spikeLayer = L.polygon(spike.map(point => [point.lat, point.lng]), {
+            color: '#ff24bd',
+            fillColor: '#ff24bd',
+            fillOpacity: 0.1  // Reduced opacity for more transparency
+          });
+          spikeLayer.addTo(spikeFeatureGroup);
         });
-        spikeLayer.addTo(spikeFeatureGroup);
-      });
+      }
       const regionLayer = L.geoJSON(regionData, {
         style: function (feature) {
             switch (feature.geometry.type) {
@@ -175,10 +187,16 @@ const PublicMapView = () => {
           return null;
         }
       }).addTo(leafletMap);
-      spikeFeatureGroup.bringToFront();
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+      if(typeData.features) spikeFeatureGroup.bringToFront();
   
       return () => {
-        spikeFeatureGroup.remove();
+        if(typeData.features) spikeFeatureGroup.remove();
         regionLayer.remove();
       };
     }, [typeData, regionData, leafletMap]);
