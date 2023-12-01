@@ -48,7 +48,7 @@ function UniversalModal(){
     let confirmButton = ""
     if (store.modalConfirmButton){
       confirmButton = (<Grid item xs = {4} sx = {center}>
-                              <StyledButton onClick = {handleConfirm}>
+                              <StyledButton onClick = {handleConfirm} data-testid="confirm">
                                   Confirm
                               </StyledButton>
                       </Grid>);

@@ -143,7 +143,7 @@ const DotDistMap = () => {
         }
       }).addTo(map);
       try{
-        map.fitBounds(dotsLayerGroup.getBounds());
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
       catch (err){
         console.log(err)
