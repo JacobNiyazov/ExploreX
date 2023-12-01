@@ -12,6 +12,12 @@ import { GlobalStoreContext } from '../store'
 function UniversalModal(){
     const { store } = useContext(GlobalStoreContext);
   
+    const handleConfirm = () => {
+        if(store.modalAction === store.modalActionTypes.publish){
+            store.publishMap(store.currentMap);
+        }
+        store.closeModal();
+    };
     const handleClose = () => {
         store.closeModal();
     };
@@ -42,7 +48,7 @@ function UniversalModal(){
     let confirmButton = ""
     if (store.modalConfirmButton){
       confirmButton = (<Grid item xs = {4} sx = {center}>
-                              <StyledButton onClick = {handleClose}>
+                              <StyledButton onClick = {handleConfirm}>
                                   Confirm
                               </StyledButton>
                       </Grid>);

@@ -133,7 +133,7 @@ const PublicMapView = () => {
         }
       }).addTo(leafletMap);
       try{
-        leafletMap.fitBounds(L.geoJSON(dotLayer).getBounds());
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
         console.log(err)
