@@ -266,6 +266,7 @@ createMap = async (req,res) =>{
                         isPublic: false,
                         type: body.mapType,
                         publishDate: body.publishedDate,
+                        imageBuffer: ""
                     }
                     tempMap.graphics = graphics._id
                     const map = new Map(tempMap);
@@ -363,6 +364,13 @@ getMapById = async (req, res) => {
             tempMap = {...map}._doc;
             tempMap.graphics = {...graphics}._doc
             tempMap.graphics.geojson = JSON.parse(zlib.inflateSync(Buffer.from(graphics.geojson)).toString("utf-8"));
+            if(tempMap.imageBuffer){
+                decompressedImage = Buffer.from(map.imageBuffer, 'base64');
+                decompressedImage = zlib.inflateSync(decompressedImage)
+                decompressedImage = decompressedImage.toString('utf8');
+                tempMap.imageBuffer = decompressedImage;
+            }
+
             console.log("correct user!");
             return res.status(200).json({ success: true, map: tempMap })
         }).catch((err) => {
@@ -525,6 +533,7 @@ updateMapById = async (req, res) => {
                         ).then(() => {
                             let tempMap = {...map}._doc
                             tempMap.graphics = tempGraphics;
+                            tempMap.imageBuffer = body.map.imageBuffer
                             return res.status(200).json({
                                 success: true,
                                 map: tempMap,
@@ -572,6 +581,7 @@ updateMapById = async (req, res) => {
             return res.status(404).json({
                 err,
                 message: 'Map not updated!',
+                mapBuffer: map
             })
         });
     }).catch((err) =>{
