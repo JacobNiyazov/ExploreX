@@ -16,6 +16,7 @@ import HeatMap from "../HeatMap.js";
 import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
 import DeletePostModal from '../DeletePostModal';
+import ExportMapModal from '../ExportMapModal';
 
 import {
   StyledCard,
@@ -42,6 +43,9 @@ const PublicMapView = () => {
     setOpenDelete(false)
     navigate("/feed");
   };
+  const [openExport, setOpenExport] = useState(false);
+  const handleOpenExport = () => setOpenExport(true);
+  const handleCloseExport = () => setOpenExport(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -334,6 +338,15 @@ const PublicMapView = () => {
             right: 0 
         }}>
           {forkButton}
+          <StyledForkButton 
+            sx={{ 
+              marginLeft: "7px"
+            }} 
+            onClick = {handleOpenExport} >
+            <StyledTypography variant="h5">
+              Export
+            </StyledTypography>
+          </StyledForkButton>
           {deleteButton}
         </Box>
         <DeletePostModal
@@ -341,6 +354,12 @@ const PublicMapView = () => {
             onClose={handleCloseDelete}
             map = {store.currentMap}
             screen= "MapFeed"
+            />
+
+        <ExportMapModal
+            open={openExport} 
+            onClose={handleCloseExport}
+            map = {store.currentMap}
             />
       </Box>
     );
