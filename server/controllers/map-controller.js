@@ -496,7 +496,7 @@ updateMapById = async (req, res) => {
                 map.title = body.map.title;
                 console.log(body.map.title)
 
-                map.reactions = body.map.reactions;
+                //.reactions = .map.reactions;
                 // console.log(map.reactions)
                 //console.log(body.map.reactions)
                 // console.log(map.reactions == body.map.reactions)

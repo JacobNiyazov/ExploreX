@@ -92,6 +92,12 @@ const PublicMapView = () => {
       console.log("this is likes in public map view: ",likes)
       store.updateMapReaction(map,likes,dislikes,false,null)
     }
+    else{
+      // if its in the likeresults that means this user is removing their like
+      likes = likes.filter((name)=>name!==auth.user.username)
+      setLiked(false)
+      store.updateMapReaction(map,likes,dislikes,false,null)
+    }
   };
   
 
@@ -108,6 +114,11 @@ const PublicMapView = () => {
       }
       setDisliked(true)
       dislikes.push(auth.user.username)
+      store.updateMapReaction(map,likes,dislikes,false,null)
+    }
+    else{
+      dislikes = dislikes.filter((name)=>name!==auth.user.username)
+      setDisliked(false)
       store.updateMapReaction(map,likes,dislikes,false,null)
     }
   };

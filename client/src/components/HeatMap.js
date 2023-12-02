@@ -8,7 +8,7 @@ import "leaflet.heat";
 
 const HeatMap = ({ geojsonData, property }) => {
   const map = useMap();
-
+  console.log("what is property: ", property)
   
   useEffect(() => {
     // Extract coordinates and create a heat map layer
@@ -18,6 +18,7 @@ const HeatMap = ({ geojsonData, property }) => {
 
       // Skip features without the selected property or with non-numeric property values
       if (propertyValue === undefined || propertyValue === null || isNaN(propertyValue)) {
+        console.log("is this property a number?")
         return [];
       }
 
@@ -61,7 +62,7 @@ const HeatMap = ({ geojsonData, property }) => {
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
             radius: 5,
-            fillColor: "#000000",
+            fillColor: "#00000",
             color: "#000",
             weight: 1,
             opacity: 1,
@@ -76,7 +77,7 @@ const HeatMap = ({ geojsonData, property }) => {
     // Remove default border styles for each region
     map.eachLayer((layer) => {
       if (layer.setStyle) {
-        layer.setStyle({color:"pink" });
+        layer.setStyle({fillColor:"transparent",color:"pink" });
       }
     });
   }, [geojsonData, map, property]);

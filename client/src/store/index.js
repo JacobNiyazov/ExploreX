@@ -683,24 +683,6 @@ function GlobalStoreContextProvider(props) {
             }
         }
         reactToMap()
-        /*let mapList = Object.keys(exampleMaps).map((key) => {
-            const currentMap = exampleMaps[key];
-            if (currentMap.title === map.title) {
-                map.reactions.likes = like;
-                map.reactions.dislikes = dislike;
-                if (comment) {
-                    map.reactions.comments.push(data);
-                }
-                return map;
-            }
-            return currentMap;
-        });
-        
-        storeReducer({
-            type: GlobalStoreActionType.UPDATE_MAP_REACTION,
-            payload: {
-                currentMaps: mapList
-            }})*/
     }
     store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
         let currentMap = store.currentMap;
@@ -708,7 +690,7 @@ function GlobalStoreContextProvider(props) {
             store.currentMap.imageBuffer = imageBuffer;
             
         }
-        console.log(property)
+        console.log("PROPERTY IN STORE: ",property)
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
