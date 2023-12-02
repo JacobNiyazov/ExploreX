@@ -15,59 +15,54 @@ const MapFeedCard = ({ map, id }) => {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const likes = map.reactions.likes;
-  const dislikes = map.reactions.dislikes;
-
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
-  const [newLike, setNewLike] = useState(likes.length);
-  const [newDislike, setNewDislike] = useState(dislikes.length);
-
-  useEffect(() => {
-    // Update the local state when the likes or dislikes prop changes
-    setLiked(likes.includes(auth.user.username));
-    setDisliked(dislikes.includes(auth.user.username));
-    setNewLike(likes.length);
-    setNewDislike(dislikes.length);
-  }, [likes, dislikes, auth.user.username]);
+  const [liked, setLiked] = useState(map.reactions.likes.includes(auth.user?.username));
+  const [disliked, setDisliked] = useState(map.reactions.dislikes.includes(auth.user?.username));
+  const [newLiked, setNewLiked] = useState(map.reactions.likes);
+  const [newDisliked, setNewDisliked] = useState(map.reactions.dislikes);
 
   const handleLikeToggle = (event) => {
     event.stopPropagation();
 
-    const likeresult = likes.includes(auth.user.username);
-    const dislikeresult = dislikes.includes(auth.user.username);
+    if (!newLiked.includes(auth.user.username)) {
+      const updatedLikes = [...newLiked, auth.user.username];
+      const updatedDislikes = newDisliked.filter((name) => name !== auth.user.username);
 
-    if (!likeresult) {
-      // This means they're able to like
       setLiked(true);
       setDisliked(false);
-      const updatedLikes = [...likes, auth.user.username];
-      const updatedDislikes = dislikeresult ? dislikes.filter((name) => name !== auth.user.username) : dislikes;
-
-      setNewLike(updatedLikes.length);
-      setNewDislike(updatedDislikes.length);
+      setNewLiked(updatedLikes);
+      setNewDisliked(updatedDislikes);
 
       store.updateMapReaction(map, updatedLikes, updatedDislikes, false, null);
+    } else {
+      const updatedLikes = newLiked.filter((name) => name !== auth.user.username);
+
+      setLiked(false);
+      setNewLiked(updatedLikes);
+
+      store.updateMapReaction(map, updatedLikes, newDisliked, false, null);
     }
   };
 
   const handleDislikeToggle = (event) => {
     event.stopPropagation();
 
-    const likeresult = likes.includes(auth.user.username);
-    const dislikeresult = dislikes.includes(auth.user.username);
+    if (!newDisliked.includes(auth.user.username)) {
+      const updatedDislikes = [...newDisliked, auth.user.username];
+      const updatedLikes = newLiked.filter((name) => name !== auth.user.username);
 
-    if (!dislikeresult) {
-      // This means they're able to dislike
-      setDisliked(true);
       setLiked(false);
-      const updatedDislikes = [...dislikes, auth.user.username];
-      const updatedLikes = likeresult ? likes.filter((name) => name !== auth.user.username) : likes;
-
-      setNewLike(updatedLikes.length);
-      setNewDislike(updatedDislikes.length);
+      setDisliked(true);
+      setNewLiked(updatedLikes);
+      setNewDisliked(updatedDislikes);
 
       store.updateMapReaction(map, updatedLikes, updatedDislikes, false, null);
+    } else {
+      const updatedDislikes = newDisliked.filter((name) => name !== auth.user.username);
+
+      setDisliked(false);
+      setNewDisliked(updatedDislikes);
+
+      store.updateMapReaction(map, newLiked, updatedDislikes, false, null);
     }
   };
 
@@ -75,17 +70,20 @@ const MapFeedCard = ({ map, id }) => {
     store.setCurrentPage(store.currentPageType.publicMapView, map);
     navigate(`/map?id=${map._id}`);
   };
+
   let temp;
-  console.log("map owner: ", map)
-  if (map.imageBuffer){
-    temp = map.imageBuffer
+
+  if (map.imageBuffer) {
+    temp = map.imageBuffer;
   }
+
   return (
     <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
-      <StyledCardMedia as={CardMedia}
+      <StyledCardMedia
+        as={CardMedia}
         component="img"
         alt={`${map.title} by ${map.ownerUsername}`}
-        image={ map.imageBuffer ? temp : null}
+        image={map.imageBuffer ? temp : null}
       />
       <StyledCardContent as={CardContent}>
         <ContentContainer>
@@ -96,15 +94,15 @@ const MapFeedCard = ({ map, id }) => {
             <AuthorTypography variant="body2" component="div">
               by {map.ownerUsername}
             </AuthorTypography>
-            </TextContainer>
-            <StyledBox>
-            <ReactionButton sx={{display:"none"}} data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
+          </TextContainer>
+          <StyledBox>
+            <ReactionButton data-testid="feed-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount data-testid= "feed-likes-count">{newLike}</ReactionCount>
+              <ReactionCount data-testid="feed-likes-count">{newLiked.length}</ReactionCount>
             </ReactionButton>
-            <ReactionButton sx={{display:"none"}} data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
+            <ReactionButton data-testid="feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount data-testid= "feed-dislikes-count">{newDislike}</ReactionCount>
+              <ReactionCount data-testid="feed-dislikes-count">{newDisliked.length}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </ContentContainer>
