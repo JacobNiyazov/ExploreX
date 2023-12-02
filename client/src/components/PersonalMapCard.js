@@ -117,6 +117,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
                 open={openDelete} 
                 onClose={handleCloseDelete}
                 map = {map}
+                screen = "ProfileScreen"
                 />
             <Button
               data-testid="edit-button"

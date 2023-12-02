@@ -8,11 +8,11 @@ import {DescriptionText, StyledError, StyledButton} from './StyleSheets/DeletePo
 import { Grid, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function DeletePostModal({map,open,onClose}){
+function DeletePostModal({map,open,onClose,screen}){
     const { store } = useContext(GlobalStoreContext);
-    function handleDeleteClick () {
+    async function handleDeleteClick () {
         console.log("delete map from list: ", map)
-        store.deleteMap(map, "ProfileScreen",store.currentMaps)
+        await store.deleteMap(map, screen)
         onClose()
       }
     const style = {

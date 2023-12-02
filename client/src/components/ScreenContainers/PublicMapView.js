@@ -5,6 +5,7 @@ import CallSplitIcon from '@mui/icons-material/CallSplit';
 import { GlobalStoreContext } from '../../store';
 import { MapContainer, TileLayer, ZoomControl, useMap, GeoJSON} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
+import DeleteIcon from '@mui/icons-material/Delete'
 import * as ReactDOMServer from 'react-dom/server';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
@@ -14,6 +15,7 @@ import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
 import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
+import DeletePostModal from '../DeletePostModal';
 
 import {
   StyledCard,
@@ -34,6 +36,12 @@ const PublicMapView = () => {
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [geojsonData, setGeojsonData] = useState("");
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleOpenDelete = () => setOpenDelete(true);
+  const handleCloseDelete = () => {
+    setOpenDelete(false)
+    navigate("/feed");
+  };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -233,17 +241,27 @@ const PublicMapView = () => {
 
   let forkButton = ""
   let commentSection = ""
+  let deleteButton = ""
   if(auth.user !== null && auth.loggedIn === true){
-    forkButton = (<StyledForkButton sx={{ 
-        position: 'absolute', 
-        top: 0, 
-        right: 0 
-    }}>
+    forkButton = (<StyledForkButton >
       <CallSplitIcon />
       <StyledTypography variant="h5">
         Fork
       </StyledTypography>
     </StyledForkButton>)
+
+    console.log("delete button: ", store.currentMap.ownerUsername, auth.user.username)
+    if(store.currentMap && auth.user.username === store.currentMap.ownerUsername){
+      
+      deleteButton = (
+      <StyledForkButton 
+        sx={{ 
+          marginLeft: "7px"
+        }} 
+        onClick = {handleOpenDelete} >
+        <DeleteIcon fontSize= "large"/>
+      </StyledForkButton>)
+    }
 
     commentSection = (<CommentForm map={map}/>)
 
@@ -310,7 +328,20 @@ const PublicMapView = () => {
           <CommentList map={map} commentsList ={map.reactions.comments} />
           {commentSection}
         </StyledCard>
-        {forkButton}
+        <Box sx={{ 
+            position: 'absolute', 
+            top: 0, 
+            right: 0 
+        }}>
+          {forkButton}
+          {deleteButton}
+        </Box>
+        <DeletePostModal
+            open={openDelete} 
+            onClose={handleCloseDelete}
+            map = {store.currentMap}
+            screen= "MapFeed"
+            />
       </Box>
     );
   }

@@ -628,7 +628,7 @@ function GlobalStoreContextProvider(props) {
                                 },
                             });
             }
-            else if(store.currentPage === "MapFeed"){
+            else if(store.currentPage === "MapFeed" || store.currentPage === "PublicMapView"){
                 try{
                     let mapList = await maps.getPublicMapIdPairs();
                     if(mapList.data.success){
