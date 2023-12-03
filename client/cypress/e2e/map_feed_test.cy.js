@@ -37,8 +37,7 @@ describe('Map Feed and Public Map View Test', () => {
                 .invoke('text')
                 .should('equal', (initialLikes - 1).toString());
 
-              cy.get('[data-testid=feed-dislike-button]')
-              .click();
+              cy.get('[data-testid=feed-dislike-button]').click();
           });
       });
     })
@@ -87,8 +86,7 @@ describe('Map Feed and Public Map View Test', () => {
           cy.get('[data-testid=map-dislikes-count]')
             .invoke('text')
             .should('equal', (initialDislikes - 1).toString());
-          cy.get('[data-testid=map-dislike-button]')
-            .click();
+          
       });
     })
   })
