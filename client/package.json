@@ -66,6 +66,6 @@
   },
   "devDependencies": {
     "cy-verify-downloads": "^0.2.2",
-    "cypress": "^13.5.1"
+    "cypress": "^13.6.0"
   }
 }

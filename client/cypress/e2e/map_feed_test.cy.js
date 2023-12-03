@@ -36,6 +36,9 @@ describe('Map Feed and Public Map View Test', () => {
               cy.get('[data-testid=feed-likes-count]')
                 .invoke('text')
                 .should('equal', (initialLikes - 1).toString());
+
+              cy.get('[data-testid=feed-dislike-button]')
+              .click();
           });
       });
     })
