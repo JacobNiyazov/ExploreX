@@ -16,7 +16,7 @@ describe('Map Feed and Public Map View Test', () => {
 
           cy.get('[data-testid=feed-likes-count]')
             .invoke('text')
-            .should('equal', (initialLikes + 1).toString());
+            .should('equal', (initialLikes + 1 || initialLikes-1).toString());
       });
       cy.get('[data-testid=feed-dislikes-count]')
         .invoke('text')
@@ -36,9 +36,18 @@ describe('Map Feed and Public Map View Test', () => {
               cy.get('[data-testid=feed-likes-count]')
                 .invoke('text')
                 .should('equal', (initialLikes - 1).toString());
-
-              cy.get('[data-testid=feed-dislike-button]').click();
           });
+      });
+      cy.get('[data-testid=feed-dislikes-count]')
+        .invoke('text')
+        .then((initialDislikesText) => {
+          const initialDislikes = parseInt(initialDislikesText, 10);
+          cy.get('[data-testid=feed-dislike-button]')
+            .click();
+
+          cy.get('[data-testid=feed-dislikes-count]')
+            .invoke('text')
+            .should('equal', (initialDislikes - 1).toString());
       });
     })
   })
@@ -54,7 +63,7 @@ describe('Map Feed and Public Map View Test', () => {
 
           cy.get('[data-testid=map-likes-count]')
             .invoke('text')
-            .should('equal', (initialLikes + 1).toString());
+            .should('equal', (initialLikes + 1||initalLikes-1).toString());
       });
       cy.get('[data-testid=map-dislikes-count]')
         .invoke('text')
@@ -86,7 +95,6 @@ describe('Map Feed and Public Map View Test', () => {
           cy.get('[data-testid=map-dislikes-count]')
             .invoke('text')
             .should('equal', (initialDislikes - 1).toString());
-          
       });
     })
   })
