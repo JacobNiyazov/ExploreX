@@ -46,7 +46,7 @@ function DeletePostModal({map,open,onClose,screen}){
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={style}>
+            <Box sx={style} data-testid="delete-modal">
             <IconButton onClick={onClose} sx={closeButtonStyle}>
                     <CloseIcon />
                 </IconButton>

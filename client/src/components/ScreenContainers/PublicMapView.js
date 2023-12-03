@@ -254,7 +254,6 @@ const PublicMapView = () => {
       </StyledTypography>
     </StyledForkButton>)
 
-    console.log("delete button: ", store.currentMap.ownerUsername, auth.user.username)
     if(store.currentMap && auth.user.username === store.currentMap.ownerUsername){
       
       deleteButton = (
@@ -262,7 +261,8 @@ const PublicMapView = () => {
         sx={{ 
           marginLeft: "7px"
         }} 
-        onClick = {handleOpenDelete} >
+        onClick = {handleOpenDelete} 
+        data-testid="delete-button">
         <DeleteIcon fontSize= "large"/>
       </StyledForkButton>)
     }
@@ -342,7 +342,8 @@ const PublicMapView = () => {
             sx={{ 
               marginLeft: "7px"
             }} 
-            onClick = {handleOpenExport} >
+            onClick = {handleOpenExport}
+            data-testid="export-button" >
             <StyledTypography variant="h5">
               Export
             </StyledTypography>

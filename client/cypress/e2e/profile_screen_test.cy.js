@@ -24,7 +24,7 @@ describe('Profile Screen Test', () => {
   });
 
   it('shows the import modal when import button is clicked', () => {
-    cy.get('[data-testid=import-button]').click();
+    cy.get('[data-testid=AddIcon]').click();
     cy.get('[data-testid=import-modal]').should('be.visible');
   });
 

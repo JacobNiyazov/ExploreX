@@ -18,8 +18,7 @@ function ExportMapModal({map,open,onClose}){
     async function handleExportClick () {
         const link = document.createElement("a");
         let title = map.title.replace(/\s+/g, '_');
-        if(exportType === "Native File JSON"){
-            //cleaning up map info
+        if(exportType === "Native File (JSON)"){
             let tempMap = {...map}
             delete tempMap.imageBuffer
             delete tempMap.ownerUsername
@@ -76,13 +75,13 @@ function ExportMapModal({map,open,onClose}){
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box sx={style}>
+            <Box sx={style} >
                 <IconButton onClick={onClose} sx={closeButtonStyle}>
                         <CloseIcon />
                 </IconButton>
                 <Box sx={{display:'flex', justifyContent:'space-around', alignItems:'center'}}>
                     <StyledButton sx={{marginTop: '0px'}}
-                        data-testid="confirm-delete-button"
+                        data-testid="confirm-export-button"
                         onClick = {handleExportClick}
                     >
                         Download

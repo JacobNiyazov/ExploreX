@@ -61,6 +61,14 @@ describe('Map Feed and Public Map View Test', () => {
     })
   })
 
+  it('leads to public map view and exports a map', ()=>{
+    cy.get('[data-testid="map-feed-card-0"] > .MuiCardMedia-root').click();
+    cy.get('[data-testid="export-button"] > .MuiTypography-root').click();
+    cy.get('[data-testid="confirm-export-button"]').should('be.visible')
+    cy.get('[data-testid="confirm-export-button"]').click();
+    cy.verifyDownload('.json', { contains: true });
+  })
+
   /* ==== Test Created with Cypress Studio ==== */
   it('Test Public Map View', function() {
     /* ==== Generated with Cypress Studio ==== */

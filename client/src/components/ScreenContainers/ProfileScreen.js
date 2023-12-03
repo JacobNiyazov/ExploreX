@@ -120,7 +120,7 @@ function ProfileScreen(){
                 </StyledTypography>
             </Grid>
             <Grid item xs = {2}>
-                <StyledButton data-testid="import-button"
+                <StyledButton data-testid="AddIcon"
                 onClick = {handleOpenImport}>
                   Create Map
                 </StyledButton>
