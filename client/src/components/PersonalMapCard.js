@@ -16,7 +16,6 @@ import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useNavigate } from 'react-router-dom';
-import maps from '../store/map-request-api';
 
 function PersonalMapCard({ map,id,likes,dislikes }) {
   const [liked, setLiked] = useState(false);

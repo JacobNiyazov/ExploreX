@@ -1,4 +1,4 @@
-import { useState, React, useContext, useEffect, useRef} from "react";
+import { useState, React, useContext, useEffect, useRef, useCallback} from "react";
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from "leaflet";
@@ -109,7 +109,7 @@ const MapEdit = ({
     const [baseMap, setBaseMap] = useState(false)
     const [photo, setPhoto] = useState(false)
     const { store } = useContext(GlobalStoreContext);
-
+    const storeRef = useRef(store);
 
 
     const [legendColor, setLegendColor] = useState({
@@ -174,31 +174,31 @@ const MapEdit = ({
     }
 
     const mapContainerRef = useRef(null);
-    const captureMapAsImage = async () => {
+    const captureMapAsImage = useCallback(async () => {        
         const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
-        console.log("map container: ",mapContainer)
-        if (mapContainer) {
-          // Use dom-to-image to convert the MapContainer element to an image
-          domtoimage.toPng(mapContainer, {
-            width: mapContainer.clientWidth * 1,
-            height: mapContainer.clientHeight * 1,
-          })
-            .then(async function (dataUrl) {
-              // 'dataUrl' now contains the image data in base64 format
-              // You can send this dataUrl to the backend or use it as needed
-              store.updateMapGraphics(null, dataUrl)
+            console.log("map container: ",mapContainer)
+            if (mapContainer) {
+            // Use dom-to-image to convert the MapContainer element to an image
+            domtoimage.toPng(mapContainer, {
+                width: mapContainer.clientWidth * 1,
+                height: mapContainer.clientHeight * 1,
             })
-            .catch(function (error) {
-              // Handle any errors that occurred during image conversion
-              console.error('Error capturing screenshot:', error);
-            });
-        } else {
-          console.error('MapContainer element not found');
-        }
-        //console.log("set photo")
-        setPhoto(true);
+                .then(async function (dataUrl) {
+                // 'dataUrl' now contains the image data in base64 format
+                // You can send this dataUrl to the backend or use it as needed
+                storeRef.current.updateMapGraphics(null, dataUrl)
+                })
+                .catch(function (error) {
+                // Handle any errors that occurred during image conversion
+                console.error('Error capturing screenshot:', error);
+                });
+            } else {
+            console.error('MapContainer element not found');
+            }
+            //console.log("set photo")
+            setPhoto(true);
 
-      };
+        }, [storeRef]);
 
       useEffect(() => {
         const waitForMapLoad = async () => {
@@ -216,7 +216,7 @@ const MapEdit = ({
         }
 
         waitForMapLoad();
-      }, []);
+      }, [captureMapAsImage, photo ]);
 
 
     return(

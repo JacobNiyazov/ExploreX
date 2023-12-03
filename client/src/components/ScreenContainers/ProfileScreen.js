@@ -11,7 +11,6 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 //import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
-import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 import SelectPropModal from '../SelectPropModal';

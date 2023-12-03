@@ -6,7 +6,6 @@ import { GlobalStoreContext } from '../../store';
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import DeleteIcon from '@mui/icons-material/Delete'
-import * as ReactDOMServer from 'react-dom/server';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
@@ -34,7 +33,6 @@ const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [geojsonData, setGeojsonData] = useState("");
   const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => {

@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { useContext, useState } from 'react';
-import { GlobalStoreContext } from '../store';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import { StyledButton, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
-import styled from '@emotion/styled';
-import { Grid, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 function ExportMapModal({map,open,onClose}){
-    const { store } = useContext(GlobalStoreContext);
     const [exportType, setExportType] = useState("Native File (JSON)")
     async function handleExportClick () {
         const link = document.createElement("a");
@@ -57,11 +53,7 @@ function ExportMapModal({map,open,onClose}){
         p: 4,
         borderRadius:"5vh"
       };
-      const center = {
-        display:"flex", 
-        justifyContent:"center", 
-        alignItems:"center"
-    }
+
     const closeButtonStyle = {
         position: 'absolute',
         right: 8,
