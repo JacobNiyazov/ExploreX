@@ -215,7 +215,7 @@ const PublicMapView = () => {
     useEffect(() => {
       leafletMap.invalidateSize();
       let spikeFeatureGroup; 
-      if(typeData.features){
+      if(typeData){
         spikeFeatureGroup = L.featureGroup().addTo(leafletMap);
         typeData.forEach(spike => {
           const spikeLayer = L.polygon(spike.map(point => [point.lat, point.lng]), {
@@ -250,10 +250,10 @@ const PublicMapView = () => {
       catch (err){
         console.log(err)
       }
-      if(typeData.features) spikeFeatureGroup.bringToFront();
+      if(typeData) spikeFeatureGroup.bringToFront();
   
       return () => {
-        if(typeData.features) spikeFeatureGroup.remove();
+        if(typeData) spikeFeatureGroup.remove();
         regionLayer.remove();
       };
     }, [typeData, regionData, leafletMap]);
