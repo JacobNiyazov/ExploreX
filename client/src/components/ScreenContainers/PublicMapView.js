@@ -3,14 +3,14 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import { GlobalStoreContext } from '../../store';
-import { MapContainer, TileLayer, ZoomControl, useMap, GeoJSON} from "react-leaflet";
+import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import * as ReactDOMServer from 'react-dom/server';
+//import * as ReactDOMServer from 'react-dom/server';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
-import DotDistMap from '../DotDistMap.js';
-import SpikeMap from '../SpikeMap.js';
+//import DotDistMap from '../DotDistMap.js';
+//import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
 import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
@@ -33,7 +33,7 @@ const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [geojsonData, setGeojsonData] = useState("");
+  //const [geojsonData, setGeojsonData] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const PublicMapView = () => {
     event.stopPropagation()
     let likeresult = likes.filter((name)=> name === auth.user.username)
     let dislikeresult = dislikes.filter((name) => name === auth.user.username)
-    if(likeresult.length == 0){
+    if(likeresult.length === 0){
       //this means theyre able to like
       if(dislikeresult.length > 0){
         //this means they have to remove this name from the array
@@ -105,7 +105,7 @@ const PublicMapView = () => {
     event.stopPropagation();
     let likeresult = likes.filter((name)=> name === auth.user.username)
     let dislikeresult = dislikes.filter((name) => name === auth.user.username)
-    if(dislikeresult.length == 0){
+    if(dislikeresult.length === 0){
       //this means theyre able to dislike
       if(likeresult.length > 0){
         //this means they have to remove this name from the array
