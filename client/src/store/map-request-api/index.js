@@ -21,15 +21,25 @@ export const createMap = (ownerUsername, files, mapType, publishDate, fileType, 
         property:property},
     },  {headers:headers})
 }
-export const updateMapById = (id, map) =>{
+export const updateMapById = (id, map, chloro) =>{
+    console.log("IM CRAZY", chloro)
+    let crazyFix;
+    if(!chloro){
+        crazyFix = null;
+    }
+    else{
+        crazyFix = { ...chloro };
+    }
     return maps.put(`/map/${id}`,{
-        map: map
+        map: map,
+        chloro: crazyFix
     })
 }
 export const getMapById = (id) =>maps.get(`/map/${id}`)
 
 export const getUserMapIdPairs = () =>maps.get('/usermapidpairs')
 
+export const forkMap = (id) => maps.post(`/map/${id}`)
 export const deleteMap = (id) => maps.delete(`/map/${id}`)
 export const getPublicMapIdPairs = ()=>maps.get(`/publicmapidpairs`)
 
@@ -38,6 +48,7 @@ const apis = {
     createMap,
     updateMapById,
     getMapById,
+    forkMap,
     getUserMapIdPairs,
     deleteMap,
     getPublicMapIdPairs
