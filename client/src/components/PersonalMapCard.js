@@ -56,7 +56,7 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   
   const handlePostClick = () => {
     if (isPost) {
-      store.setCurrentPage(store.currentPageType.publicMapView, map);
+      store.setCurrentPage(store.currentPageType.publicMapView,map);
       navigate(`/map?id=${map._id}`);
     } else {
       store.setCurrentPage("EditMapScreen", map)

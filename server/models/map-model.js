@@ -12,8 +12,8 @@ const MapSchema = new Schema(
                 authorUsername: {type: String, required:true},
                 comment:{type: String, required:true}
             }],
-            likes: {type: Number},
-            dislikes:{type: Number},
+            likes: [{type: String, required: true}],
+            dislikes:[{type: String, required: true}],
         },
         graphics:{type: ObjectId},
         isPublic:{type: Boolean},

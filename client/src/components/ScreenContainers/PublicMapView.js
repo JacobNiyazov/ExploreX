@@ -6,10 +6,12 @@ import { GlobalStoreContext } from '../../store';
 import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import DeleteIcon from '@mui/icons-material/Delete'
-import * as ReactDOMServer from 'react-dom/server';
+//import * as ReactDOMServer from 'react-dom/server';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
+//import DotDistMap from '../DotDistMap.js';
+//import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
 import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
@@ -34,7 +36,7 @@ const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [geojsonData, setGeojsonData] = useState("");
+  //const [geojsonData, setGeojsonData] = useState("");
   const [openDelete, setOpenDelete] = useState(false);
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => {
@@ -65,43 +67,71 @@ const PublicMapView = () => {
     waitForAuthCheck();
   }, [auth, navigate, store]);
 
+  let likes = [];
+  let dislikes = [];
+
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
   const [baseMap, setBaseMap] = useState(false);
 
-  /*const handleCommentSubmit = () => {
-    // Logic to refresh comments after a new one is added
-    // Potentially re-fetch the comments or add the new comment to the state
-    store.updateMapReaction(map, likes, dislikes, true, "HELLO")
-    console.log(map.reactions.comments)
-  };*/
+  useEffect(() => {
+    setLiked(likes.includes(auth.user?.username));
+    setDisliked(dislikes.includes(auth.user?.username));
+  }, [likes, dislikes, auth.user?.username]);
   console.log(store.currentMap)
   if (!store.currentMap || loading) {
     return <div>Loading...</div>; // or any loading indicator
   }
   let map = store.currentMap;
-  let likes = store.currentMap.reactions.likes;
-  let dislikes = store.currentMap.reactions.dislikes;
+  likes = store.currentMap.reactions.likes;
+  dislikes = store.currentMap.reactions.dislikes;
+
   const handleLikeToggle = (event) => {
-    setLiked((prevLiked) => !prevLiked);
-    setDisliked(false);
+    //setLiked((prevLiked) => !prevLiked);
+    //setDisliked(false);
     event.stopPropagation()
-    if (!liked) {
-      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
-    } else {
-      store.updateMapReaction(map, likes - 1, dislikes, false, null);
+    let likeresult = likes.filter((name)=> name === auth.user.username)
+    let dislikeresult = dislikes.filter((name) => name === auth.user.username)
+    if(likeresult.length === 0){
+      //this means theyre able to like
+      if(dislikeresult.length > 0){
+        //this means they have to remove this name from the array
+        dislikes = dislikes.filter((name)=>name!==auth.user.username)
+        setDisliked(false)
+      }
+      setLiked(true)
+      likes.push(auth.user.username)
+      console.log("this is likes in public map view: ",likes)
+      store.updateMapReaction(map,likes,dislikes,false,null)
+    }
+    else{
+      // if its in the likeresults that means this user is removing their like
+      likes = likes.filter((name)=>name!==auth.user.username)
+      setLiked(false)
+      store.updateMapReaction(map,likes,dislikes,false,null)
     }
   };
   
 
   const handleDislikeToggle = (event) => {
-    setDisliked((prevDisliked) => !prevDisliked);
-    setLiked(false);
     event.stopPropagation();
-    if (!disliked) {
-      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
-    } else {
-      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+    let likeresult = likes.filter((name)=> name === auth.user.username)
+    let dislikeresult = dislikes.filter((name) => name === auth.user.username)
+    if(dislikeresult.length === 0){
+      //this means theyre able to dislike
+      if(likeresult.length > 0){
+        //this means they have to remove this name from the array
+        likes = likes.filter((name)=>name!==auth.user.username)
+        setLiked(false)
+      }
+      setDisliked(true)
+      dislikes.push(auth.user.username)
+      store.updateMapReaction(map,likes,dislikes,false,null)
+    }
+    else{
+      dislikes = dislikes.filter((name)=>name!==auth.user.username)
+      setDisliked(false)
+      store.updateMapReaction(map,likes,dislikes,false,null)
     }
   };
   const handleBaseMap = () =>{
@@ -389,11 +419,11 @@ const PublicMapView = () => {
             <StyledBox>
               <ReactionButton disabled={auth.isGuest} data-testid = "map-like-button" selected={liked} onClick={handleLikeToggle}>
                 <ThumbUpIcon />
-                <ReactionCount data-testid = "map-likes-count">{likes}</ReactionCount>
+                <ReactionCount data-testid = "map-likes-count">{likes.length}</ReactionCount>
               </ReactionButton>
               <ReactionButton disabled={auth.isGuest} data-testid = "map-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
                 <ThumbDownIcon />
-                <ReactionCount data-testid = "map-dislikes-count">{dislikes}</ReactionCount>
+                <ReactionCount data-testid = "map-dislikes-count">{dislikes.length}</ReactionCount>
               </ReactionButton>
             </StyledBox>
           </StyledCardContent>
