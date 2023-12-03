@@ -175,8 +175,6 @@ const MapEdit = ({
 
     const mapContainerRef = useRef(null);
     const captureMapAsImage = async () => {
-        // Get the MapContainer element by its ID or other means
-        // await new Promise((resolve) => setTimeout(resolve, 2000)); // Adjust time as needed
         const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
         console.log("map container: ",mapContainer)
         if (mapContainer) {
@@ -210,7 +208,6 @@ const MapEdit = ({
                 waitForMapLoad(); // Re-check status
             } else {
                 if(!photo){
-                    console.log("HERE")
                     // setPhoto(true)   
                     captureMapAsImage()
 

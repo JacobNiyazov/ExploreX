@@ -3,14 +3,11 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import { GlobalStoreContext } from '../../store';
-import { MapContainer, TileLayer, ZoomControl, useMap, GeoJSON} from "react-leaflet";
+import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import * as ReactDOMServer from 'react-dom/server';
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
-import DotDistMap from '../DotDistMap.js';
-import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
 import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
@@ -33,7 +30,7 @@ const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [geojsonData, setGeojsonData] = useState("");
+  // const [geojsonData, setGeojsonData] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -96,6 +93,16 @@ const PublicMapView = () => {
   };
   const handleBaseMap = () =>{
     setBaseMap(!baseMap);
+  }
+
+  const handleFork = async () => {
+    console.log("Forking")
+    await store.handleFork();
+    
+    // store.setCurrentPage(store.currentPageType.editMapScreen, store.currentMap)
+    navigate(`/editMap?id=${map._id}`)
+
+
   }
   const DotLayer = ({ typeData, regionData }) => {
     const leafletMap = useMap();
@@ -203,6 +210,61 @@ const PublicMapView = () => {
   
     return null;
   };
+  // const ChloroLayer = ({ typeData, regionData }) => {
+  //   const leafletMap = useMap();
+ 
+  //   useEffect(() => {
+  //     leafletMap.invalidateSize();
+  //     let dotLayer;
+  //     if(typeData.features){
+  //       dotLayer = L.geoJSON(typeData, {
+  //         pointToLayer: function (feature, latlng) {
+  //           return L.circleMarker(latlng, {
+  //               radius: 3,
+  //               fillColor: "#ff24bd",
+  //               color: "#000",
+  //               weight: 1,
+  //               opacity: 1,
+  //               fillOpacity: 0.8
+  //           })
+  //         },
+  //       }).addTo(leafletMap);
+  //     }
+      
+  //     const regionLayer = L.geoJSON(regionData, {
+  //       style: function (feature) {
+  //           switch (feature.geometry.type) {
+  //               case 'Polygon':
+  //               case 'MultiPolygon':
+  //                   return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+  //               case 'LineString':
+  //               case 'MultiLineString':
+  //                   return { color: "#f55", weight: 2, opacity: 0.8 };
+  //               default:
+  //                   return {}; // Point geometries, if any, are already handled in dot density layer
+  //           }
+  //       },
+  //       // Ensure that no default marker is created for point features
+  //       pointToLayer: function (feature, latlng) {
+  //         return null;
+  //       }
+  //     }).addTo(leafletMap);
+  //     try{
+  //       leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+  //     }
+  //     catch (err){
+  //       console.log(err)
+  //     }
+  //     if(typeData.features) dotLayer.bringToFront();
+  
+  //     return () => {
+  //       if(typeData.features) dotLayer.remove();
+  //       regionLayer.remove();
+  //     };
+  //   }, [typeData, regionData, leafletMap]);
+  
+  //   return null;
+  // };
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
       let data = {
@@ -230,17 +292,18 @@ const PublicMapView = () => {
     }
     return null;
   }
+  
 
   let forkButton = ""
   let commentSection = ""
   if(auth.user !== null && auth.loggedIn === true){
-    forkButton = (<StyledForkButton sx={{ 
+    forkButton = (<StyledForkButton onClick={handleFork} sx={{ 
         position: 'absolute', 
         top: 0, 
         right: 0 
     }}>
       <CallSplitIcon />
-      <StyledTypography variant="h5">
+      <StyledTypography variant="h5" >
         Fork
       </StyledTypography>
     </StyledForkButton>)

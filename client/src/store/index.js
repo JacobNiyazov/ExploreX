@@ -4,7 +4,6 @@ import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
-import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -19,7 +18,9 @@ export const GlobalStoreActionType = {
    DELETE_MAP: "DELETE_MAP",
    UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
    CREATE_MAP: "CREATE_MAP",
-   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS"
+   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
+   FORK_MAP: "FORK_MAP",
+
 }
 
 
@@ -161,6 +162,17 @@ function GlobalStoreContextProvider(props) {
                 });
             }
             case GlobalStoreActionType.CREATE_MAP:{
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.FORK_MAP:{
                 return setStore({
                     currentPage: payload.currentPage,
                     modalMessage: null,
@@ -383,6 +395,7 @@ function GlobalStoreContextProvider(props) {
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
                                 payload: {
                                     currentPage: dict[pageURL],
+                                    currentMaps: store.currentMaps,
                                     currentMap: response.data.map
                                 }
                             })
@@ -402,6 +415,8 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentPage: dict[pageURL],
                     currentMaps: store.currentMaps,
+                    currentMap: store.currentMap
+
                 }
             });
         }
@@ -578,6 +593,34 @@ function GlobalStoreContextProvider(props) {
         }
         asyncUpdateUser(username, email, bio, password);
     }
+
+    store.handleFork = async () => {
+        let id = store.currentMap._id;
+        async function forkMap(){
+            try{
+                let response = await maps.forkMap(id);
+                if(response.data.success)
+                {
+                    storeReducer({
+                        type: GlobalStoreActionType.FORK_MAP,
+                        payload: {
+                            currentPage: store.currentPageType.editMapScreen,
+                            currentMap: response.data.map
+                        },
+                    });
+
+                }
+            }
+            catch (err){
+                console.log(err)
+            }
+
+        }
+        forkMap();
+
+
+    }
+
     store.deleteMap = (currentMap, currentPage) => {
         //get the id of the map we are removing 
 
@@ -698,13 +741,12 @@ function GlobalStoreContextProvider(props) {
                 currentMaps: mapList
             }})*/
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
             
         }
-        console.log(property)
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
@@ -721,8 +763,12 @@ function GlobalStoreContextProvider(props) {
         if(spikeLegend !== null){
             graphics['typeSpecific']['spikeLegend'] = spikeLegend;
         }
+        if(chloroLegend !== null){
+            currentMap.graphics.typeSpecific.chloroLegend = chloroLegend;
+        }
         try {
-            let res = await maps.updateMapById(currentMap._id, currentMap);
+            chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
+            let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
             if(res.data.success){
                 storeReducer({
                     type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
