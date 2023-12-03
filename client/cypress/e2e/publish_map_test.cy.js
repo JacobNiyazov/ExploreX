@@ -45,6 +45,7 @@ describe('Map Feed and Public Map View Test', () => {
     cy.get('#\\:r7\\:-label').should('be.visible');
     /* ==== End Cypress Studio ==== */
     /* ==== Generated with Cypress Studio ==== */
+    cy.wait(500);
     cy.get('[data-testid="map-publish-button"] > .MuiTypography-root').should('have.text', 'Publish');
     cy.get('[data-testid="map-publish-button"] > .MuiTypography-root').click();
     cy.get('#modal-modal-description > div > span').should('have.text', 'Ready to Publish?');

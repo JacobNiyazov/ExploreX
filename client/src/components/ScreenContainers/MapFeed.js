@@ -53,6 +53,13 @@ const MapFeed = () => {
 
   let mapValues = "";
 
+  let createMapButton = "";
+  if(auth.user !== null){
+    createMapButton = (<HeaderBar>
+      <StyledCreateButton onClick = {handleOpenImport}>Create Map</StyledCreateButton>
+    </HeaderBar>);
+  }
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -68,9 +75,7 @@ const MapFeed = () => {
   if (store.currentPage === store.currentPageType.mapFeed){
     return (
       <div>
-        <HeaderBar>
-          <StyledCreateButton onClick = {handleOpenImport}>Create Map</StyledCreateButton>
-        </HeaderBar>
+        {createMapButton}
         <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
           files={files}
           setFiles={setFiles}
@@ -86,7 +91,7 @@ const MapFeed = () => {
               {mapValues.map((map, index) => (
                 <Grid item key={index} xs={12}>
                   {console.log("MAP BEFORE PASS: ",map)}
-                  <MapFeedCard id={`map-feed-card-${index}`} map={map} likes={map.reactions.likes} dislikes={map.reactions.dislikes} />
+                  <MapFeedCard id={`map-feed-card-${index}`} map={map} />
                 </Grid>
               ))}
             </Grid>

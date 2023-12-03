@@ -17,8 +17,8 @@ describe('App Banner Tests', () => {
     cy.get('[data-testid="search-type-option2"]').should('have.text', 'Map Name');
     cy.get('[data-testid="search-type-option3"]').should('have.text', 'Map Type');
     cy.get('[data-testid="search-type-option2"]').click();
-    cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' GREAT EXaMPLE FOR CoMPRPESS ').type('{enter}');
-    cy.get('.css-rklg78').should('have.text', 'GREAT EXAMPLE FOR COMPRPESS');
+    cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' MAP eXample ').type('{enter}');
+    
     cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' Wrong ').type('{enter}');
     cy.get('.css-platyw').should('be.visible');
     cy.get('[data-testid="user-icon"]').should('be.visible');

@@ -115,7 +115,7 @@ function ProfileScreen(){
         <Grid container spacing = {2}>
             <Grid item xs = {10}>
                 <StyledTypography>
-                    Team Pink
+                    {auth.user.username}
                 </StyledTypography>
             </Grid>
             <Grid item xs = {2}>
@@ -137,8 +137,7 @@ function ProfileScreen(){
                 <StyledTypography2
                 data-testid="bio-text"
                 >
-                    Hello, welcome to my page this is where the bio goes.
-                    I hope you enjoy all my maps!
+                    {auth.user.bio}
                 </StyledTypography2>
             </Grid>
             <Grid item xs = {12} sx = {{marginLeft:"4vw"}}>
