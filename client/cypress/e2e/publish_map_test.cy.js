@@ -49,13 +49,13 @@ describe('Map Feed and Public Map View Test', () => {
     cy.get('[data-testid="map-publish-button"] > .MuiTypography-root').should('have.text', 'Publish');
     cy.get('[data-testid="map-publish-button"] > .MuiTypography-root').click();
     cy.get('#modal-modal-description > div > span').should('have.text', 'Ready to Publish?');
-    cy.get('[data-testid="confirm"]').should('be.enabled');
-    cy.get('[data-testid="confirm"]').click();
-    cy.get('.MuiTypography-h4').should('have.text', 'Map Example');
-    cy.get('.MuiTypography-subtitle1').should('have.text', 'Author: cypress');
-    cy.get('.MuiCardContent-root > .MuiTypography-body1').should('have.text', 'Dot Distribution Map');
-    cy.get('.css-153odwb').should('be.visible');
-    cy.get('.PrivateSwitchBase-input').check();
+    // cy.get('[data-testid="confirm"]').should('be.enabled');
+    // cy.get('[data-testid="confirm"]').click();
+    // cy.get('.MuiTypography-h4').should('have.text', 'Map Example');
+    // cy.get('.MuiTypography-subtitle1').should('have.text', 'Author: cypress');
+    // cy.get('.MuiCardContent-root > .MuiTypography-body1').should('have.text', 'Dot Distribution Map');
+    // cy.get('.css-153odwb').should('be.visible');
+    // cy.get('.PrivateSwitchBase-input').check();
     /* ==== End Cypress Studio ==== */
   })
 

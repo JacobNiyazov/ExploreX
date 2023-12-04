@@ -596,29 +596,23 @@ function GlobalStoreContextProvider(props) {
 
     store.handleFork = async () => {
         let id = store.currentMap._id;
-        async function forkMap(){
-            try{
-                let response = await maps.forkMap(id);
-                if(response.data.success)
-                {
-                    storeReducer({
-                        type: GlobalStoreActionType.FORK_MAP,
-                        payload: {
-                            currentPage: store.currentPageType.editMapScreen,
-                            currentMap: response.data.map
-                        },
-                    });
+        try{
+            let response = await maps.forkMap(id);
+            if(response.data.success)
+            {
+                await storeReducer({
+                    type: GlobalStoreActionType.FORK_MAP,
+                    payload: {
+                        currentPage: store.currentPageType.editMapScreen,
+                        currentMap: response.data.map
+                    },
+                });
 
-                }
             }
-            catch (err){
-                console.log(err)
-            }
-
         }
-        forkMap();
-
-
+        catch (err){
+            console.log(err)
+        }
     }
 
     store.deleteMap = (currentMap, currentPage) => {

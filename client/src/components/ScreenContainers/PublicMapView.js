@@ -147,12 +147,9 @@ const PublicMapView = () => {
 
   const handleFork = async () => {
     console.log("Forking")
-    await store.handleFork();
-    
-    // store.setCurrentPage(store.currentPageType.editMapScreen, store.currentMap)
-    navigate(`/editMap?id=${map._id}`)
-
-
+    await store.handleFork()
+    console.log(store.currentMap._id)
+    navigate(`/editMap?id=${store.currentMap._id}`)
   }
   const DotLayer = ({ typeData, regionData }) => {
     const leafletMap = useMap();

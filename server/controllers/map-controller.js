@@ -340,8 +340,8 @@ forkMap = async (req, res) =>{
                             ownerUsername: user.username,
                             reactions: {
                                 comments:[],
-                                likes:0,
-                                dislikes:0,
+                                likes:[],
+                                dislikes:[],
                             },
                             imageBuffer: map.imageBuffer,
                             graphics: newGraphics._id,
@@ -549,12 +549,20 @@ getPublicMapIdPairs = async (req, res) => {
         }
     }).catch(err => {return res.status(400).json({ success: false, error: err })})
 }
-
+function arraysAreEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
 updateMapById = async (req, res) => {
     const body = req.body
     console.log("BODY")
-    console.log(req.body.map.graphics.typeSpecific)
-    console.log(req.body.chloro)
     // console.log("updateMapById: " + JSON.stringify(body.map));
     //console.log("req.body.title: " + req.body.title);
 
@@ -573,21 +581,25 @@ updateMapById = async (req, res) => {
             // console.log("username: " + user.username);
             // console.log("req.userId: " + req.userId);
             if (user._id == req.userId) {
-                // console.log(req.body.map)
-
-                console.log("correct user!!!");
-                console.log(map.graphics.typeSpecific)
-                console.log("DIVIDER")
-                console.log(req.body.map.graphics.typeSpecific)
 
                 // console.log(map)
 
                 map.title = body.map.title;
                 // console.log(body.map.title)
 
-                map.reactions = body.map.reactions;
+                let temp1 = map.reactions;
+                let temp2 = body.map.reactions;
+
+                if (!arraysAreEqual(temp1.comments, temp2.comments) || 
+                    !arraysAreEqual(temp1.likes, temp2.likes) || 
+                    !arraysAreEqual(temp1.dislikes, temp2.dislikes)) {
+                    console.log(temp1)
+                    console.log(temp2)
+                    // Update map.reactions with body.map.reactions
+                    map.reactions = {...body.map.reactions};
+                }
                 // console.log(map.reactions)
-                //console.log(body.map.reactions)
+                // console.log(body.map.reactions)
                 // console.log(map.reactions == body.map.reactions)
 
                 // let temp = map.imageBuffer;
@@ -607,9 +619,9 @@ updateMapById = async (req, res) => {
                     .save()
                     .then(() => {
                         var tempGraphics = {...body.map.graphics};
-                        console.log("------")
-                        console.log(body.map.graphics)
-                        console.log("GRAPHICS") 
+                        // console.log("------")
+                        // console.log(body.map.graphics)
+                        // console.log("GRAPHICS") 
 
                         var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
                         var deflated= zlib.deflateSync(input);
