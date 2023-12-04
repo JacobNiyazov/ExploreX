@@ -49,6 +49,7 @@ describe('Map Feed and Public Map View Test', () => {
             .invoke('text')
             .should('equal', (initialDislikes - 1).toString());
       });
+      cy.wait(500)
     })
   })
   it('leads to public view page and likes and dislikes', ()=>{
