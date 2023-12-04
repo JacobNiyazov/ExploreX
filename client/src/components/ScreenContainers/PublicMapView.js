@@ -67,7 +67,7 @@ const PublicMapView = () => {
 
   let likes = [];
   let dislikes = [];
-
+  
   let currLiked = false;
   let currDisliked = false;
   /*if(store && store.currentMap && store.currentMap.reactions && auth.user !== null){

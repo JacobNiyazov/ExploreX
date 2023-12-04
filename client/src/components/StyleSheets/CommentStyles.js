@@ -36,6 +36,7 @@ export const StyledCommentForm = styled('form')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   '& textarea': {
+    fontFamily: 'Nova Square',
     color: 'white',
     fontSize: '1.05rem',
     resize: 'vertical',
@@ -47,6 +48,7 @@ export const StyledCommentForm = styled('form')(({ theme }) => ({
     borderRadius: '4px',
   },
   '& button': {
+    fontFamily: 'Nova Square',
     fontSize: '1.05rem', // Larger font size for button text
     padding: '8px',
     backgroundColor: '#FF76D6', // Pink background for the button

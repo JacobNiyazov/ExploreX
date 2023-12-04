@@ -772,6 +772,7 @@ function GlobalStoreContextProvider(props) {
         }
         try {
             map.isPublic = true;
+            map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success){
                 let mapList = await maps.getPublicMapIdPairs();
