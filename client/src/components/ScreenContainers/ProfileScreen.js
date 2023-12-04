@@ -105,8 +105,8 @@ function ProfileScreen(){
     if (store.currentMaps) {
       mapValues = Object.values(store.currentMaps);
     }
-    const drafts = mapValues.filter((map) => !map.isPublic);
-    const posted = mapValues.filter((map) => map.isPublic);
+    let drafts = mapValues.filter((map) => !map.isPublic);
+    let posted = mapValues.filter((map) => map.isPublic);
     if (loading) {
       return <div>Loading...</div>;
     }

@@ -69,18 +69,27 @@ const PublicMapView = () => {
 
   let currLiked = false;
   let currDisliked = false;
-  if(store && store.currentMap && store.currentMap.reactions && auth.user !== null){
+  /*if(store && store.currentMap && store.currentMap.reactions && auth.user !== null){
     currLiked = store.currentMap.reactions.likes.includes(auth.user.username);
   }
   if(store && store.currentMap && store.currentMap.reactions && auth.user !== null){
     currDisliked = store.currentMap.reactions.dislikes.includes(auth.user.username);
-  }
+  }*/
 
   const [liked, setLiked] = useState(currLiked);
   const [disliked, setDisliked] = useState(currDisliked);
   const [baseMap, setBaseMap] = useState(false);
-
-  // useEffect(() => {
+  useEffect(() => {
+    if (store && store.currentMap && store.currentMap.reactions && auth.user !== null) {
+      const isLiked = store.currentMap.reactions.likes.includes(auth.user.username);
+      const isDisliked = store.currentMap.reactions.dislikes.includes(auth.user.username);
+  
+      setLiked(isLiked);
+      setDisliked(isDisliked);
+    }
+  }, [store,store.currentMap, auth.user]);
+  
+  //useEffect(() => {
   //   setLiked(likes.includes(auth.user?.username));
   //   setDisliked(dislikes.includes(auth.user?.username));
   // }, [likes, dislikes, auth.user?.username]);
