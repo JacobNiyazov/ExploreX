@@ -39,7 +39,6 @@ const PublicMapView = () => {
   const handleOpenDelete = () => setOpenDelete(true);
   const handleCloseDelete = () => {
     setOpenDelete(false)
-    navigate("/feed");
   };
   const [openExport, setOpenExport] = useState(false);
   const handleOpenExport = () => setOpenExport(true);
