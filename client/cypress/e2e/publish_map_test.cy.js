@@ -59,4 +59,14 @@ describe('Map Feed and Public Map View Test', () => {
     /* ==== End Cypress Studio ==== */
   })
 
+  it('should delete published map', () =>{
+    /* ==== Generated with Cypress Studio ==== */
+    cy.get('[data-testid="AccountCircleIcon"]').click();
+    cy.get('[data-testid="My Profile"]').click();
+    cy.get('.MuiCardMedia-root').last().click();
+    cy.get('[data-testid="delete-button"]').click();
+    cy.get('[data-testid="confirm-delete-button"]').click();
+    /* ==== End Cypress Studio ==== */
+  })
+  
 });
