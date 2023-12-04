@@ -13,10 +13,9 @@ const EditScreen = () => {
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
-    console.log("why: ",store.currentMap)
     useEffect(() => {
       const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined) {
+        if (auth.loggedIn === undefined || store.currentMap === null) {
           // Wait until authentication check is completed
           await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
           waitForAuthCheck(); // Re-check status
@@ -24,6 +23,10 @@ const EditScreen = () => {
           if (!auth.loggedIn) {
             store.setCurrentPage(store.currentPageType.login);
             navigate('/login');
+          }
+          if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+            store.setCurrentPage(store.currentPageType.profileScreen);
+            navigate('/profile');
           }
           setLoading(false);
         }

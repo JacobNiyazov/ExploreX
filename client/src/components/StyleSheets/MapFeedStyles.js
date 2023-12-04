@@ -1,10 +1,12 @@
 import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 export const StyledMapFeed = styled('div')({
   backgroundColor: '#505050',
   padding: '20px',
   width: '55%',  // Adjust width as needed
-  margin: 'auto',
+  marginLeft: 'auto',
+  marginRight: 'auto',
   height: '100vh',  // Full view height
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
@@ -47,6 +49,7 @@ export const AuthorTypography = styled('div')({
 
 export const StyledCardMedia = styled('div')({
   height: '200px',  // Adjusted height for image section
+  
 });
 
 export const StyledCardContent = styled('div')({
@@ -85,4 +88,26 @@ export const ReactionCount = styled('span')({
   marginLeft: '8px',
   display: 'flex',
   alignItems: 'center',
+});
+
+export const StyledCreateButton = styled(Button)({
+  backgroundColor: "#f57fd9",
+  color: "black",
+  width:"55%",
+  height:"5vh",
+  padding: "1vh",
+  margin: "auto",
+  borderRadius:"3vh",
+  "&:hover": {
+      backgroundColor: "#f57fd9",
+      opacity:"0.9",
+  }
+});
+export const HeaderBar = styled('div')({
+  marginBottom:'1vh',
+  backgroundColor: 'black',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '10px 0',
+  width: '100%',
 });

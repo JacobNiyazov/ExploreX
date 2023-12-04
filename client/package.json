@@ -14,9 +14,12 @@
     "@turf/turf": "^6.5.0",
     "axios": "^1.6.0",
     "d3-delaunay": "^6.0.4",
+    "dom-to-image": "^2.6.0",
+    "dom2image": "^0.0.0",
     "dotenv": "^16.3.1",
     "install": "^0.13.0",
     "leaflet": "^1.9.4",
+    "leaflet-image": "^0.4.0",
     "leaflet-plugins": "^3.4.0",
     "leaflet.heat": "^0.2.0",
     "memoize-one": "^5.2.1",
@@ -62,6 +65,7 @@
     ]
   },
   "devDependencies": {
-    "cypress": "^13.5.1"
+    "cy-verify-downloads": "^0.2.2",
+    "cypress": "^13.6.0"
   }
 }

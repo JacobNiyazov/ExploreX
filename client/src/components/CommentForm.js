@@ -2,35 +2,18 @@
 import React, { useState, useContext } from 'react';
 import { StyledCommentForm } from './StyleSheets/CommentStyles';
 import { GlobalStoreContext } from '../store';
+import { AuthContext } from '../auth'
 
 const CommentForm = ({ map }) => {
   const [commentText, setCommentText] = useState('');
   const { store } = useContext(GlobalStoreContext);
-  /*const handleSubmit = (event) => {
-    event.preventDefault();
-    // Replace with your actual API endpoint
-    fetch(`/api/maps/${mapId}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text: commentText }),
-    })
-    .then(response => response.json())
-    .then(() => {
-      onCommentSubmit();
-      setCommentText('');
-    })
-    .catch(error => console.error('Error posting comment:', error));
-  };*/
+  const { auth } = useContext(AuthContext);
   const handleSubmit=(event)=> {
     event.preventDefault();
-    //the author name will change when i have auth
     let newComment = {
-      _id: "3",
-      authorUsername: "amelia",
+      authorUsername: auth.user.username,
       comment: commentText,
-      timestamp: '2023-11-01T09:24:00.000Z'
+      timestamp: Date.now()
     }
     store.updateMapReaction(map, map.reactions.likes, map.reactions.dislikes, true, newComment)
     setCommentText('');

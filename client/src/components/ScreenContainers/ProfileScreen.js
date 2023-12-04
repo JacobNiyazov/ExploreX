@@ -11,7 +11,6 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 //import {TabIndicatorProps} from "@mui/material"
 import { GlobalStoreContext } from '../../store';
-import AddIcon from '@mui/icons-material/Add';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 import SelectPropModal from '../SelectPropModal';
@@ -116,13 +115,13 @@ function ProfileScreen(){
         <Grid container spacing = {2}>
             <Grid item xs = {10}>
                 <StyledTypography>
-                    Team Pink
+                    {auth.user.username}
                 </StyledTypography>
             </Grid>
             <Grid item xs = {2}>
-                <StyledButton data-testid="import-button"
+                <StyledButton data-testid="AddIcon"
                 onClick = {handleOpenImport}>
-                  <AddIcon></AddIcon>
+                  Create Map
                 </StyledButton>
                 <ImportFileModal open={openImport} onClose={handleCloseImport} openSelectPropModal={handleOpenSelectPropModal}
                   files={files}
@@ -138,8 +137,7 @@ function ProfileScreen(){
                 <StyledTypography2
                 data-testid="bio-text"
                 >
-                    Hello, welcome to my page this is where the bio goes.
-                    I hope you enjoy all my maps!
+                    {auth.user.bio}
                 </StyledTypography2>
             </Grid>
             <Grid item xs = {12} sx = {{marginLeft:"4vw"}}>
@@ -156,7 +154,7 @@ function ProfileScreen(){
                     <CustomTabPanel value={value} index={0}>
                       <Grid id="map-cards" container spacing={1}>
                         {posted.map((map, index) => (
-                          <Grid item key={index} xs={3}>
+                          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <PersonalMapCard id={`map-posted-${index}`} map={map} likes = {map.reactions.likes} dislikes={map.reactions.dislikes}/>
                           </Grid>
                         ))}
@@ -165,7 +163,7 @@ function ProfileScreen(){
                     <CustomTabPanel value={value} index={1}>
                       <Grid id="map-cards" container spacing={1}>
                         {drafts.map((map, index) => (
-                          <Grid item key={index} xs={3}>
+                          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <PersonalMapCard data-testid = {`map-draft-${index}`} id={`map-draft-${index}`} map={map}/>
                           </Grid>
                         ))}

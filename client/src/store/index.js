@@ -1,9 +1,9 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
-import sampleComments from '../components/CommentList'
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -18,70 +18,11 @@ export const GlobalStoreActionType = {
    DELETE_MAP: "DELETE_MAP",
    UPDATE_MAP_REACTION:"UPDATE_MAP_REACTION",
    CREATE_MAP: "CREATE_MAP",
-   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS"
+   UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
+   FORK_MAP: "FORK_MAP",
+
 }
 
-let exampleMaps = {
-    Map1: {
-        title: 'Voronoi Map Example',
-        author: 'Author 1',
-        reactions:{
-            likes: 10,
-            dislikes: 2,
-            comments: {sampleComments},
-        },
-        type: "Voronoi Map",
-        isPublic: false,
-        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-      },
-    Map2: {
-        title: 'Heat Map Example',
-        author: 'Author 2',
-        reactions:{
-            likes: 34,
-            dislikes: 55,
-            comments: {sampleComments},
-        },
-        type: "Heat Map",
-        isPublic: false,
-        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-      },
-    Map3: {
-        title: 'Dot Map Example',
-        author: 'Author 2',
-        reactions:{
-            likes: 0,
-            dislikes: 8,
-            comments: {sampleComments},
-        },
-        type: "Dot Map",
-        isPublic: true,
-        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-      },
-    Map4: {
-        title: 'Spike Map Example',
-        author: 'Author 2',
-        reactions:{
-            likes: 2,
-            dislikes: 100,
-            comments: {sampleComments},
-        },
-        type: "Spike Map",
-        isPublic: true,
-        imageUrl: 'https://orgtheory.files.wordpress.com/2012/01/soda_map.jpg',
-      },
-    Map5:{
-        title: 'Choropleth Map Example',
-        author: 'Author 2',
-        reactions:{
-            likes: 20,
-            dislikes: 8,
-            comments: {sampleComments},
-        },
-        isPublic: true,
-        type: "Choropleth Map"
-    }
-}
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
@@ -89,8 +30,9 @@ function GlobalStoreContextProvider(props) {
        modalMessage: "Blah",
        modalOpen: false,
        modalConfirmButton: false,
-       currentMap: exampleMaps.Map1,
-       currentMaps: exampleMaps,
+       modalAction: "",
+       currentMap: null,
+       currentMaps: [],
    });
    const dict = {
     "/login": "Login",
@@ -105,6 +47,9 @@ function GlobalStoreContextProvider(props) {
     "/editMap": "EditMapScreen"
    }
 
+   store.modalActionTypes = {
+        publish: "Publish",
+   }
 
    store.currentPageType = {
         login: "Login",
@@ -120,6 +65,8 @@ function GlobalStoreContextProvider(props) {
     }
 
     const { auth } = useContext(AuthContext);
+    const navigate = useNavigate();
+
 
     const storeReducer = (action) => {
         const { type, payload } = action;
@@ -132,6 +79,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps,
                 });
@@ -142,8 +90,9 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
-                    currentMaps: exampleMaps,
+                    currentMaps: store.currentMaps,
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -152,8 +101,9 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
+                    modalAction: payload.modalAction,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps,
+                    currentMaps: store.currentMaps,
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -162,8 +112,9 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: payload.modalMessage,
                     modalOpen: true,
                     modalConfirmButton: payload.confirmButton,
+                    modalAction: payload.modalAction,
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps,
+                    currentMaps: store.currentMaps,
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -172,8 +123,9 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: store.currentMap,
-                    currentMaps: exampleMaps,
+                    currentMaps: store.currentMaps,
                 });
             }
             case GlobalStoreActionType.DELETE_MAP: {       
@@ -181,6 +133,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: null,
                     currentMaps: payload.currentMaps,
                 });
@@ -190,6 +144,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -199,6 +155,8 @@ function GlobalStoreContextProvider(props) {
                     currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -208,6 +166,19 @@ function GlobalStoreContextProvider(props) {
                     currentPage: payload.currentPage,
                     modalMessage: null,
                     modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.FORK_MAP:{
+                return setStore({
+                    currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -218,6 +189,7 @@ function GlobalStoreContextProvider(props) {
                     modalMessage: store.modalMessage,
                     modalOpen: false,
                     modalConfirmButton: false,
+                    modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -226,11 +198,11 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-   store.setCurrentPage = (currentPage) => {
+   store.setCurrentPage = (currentPage, map=null) => {
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("65605143b27302f331e6e009")
+                    let response = await maps.getMapById(map._id)
                     console.log("ATTEMPTING GET MAP")
                     if(response.data.success){
                         console.log("response: ", response.data)
@@ -238,7 +210,7 @@ function GlobalStoreContextProvider(props) {
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
                                 currentPage: currentPage,
-                                currentMaps: null,
+                                currentMaps: store.currentMaps,
                                 currentMap: response.data.map
                             }
                         }
@@ -251,32 +223,19 @@ function GlobalStoreContextProvider(props) {
             }
             getMap()
         }
-        
-        console.log("set page map: ", store.currentMap)
-        storeReducer({
-                type: GlobalStoreActionType.SET_CURRENT_PAGE,
-                payload: {
-                    currentPage: currentPage,
-                    currentMaps: exampleMaps,
-                    currentMap: store.currentMap
-                }
-            }
-        );
-    }
-
-    store.updatePageLink = (pageURL) => {
-        if(dict[pageURL] === "PublicMapView"){
+        else if(currentPage === "ProfileScreen"){
             async function getMap(){
                 try{
-                    let response = await maps.getMapById("65605143b27302f331e6e009")
+                    let response = await maps.getUserMapIdPairs()
+                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
                     if(response.data.success){
                         console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
-                                currentPage: dict[pageURL],
-                                currentMaps: null,
-                                currentMap: response.data.map
+                                currentPage: currentPage,
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
                             }
                         }
                         ); 
@@ -284,6 +243,168 @@ function GlobalStoreContextProvider(props) {
                 }
                 catch(error){
                     console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
+        else if(currentPage === "MapFeed"){
+            async function getMapPairs(){
+                try{
+                    let mapList = await maps.getPublicMapIdPairs();
+                    if(mapList.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: mapList.data.idNamePairs,
+                                currentMap: null
+                            },
+                        });
+                    }
+                }
+                catch (err){
+                    console.log(err)
+                }
+            }
+            getMapPairs();
+        }
+        else if(currentPage === "EditMapScreen"){
+            async function getMap(){
+                try{
+                    async function setCurrentMapToEdit(){
+                        let response = await maps.getMapById(map._id);
+                        console.log("map: ",response.data.map);
+                        if(response.data.success){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                                payload: {
+                                    currentPage: currentPage,
+                                    currentMap: response.data.map,
+                                    currentMaps: store.currentMaps
+                                }
+                            })
+                        }
+                    }
+                    setCurrentMapToEdit();
+                }
+                catch(err){
+                    console.log("error: ", err)
+                }
+            }
+            getMap()
+        }
+        else{
+            console.log("set page map: ", store.currentMap, currentPage)
+            storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                    payload: {
+                        currentPage: currentPage,
+                        currentMaps: store.currentMaps,
+                        currentMap: store.currentMap
+                    }
+                }
+            );
+        }
+        
+        
+    }
+
+    store.updatePageLink = (pageURL, id) => {
+        if(dict[pageURL] === "PublicMapView"){
+            async function getMap(){
+                try{
+                    let response = await maps.getMapById(id);
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        if(response.data.map.isPublic){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                                payload: {
+                                    currentPage: dict[pageURL],
+                                    currentMaps: store.currentMaps,
+                                    currentMap: response.data.map
+                                }
+                            }
+                            ); 
+                        }
+                        else{
+                            store.setCurrentPage(store.currentPageType.mapFeed);
+                            navigate("/feed");
+                        }
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
+        else if(dict[pageURL] === "ProfileScreen"){
+            async function getMap(){
+                try{
+                    let response = await maps.getUserMapIdPairs()
+                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    if(response.data.success){
+                        console.log("response: ", response.data)
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: dict[pageURL],
+                                currentMaps: response.data.idNamePairs,
+                                currentMap: null
+                            }
+                        }
+                        ); 
+                    }
+                }
+                catch(error){
+                    console.log("error: ", error )
+                }
+            }
+            getMap()
+        }
+        else if(dict[pageURL] === "MapFeed"){
+            async function getMapPairs(){
+                try{
+                    let mapList = await maps.getPublicMapIdPairs();
+                    if(mapList.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                            payload: {
+                                currentPage: dict[pageURL],
+                                currentMaps: mapList.data.idNamePairs,
+                                currentMap: null
+                            },
+                        });
+                    }
+                }
+                catch (err){
+                    console.log(err)
+                }
+            }
+            getMapPairs();
+        }
+        else if(dict[pageURL] === "EditMapScreen"){
+            async function getMap(){
+                try{
+                    async function setCurrentMapToEdit(){
+                        let response = await maps.getMapById(id);
+                        console.log("map: ",response.data.map);
+                        if(response.data.success){
+                            storeReducer({
+                                type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
+                                payload: {
+                                    currentPage: dict[pageURL],
+                                    currentMaps: store.currentMaps,
+                                    currentMap: response.data.map
+                                }
+                            })
+                        }
+                    }
+                    await setCurrentMapToEdit();
+                }
+                catch(err){
+                    console.log("error: ", err)
                 }
             }
             getMap()
@@ -293,7 +414,9 @@ function GlobalStoreContextProvider(props) {
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {
                     currentPage: dict[pageURL],
-                    currentMaps: exampleMaps,
+                    currentMaps: store.currentMaps,
+                    currentMap: store.currentMap
+
                 }
             });
         }
@@ -304,7 +427,9 @@ function GlobalStoreContextProvider(props) {
     useEffect(() => {
     const updateCurrentPage = () => {
           const currentPage = window.location.pathname;
-          storeRef.current.updatePageLink(currentPage)
+          const queryParams = new URLSearchParams(window.location.search);
+          const id = queryParams.get('id');
+          storeRef.current.updatePageLink(currentPage, id);
         };
     
         window.addEventListener('popstate', updateCurrentPage);
@@ -356,6 +481,8 @@ function GlobalStoreContextProvider(props) {
                 }
             })
         }
+
+        return response.data.map
     }
     store.createMapTemp = async (files, mapType, fileType) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
@@ -376,12 +503,13 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-    store.displayModal = (modalMessage, confirmButton=true) => {
+    store.displayModal = (modalMessage, confirmButton=true, modalAction="") => {
         storeReducer({
                 type: GlobalStoreActionType.DISPLAY_MODAL,
                 payload: {
                     modalMessage: modalMessage,
                     confirmButton: confirmButton,
+                    modalAction: modalAction
                 }
             }
         );
@@ -405,6 +533,35 @@ function GlobalStoreContextProvider(props) {
             }
         );
     };
+
+    store.searchSubmit = async (searchInput, searchType) => {
+        try{
+            let mapList = await maps.getPublicMapIdPairs();
+            if(mapList.data.success){
+                let filteredMaps;
+                if(searchInput === ""){
+                    filteredMaps = mapList.data.idNamePairs;
+                }
+                else{
+                    let field = 'ownerUsername';
+                    if(searchType === 'map') field = 'title';
+                    if(searchType === 'type') field = 'type';
+                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase() === searchInput.trim().toLowerCase());
+                }
+                storeReducer({
+                    type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                    payload: {
+                        currentPage: store.currentPageType.mapFeed,
+                        currentMaps: filteredMaps
+                    },
+                });
+                navigate('/feed');
+            }
+        }
+        catch (err){
+            console.log(err)
+        }
+    }
 
     store.updateUserInfo = function (username, email, bio, password) {
         async function asyncUpdateUser(username, email, bio, password) {
@@ -436,6 +593,28 @@ function GlobalStoreContextProvider(props) {
         }
         asyncUpdateUser(username, email, bio, password);
     }
+
+    store.handleFork = async () => {
+        let id = store.currentMap._id;
+        try{
+            let response = await maps.forkMap(id);
+            if(response.data.success)
+            {
+                await storeReducer({
+                    type: GlobalStoreActionType.FORK_MAP,
+                    payload: {
+                        currentPage: store.currentPageType.editMapScreen,
+                        currentMap: response.data.map
+                    },
+                });
+
+            }
+        }
+        catch (err){
+            console.log(err)
+        }
+    }
+
     store.deleteMap = (currentMap, currentPage) => {
         //get the id of the map we are removing 
 
@@ -486,17 +665,23 @@ function GlobalStoreContextProvider(props) {
                                 },
                             });
             }
-            else if(store.currentPage === "MapFeed"){
-                let mapList = await maps.getPublicMapIdPairs();
-                if(mapList.data.success){
-                    storeReducer({
-                        type: GlobalStoreActionType.DELETE_MAP,
-                        payload: {
-                            currentPage: currentPage,
-                            currentMaps: mapList.data
-                        },
-                    });
+            else if(store.currentPage === "MapFeed" || store.currentPage === "PublicMapView"){
+                try{
+                    let mapList = await maps.getPublicMapIdPairs();
+                    if(mapList.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.DELETE_MAP,
+                            payload: {
+                                currentPage: currentPage,
+                                currentMaps: mapList.data.idNamePairs
+                            },
+                        });
+                    }
                 }
+                catch (err){
+                    console.log(err)
+                }
+                
             }
         }
       }
@@ -504,54 +689,45 @@ function GlobalStoreContextProvider(props) {
     };
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
-        //let currentMap = map._id;
-        //make the current map id a static value
-        let currentMap = "655fe27a63706d4925d1340b"; 
+        let currentMap = map._id;
+        console.log("this is map were updating: ",map)
+        console.log("this is likes: ",like)
         let author = auth.user.username;
-        //console.log("curr and author: ", currentMap, author)
         async function reactToMap(){
             // get all the maps based on page
-            let map = await maps.getMapById(currentMap);
-            if(map.data.success){
-                let tempMap = {...map.data.map}
-                tempMap.reactions.likes = like;
-                tempMap.reactions.dislikes = dislike;
-                if (comment){
-                    tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
+            try{
+                let map = await maps.getMapById(currentMap);
+                if(map.data.success){
+                    let tempMap = {...map.data.map}
+                    tempMap.reactions.likes = like;
+                    tempMap.reactions.dislikes = dislike;
+                    if (comment){
+                        tempMap.reactions.comments.push({authorUsername: author, comment: data.comment})
+                    }
+                    let update = await maps.updateMapById(currentMap,tempMap);
+                    if(update.data.success){
+                        storeReducer({
+                            type: GlobalStoreActionType.UPDATE_MAP_REACTION,
+                            payload: {
+                                currentMap: tempMap
+                            }})
+                        
+                    }
                 }
-                let update = await maps.updateMapById(currentMap,tempMap);
-                if(update.data.success){
-                    storeReducer({
-                        type: GlobalStoreActionType.UPDATE_MAP_REACTION,
-                        payload: {
-                            currentMap: tempMap
-                        }})
-                    
-                }
+            }
+            catch(err){
+                console.log("update reactions failed: ",err)
             }
         }
         reactToMap()
-        /*let mapList = Object.keys(exampleMaps).map((key) => {
-            const currentMap = exampleMaps[key];
-            if (currentMap.title === map.title) {
-                map.reactions.likes = like;
-                map.reactions.dislikes = dislike;
-                if (comment) {
-                    map.reactions.comments.push(data);
-                }
-                return map;
-            }
-            return currentMap;
-        });
-        
-        storeReducer({
-            type: GlobalStoreActionType.UPDATE_MAP_REACTION,
-            payload: {
-                currentMaps: mapList
-            }})*/
     }
-    store.updateMapGraphics = async (property=null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null) =>{
         let currentMap = store.currentMap;
+        if(imageBuffer !== null){
+            store.currentMap.imageBuffer = imageBuffer;
+            
+        }
+
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
@@ -568,14 +744,49 @@ function GlobalStoreContextProvider(props) {
         if(spikeLegend !== null){
             graphics['typeSpecific']['spikeLegend'] = spikeLegend;
         }
+        if(chloroLegend !== null){
+            currentMap.graphics.typeSpecific.chloroLegend = chloroLegend;
+        }
         try {
-            let res = await maps.updateMapById(currentMap._id, currentMap);
+            chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
+            let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
             if(res.data.success){
                 storeReducer({
                     type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
                     payload: {
                         currentMap: res.data.map
                     }});
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+            
+    }
+    store.publishMap = async (map) =>{
+        console.log(map)
+
+        if(!map){
+            if(!store.currentMap) return;
+            else map = store.currentMap;
+        }
+        try {
+            map.isPublic = true;
+            let res = await maps.updateMapById(map._id, map);
+            if(res.data.success){
+                let mapList = await maps.getPublicMapIdPairs();
+                if(mapList.data.success){
+                    storeReducer({
+                        type: GlobalStoreActionType.SET_CURRENT_PAGE,
+                        payload: {
+                            currentPage: store.currentPageType.publicMapView,
+                            currentMaps: mapList.data.idNamePairs,
+                            currentMap: res.data.map
+                        }
+                    }
+                    ); 
+                    navigate(`/map?id=${res.data.map._id}`);
+                }
             }
         }
         catch (err) {

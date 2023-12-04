@@ -14,7 +14,9 @@ import { StyledAppBar, StyledToolbar, Search, StyledInputBase, SearchSelect, Use
 import { useNavigate } from 'react-router-dom';
 
 function AppBanner() {
-  const [searchType, setSearchType] = React.useState('user'); // Default to 'user'
+  const [searchType, setSearchType] = React.useState('map');
+  const [searchInput, setSearchInput] = useState('');
+
 
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
@@ -23,7 +25,19 @@ function AppBanner() {
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
   };
-  //test
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    console.log(searchInput, searchType);
+    store.searchSubmit(searchInput, searchType);
+  };
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearchSubmit(event);
+    }
+  };
 
   // State for the account menu dropdown
   const [anchorEl, setAnchorEl] = useState(null);
@@ -48,10 +62,19 @@ function AppBanner() {
   };
 
   const handleLogin = (e) => {
-    auth.logoutUser();
-    store.setCurrentPage(store.currentPageType.login);
-    navigate("/login");
-    handleAccountMenuClose();
+    auth.logoutUser()
+    .then( 
+      (val) => {
+        store.setCurrentPage(store.currentPageType.login);
+        navigate("/login");
+        handleAccountMenuClose();
+      })
+    .catch(
+      (error) => store.displayModal(<div>
+        <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
+      </div>, false));
+
   };
 
   const handleFAQOption = () => {
@@ -193,16 +216,20 @@ function AppBanner() {
             }}
             sx={{ color: '#ff24bd', zIndex: 1 }}
           >
-            <MenuItem data-testid='search-type-option1' value="user">User</MenuItem>
+            <MenuItem data-testid='search-type-option1' value="user">Username</MenuItem>
             <MenuItem data-testid='search-type-option2' value="map">Map Name</MenuItem>
+            <MenuItem data-testid='search-type-option3' value="type">Map Type</MenuItem>
           </SearchSelect>
           <StyledInputBase
             data-testid='search-bar'
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
+            value={searchInput}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleKeyDown}
           />
-          <IconButton type="submit" aria-label="search" sx={{ position: 'absolute', right: 0, top: 0, bottom: 0, zIndex: 0 }}>
-            <SearchIcon />
+          <IconButton type="submit" aria-label="search" sx={{ position: 'absolute', right: 0, top: 0, bottom: 0, zIndex: 0 }} onClick={handleSearchSubmit}>
+            <SearchIcon/>
           </IconButton>
         </Search>
         {/* User Icon */}

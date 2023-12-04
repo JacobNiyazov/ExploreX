@@ -7,49 +7,83 @@ import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledC
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
 import { useNavigate } from 'react-router-dom';
-//import { AuthContext } from '../auth'
+import { AuthContext } from '../auth'
 
 
-const MapFeedCard = ({ map, likes, dislikes,id }) => {
+const MapFeedCard = ({ map, id }) => {
   const { store } = useContext(GlobalStoreContext);
-  //const { auth } = useContext(AuthContext);
+  const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [liked, setLiked] = useState(false);
-  const [disliked, setDisliked] = useState(false);
+  const [liked, setLiked] = useState(map.reactions.likes.includes(auth.user?.username));
+  const [disliked, setDisliked] = useState(map.reactions.dislikes.includes(auth.user?.username));
+  const [newLiked, setNewLiked] = useState(map.reactions.likes);
+  const [newDisliked, setNewDisliked] = useState(map.reactions.dislikes);
 
   const handleLikeToggle = (event) => {
-    setLiked((prevLiked) => !prevLiked);
-    setDisliked(false);
-    event.stopPropagation()
-    if (!liked) {
-      store.updateMapReaction(map, likes + 1, dislikes - (disliked ? 1 : 0), false, null);
-    } else {
-      store.updateMapReaction(map, likes - 1, dislikes, false, null);
-    }
-  };
-  
-  const handleDislikeToggle = (event) => {
-    setDisliked((prevDisliked) => !prevDisliked);
-    setLiked(false);
     event.stopPropagation();
-    if (!disliked) {
-      store.updateMapReaction(map, likes - (liked ? 1 : 0), dislikes + 1, false, null);
+
+    if (!newLiked.includes(auth.user.username)) {
+      const updatedLikes = [...newLiked, auth.user.username];
+      const updatedDislikes = newDisliked.filter((name) => name !== auth.user.username);
+
+      setLiked(true);
+      setDisliked(false);
+      setNewLiked(updatedLikes);
+      setNewDisliked(updatedDislikes);
+
+      store.updateMapReaction(map, updatedLikes, updatedDislikes, false, null);
     } else {
-      store.updateMapReaction(map, likes, dislikes - 1, false, null);
+      const updatedLikes = newLiked.filter((name) => name !== auth.user.username);
+
+      setLiked(false);
+      setNewLiked(updatedLikes);
+
+      store.updateMapReaction(map, updatedLikes, newDisliked, false, null);
     }
   };
+
+  const handleDislikeToggle = (event) => {
+    event.stopPropagation();
+
+    if (!newDisliked.includes(auth.user.username)) {
+      const updatedDislikes = [...newDisliked, auth.user.username];
+      const updatedLikes = newLiked.filter((name) => name !== auth.user.username);
+
+      setLiked(false);
+      setDisliked(true);
+      setNewLiked(updatedLikes);
+      setNewDisliked(updatedDislikes);
+
+      store.updateMapReaction(map, updatedLikes, updatedDislikes, false, null);
+    } else {
+      const updatedDislikes = newDisliked.filter((name) => name !== auth.user.username);
+
+      setDisliked(false);
+      setNewDisliked(updatedDislikes);
+
+      store.updateMapReaction(map, newLiked, updatedDislikes, false, null);
+    }
+  };
+
   const handleOpenMap = () => {
     store.setCurrentPage(store.currentPageType.publicMapView, map);
-    navigate("/map");
+    navigate(`/map?id=${map._id}`);
   };
-  console.log("map owner: ", map)
+
+  let temp;
+
+  if (map.imageBuffer) {
+    temp = map.imageBuffer;
+  }
+
   return (
     <StyledCard as={Card} onClick={handleOpenMap} data-testid={id}>
-      <StyledCardMedia as={CardMedia}
+      <StyledCardMedia
+        as={CardMedia}
         component="img"
-        alt={`${map.title} by ${map.author}`}
-        image={"https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"}
+        alt={`${map.title} by ${map.ownerUsername}`}
+        image={map.imageBuffer ? temp : null}
       />
       <StyledCardContent as={CardContent}>
         <ContentContainer>
@@ -58,17 +92,17 @@ const MapFeedCard = ({ map, likes, dislikes,id }) => {
               {map.title}
             </TitleTypography>
             <AuthorTypography variant="body2" component="div">
-              by {map.author}
+              by {map.ownerUsername}
             </AuthorTypography>
-            </TextContainer>
-            <StyledBox>
-            <ReactionButton sx ={{display:"none"}} data-testid= "feed-like-button" selected={liked} onClick={handleLikeToggle}>
+          </TextContainer>
+          <StyledBox>
+            <ReactionButton disabled={auth.isGuest} data-testid="feed-like-button" selected={liked} onClick={handleLikeToggle}>
               <ThumbUpIcon />
-              <ReactionCount data-testid= "feed-likes-count">{likes}</ReactionCount>
+              <ReactionCount data-testid="feed-likes-count">{newLiked.length}</ReactionCount>
             </ReactionButton>
-            <ReactionButton sx ={{display:"none"}} data-testid= "feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
+            <ReactionButton disabled={auth.isGuest} data-testid="feed-dislike-button" selected={disliked} onClick={handleDislikeToggle}>
               <ThumbDownIcon />
-              <ReactionCount data-testid= "feed-dislikes-count">{dislikes}</ReactionCount>
+              <ReactionCount data-testid="feed-dislikes-count">{newDisliked.length}</ReactionCount>
             </ReactionButton>
           </StyledBox>
         </ContentContainer>

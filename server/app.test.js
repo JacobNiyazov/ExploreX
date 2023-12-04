@@ -46,6 +46,15 @@ describe('Test Map Controller', () => {
     expect(response.body).toHaveProperty('map');
     mapRes = response.body;
   });
+
+  it('Tests successful POST /api/map/${id} -- Fork Map', async () => {
+    const response = await request(app)
+      .post(`/api/map/${id}`)
+      .set("Cookie", token);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty('map');
+  });
   
   it('Tests successful PUT /api/map/${id} -- Edit Map by Id', async () => {
     const response = await request(app)
@@ -264,6 +273,7 @@ describe('Register user tests', function(){
     });
   });
 });
+
 
 describe('Edit Account details tests', function(){
   // let token = ""

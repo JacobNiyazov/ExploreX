@@ -42,6 +42,20 @@ describe('Heat Map Tests', () => {
       cy.get('#\\:r7\\:-label').should('be.visible');
       /* ==== End Cypress Studio ==== */
     });
+
+    it('should delete created heat map', () =>{
+      cy.get('[data-testid="username-field"]').type('cypress');
+      cy.get('[data-testid="password-field"]').type('abcd1234');
+      cy.get('[data-testid="login-button"]').click();
+      /* ==== Generated with Cypress Studio ==== */
+      cy.get('[data-testid="AccountCircleIcon"]').click();
+      cy.get('[data-testid="My Profile"]').click();
+      cy.get('[data-testid="drafts-tab"]').click();
+      cy.get('.MuiCardActions-root > [data-testid="delete-button"] > [data-testid="DeleteIcon"]').last().click();
+      cy.get('[data-testid="confirm-delete-button"]').click();
+      /* ==== End Cypress Studio ==== */
+    })
+
     it('should fail to create heat map', () => {
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');

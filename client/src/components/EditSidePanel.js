@@ -80,7 +80,7 @@ const EditSidePanel = ({
                 Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
             </div>
         )
-        store.displayModal(publishMessage, true);
+        store.displayModal(publishMessage, true, store.modalActionTypes.publish);
     }
 
     const handleOpenSave= () => {

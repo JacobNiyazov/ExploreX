@@ -13,10 +13,14 @@ describe('App Banner Tests', () => {
     cy.get('[data-testid="logo"] > path').should('be.visible');
     cy.get('[data-testid="app-name"]').should('have.text', 'ExploreX');
     cy.get('[data-testid="search-type"]').click();
-    cy.get('[data-testid="search-type-option1"]').should('have.text', 'User');
+    cy.get('[data-testid="search-type-option1"]').should('have.text', 'Username');
     cy.get('[data-testid="search-type-option2"]').should('have.text', 'Map Name');
+    cy.get('[data-testid="search-type-option3"]').should('have.text', 'Map Type');
     cy.get('[data-testid="search-type-option2"]').click();
-    cy.get('[data-testid="search-bar"] > .MuiInputBase-input').type('abc');
+    cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' MAP eXample ').type('{enter}');
+    
+    cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' Wrong ').type('{enter}');
+    cy.get('.css-platyw').should('be.visible');
     cy.get('[data-testid="user-icon"]').should('be.visible');
     cy.get('[data-testid="user-icon"]').click();
     cy.get('[data-testid="My Profile"]').should('have.text', 'My Profile');
@@ -43,5 +47,6 @@ describe('App Banner Tests', () => {
     cy.get('.MuiList-root > :nth-child(5)').click();
     cy.get('form > .MuiTypography-h5').should('have.text', 'Welcome, Map Lovers!');
     /* ==== End Cypress Studio ==== */
+
   });
 });

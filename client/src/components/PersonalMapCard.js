@@ -16,7 +16,6 @@ import {Button} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete'
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useNavigate } from 'react-router-dom';
-import maps from '../store/map-request-api';
 
 function PersonalMapCard({ map,id,likes,dislikes }) {
   const [liked, setLiked] = useState(false);
@@ -29,14 +28,8 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
 
 
   async function handleEditClick (){
-    let tempMap;
-    let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
-    if(response.data.success){
-      tempMap = response.data.map; 
-      console.log(tempMap)
-    }
-    store.setCurrentEditMap(tempMap, "EditMapScreen")
-    navigate("/editMap")
+    store.setCurrentPage("EditMapScreen", map)
+    navigate(`/editMap?id=${map._id}`)
   }
   const handleLikeToggle = () => {
     setLiked((prevLiked) => !prevLiked);
@@ -62,33 +55,44 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
   
   const handlePostClick = () => {
     if (isPost) {
-      store.setCurrentPage(store.currentPageType.publicMapView);
-      navigate("/map");
+      store.setCurrentPage(store.currentPageType.publicMapView,map);
+      navigate(`/map?id=${map._id}`);
     } else {
-      store.setCurrentEditMap(map, "EditMapScreen");
-      navigate("/editMap")
-
-
+      store.setCurrentPage("EditMapScreen", map)
+      navigate(`/editMap?id=${map._id}`)
     }
   };
   const card = {
-    height: '34vh',
-    maxWidth: '23vw',
+    width: '23vw',
     marginTop: '5vh',
     borderRadius: '2.5vh',
+    //display: "flex",
+    //flexDirection:"column"
+  };
+  const actions = {
+    display: 'flex',
+    padding: '1vh',
   };
   const isPost = id.includes('post');
+  let temp;
+  if (map.imageBuffer){
+    temp = map.imageBuffer
+  }
+
   return (
     <Card sx={card} data-testid={id}>
-      <CardHeader title="map test" subheader="team pink" />
-      <CardMedia
-        component="img"
-        height="160vh"
-        image="https://as2.ftcdn.net/v2/jpg/01/11/60/53/1000_F_111605345_4QzFce77L5YnuieLC63lhI3WCdH1UNrP.jpg"
-        alt="map test"
-        onClick = {handlePostClick}
-      />
-      <CardActions disableSpacing>
+      <CardHeader title={map.title} subheader={map.ownerUsername} />
+      <div>
+        <CardMedia
+          key = {map.imageBuffer}
+          component="img"
+          height="160vh"
+          image={ map.imageBuffer ? temp : "https://img.freepik.com/premium-photo/map-world-pastel-pink-background_60487-2207.jpg" }
+          alt="map test"
+          onClick = {handlePostClick}
+        />
+      </div>
+      <CardActions disableSpacing sx = {actions}>
         {isPost ? (
           <>
             <ToggleButton data-testid = "like-button" value="like" selected={liked} onChange={handleLikeToggle} sx={{ border: 'none', display:'none' }}>
@@ -106,18 +110,19 @@ function PersonalMapCard({ map,id,likes,dislikes }) {
               data-testid="delete-button"
               onClick = {handleOpenDelete}
             >
-              <DeleteIcon sx={{color:"#FF76D6"}}/>
+              <DeleteIcon sx={{color:"#FF76D6",maxHeight: "4vh"}}/>
             </Button>
             <DeletePostModal
                 open={openDelete} 
                 onClose={handleCloseDelete}
                 map = {map}
+                screen = "ProfileScreen"
                 />
             <Button
               data-testid="edit-button"
               onClick={handleEditClick}
             >
-              <ModeEditIcon sx={{color:"#FF76D6"}}/>
+              <ModeEditIcon sx={{color:"#FF76D6",maxHeight: "4vh"}}/>
             </Button>
           </>
         )}
