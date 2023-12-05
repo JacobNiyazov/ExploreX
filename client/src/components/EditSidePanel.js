@@ -229,17 +229,61 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
-                {/* Edit Region Options */}
+                {/* Edit Fill Options */}
                 {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Region</Typography>
+                            <Typography variant="inherit">Fill</Typography>
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
                                 <CustomListItem>
+                                    <Typography>Hide Fill</Typography>
+                                    <SelectAllCheck onChange={()=> {handleHideLegend()}}></SelectAllCheck>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
                                     <Typography>Fill Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionFill"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Fill Opacity</Typography>
+                                    <NumberSelector
+                                        data-testid="region-selector1"
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={size.Region}
+                                        onChange={(event)=>{handleSize(event, "Region")}}
+                                        error={size.Region === ""}
+                                    />
+                                </CustomListItem>
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
+
+                {/* Edit Stroke Options */}
+                {
+                    store.currentMap.type !== "Heat Map" ?
+                    <EditAccordion disableGutters data-testid="edit-accordion region" data->
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Stroke</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
+                                <CustomListItem>
+                                    <Typography>Hide Stroke</Typography>
+                                    <SelectAllCheck onChange={()=> {handleHideLegend()}}></SelectAllCheck>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Color</Typography>
                                     <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionFill"/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
@@ -253,30 +297,11 @@ const EditSidePanel = ({
                                         }}
                                         variant="standard"
                                         value={size.Region}
-                                        onChange={(event)=>{handleSize(event, "Region")}}
+                                        onChange={(event)=>{handleSize(event, "strokeSize")}}
                                         error={size.Region === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Border Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionBorder"/>
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Border Width</Typography>
-                                    <NumberSelector
-                                    data-testid="region-selector2"
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={borderWidth.Region}
-                                        onChange={(event)=>{handleBorderWidth(event, "Region")}}
-                                        error={borderWidth.Region === ""}
-                                    />
-                                </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
                     </EditAccordion>
