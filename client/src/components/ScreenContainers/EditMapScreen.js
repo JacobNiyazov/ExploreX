@@ -78,7 +78,7 @@ const EditScreen = () => {
         VoronoiMap: null
     })
     const [font, setFont] = React.useState("Nova Square")
-    const [size, setSize] = React.useState({
+    const [sizes, setSizes] = React.useState({
         Text: 12,
         Region: 12,
         DotMap: 12,
@@ -173,8 +173,8 @@ const EditScreen = () => {
                     setAnchors={setAnchors}
                     font={font}
                     setFont={setFont}
-                    size={size}
-                    setSize={setSize}
+                    size={sizes}
+                    setSize={setSizes}
                     range={range}
                     setRange={setRange}
                     borderWidth={borderWidth}
@@ -186,7 +186,7 @@ const EditScreen = () => {
                 <MapEdit 
                     colors={colors}
                     font={font}
-                    size={size}
+                    size={sizes}
                     range={range}
                     borderWidth={borderWidth}
                     selectAll={selectAll}

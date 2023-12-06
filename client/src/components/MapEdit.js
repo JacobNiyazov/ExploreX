@@ -23,7 +23,7 @@ import GlobalMapEditContext from '../mapEdit/index.js'
 
 const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
-
+    const {mapEdit} = useContext(GlobalMapEditContext)
     function getRandomShade(){
         // Generate random values for the red and green components
         const red = Math.floor(Math.random() * 256); // Random red value (0-255)
@@ -138,7 +138,7 @@ const MapEdit = ({
         label2: "Field 2",
         label3: "Field 3"
     })
-    function handleEditMap(){
+    /*function handleEditMap(){
         let newMapData = {
             hasStroke: this.hasStroke,
             strokeColor: this.colors.strokeColor,
@@ -157,7 +157,7 @@ const MapEdit = ({
             legendFields: this.legendFields
         }
         mapEdit.addUpdateMapTransaction(newMapData); 
-    }
+    }*/
     const handleLegendClick = (event, label) => {
         setLegendColorPicker({
             ...legendColorPicker,
@@ -167,7 +167,7 @@ const MapEdit = ({
             ...legendAnchors,
             [label]: event.currentTarget
         })
-        handleEditMap()
+        //handleEditMap()
     };
 
     const handleClose = (label) => {
@@ -182,7 +182,7 @@ const MapEdit = ({
             ...legendColor,
             [label] : event.hex
         })
-        handleEditMap()
+        //handleEditMap()
     }
 
     const handleBaseMap = () =>{
@@ -194,7 +194,7 @@ const MapEdit = ({
             ...legendText,
             [label]: event.target.value
         })
-        handleEditMap()
+        //handleEditMap()
     }
 
     const mapContainerRef = useRef(null);
@@ -242,6 +242,13 @@ const MapEdit = ({
         waitForMapLoad();
       }, [captureMapAsImage, photo ]);
 
+    function handleUndo(){
+        mapEdit.undo();
+    }
+    function handleRedo(){
+        mapEdit.redo();
+    }
+
     return(
         <Grid item xs = {8}>
 
@@ -268,13 +275,17 @@ const MapEdit = ({
                         <UndoRedoContainer>
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    <IconButton sx={{color: "#000000"}}
+                                    onClick={handleUndo}
+                                    >
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    <IconButton sx={{color: "#000000"}}
+                                    onClick={handleRedo}
+                                    >
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>

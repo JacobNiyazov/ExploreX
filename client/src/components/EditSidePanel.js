@@ -33,19 +33,7 @@ const EditSidePanel = ({
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     // need to update this when i have map edit store
-    /*
-    function handleUndo() {
-        // inside the map store i have to add smth like this, likewise for redo
-        //store.undo = function () {
-        //if (store.currentModal === CurrentModal.NONE)
-        //    tps.undoTransaction();
-    } 
-        mapStore.undo();
-    }
-    function handleRedo() {
-        mapStore.redo();
-    }
-    */
+
     const [title, setTitle] = useState("Example Map")
     
     function handleEditMap(){
