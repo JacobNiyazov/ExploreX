@@ -1,9 +1,7 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
-import api from './store-request-api'
 import { AuthContext } from '../auth'
-import maps from '../store/map-request-api';
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -17,6 +15,7 @@ export const GlobalMapEditActionType = {
 
 function GlobalMapEditContextProvider(props) {
     const [mapEdit, setMapEdit] = useState({
+        title: '',
         hasStroke: true,
         strokeColor: '',
         strokeWeight: '',
@@ -27,10 +26,10 @@ function GlobalMapEditContextProvider(props) {
         textColor: '',
         textSize: '',
         textFont: '',
-        legendFillColor: '',
-        legendBorderColor: '',
+        // legendFillColor: '',
+        // legendBorderColor: '',
         legendTitle: '',
-        legendBorderWidth: '',
+        // legendBorderWidth: '',
         legendFields: []
     });
 
@@ -42,6 +41,7 @@ function GlobalMapEditContextProvider(props) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
                 return setMapEdit({
+                  title: payload.title,
                   hasStroke: payload.hasStroke,
                   strokeColor: payload.strokeColor,
                   strokeWeight: payload.strokeWeight,
@@ -52,15 +52,36 @@ function GlobalMapEditContextProvider(props) {
                   textColor: payload.textColor,
                   textSize: payload.textSize,
                   textFont: payload.textFont,
-                  legendFillColor: payload.legendFillColor,
-                  legendBorderColor: payload.legendBorderColor,
+                  // legendFillColor: payload.legendFillColor,
+                  // legendBorderColor: payload.legendBorderColor,
                   legendTitle: payload.legendTitle,
-                  legendBorderWidth: payload.legendBorderWidth,
+                  // legendBorderWidth: payload.legendBorderWidth,
+                  legendFields: payload.legendFields
+                });
+            }
+            case GlobalMapEditActionType.LOAD: {
+                return setMapEdit({
+                  title: payload.title,
+                  hasStroke: payload.hasStroke,
+                  strokeColor: payload.strokeColor,
+                  strokeWeight: payload.strokeWeight,
+                  strokeOpacity: payload.strokeOpacity,
+                  hasFill: payload.hasFill,
+                  fillColor: payload.fillColor,
+                  fillOpacity: payload.fillOpacity,
+                  textColor: payload.textColor,
+                  textSize: payload.textSize,
+                  textFont: payload.textFont,
+                  // legendFillColor: payload.legendFillColor,
+                  // legendBorderColor: payload.legendBorderColor,
+                  legendTitle: payload.legendTitle,
+                  // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields
                 });
             }
             default: {
                 return setMapEdit({
+                  title: '',
                   hasStroke: true,
                   strokeColor: '',
                   strokeWeight: '',
@@ -71,15 +92,30 @@ function GlobalMapEditContextProvider(props) {
                   textColor: '',
                   textSize: '',
                   textFont: '',
-                  legendFillColor: '',
-                  legendBorderColor: '',
+                  // legendFillColor: '',
+                  // legendBorderColor: '',
                   legendTitle: '',
-                  legendBorderWidth: '',
+                  // legendBorderWidth: '',
                   legendFields: []
                 });
             }
 
         }
+    }
+
+    mapEdit.editStyles = async (styles) => {
+      mapEditReducer({
+        type: GlobalMapEditActionType.EDIT,
+        payload: styles
+      }); 
+    };
+
+    mapEdit.loadStyles = async (styles) => {
+      console.log(styles)
+      mapEditReducer({
+        type: GlobalMapEditActionType.LOAD,
+        payload: styles
+      }); 
     }
 
    return (

@@ -24,6 +24,7 @@ import UniversalModal from './components/UniversalModal'
 
 import { AuthContextProvider } from './auth'
 import { GlobalStoreContextProvider } from './store'
+import { GlobalMapEditContextProvider } from './mapEdit'
 
 const MainLayout = styled('div')({
   display: 'flex',
@@ -36,30 +37,32 @@ function App() {
   return (
     <BrowserRouter>
       <AuthContextProvider>
-        <GlobalStoreContextProvider>
-          <MainLayout>
-            <ThemeProvider theme={theme}>
-              <AppBanner />
-              <div style={{flexGrow: 1}}>
-                <UniversalModal/>
-                <Routes>
-                  <Route path="/login/" element= {<LoginScreen/>} />
-                  <Route path="/register/" element= {<RegisterScreen/>}/>
-                  <Route path="/forgotPassword/" element= {<ForgotPasswordScreen/>}/>
-                  <Route path="/FAQ/" element= {<FAQScreen/>} />
-                  <Route path="/feed/" element= {<MapFeed/>} />
-                  <Route path="/profile/" element= {<ProfileScreen/>}/>
-                  <Route path="/editMap/" element= {<EditScreen/>}/>
-                  <Route path="/editAccount/" element= {<EditAccountScreen/>}/>
-                  <Route path="/passwordReset/" element= {<RecoverPasswordScreen/>}/>
-                  <Route path="/map/" element= {<PublicMapView/>}/>
-                  <Route path="/*" element= {<Navigate to='/login' />} />
-              </Routes>
-              </div>
-              <Footer />
-            </ThemeProvider>
-          </MainLayout>
-        </GlobalStoreContextProvider>
+        <GlobalMapEditContextProvider> 
+          <GlobalStoreContextProvider>
+            <MainLayout>
+              <ThemeProvider theme={theme}>
+                <AppBanner />
+                <div style={{flexGrow: 1}}>
+                  <UniversalModal/>
+                  <Routes>
+                    <Route path="/login/" element= {<LoginScreen/>} />
+                    <Route path="/register/" element= {<RegisterScreen/>}/>
+                    <Route path="/forgotPassword/" element= {<ForgotPasswordScreen/>}/>
+                    <Route path="/FAQ/" element= {<FAQScreen/>} />
+                    <Route path="/feed/" element= {<MapFeed/>} />
+                    <Route path="/profile/" element= {<ProfileScreen/>}/>
+                    <Route path="/editMap/" element= {<EditScreen/>}/>
+                    <Route path="/editAccount/" element= {<EditAccountScreen/>}/>
+                    <Route path="/passwordReset/" element= {<RecoverPasswordScreen/>}/>
+                    <Route path="/map/" element= {<PublicMapView/>}/>
+                    <Route path="/*" element= {<Navigate to='/login' />} />
+                </Routes>
+                </div>
+                <Footer />
+              </ThemeProvider>
+            </MainLayout>
+          </GlobalStoreContextProvider>
+        </GlobalMapEditContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   );
