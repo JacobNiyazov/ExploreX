@@ -12,7 +12,6 @@ import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../Sty
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
-import ChloroplethMap from '../ChloroplethMap.js';
 import VoronoiMap from '../VoronoiMap.js';
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
@@ -266,61 +265,98 @@ const PublicMapView = () => {
   
     return null;
   };
-  // const ChloroLayer = ({ typeData, regionData }) => {
-  //   const leafletMap = useMap();
+  const ChloroLayer = ({ typeData, regionData, property }) => {
+    const leafletMap = useMap();
  
-  //   useEffect(() => {
-  //     leafletMap.invalidateSize();
-  //     let dotLayer;
-  //     if(typeData.features){
-  //       dotLayer = L.geoJSON(typeData, {
-  //         pointToLayer: function (feature, latlng) {
-  //           return L.circleMarker(latlng, {
-  //               radius: 3,
-  //               fillColor: "#ff24bd",
-  //               color: "#000",
-  //               weight: 1,
-  //               opacity: 1,
-  //               fillOpacity: 0.8
-  //           })
-  //         },
-  //       }).addTo(leafletMap);
-  //     }
+    useEffect(() => {
+      leafletMap.invalidateSize();
+
+      const getColor = (d, colorObject) => {
+        let temp = {...colorObject}
+        delete temp.isString;
+        const keys = Object.keys(temp).map(Number).sort((a, b) => b - a);
+        for (let i = 0; i < keys.length; i++) {
+            if (d > keys[i]) {
+                return temp[keys[i]];
+            }
+        }
+        return temp[keys[0]];
+      };
+
+      function convertStringToNumber(inputString) {
+        const editedString = inputString.replace(/,/g, '').replace(/%/g, '');
+        let isNegative = false;
+        let numberString = editedString;
+
+        if (editedString.includes('-')) {
+          isNegative = true;
+          numberString = editedString.replace('-', '');
+        }
       
-  //     const regionLayer = L.geoJSON(regionData, {
-  //       style: function (feature) {
-  //           switch (feature.geometry.type) {
-  //               case 'Polygon':
-  //               case 'MultiPolygon':
-  //                   return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-  //               case 'LineString':
-  //               case 'MultiLineString':
-  //                   return { color: "#f55", weight: 2, opacity: 0.8 };
-  //               default:
-  //                   return {}; // Point geometries, if any, are already handled in dot density layer
-  //           }
-  //       },
-  //       // Ensure that no default marker is created for point features
-  //       pointToLayer: function (feature, latlng) {
-  //         return null;
-  //       }
-  //     }).addTo(leafletMap);
-  //     try{
-  //       leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
-  //     }
-  //     catch (err){
-  //       console.log(err)
-  //     }
-  //     if(typeData.features) dotLayer.bringToFront();
+        // Convert string to number
+        let result = parseFloat(numberString);
+      
+        // Multiply by -1 for negative numbers
+        if (isNegative) {
+          result *= -1;
+        }
+      
+        if (!isNaN(result)) {
+          return result;
+        } else {
+          console.log("ERROR", inputString)
+          return null; 
+        }
+      }
+      
+      let flag = typeData.isString
+      let coloring = typeData;
+      const regionLayer = L.geoJSON(regionData, {
+        style: function (feature) {
+            let fillColor;
+            let propertyValue;
+            if (flag){
+              fillColor = coloring[feature.properties[property]];;
+            }
+            else if(typeof(feature.properties[property]) === 'string'){
+                propertyValue = convertStringToNumber(feature.properties[property]);
+            }
+            else{
+                propertyValue = feature.properties[property];
+            }
+            if (!flag){
+              fillColor = getColor(propertyValue, coloring);
+            }
+
+          
+            return {
+              fillColor,
+              weight: 2,
+              opacity: 1,
+              color: 'white',
+              fillOpacity: 0.7,
+            };
+        },
+        pointToLayer: function (feature, latlng) {
+          return null;
+        }
+      }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+      // if(typeData.features) dotLayer.bringToFront();
   
-  //     return () => {
-  //       if(typeData.features) dotLayer.remove();
-  //       regionLayer.remove();
-  //     };
-  //   }, [typeData, regionData, leafletMap]);
+      return () => {
+        // if(typeData.features) dotLayer.remove();
+        regionLayer.remove();
+      };
+    }, [typeData, regionData, property, leafletMap]);
   
-  //   return null;
-  // };
+    return null;
+  };
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
       let data = {
@@ -340,7 +376,9 @@ const PublicMapView = () => {
         }
     }
     else if(map.type === "Chloropleth Map"){
-        return <ChloroplethMap/>
+        console.log("SHOWING MAP")
+        let data = store.currentMap.graphics.typeSpecific.chloroLegend;
+        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
     }
     else if(map.type === "Voronoi Map"){
       console.log(map)
