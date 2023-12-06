@@ -332,7 +332,8 @@ forkMap = async (req, res) =>{
                         geojson: graphics.geojson,
                         legend: graphics.legend,
                         typeSpecific: graphics.typeSpecific,
-                        region: graphics.region,
+                        fill: graphics.fill,
+                        stroke: graphics.stroke,
                         text: graphics.text,
                         ownerUsername: graphics.ownerUsername,
                     });
