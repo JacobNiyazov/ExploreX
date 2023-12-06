@@ -6,9 +6,9 @@ const GraphicsSchema = new Schema(
         geojson: {type:Buffer, required: true},
         legend:{
             hideLegend: {type: Boolean, required: true},
-            legendFillColor: {type: String, required: true},
-            legendBorderColor: {type: String, required:true},
-            legendBorderWidth: {type: Number, required:true},
+            // legendFillColor: {type: String, required: true},
+            // legendBorderColor: {type: String, required:true},
+            // legendBorderWidth: {type: Number, required:true},
             legendTitle: {type: String, required: true},
             legendFields:[{
                 fieldColor:{type: String, required: true},
