@@ -96,6 +96,9 @@ const EditScreen = () => {
         VoronoiMap: false
     })
     const [hideLegend, setHideLegend] = React.useState(false)
+    // if they have any sort of edits in here then 
+    // we have to add an updateMapTransaction
+    
     /*const [colors, setColors] = React.useState({
         Text: store.currentGraphics.typeSpecific.color,
         HeatMap: '#FFFFFF',

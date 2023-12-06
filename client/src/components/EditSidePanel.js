@@ -32,27 +32,55 @@ const EditSidePanel = ({
     setHideLegend,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    
-    const handleFont= (event, label) => {
-        setFont(event.target.value)
+    // need to update this when i have map edit store
+    /*
+    function handleUndo() {
+        // inside the map store i have to add smth like this, likewise for redo
+        //store.undo = function () {
+        //if (store.currentModal === CurrentModal.NONE)
+        //    tps.undoTransaction();
+    } 
+        mapStore.undo();
     }
+    function handleRedo() {
+        mapStore.redo();
+    }
+    */
     const [title, setTitle] = useState("Example Map")
     
+    function handleEditMap(){
+        let newMapData = {
+            font: this.font,
+            title: this.title,
+            size: this.size,
+            range: this.range,
+            borderWidth: this.borderWidth,
+            legend: this.legend,
+            colors: this.colors
+        }
+        //store.addUpdateMapTransaction(newMapData); 
+    }
     const handleTitle= (event) => {
         setTitle(event.target.value)
+        handleEditMap()
     }
 
-    
+    const handleFont= (event, label) => {
+        setFont(event.target.value)
+        handleEditMap() 
+    }
 
     const handleSize= (event, label) => {
         setSize({
             ...size,
             [label]: event.target.value
         })
+        handleEditMap() 
     }
 
     const handleRange= (event) => {
         setRange(event.target.value)
+        handleEditMap() 
     }
 
     const handleBorderWidth= (event, label) => {
@@ -60,6 +88,7 @@ const EditSidePanel = ({
             ...borderWidth,
             [label]: event.target.value
         })
+        handleEditMap() 
     }
 
     const handleSelectAll= (label) => {
@@ -71,6 +100,7 @@ const EditSidePanel = ({
 
     const handleHideLegend= () => {
         setHideLegend(!hideLegend)
+        handleEditMap() 
     }
 
     const handleOpenPublish = () => {

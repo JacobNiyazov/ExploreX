@@ -136,7 +136,18 @@ const MapEdit = ({
         label2: "Field 2",
         label3: "Field 3"
     })
-
+    function handleEditMap(){
+        let newMapData = {
+            font: this.font,
+            title: this.title,
+            size: this.size,
+            range: this.range,
+            borderWidth: this.borderWidth,
+            legend: this.legend,
+            colors: this.colors
+        }
+        //store.addUpdateMapTransaction(newMapData); 
+    }
     const handleLegendClick = (event, label) => {
         setLegendColorPicker({
             ...legendColorPicker,
@@ -146,6 +157,7 @@ const MapEdit = ({
             ...legendAnchors,
             [label]: event.currentTarget
         })
+        handleEditMap()
     };
 
     const handleClose = (label) => {
@@ -160,6 +172,7 @@ const MapEdit = ({
             ...legendColor,
             [label] : event.hex
         })
+        handleEditMap()
     }
 
     const handleBaseMap = () =>{
@@ -171,6 +184,7 @@ const MapEdit = ({
             ...legendText,
             [label]: event.target.value
         })
+        handleEditMap()
     }
 
     const mapContainerRef = useRef(null);
@@ -217,7 +231,6 @@ const MapEdit = ({
 
         waitForMapLoad();
       }, [captureMapAsImage, photo ]);
-
 
     return(
         <Grid item xs = {8}>
