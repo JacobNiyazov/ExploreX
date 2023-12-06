@@ -14,39 +14,6 @@ const EditScreen = () => {
     const { auth } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate();
-    useEffect(() => {
-      const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap.title !== mapEdit.title)) {
-          // Wait until authentication check is completed
-          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-          waitForAuthCheck(); // Re-check status
-        } else {
-          if (!auth.loggedIn) {
-            store.setCurrentPage(store.currentPageType.login);
-            navigate('/login');
-          }
-          if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
-            store.setCurrentPage(store.currentPageType.profileScreen);
-            navigate('/profile');
-          }
-          setLoading(false);
-        }
-      };
-  
-      waitForAuthCheck();
-    }, [auth, navigate, store]);
-    useEffect(() => {
-        const waitForCurrentMap = async () => {
-            while (loading) {
-                // Wait until currentMap is available
-                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-            }
-        };
-
-        waitForCurrentMap();
-    }, [store, store.currentMap, loading]);
-
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     
@@ -87,9 +54,79 @@ const EditScreen = () => {
 
     const [range, setRange] = React.useState(5)
 
+    const navigate = useNavigate();
+    useEffect(() => {
+      const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap.title !== mapEdit.title)) {
+          // Wait until authentication check is completed
+          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+          waitForAuthCheck(); // Re-check status
+        } else {
+            if (!auth.loggedIn) {
+                store.setCurrentPage(store.currentPageType.login);
+                navigate('/login');
+            }
+            if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+                store.setCurrentPage(store.currentPageType.profileScreen);
+                navigate('/profile');
+            }
+            setLoading(false);
+            setTitle(mapEdit.title);
+            setColors({
+                TextColor: mapEdit.textColor,
+                HeatMap: '#FFFFFF',
+                // LegendFill: mapEdit.legendFillColor,
+                // LegendBorder: mapEdit.legendBorderColor,
+                FillColor: mapEdit.fillColor,
+                StrokeColor: mapEdit.strokeColor,
+                DotMap: '#FFFFFF',
+                SpikeMap: '#FFFFFF',
+                VoronoiMap: '#FFFFFF'
+            });
+            setSizes({
+                TextSize: mapEdit.textSize,
+                StrokeWeight: mapEdit.strokeWeight,
+            });
+            setOpacities({
+                StrokeOpacity: mapEdit.strokeOpacity,
+                FillOpacity: mapEdit.fillOpacity,
+            });
+            setAnchors({
+                Text: null,
+                HeatMap: null,
+                // LegendFill: null,
+                // LegendBorder: null,
+                RegionFill: null,
+                RegionBorder: null,
+                DotMap: null,
+                SpikeMap: null,
+                VoronoiMap: null
+            });
+            setTextFont(mapEdit.textFont);
+            setHasStroke(mapEdit.hasStroke);
+            setHasFill(mapEdit.hasFill);
+        }
+      };
+  
+      waitForAuthCheck();
+    }, [auth, navigate, store]);
+    useEffect(() => {
+        const waitForCurrentMap = async () => {
+            while (loading) {
+                // Wait until currentMap is available
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            }
+        };
+
+        waitForCurrentMap();
+    }, [store, store.currentMap, loading]);
+
+    
+
     
     console.log(store.currentPage)
     console.log(mapEdit.title)
+    console.log(title)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>

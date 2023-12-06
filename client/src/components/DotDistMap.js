@@ -4,11 +4,10 @@ import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 
-const DotDistMap = () => {
+const DotDistMap = ({map}) => {
 
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
-  const map = useMap();
 
   useEffect(() => {
     function calculateMedian(values) {
@@ -124,24 +123,24 @@ const DotDistMap = () => {
           })
         },
       }).addTo(dotsLayerGroup);
-      L.geoJSON(geojsonData, {
-        style: function (feature) {
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-                case 'LineString':
-                case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
-                default:
-                    return {}; // Point geometries, if any, are already handled in dot density layer
-            }
-        },
-        // Ensure that no default marker is created for point features
-        pointToLayer: function (feature, latlng) {
-          return null;
-        }
-      }).addTo(map);
+      // L.geoJSON(geojsonData, {
+      //   style: function (feature) {
+      //       switch (feature.geometry.type) {
+      //           case 'Polygon':
+      //           case 'MultiPolygon':
+      //               return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+      //           case 'LineString':
+      //           case 'MultiLineString':
+      //               return { color: "#f55", weight: 2, opacity: 0.8 };
+      //           default:
+      //               return {}; // Point geometries, if any, are already handled in dot density layer
+      //       }
+      //   },
+      //   // Ensure that no default marker is created for point features
+      //   pointToLayer: function (feature, latlng) {
+      //     return null;
+      //   }
+      // }).addTo(map);
       try{
         map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
