@@ -230,17 +230,17 @@ createMap = async (req,res) =>{
         }
         graphic.fill = {
                 hasFill: true,
-                fillColor: "#000000",
+                fillColor: "#B9B0B0",
                 fillOpacity: 0.7,
             }
         graphic.stroke = {
             hasStroke: true,
-            strokeColor: "#000000",
+            strokeColor: "#B9B0B0",
             strokeWeight: 3.0,
             strokeOpacity: 1.0,
         }
         graphic.text = {
-                textColor: "#000000",
+                textColor: "#B9B0B0",
                 textFont: "Nova Square",
                 textSize: 12
             }

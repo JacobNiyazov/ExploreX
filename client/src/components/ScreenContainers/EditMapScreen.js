@@ -4,18 +4,20 @@ import Grid from '@mui/material/Grid';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
 import { GlobalStoreContext } from '../../store'
+import { GlobalMapEditContext } from '../../mapEdit'
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 
 const EditScreen = () => {
     const { store } = useContext(GlobalStoreContext);
+    const { mapEdit } = useContext(GlobalMapEditContext);
     const { auth } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined || store.currentMap === null) {
+        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap.title !== mapEdit.title)) {
           // Wait until authentication check is completed
           await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
           waitForAuthCheck(); // Re-check status
@@ -44,61 +46,44 @@ const EditScreen = () => {
 
         waitForCurrentMap();
     }, [store, store.currentMap, loading]);
-    const[colors,setColors] = useState({
-        Text: "#FFFFFF",
+
+    const [title, setTitle] = useState(mapEdit.title);
+    const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
+    
+    const [colors,setColors] = useState({
+        TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
-        LegendFill: "#FFFFFF",
-        LegendBorder: "#FFFFFF",
-        RegionFill: "#FFFFFF",
-        RegionBorder: "#FFFFFF",
+        // LegendFill: mapEdit.legendFillColor,
+        // LegendBorder: mapEdit.legendBorderColor,
+        FillColor: mapEdit.fillColor,
+        StrokeColor: mapEdit.strokeColor,
         DotMap: '#FFFFFF',
         SpikeMap: '#FFFFFF',
         VoronoiMap: '#FFFFFF'
     })
-    const [colorPicker, setColorPicker] = React.useState({
-        Text: true,
-        HeatMap: false,
-        LegendFill: true,
-        LegendBorder: true,
-        RegionFill: true,
-        RegionBorder: true,
-        DotMap: false,
-        SpikeMap: false,
-        VoronoiMap: false
+    const [sizes,setSizes] = useState({
+        TextSize: mapEdit.textSize,
+        StrokeWeight: mapEdit.strokeWeight,
+    })
+    const [opacities,setOpacities] = useState({
+        StrokeOpacity: mapEdit.strokeOpacity,
+        FillOpacity: mapEdit.fillOpacity,
     })
     const [anchors, setAnchors] = React.useState({
         Text: null,
         HeatMap: null,
-        LegendFill: null,
-        LegendBorder: null,
+        // LegendFill: null,
+        // LegendBorder: null,
         RegionFill: null,
         RegionBorder: null,
         DotMap: null,
         SpikeMap: null,
         VoronoiMap: null
     })
-    const [font, setFont] = React.useState("Nova Square")
-    const [sizes, setSizes] = React.useState({
-        Text: 12,
-        Region: 12,
-        DotMap: 12,
-        SpikeMap: 12,
-        VoronoiMap: 12
-    })
-    const [range, setRange] = React.useState(5)
-    const [borderWidth, setBorderWidth] = React.useState({
-        Region: 1,
-        Legend: 1,
-    })
-    const [selectAll, setSelectAll] = React.useState({
-        DotMap: false,
-        SpikeMap: false,
-        VoronoiMap: false
-    })
+    const [textFont, setTextFont] = React.useState(mapEdit.textFont)
+    const [hasStroke, setHasStroke] = React.useState(mapEdit.hasStroke)
+    const [hasFill, setHasFill] = React.useState(mapEdit.hasFill)
     const [hideLegend, setHideLegend] = React.useState(false)
-    // if they have any sort of edits in here then 
-    // we have to add an updateMapTransaction
-    
     /*const [colors, setColors] = React.useState({
         Text: store.currentGraphics.typeSpecific.color,
         HeatMap: '#FFFFFF',
@@ -145,57 +130,50 @@ const EditScreen = () => {
         VoronoiMap: 12
     })
 
-    const [range, setRange] = React.useState(5)
+    const [range, setRange] = React.useState(5)*/
 
-    const [borderWidth, setBorderWidth] = React.useState({
-        Region: store.currentMap.graphics.region.borderWidth,
-        Legend: store.currentMap.graphics.legend.borderWidth,
-    })
-
-    const [selectAll, setSelectAll] = React.useState({
-        DotMap: false,
-        SpikeMap: false,
-        VoronoiMap: false
-    })
-
-    const [hideLegend, setHideLegend] = React.useState(false)*/
     
     console.log(store.currentPage)
+    console.log(mapEdit.title)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>
                 <EditSidePanel 
+                    title={title}
+                    setTitle={setTitle}
                     colors={colors}
                     setColors={setColors}
-                    colorPicker={colorPicker}
-                    setColorPicker={setColorPicker}
                     anchors={anchors}
                     setAnchors={setAnchors}
-                    font={font}
-                    setFont={setFont}
-                    size={sizes}
-                    setSize={setSizes}
-                    range={range}
-                    setRange={setRange}
-                    borderWidth={borderWidth}
-                    setBorderWidth={setBorderWidth}
-                    selectAll={selectAll}
-                    setSelectAll={setSelectAll}
+                    sizes={sizes}
+                    setSizes={setSizes}
+                    opacities={opacities}
+                    setOpacities={setOpacities}
+                    textFont={textFont}
+                    setTextFont={setTextFont}
+                    hasStroke={hasStroke}
+                    setHasStroke={setHasStroke}
+                    hasFill={hasFill}
+                    setHasFill={setHasFill}
+                    //range={range}
+                    //setRange={setRange}
+                    // borderWidth={borderWidth}
+                    // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}/>
                 <MapEdit 
                     colors={colors}
-                    font={font}
-                    size={sizes}
-                    range={range}
-                    borderWidth={borderWidth}
-                    selectAll={selectAll}
+                    sizes={sizes}
+                    opacities={opacities}
+                    hasStroke={hasStroke}
+                    hasFill={hasFill}
+                    //range={range}
                     hideLegend={hideLegend}/>
             </Grid>
         );
     }
     else{
-        return <div></div>
+        return <div>Loading...</div>
     }
    
 }
