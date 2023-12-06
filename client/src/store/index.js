@@ -4,6 +4,7 @@ import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
 import maps from '../store/map-request-api';
+import jsTPS from '../transactions/jsTPS';
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -22,7 +23,7 @@ export const GlobalStoreActionType = {
    FORK_MAP: "FORK_MAP",
 
 }
-
+const tps = new jsTPS();
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({

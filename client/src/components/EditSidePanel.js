@@ -14,20 +14,20 @@ import GlobalStoreContext from '../store/index.js';
 const EditSidePanel = ({
     colors,
     setColors,
-    colorPicker,
-    setColorPicker,
     anchors,
     setAnchors,
-    font,
-    setFont,
-    size,
-    setSize,
+    sizes,
+    setSizes,
+    opacities,
+    setOpacities,
+    textFont,
+    setTextFont,
+    hasStroke,
+    setHasStroke,
+    hasFill,
+    setHasFill,
     range,
     setRange,
-    borderWidth,
-    setBorderWidth,
-    selectAll,
-    setSelectAll,
     hideLegend,
     setHideLegend,
   }) => {  
@@ -50,13 +50,21 @@ const EditSidePanel = ({
     
     function handleEditMap(){
         let newMapData = {
-            font: this.font,
-            title: this.title,
-            size: this.size,
-            range: this.range,
-            borderWidth: this.borderWidth,
-            legend: this.legend,
-            colors: this.colors
+            hasStroke: this.hasStroke,
+            strokeColor: this.colors.strokeColor,
+            strokeWeight: this.strole.Weight,
+            strokeOpacity: this.opacities.strokeOpacity,
+            hasFill: this.hasFill,
+            fillColor: this.colors.fillColor,
+            fillOpacity: this.opacities.fillOpacity,
+            textColor: this.colors.textColor,
+            textSize: this.sizes.textSize,
+            textFont: this.textFont,
+            legendFillColor: this.colors.legendFillColor,
+            legendBorderColor: this.colors.borderColor,
+            legendTitle: this.title,
+            legendBorderWidth: this.legendBorderWidth,
+            legendFields: this.legendFields
         }
         //store.addUpdateMapTransaction(newMapData); 
     }
@@ -66,41 +74,39 @@ const EditSidePanel = ({
     }
 
     const handleFont= (event, label) => {
-        setFont(event.target.value)
+        setTextFont(event.target.value)
         handleEditMap() 
     }
 
     const handleSize= (event, label) => {
-        setSize({
-            ...size,
+        setSizes({
+            ...sizes,
             [label]: event.target.value
         })
         handleEditMap() 
     }
 
-    const handleRange= (event) => {
+    const handleOpacity = (event, label) => {
+        setOpacities({
+            ...opacities,
+            [label]: event.target.value
+        })
+        handleEditMap() 
+    }
+
+    const handleRange = (event) => {
         setRange(event.target.value)
-        handleEditMap() 
     }
 
-    const handleBorderWidth= (event, label) => {
-        setBorderWidth({
-            ...borderWidth,
-            [label]: event.target.value
-        })
-        handleEditMap() 
-    }
-
-    const handleSelectAll= (label) => {
-        setSelectAll({
-            ...selectAll,
-            [label]: !selectAll[label]
-        })
-    }
-
-    const handleHideLegend= () => {
+    const handleHideLegend = () => {
         setHideLegend(!hideLegend)
         handleEditMap() 
+    }
+    const handleHideStroke = () => {
+        setHasStroke(!hasStroke)
+    }
+    const handleHideFill = () => {
+        setHasFill(!hasFill)
     }
 
     const handleOpenPublish = () => {
@@ -173,7 +179,7 @@ const EditSidePanel = ({
                         <CustomList>
                             <CustomListItem>
                                 <Typography>Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="Text"/>
+                                <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="TextColor"/>
                             </CustomListItem>
                             <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
@@ -187,8 +193,8 @@ const EditSidePanel = ({
                                             sx: { height: "300px"},
                                         },
                                     }}
-                                    onChange={(e) =>{handleFont(e, "Text")}}
-                                    value={font}
+                                    onChange={(e) =>{handleFont(e, "TextFont")}}
+                                    value={textFont}
                                     data-testid="font-selector"
                                     >
                                         {commonFonts.map((option) => (
@@ -208,9 +214,9 @@ const EditSidePanel = ({
                                         shrink: true,
                                     }}
                                     variant="standard"
-                                    value={size.Text}
+                                    value={sizes.Text}
                                     onChange={(event)=>{handleSize(event, "Text")}}
-                                    error={size.Text === ""}
+                                    error={sizes.Text === ""}
                                 />
                             </CustomListItem>
                         </CustomList>
@@ -230,51 +236,31 @@ const EditSidePanel = ({
                                 <Typography>Hide Legend</Typography>
                                 <SelectAllCheck onChange={()=> {handleHideLegend()}}></SelectAllCheck>
                             </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Fill Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="LegendFill"/>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Border Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="LegendBorder"/>
-                            </CustomListItem>
-                            <Divider sx={{borderColor:"white"}} />
-                            <CustomListItem>
-                                <Typography>Border Width</Typography>
-                                <NumberSelector
-                                    data-testid="legend-selector"
-                                    type="number"
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    variant="standard"
-                                    value={borderWidth.Legend}
-                                    onChange={(event)=>{handleBorderWidth(event, "Legend")}}
-                                    error={borderWidth.Legend === ""}
-                                />
-                            </CustomListItem>
                         </CustomList>
                     </AccordionDetails>
                 </EditAccordion>
 
-                {/* Edit Region Options */}
+                {/* Edit Fill Options */}
                 {console.log(store.currentMap)}{
                     store.currentMap.type !== "Heat Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Region</Typography>
+                            <Typography variant="inherit">Fill</Typography>
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
                                 <CustomListItem>
-                                    <Typography>Fill Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionFill"/>
+                                    <Typography>Hide Fill</Typography>
+                                    <SelectAllCheck onChange={()=> {handleHideFill()}}></SelectAllCheck>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Size</Typography>
+                                    <Typography>Fill Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="FillColor"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Fill Opacity</Typography>
                                     <NumberSelector
                                         data-testid="region-selector1"
                                         type="number"
@@ -282,29 +268,63 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={size.Region}
-                                        onChange={(event)=>{handleSize(event, "Region")}}
-                                        error={size.Region === ""}
+                                        value={sizes.Region}
+                                        onChange={(event)=>{handleOpacity(event, "FillOpacity")}}
+                                        error={sizes.Region === ""}
                                     />
                                 </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
+                            </CustomList>
+                        </AccordionDetails>
+                    </EditAccordion>
+                    : null
+                }
+
+                {/* Edit Stroke Options */}
+                {
+                    store.currentMap.type !== "Heat Map" ?
+                    <EditAccordion disableGutters data-testid="edit-accordion region" data->
+                        <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                            <Typography variant="inherit">Stroke</Typography>
+                        </EditAccordionSummary>
+                        <AccordionDetails sx={{padding:0}}>
+                            <CustomList>
                                 <CustomListItem>
-                                    <Typography>Border Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="RegionBorder"/>
+                                    <Typography>Hide Stroke</Typography>
+                                    <SelectAllCheck onChange={()=> {handleHideStroke()}}></SelectAllCheck>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Border Width</Typography>
+                                    <Typography>Stroke Color</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="StrokeColor"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Stroke Size</Typography>
                                     <NumberSelector
-                                    data-testid="region-selector2"
+                                        data-testid="region-selector1"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={borderWidth.Region}
-                                        onChange={(event)=>{handleBorderWidth(event, "Region")}}
-                                        error={borderWidth.Region === ""}
+                                        value={sizes.Region}
+                                        onChange={(event)=>{handleSize(event, "StrokeSize")}}
+                                        error={sizes.Region === ""}
+                                    />
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Stroke Opacity</Typography>
+                                    <NumberSelector
+                                        data-testid="region-selector1"
+                                        type="number"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        variant="standard"
+                                        value={sizes.Region}
+                                        onChange={(event)=>{handleOpacity(event, "StrokeOpacity")}}
+                                        error={sizes.Region === ""}
                                     />
                                 </CustomListItem>
                             </CustomList>
@@ -324,7 +344,7 @@ const EditSidePanel = ({
                         <CustomList>
                                 <CustomListItem>
                                     <Typography>Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
@@ -370,15 +390,15 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={size.DotMap}
+                                        value={sizes.DotMap}
                                         onChange={(event)=>{handleSize(event, "DotMap")}}
-                                        error={size.DotMap === ""}
+                                        error={sizes.DotMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -409,15 +429,15 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={size.SpikeMap}
+                                        value={sizes.SpikeMap}
                                         onChange={(event)=>{handleSize(event, "SpikeMap")}}
-                                        error={size.SpikeMap === ""}
+                                        error={sizes.SpikeMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Spike Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -449,15 +469,15 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={size.VoronoiMap}
+                                        value={sizes.VoronoiMap}
                                         onChange={(event)=>{handleSize(event, "VoronoiMap")}}
-                                        error={size.VoronoiMap === ""}
+                                        error={sizes.VoronoiMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} colorPicker={colorPicker} setColorPicker={setColorPicker} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>

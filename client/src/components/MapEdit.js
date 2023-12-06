@@ -18,6 +18,8 @@ import SpikeMap from './SpikeMap.js';
 import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
+import GlobalMapEditContext from '../mapEdit/index.js'
+
 
 const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
@@ -108,7 +110,7 @@ const MapEdit = ({
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const [photo, setPhoto] = useState(false)
-    const { store } = useContext(GlobalStoreContext);
+    const { store } = useContext(GlobalStoreContext);const { mapEdit } = useContext(GlobalMapEditContext);
     const storeRef = useRef(store);
 
 
@@ -138,15 +140,23 @@ const MapEdit = ({
     })
     function handleEditMap(){
         let newMapData = {
-            font: this.font,
-            title: this.title,
-            size: this.size,
-            range: this.range,
-            borderWidth: this.borderWidth,
-            legend: this.legend,
-            colors: this.colors
+            hasStroke: this.hasStroke,
+            strokeColor: this.colors.strokeColor,
+            strokeWeight: this.strokeWeight,
+            strokeOpacity: this.opacities.strokeOpacity,
+            hasFill: this.hasFill,
+            fillColor: this.colors.fillColor,
+            fillOpacity: this.opacities.fillOpacity,
+            textColor: this.colors.textColor,
+            textSize: this.sizes.textSize,
+            textFont: this.textFont,
+            legendFillColor: this.colors.legendFillColor,
+            legendBorderColor: this.colors.borderColor,
+            legendTitle: this.title,
+            legendBorderWidth: this.legendBorderWidth,
+            legendFields: this.legendFields
         }
-        //store.addUpdateMapTransaction(newMapData); 
+        mapEdit.addUpdateMapTransaction(newMapData); 
     }
     const handleLegendClick = (event, label) => {
         setLegendColorPicker({

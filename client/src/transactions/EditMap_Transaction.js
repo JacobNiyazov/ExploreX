@@ -10,10 +10,10 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
     // need to add a edit map transaction every time a onChange or smth
     // is triggered in edit side panel
     doTransaction() {
-        this.store.updateMap(this.index, this.newMapData);
+        this.store.updateMap(this.newMapData);
     }
     
     undoTransaction() {
-        this.store.updateMap(this.index, this.oldMapData);
+        this.store.updateMap(this.oldMapData);
     }
 }
