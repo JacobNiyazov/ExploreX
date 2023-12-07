@@ -6,7 +6,7 @@ import * as turf from '@turf/turf'
 import * as ReactDOMServer from 'react-dom/server';
 import { Box, Typography } from '@mui/material';
 
-const VoronoiMap = () => {
+const VoronoiMap = ({setPropertyIndex}) => {
 
     /*function getRandomShade(){
         // Generate random values for the red and green components
@@ -63,15 +63,11 @@ const VoronoiMap = () => {
         clippedPolygons.features.push(feature)
     })
 
-    console.log("Voronoi:", voronoiPolygons)
-    console.log("clipped: ", clippedPolygons)
-    console.log("points: ", points)
-    console.log("options: ", options)
-    console.log("poly geo: ", polygonGeo)
-    console.log("geo points: ", geoPoints)
+    let i = 0;
     L.geoJSON(clippedPolygons, {
         onEachFeature: function (feature, layer) {
-            console.log(feature)
+            i+=1
+            let tempi = i; //kept passing last index so save it in temp
             // Customize popup content
             layer.bindPopup(Object.keys(feature.properties).map(function(k) {
            
@@ -87,6 +83,15 @@ const VoronoiMap = () => {
                 maxHeight: 200
             });
 
+            layer.on({
+                click: (e) => {
+                    if(feature.geometry.type !== 'Point'){
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        setPropertyIndex(tempi)
+                    }
+                },
+            })
 
             if(feature.geometry.type === 'Polygon'){
                 layer.setStyle({
@@ -103,7 +108,7 @@ const VoronoiMap = () => {
                 color: '#000000',
                 });}*/
            
-            console.log(feature, layer)
+            console.log(feature, layer, tempi)
         },
         pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, {
@@ -117,8 +122,6 @@ const VoronoiMap = () => {
         }
     }).addTo(map);
     map.fitBounds(L.geoJSON(clippedPolygons).getBounds());
-
-
 
     return null
 }

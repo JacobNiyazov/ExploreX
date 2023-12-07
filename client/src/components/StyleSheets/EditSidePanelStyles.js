@@ -8,6 +8,7 @@ import ListItem from '@mui/material/ListItem';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 
 export const SidePanelGrid = styled(Grid)({
@@ -177,4 +178,26 @@ export const SelectAllCheck = styled(Checkbox)({
   '&.Mui-checked': {
     color: "#ff24bd",
   },
+});
+
+export const PropertyDetails = styled(AccordionDetails)({
+  maxHeight: '250px',
+  overflow: 'auto',
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#FF76D6',
+    borderRadius: '10px',
+    '&:hover': {
+      backgroundColor: '#FF76D6',
+    },
+  },
+  // Styles for Firefox
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
 });

@@ -3,10 +3,11 @@ import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
+import { PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
+import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
 //import PublishMapModal from './PublishMapModal.js'
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
@@ -30,6 +31,7 @@ const EditSidePanel = ({
     setSelectAll,
     hideLegend,
     setHideLegend,
+    propertyIndex
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -60,6 +62,12 @@ const EditSidePanel = ({
             ...borderWidth,
             [label]: event.target.value
         })
+    }
+
+    const handleProperty = (e, key, propertyIndex) =>{
+        // Here we update the change store.currentMap
+        // function would change value at store.currentMap.graphics.geojson.features[propertyIndex].properties[key]
+        store.editProperties(propertyIndex, key, e.target.value)
     }
 
     const handleSelectAll= (label) => {
@@ -128,8 +136,6 @@ const EditSidePanel = ({
 
     return (
         <SidePanelGrid container direction="column" item xs={4}>
-            
-            
             <AccordianContainer item xs>
                 <TitleContainer item>  
                     <TitleTextField label="Title" value={title} onChange={handleTitle} data-testid="title-input"/>
@@ -187,8 +193,32 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
+                {/* Edit Text Options */}
+                {console.log(propertyIndex)}
+                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyIndex==null}>
+                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                        <Typography variant="inherit">Properties</Typography>
+                    </EditAccordionSummary>
+                    <PropertyDetails sx={{padding:0}}>
+                        <CustomList>
+                            {
+                                propertyIndex !== null ?
+                                Object.keys(store.currentMap.graphics.geojson.features[propertyIndex].properties).map((k, index, array)=>{
+                                    return (
+                                        <div key={k}>
+                                            <CustomListItem>
+                                                <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
+                                                <ColorTextField variant="standard" value={store.currentMap.graphics.geojson.features[propertyIndex].properties[k]} onChange={(e) => {handleProperty(e, k, propertyIndex)}}/>
+                                            </CustomListItem>
+                                            {index !== array.length - 1 && <Divider sx={{ borderColor: "white" }} />}
+                                        </div>
+                                    );
+                                }) : null
+                            }
+                        </CustomList>
+                    </PropertyDetails>
+                </EditAccordion>
                 
-
                 {/* Edit Legend Options */}
                 <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>

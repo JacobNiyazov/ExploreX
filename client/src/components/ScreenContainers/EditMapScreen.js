@@ -96,6 +96,13 @@ const EditScreen = () => {
         VoronoiMap: false
     })
     const [hideLegend, setHideLegend] = React.useState(false)
+
+    const [propertyIndex, setPropertyIndex] = React.useState(null)
+
+    // This will contain all the properties. When full would look something like this
+    // [{label: 'text'}, {label: 'text'}] -> this way we keep track of both labels and its associated text
+    // Will be updated 
+    //const [properties, setProperties] = React.useState([])
     /*const [colors, setColors] = React.useState({
         Text: store.currentGraphics.typeSpecific.color,
         HeatMap: '#FFFFFF',
@@ -179,7 +186,8 @@ const EditScreen = () => {
                     selectAll={selectAll}
                     setSelectAll={setSelectAll}
                     hideLegend={hideLegend}
-                    setHideLegend={setHideLegend}/>
+                    setHideLegend={setHideLegend}
+                    propertyIndex={propertyIndex}/>
                 <MapEdit 
                     colors={colors}
                     font={font}
@@ -187,7 +195,8 @@ const EditScreen = () => {
                     range={range}
                     borderWidth={borderWidth}
                     selectAll={selectAll}
-                    hideLegend={hideLegend}/>
+                    hideLegend={hideLegend}
+                    setPropertyIndex = {setPropertyIndex}/>
             </Grid>
         );
     }

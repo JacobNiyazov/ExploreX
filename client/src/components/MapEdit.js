@@ -19,7 +19,7 @@ import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
 
-const MapEditInner = () =>{
+const MapEditInner = ({setPropertyIndex}) =>{
     const { store } = useContext(GlobalStoreContext);
 
     function getRandomShade(){
@@ -40,7 +40,7 @@ const MapEditInner = () =>{
     const map = useMap();
 
     function loadMap(geojson){
-        
+        let i = 0;
         L.geoJSON(geojson, {
             onEachFeature: function (feature, layer) {
                 
@@ -68,31 +68,50 @@ const MapEditInner = () =>{
                 fillOpacity: 0.5
                 });}
                 console.log(feature, layer)
+                
+                let tempi = i; //kept passing last index so save it in temp
+                layer.on({
+                    click: (e) => {
+                    console.log("huh")
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        setPropertyIndex(tempi)
+                    },
+                })
+                i+=1
             }
         }).addTo(map);
         map.fitBounds(L.geoJSON(geojson).getBounds());
+
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistMap/>
+        return <DotDistMap setPropertyIndex = {setPropertyIndex}/>
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap/>
+        return <SpikeMap setPropertyIndex = {setPropertyIndex}/>
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
-            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property}/>
+            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property} setPropertyIndex = {setPropertyIndex}/>
         }
     }
     else if(store.currentMap.type === "Chloropleth Map"){
-        return <ChloroplethMap/>
+        return <ChloroplethMap setPropertyIndex = {setPropertyIndex}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
-        return <VoronoiMap />
+        return <VoronoiMap setPropertyIndex = {setPropertyIndex}/>
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
     }
+
+    map.on('click',function(e) {
+        console.log('clicked on map');
+        // Here we set the index to null
+        setPropertyIndex(null)
+    });
+
     return null;
 }
 
@@ -104,6 +123,7 @@ const MapEdit = ({
     borderWidth,
     selectAll,
     hideLegend,
+    setPropertyIndex
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
@@ -232,7 +252,7 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner />
+                <MapEditInner  setPropertyIndex={setPropertyIndex}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?

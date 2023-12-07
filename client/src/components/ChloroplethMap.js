@@ -3,7 +3,7 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 
-const ChloroplethMap = () => {
+const ChloroplethMap = ({setPropertyIndex}) => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
@@ -132,8 +132,21 @@ const ChloroplethMap = () => {
             coloring = chloroInfo
           
           }        
-      
+            let i = 0;
             L.geoJSON(geojsonData, {
+                onEachFeature: function (feature, layer) {
+                  i+=1
+                  let tempi = i; //kept passing last index so save it in temp
+                  layer.on({
+                    click: (e) => {
+                        if(feature.geometry.type !== 'Point'){
+                            L.DomEvent.stopPropagation(e);
+                            // Here we set the index to tempi
+                            setPropertyIndex(tempi)
+                        }
+                    },
+                  })
+                },
                 style: (feature) => {
                     let fillColor;
                     let propertyValue;

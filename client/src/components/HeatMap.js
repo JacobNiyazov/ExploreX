@@ -6,7 +6,7 @@ import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
 import "leaflet.heat";
 
-const HeatMap = ({ geojsonData, property }) => {
+const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
   const map = useMap();
   console.log("what is property: ", property)
   
@@ -41,6 +41,7 @@ const HeatMap = ({ geojsonData, property }) => {
     
     L.heatLayer(heatPoints).addTo(map);
 
+    let i = 0;
     // Customize popups
     var geojsonLayer = L.geoJSON(geojsonData, {
       onEachFeature: function (feature, layer) {
@@ -58,6 +59,15 @@ const HeatMap = ({ geojsonData, property }) => {
             maxHeight: 200
           }
         );
+        i+=1
+        let tempi = i; //kept passing last index so save it in temp
+        layer.on({
+          click: (e) => {
+            L.DomEvent.stopPropagation(e);
+            // Here we set the index to tempi
+            setPropertyIndex(tempi)
+          },
+        })
       },
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
