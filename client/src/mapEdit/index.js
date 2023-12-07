@@ -111,6 +111,7 @@ function GlobalMapEditContextProvider(props) {
     // update map edit
     mapEdit.addUpdateMapTransaction = function(newMapData){
         let oldMapData = {
+            title: mapEdit.title,
             hasStroke: mapEdit.hasStroke,
             strokeColor: mapEdit.strokeColor,
             strokeWeight: mapEdit.strokeWeight,
@@ -128,7 +129,9 @@ function GlobalMapEditContextProvider(props) {
             legendFields: mapEdit.legendFields
         }
         let transaction = new EditMap_Transaction(this, oldMapData, newMapData)
+        console.log("this is the transaction created: ",transaction)
         tps.addTransaction(transaction)
+        console.log("this is how big the transaction stack is: ",tps.getSize())
     }
     mapEdit.undo = function(){
         tps.undoTransaction()

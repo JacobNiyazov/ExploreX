@@ -202,6 +202,10 @@ function GlobalStoreContextProvider(props) {
     }
 
    store.setCurrentPage = (currentPage, map=null) => {
+        if(store.currentPage === "EditMapScreen"){
+            console.log("tps is cleared!")
+            tps.clearAllTransactions()
+        }
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{

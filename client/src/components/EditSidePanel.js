@@ -10,10 +10,11 @@ import MenuItem from '@mui/material/MenuItem';
 //import PublishMapModal from './PublishMapModal.js'
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
+import GlobalMapEditContext from '../mapEdit/index.js';
 
 const EditSidePanel = ({
-    //title,
-    //setTitle,
+    title,
+    setTitle,
     colors,
     setColors,
     anchors,
@@ -34,29 +35,29 @@ const EditSidePanel = ({
     setHideLegend,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    // need to update this when i have map edit store
-
-    const [title, setTitle] = useState("Example Map")
+    const {mapEdit} = useContext(GlobalMapEditContext);
     
     function handleEditMap(){
         let newMapData = {
-            hasStroke: this.hasStroke,
-            strokeColor: this.colors.strokeColor,
-            strokeWeight: this.strole.Weight,
-            strokeOpacity: this.opacities.strokeOpacity,
-            hasFill: this.hasFill,
-            fillColor: this.colors.fillColor,
-            fillOpacity: this.opacities.fillOpacity,
-            textColor: this.colors.textColor,
-            textSize: this.sizes.textSize,
-            textFont: this.textFont,
-            legendFillColor: this.colors.legendFillColor,
-            legendBorderColor: this.colors.borderColor,
-            legendTitle: this.title,
-            legendBorderWidth: this.legendBorderWidth,
-            legendFields: this.legendFields
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.strokeColor,
+            strokeWeight: sizes.strokeWeight,
+            strokeOpacity: opacities.strokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.fillColor,
+            fillOpacity: opacities.fillOpacity,
+            textColor: colors.textColor,
+            textSize: sizes.textSize,
+            textFont: textFont,
+            //legendFillColor: mapEdit.legendFillColor,
+            //legendBorderColor: mapEdit.legendBorderColor,
+            legendTitle: mapEdit.legendTitle,
+            //legendBorderWidth: mapEdit.legendBorderWidth,
+            legendFields: mapEdit.legendFields
         }
-        //store.addUpdateMapTransaction(newMapData); 
+        console.log("newMapData: ", newMapData)
+        mapEdit.addUpdateMapTransaction(newMapData); 
     }
     const handleTitle= (event) => {
         setTitle(event.target.value)
@@ -86,6 +87,7 @@ const EditSidePanel = ({
 
     const handleRange = (event) => {
         setRange(event.target.value)
+        handleEditMap() 
     }
 
     const handleHideLegend = () => {
@@ -94,9 +96,11 @@ const EditSidePanel = ({
     }
     const handleHideStroke = () => {
         setHasStroke(!hasStroke)
+        handleEditMap() 
     }
     const handleHideFill = () => {
         setHasFill(!hasFill)
+        handleEditMap() 
     }
 
     const handleOpenPublish = () => {

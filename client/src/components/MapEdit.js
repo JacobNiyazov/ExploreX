@@ -138,26 +138,7 @@ const MapEdit = ({
         label2: "Field 2",
         label3: "Field 3"
     })
-    /*function handleEditMap(){
-        let newMapData = {
-            hasStroke: this.hasStroke,
-            strokeColor: this.colors.strokeColor,
-            strokeWeight: this.strokeWeight,
-            strokeOpacity: this.opacities.strokeOpacity,
-            hasFill: this.hasFill,
-            fillColor: this.colors.fillColor,
-            fillOpacity: this.opacities.fillOpacity,
-            textColor: this.colors.textColor,
-            textSize: this.sizes.textSize,
-            textFont: this.textFont,
-            legendFillColor: this.colors.legendFillColor,
-            legendBorderColor: this.colors.borderColor,
-            legendTitle: this.title,
-            legendBorderWidth: this.legendBorderWidth,
-            legendFields: this.legendFields
-        }
-        mapEdit.addUpdateMapTransaction(newMapData); 
-    }*/
+     
     const handleLegendClick = (event, label) => {
         setLegendColorPicker({
             ...legendColorPicker,
