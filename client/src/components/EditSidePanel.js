@@ -330,7 +330,7 @@ const EditSidePanel = ({
 
                 {/* Edit Dot Map Options */}
                 {
-                    store.currentMap.type === "Dot Map" ?
+                    store.currentMap.type === "Dot Distribution Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion dot-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>

@@ -29,24 +29,24 @@ const MapEditInner = ({
     hideLegend,}) =>{
     const { store } = useContext(GlobalStoreContext);
 
-    const map = useMap();
-    const layerRef = useRef(null);
-    useEffect(() => {
-        if (layerRef.current) {
-            // If there's an existing layer, remove it
-            layerRef.current.remove();
-        }
+    // const map = useMap();
+    // const layerRef = useRef(null);
+    // useEffect(() => {
+    //     if (layerRef.current) {
+    //         // If there's an existing layer, remove it
+    //         layerRef.current.remove();
+    //     }
 
-        // Load the new layer
-        layerRef.current = loadMap(store.currentMap.graphics.geojson, map, colors, sizes, opacities, hasStroke, hasFill);
+    //     // Load the new layer
+    //     layerRef.current = loadMap(store.currentMap.graphics.geojson, map, colors, sizes, opacities, hasStroke, hasFill);
 
-        // Cleanup function to remove the layer when the component unmounts or dependencies change
-        return () => {
-            if (layerRef.current) {
-                layerRef.current.remove();
-            }
-        };
-    }, [store, colors, sizes, opacities, hasStroke, hasFill]);
+    //     // Cleanup function to remove the layer when the component unmounts or dependencies change
+    //     return () => {
+    //         if (layerRef.current) {
+    //             layerRef.current.remove();
+    //         }
+    //     };
+    // }, [store, colors, sizes, opacities, hasStroke, hasFill]);
 
     function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
         
@@ -87,7 +87,13 @@ const MapEditInner = ({
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistMap map={map}/>
+        console.log(colors)
+        return <DotDistMap 
+        colors={colors}
+        sizes={sizes}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Spike Map"){
         return <SpikeMap/>
