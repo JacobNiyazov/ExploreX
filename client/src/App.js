@@ -37,8 +37,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthContextProvider>
-        <GlobalMapEditContextProvider> 
           <GlobalStoreContextProvider>
+            <GlobalMapEditContextProvider> 
             <MainLayout>
               <ThemeProvider theme={theme}>
                 <AppBanner />
@@ -61,8 +61,8 @@ function App() {
                 <Footer />
               </ThemeProvider>
             </MainLayout>
+            </GlobalMapEditContextProvider>
           </GlobalStoreContextProvider>
-        </GlobalMapEditContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   );

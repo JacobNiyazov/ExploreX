@@ -2,13 +2,14 @@ import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
+import { GlobalMapEditContext } from '../mapEdit'
 
-const ChloroplethMap = ({setPropertyIndex}) => {
+const ChloroplethMap = () => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
     const map = useMap();
-
+    const { mapEdit } = useContext(GlobalMapEditContext);
     useEffect(() => {
         function generateColor(usedColors) {
           let newColor;
@@ -141,7 +142,7 @@ const ChloroplethMap = ({setPropertyIndex}) => {
                         if(feature.geometry.type !== 'Point'){
                             L.DomEvent.stopPropagation(e);
                             // Here we set the index to tempi
-                            setPropertyIndex(tempi)
+                            mapEdit.loadProperties(tempi)
                         }
                     },
                   })
@@ -183,11 +184,10 @@ const ChloroplethMap = ({setPropertyIndex}) => {
             catch (err){
                 console.log(err)
             }
-            
             map.on('click',function(e) {
               console.log('clicked on map');
               // Here we set the index to null
-              setPropertyIndex(null)
+              mapEdit.loadProperties(null)
             });
 
             if(!flag){

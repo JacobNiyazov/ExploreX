@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { AuthContext } from '../auth'
+import GlobalStoreContext from '../store/index.js';
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -9,7 +10,7 @@ export const GlobalMapEditContext = createContext({});
 export const GlobalMapEditActionType = {
     EDIT: "Edit",
     LOAD: "Load",
-
+    EDIT_PROPERTY: "EDIT_PROPERTY"
 }
 
 
@@ -30,10 +31,13 @@ function GlobalMapEditContextProvider(props) {
         // legendBorderColor: '',
         legendTitle: '',
         // legendBorderWidth: '',
-        legendFields: []
+        legendFields: [],
+        currProperties: {},
+        featureIndex: null,
     });
 
     const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;
@@ -56,7 +60,9 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: payload.legendBorderColor,
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
-                  legendFields: payload.legendFields
+                  legendFields: payload.legendFields,
+                  currProperties: mapEdit.currProperties,
+                  featureIndex: mapEdit.featureIndex,
                 });
             }
             case GlobalMapEditActionType.LOAD: {
@@ -76,9 +82,33 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: payload.legendBorderColor,
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
-                  legendFields: payload.legendFields
+                  legendFields: payload.legendFields,
+                  currProperties: mapEdit.currProperties,
+                  featureIndex: mapEdit.featureIndex,
                 });
             }
+            case GlobalMapEditActionType.EDIT_PROPERTY: {
+              return setMapEdit({
+                title: mapEdit.title,
+                hasStroke: mapEdit.hasStroke,
+                strokeColor: mapEdit.strokeColor,
+                strokeWeight: mapEdit.strokeWeight,
+                strokeOpacity: mapEdit.strokeOpacity,
+                hasFill: mapEdit.hasFill,
+                fillColor: mapEdit.fillColor,
+                fillOpacity: mapEdit.fillOpacity,
+                textColor: mapEdit.textColor,
+                textSize: mapEdit.textSize,
+                textFont: mapEdit.textFont,
+                // legendFillColor: payload.legendFillColor,
+                // legendBorderColor: payload.legendBorderColor,
+                legendTitle: mapEdit.legendTitle,
+                // legendBorderWidth: payload.legendBorderWidth,
+                legendFields: mapEdit.legendFields,
+                currProperties: payload.currProperties,
+                featureIndex: payload.featureIndex,
+              });
+          }
             default: {
                 return setMapEdit({
                   title: '',
@@ -96,7 +126,9 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: '',
                   legendTitle: '',
                   // legendBorderWidth: '',
-                  legendFields: []
+                  legendFields: [],
+                  currProperties: mapEdit.currProperties,
+                  featureIndex: mapEdit.featureIndex,
                 });
             }
 
@@ -111,10 +143,53 @@ function GlobalMapEditContextProvider(props) {
     };
 
     mapEdit.loadStyles = async (styles) => {
-      console.log(styles)
+      console.log("STYLES", styles)
       mapEditReducer({
         type: GlobalMapEditActionType.LOAD,
         payload: styles
+      }); 
+    }
+
+    mapEdit.loadProperties = (featureIndex) => {
+      console.log("whats going onnnn", featureIndex)
+      /*
+        1st part -> dont bother changing if we are at the same index
+        2nd part -> changing from one feature to another then save
+        3rd part -> changing from a feature to no feature (clicking outside geojson) then save
+      */
+      if(mapEdit.featureIndex !== featureIndex && ((mapEdit.featureIndex !== null && featureIndex !== null) || (mapEdit.featureIndex !== null && featureIndex === null))){
+        store.editProperties(mapEdit.featureIndex, mapEdit.currProperties)
+      }
+
+      if(featureIndex === null){
+        mapEditReducer({
+          type: GlobalMapEditActionType.EDIT_PROPERTY,
+          payload:{
+            featureIndex: null,
+            currProperties: {}
+          } 
+        }); 
+      }
+      else {
+        mapEditReducer({
+          type: GlobalMapEditActionType.EDIT_PROPERTY,
+          payload:{
+            featureIndex: featureIndex,
+            currProperties: store.currentMap.graphics.geojson.features[featureIndex].properties
+          } 
+        }); 
+      }
+    }
+
+    mapEdit.editProperties = (propertyKey, value) => {
+      let tempProperties = JSON.parse(JSON.stringify(mapEdit.currProperties))
+      tempProperties[propertyKey] = value
+      mapEditReducer({
+        type: GlobalMapEditActionType.EDIT_PROPERTY,
+        payload:{
+          featureIndex: mapEdit.featureIndex,
+          currProperties: tempProperties
+        } 
       }); 
     }
 

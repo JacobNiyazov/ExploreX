@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useContext} from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOMServer from 'react-dom/server';
 import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
 import "leaflet.heat";
+import { GlobalMapEditContext } from '../mapEdit'
 
-const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
+
+const HeatMap = ({ geojsonData, property }) => {
   const map = useMap();
   console.log("what is property: ", property)
-  
+  const { mapEdit } = useContext(GlobalMapEditContext);
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
@@ -65,7 +67,7 @@ const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
           click: (e) => {
             L.DomEvent.stopPropagation(e);
             // Here we set the index to tempi
-            setPropertyIndex(tempi)
+            mapEdit.loadProperties(tempi)
           },
         })
         i+=1
@@ -112,7 +114,7 @@ const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
 map.on('click',function(e) {
   console.log('clicked on map');
   // Here we set the index to null
-  setPropertyIndex(null)
+  mapEdit.loadProperties(null)
 });
 
   return null;

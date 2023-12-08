@@ -2,11 +2,13 @@ import { useContext, useEffect, useRef } from "react";
 import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
+import { GlobalMapEditContext } from '../mapEdit'
 const turf = require('@turf/turf');
 
 
-const SpikeMap = ({setPropertyIndex}) => {
 
+const SpikeMap = () => {
+  const { mapEdit } = useContext(GlobalMapEditContext);
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
@@ -159,7 +161,7 @@ const SpikeMap = ({setPropertyIndex}) => {
                 if(feature.geometry.type !== 'Point'){
                     L.DomEvent.stopPropagation(e);
                     // Here we set the index to tempi
-                    setPropertyIndex(tempi)
+                    mapEdit.loadProperties(tempi)
                 }
             },
           })
@@ -192,7 +194,7 @@ const SpikeMap = ({setPropertyIndex}) => {
       map.on('click',function(e) {
         console.log('clicked on map');
         // Here we set the index to null
-        setPropertyIndex(null)
+        mapEdit.loadProperties(null)
       });
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;

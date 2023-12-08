@@ -3,9 +3,11 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
+import { GlobalMapEditContext } from '../mapEdit'
 
-const DotDistMap = ({setPropertyIndex}) => {
 
+const DotDistMap = () => {
+  const { mapEdit } = useContext(GlobalMapEditContext);
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
@@ -134,7 +136,7 @@ const DotDistMap = ({setPropertyIndex}) => {
                 if(feature.geometry.type !== 'Point'){
                     L.DomEvent.stopPropagation(e);
                     // Here we set the index to tempi
-                    setPropertyIndex(tempi)
+                    mapEdit.loadProperties(tempi)
                 }
             },
           })
@@ -166,7 +168,7 @@ const DotDistMap = ({setPropertyIndex}) => {
       map.on('click',function(e) {
         console.log('clicked on map');
         // Here we set the index to null
-        setPropertyIndex(null)
+        mapEdit.loadProperties(null)
       });
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;

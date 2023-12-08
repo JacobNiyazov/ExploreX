@@ -11,6 +11,7 @@ import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
 //import PublishMapModal from './PublishMapModal.js'
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
+import { GlobalMapEditContext } from '../mapEdit'
 
 const EditSidePanel = ({
     title,
@@ -36,7 +37,7 @@ const EditSidePanel = ({
     propertyIndex
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    
+    const { mapEdit } = useContext(GlobalMapEditContext);
     const handleFont = (event) => {
         setTextFont(event.target.value)
     }
@@ -59,10 +60,10 @@ const EditSidePanel = ({
         })
     }
 
-    const handleProperty = (e, key, propertyIndex) =>{
+    const handleProperty = (e, key) =>{
         // Here we update the change store.currentMap
         // function would change value at store.currentMap.graphics.geojson.features[propertyIndex].properties[key]
-        store.editProperties(propertyIndex, key, e.target.value)
+        mapEdit.editProperties(key, e.target.value)
     }
 
     const handleRange = (event) => {
@@ -136,7 +137,7 @@ const EditSidePanel = ({
         <SidePanelGrid container direction="column" item xs={4}>
             <AccordianContainer item xs>
                 <TitleContainer item>  
-                    <TitleTextField label="Title" value={title} onChange={handleTitle} data-testid="title-input"/>
+                    <TitleTextField label="Title" value={mapEdit.title} onChange={handleTitle} data-testid="title-input"/>
                 </TitleContainer>
                 {/* Edit Text Options */}
                 <EditAccordion disableGutters data-testid="edit-accordion">
@@ -192,21 +193,20 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Text Options */}
-                {console.log(propertyIndex)}
-                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyIndex==null}>
+                <EditAccordion disableGutters data-testid="edit-accordion" disabled={mapEdit.featureIndex==null}>
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Properties</Typography>
                     </EditAccordionSummary>
                     <PropertyDetails sx={{padding:0}}>
                         <CustomList>
                             {
-                                propertyIndex !== null ?
-                                Object.keys(store.currentMap.graphics.geojson.features[propertyIndex].properties).map((k, index, array)=>{
+                                mapEdit.featureIndex !== null ?
+                                Object.keys(mapEdit.currProperties).map((k, index, array)=>{
                                     return (
                                         <div key={k}>
                                             <CustomListItem>
                                                 <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
-                                                <ColorTextField variant="standard" value={store.currentMap.graphics.geojson.features[propertyIndex].properties[k]} onChange={(e) => {handleProperty(e, k, propertyIndex)}}/>
+                                                <ColorTextField variant="standard" value={mapEdit.currProperties[k]} onChange={(e) => {handleProperty(e, k)}}/>
                                             </CustomListItem>
                                             {index !== array.length - 1 && <Divider sx={{ borderColor: "white" }} />}
                                         </div>

@@ -5,23 +5,12 @@ import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 import * as ReactDOMServer from 'react-dom/server';
 import { Box, Typography } from '@mui/material';
+import { GlobalMapEditContext } from '../mapEdit'
 
-const VoronoiMap = ({setPropertyIndex}) => {
 
-    /*function getRandomShade(){
-        // Generate random values for the red and green components
-        const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-        const green = Math.floor(Math.random() * 128); // Random green value (0-127)
-      
-        // Create a random shade of orange-red by combining red and green
-        const blue = 0; // Set blue to 0 for shades of orange
-        const alpha = 1; // Alpha (opacity) value
-      
-        // Construct the RGB color string
-        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-      
-        return color;
-    }*/
+
+const VoronoiMap = () => {
+    const { mapEdit } = useContext(GlobalMapEditContext);
     // Format geojson: 1 Polygon/Multipolygon and points
     // Polygon will be used as the bounding of the voronoi map
     const { store } = useContext(GlobalStoreContext);
@@ -88,7 +77,7 @@ const VoronoiMap = ({setPropertyIndex}) => {
                     if(feature.geometry.type !== 'Point'){
                         L.DomEvent.stopPropagation(e);
                         // Here we set the index to tempi
-                        setPropertyIndex(tempi)
+                        mapEdit.loadProperties(tempi)
                     }
                 },
             })
@@ -125,7 +114,7 @@ const VoronoiMap = ({setPropertyIndex}) => {
     map.on('click',function(e) {
         console.log('clicked on map');
         // Here we set the index to null
-        setPropertyIndex(null)
+        mapEdit.loadProperties(null)
     });
     return null
 }

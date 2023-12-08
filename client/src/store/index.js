@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
-import { GlobalMapEditContext } from '../mapEdit'
+//import { GlobalMapEditContext } from '../mapEdit'
 import maps from '../store/map-request-api';
 
 export const GlobalStoreContext = createContext({});
@@ -66,7 +66,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     const { auth } = useContext(AuthContext);
-    const { mapEdit } = useContext(GlobalMapEditContext);
+    //const { mapEdit } = useContext(GlobalMapEditContext);
     const navigate = useNavigate();
 
 
@@ -288,7 +288,7 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         console.log("map: ",response.data.map);
                         if(response.data.success){
-                            let tempMap = response.data.map;
+                            /*let tempMap = response.data.map;
                             let styles = {
                                 title: tempMap.title,
                                 hasStroke: tempMap.graphics.stroke.hasStroke,
@@ -307,7 +307,7 @@ function GlobalStoreContextProvider(props) {
                                 // legendBorderWidth: '',
                                 legendFields: []
                             }
-                            mapEdit.loadStyles(styles);
+                            mapEdit.loadStyles(styles);*/
 
                             storeReducer({
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
@@ -856,9 +856,9 @@ function GlobalStoreContextProvider(props) {
             
     }
 
-    store.editProperties = (featureIndex, propertyKey, value) =>{
+    store.editProperties = (featureIndex, properties) =>{
         let tempMap = JSON.parse(JSON.stringify(store.currentMap))
-        tempMap.graphics.geojson.features[featureIndex].properties[propertyKey] = value
+        tempMap.graphics.geojson.features[featureIndex].properties = JSON.parse(JSON.stringify(properties))
         storeReducer({
             type: GlobalStoreActionType.EDIT_MAP,
             payload: {

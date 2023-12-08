@@ -238,7 +238,7 @@ createMap = async (req,res) =>{
             strokeColor: "#B9B0B0",
             strokeWeight: 3.0,
             strokeOpacity: 1.0,
-        }
+            }
         graphic.text = {
                 textColor: "#B9B0B0",
                 textFont: "Nova Square",

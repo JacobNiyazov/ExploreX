@@ -18,10 +18,12 @@ import SpikeMap from './SpikeMap.js';
 import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
+import { GlobalMapEditContext } from '../mapEdit'
 
-const MapEditInner = ({setPropertyIndex}) =>{
+
+const MapEditInner = () =>{
     const { store } = useContext(GlobalStoreContext);
-
+    const { mapEdit } = useContext(GlobalMapEditContext);
     function getRandomShade(){
         // Generate random values for the red and green components
         const red = Math.floor(Math.random() * 256); // Random red value (0-255)
@@ -75,7 +77,7 @@ const MapEditInner = ({setPropertyIndex}) =>{
                     console.log("huh")
                         L.DomEvent.stopPropagation(e);
                         // Here we set the index to tempi
-                        setPropertyIndex(tempi)
+                        mapEdit.loadProperties(tempi)
                     },
                 })
                 i+=1
@@ -86,21 +88,21 @@ const MapEditInner = ({setPropertyIndex}) =>{
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistMap setPropertyIndex = {setPropertyIndex}/>
+        return <DotDistMap />
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap setPropertyIndex = {setPropertyIndex}/>
+        return <SpikeMap />
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
-            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property} setPropertyIndex = {setPropertyIndex}/>
+            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property} />
         }
     }
     else if(store.currentMap.type === "Chloropleth Map"){
-        return <ChloroplethMap setPropertyIndex = {setPropertyIndex}/>
+        return <ChloroplethMap />
     }
     else if(store.currentMap.type === "Voronoi Map"){
-        return <VoronoiMap setPropertyIndex = {setPropertyIndex}/>
+        return <VoronoiMap />
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
