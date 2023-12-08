@@ -217,10 +217,10 @@ createMap = async (req,res) =>{
             {
                 selectAll: false,
                 size: 0,
-                dotColor: "#000000",
+                dotColor: "#ff24bd",
                 color: "#FFFFFF",
                 range:3,
-                spikeColor: "#FFFFFF",
+                spikeColor: "#ff24bd",
                 dotPoints: null,
                 dotScale: null,
                 property: null,

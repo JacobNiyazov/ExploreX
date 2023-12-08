@@ -18,6 +18,8 @@ import SpikeMap from './SpikeMap.js';
 import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
+import SpikeLegend from "./SpikeLegend.js";
+import DotDistLegend from "./DotDistLegend.js";
 
 const MapEditInner = ({
     colors,
@@ -28,6 +30,7 @@ const MapEditInner = ({
     range,
     hideLegend,}) =>{
     const { store } = useContext(GlobalStoreContext);
+
 
     // const map = useMap();
     // const layerRef = useRef(null);
@@ -87,7 +90,6 @@ const MapEditInner = ({
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        console.log(colors)
         return <DotDistMap 
         colors={colors}
         sizes={sizes}
@@ -96,7 +98,12 @@ const MapEditInner = ({
         hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap/>
+        return <SpikeMap
+        colors={colors}
+        sizes={sizes}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
@@ -114,6 +121,17 @@ const MapEditInner = ({
     // }
 
     return null;
+}
+
+const DynamicLegend = ({colors}) => {
+    const { store } = useContext(GlobalStoreContext);
+
+    if(store.currentMap.type === "Spike Map"){
+        return <SpikeLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Dot Distribution Map"){
+        return <DotDistLegend colors={colors}/>
+    }
 }
 
 const MapEdit = ({
@@ -294,7 +312,7 @@ const MapEdit = ({
                         </BaseMapContainer>
                         <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} >
                             <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
-                            <Box sx={{display:'flex', alignItems: 'center'}}>
+                            {/* <Box sx={{display:'flex', alignItems: 'center'}}>
                                 <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
                                 <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
                                 <Popover 
@@ -362,7 +380,8 @@ const MapEdit = ({
                                         renderers={false}
                                     />
                                 </Popover>
-                            </Box>
+                            </Box> */}
+                            <DynamicLegend colors={colors}/>
                         </LegendContainer>
                     </ControlGrid>
                     :null
