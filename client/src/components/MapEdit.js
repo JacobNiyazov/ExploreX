@@ -106,12 +106,6 @@ const MapEditInner = ({setPropertyIndex}) =>{
         loadMap(store.currentMap.graphics.geojson);
     }
 
-    map.on('click',function(e) {
-        console.log('clicked on map');
-        // Here we set the index to null
-        setPropertyIndex(null)
-    });
-
     return null;
 }
 

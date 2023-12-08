@@ -153,7 +153,6 @@ const SpikeMap = ({setPropertyIndex}) => {
       let i = 0;
       L.geoJSON(geojsonData, {
         onEachFeature: function (feature, layer) {
-          i+=1
           let tempi = i; //kept passing last index so save it in temp
           layer.on({
             click: (e) => {
@@ -164,6 +163,7 @@ const SpikeMap = ({setPropertyIndex}) => {
                 }
             },
           })
+          i+=1
         },
         style: function (feature) {
             switch (feature.geometry.type) {
@@ -188,6 +188,12 @@ const SpikeMap = ({setPropertyIndex}) => {
       catch (err){
         console.log(err)
       }
+
+      map.on('click',function(e) {
+        console.log('clicked on map');
+        // Here we set the index to null
+        setPropertyIndex(null)
+      });
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;

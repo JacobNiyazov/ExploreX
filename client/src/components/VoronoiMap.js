@@ -122,7 +122,11 @@ const VoronoiMap = ({setPropertyIndex}) => {
         }
     }).addTo(map);
     map.fitBounds(L.geoJSON(clippedPolygons).getBounds());
-
+    map.on('click',function(e) {
+        console.log('clicked on map');
+        // Here we set the index to null
+        setPropertyIndex(null)
+    });
     return null
 }
 

@@ -59,7 +59,7 @@ const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
             maxHeight: 200
           }
         );
-        i+=1
+        
         let tempi = i; //kept passing last index so save it in temp
         layer.on({
           click: (e) => {
@@ -68,6 +68,7 @@ const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
             setPropertyIndex(tempi)
           },
         })
+        i+=1
       },
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
@@ -108,7 +109,11 @@ const HeatMap = ({ geojsonData, property, setPropertyIndex }) => {
     });
   }
 };
-
+map.on('click',function(e) {
+  console.log('clicked on map');
+  // Here we set the index to null
+  setPropertyIndex(null)
+});
 
   return null;
 }

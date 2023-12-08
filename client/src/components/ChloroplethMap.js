@@ -135,7 +135,6 @@ const ChloroplethMap = ({setPropertyIndex}) => {
             let i = 0;
             L.geoJSON(geojsonData, {
                 onEachFeature: function (feature, layer) {
-                  i+=1
                   let tempi = i; //kept passing last index so save it in temp
                   layer.on({
                     click: (e) => {
@@ -146,6 +145,7 @@ const ChloroplethMap = ({setPropertyIndex}) => {
                         }
                     },
                   })
+                  i+=1
                 },
                 style: (feature) => {
                     let fillColor;
@@ -176,13 +176,20 @@ const ChloroplethMap = ({setPropertyIndex}) => {
                   return null;
                 }
               }).addTo(chloroLayerGroup);
-
+              
             try{
                 map.fitBounds(chloroLayerGroup.getBounds());
             }
             catch (err){
                 console.log(err)
             }
+            
+            map.on('click',function(e) {
+              console.log('clicked on map');
+              // Here we set the index to null
+              setPropertyIndex(null)
+            });
+
             if(!flag){
               coloring["isString"] = false;
               return {
