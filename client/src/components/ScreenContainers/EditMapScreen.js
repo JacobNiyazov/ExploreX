@@ -31,27 +31,6 @@ const EditScreen = () => {
                 navigate('/profile');
             }
             
-            let tempMap = JSON.parse(JSON.stringify(store.currentMap));
-            let styles = {
-                title: tempMap.title,
-                hasStroke: tempMap.graphics.stroke.hasStroke,
-                strokeColor: tempMap.graphics.stroke.strokeColor,
-                strokeWeight: tempMap.graphics.stroke.strokeWeight,
-                strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
-                hasFill: tempMap.graphics.fill.hasFill,
-                fillColor: tempMap.graphics.fill.fillColor,
-                fillOpacity: tempMap.graphics.fill.fillOpacity,
-                textColor: tempMap.graphics.text.textColor,
-                textSize: tempMap.graphics.text.textSize,
-                textFont: tempMap.graphics.text.textFont,
-                // legendFillColor: '',
-                // legendBorderColor: '',
-                legendTitle: tempMap.graphics.legend.legendTitle,
-                // legendBorderWidth: '',
-                legendFields: []
-            }
-            mapEdit.loadStyles(styles);
-            
             setLoading(false);
             }
         };
@@ -64,11 +43,42 @@ const EditScreen = () => {
                 await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
             }
         };
-
         waitForCurrentMap();
         
     }, [store, store.currentMap, loading]);
 
+    useEffect(()=>{
+        const waitForCurrentMap = async () => {
+            if (store.currentMap === null) {
+                // Wait until authentication check is completed
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+                waitForCurrentMap(); // Re-check status
+            }
+            else{
+                let tempMap = JSON.parse(JSON.stringify(store.currentMap));
+                let styles = {
+                    title: tempMap.title,
+                    hasStroke: tempMap.graphics.stroke.hasStroke,
+                    strokeColor: tempMap.graphics.stroke.strokeColor,
+                    strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                    strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                    hasFill: tempMap.graphics.fill.hasFill,
+                    fillColor: tempMap.graphics.fill.fillColor,
+                    fillOpacity: tempMap.graphics.fill.fillOpacity,
+                    textColor: tempMap.graphics.text.textColor,
+                    textSize: tempMap.graphics.text.textSize,
+                    textFont: tempMap.graphics.text.textFont,
+                    // legendFillColor: '',
+                    // legendBorderColor: '',
+                    legendTitle: tempMap.graphics.legend.legendTitle,
+                    // legendBorderWidth: '',
+                    legendFields: []
+                }
+                mapEdit.loadStyles(styles);
+            }
+        };
+        waitForCurrentMap();
+    }, [loading])
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     

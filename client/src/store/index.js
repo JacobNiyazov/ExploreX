@@ -857,6 +857,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.editProperties = (featureIndex, properties) =>{
+        console.log("WE IN HERE", featureIndex, properties)
         let tempMap = JSON.parse(JSON.stringify(store.currentMap))
         tempMap.graphics.geojson.features[featureIndex].properties = JSON.parse(JSON.stringify(properties))
         storeReducer({

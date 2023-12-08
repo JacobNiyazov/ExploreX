@@ -123,7 +123,7 @@ createMap = async (req,res) =>{
                                     tempMap._id = map._id
                                     return res.status(201).json({
                                         success: true,
-                                        map: tempMap
+                                        map: tempMap,
                                     })
                                 })
                                 .catch(error => {
@@ -186,7 +186,10 @@ createMap = async (req,res) =>{
         let graphic = {}
 
         var input = new Buffer.from(JSON.stringify(geojsonData), 'utf8')
+        let origSize = Buffer.byteLength(input)
         var deflated= zlib.deflateSync(input);
+
+        let size = Buffer.byteLength(deflated)
 
         graphic.geojson = deflated
         // Here we give basic properties to the graphics. Here we should give special properties based on the type of map To be done tomorrow
@@ -291,7 +294,8 @@ createMap = async (req,res) =>{
                                     tempMap._id = map._id;
                                     return res.status(201).json({
                                         success: true,
-                                        map: tempMap
+                                        map: tempMap,
+                                        size: [size, origSize],
                                     })
                                 })
                                 .catch(error => {

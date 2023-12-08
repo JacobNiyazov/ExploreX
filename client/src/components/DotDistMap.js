@@ -12,6 +12,10 @@ const DotDistMap = () => {
   const storeRef = useRef(store);
   const map = useMap();
 
+  function handleLoadProperties(tempi){
+    mapEdit.loadProperties(tempi)
+  }
+
   useEffect(() => {
     function calculateMedian(values) {
       values.sort((a, b) => a - b);
@@ -136,7 +140,7 @@ const DotDistMap = () => {
                 if(feature.geometry.type !== 'Point'){
                     L.DomEvent.stopPropagation(e);
                     // Here we set the index to tempi
-                    mapEdit.loadProperties(tempi)
+                    handleLoadProperties(tempi)
                 }
             },
           })

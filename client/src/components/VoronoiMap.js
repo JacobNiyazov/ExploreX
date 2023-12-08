@@ -40,8 +40,6 @@ const VoronoiMap = () => {
     voronoiPolygons.features.forEach(feature=>{
         let clipped = turf.intersect(polygon[0], feature)
 
-        console.log("Clipped poly: ", clipped)
-
         // returns null if no intersection exists, so ignore
         if(clipped != null){
             clippedPolygons.features.push(clipped);
@@ -55,7 +53,6 @@ const VoronoiMap = () => {
     let i = 0;
     L.geoJSON(clippedPolygons, {
         onEachFeature: function (feature, layer) {
-            i+=1
             let tempi = i; //kept passing last index so save it in temp
             // Customize popup content
             layer.bindPopup(Object.keys(feature.properties).map(function(k) {
@@ -81,7 +78,7 @@ const VoronoiMap = () => {
                     }
                 },
             })
-
+            i+=1
             if(feature.geometry.type === 'Polygon'){
                 layer.setStyle({
                 fillColor: '#FFFFFF',
@@ -97,7 +94,6 @@ const VoronoiMap = () => {
                 color: '#000000',
                 });}*/
            
-            console.log(feature, layer, tempi)
         },
         pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, {

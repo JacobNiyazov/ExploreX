@@ -41,6 +41,7 @@ function GlobalMapEditContextProvider(props) {
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;
+        console.log(type, payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
@@ -83,8 +84,8 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields,
-                  currProperties: mapEdit.currProperties,
-                  featureIndex: mapEdit.featureIndex,
+                  currProperties: {},
+                  featureIndex: null,
                 });
             }
             case GlobalMapEditActionType.EDIT_PROPERTY: {
@@ -127,8 +128,8 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: '',
                   // legendBorderWidth: '',
                   legendFields: [],
-                  currProperties: mapEdit.currProperties,
-                  featureIndex: mapEdit.featureIndex,
+                  currProperties: {},
+                  featureIndex: null,
                 });
             }
 
@@ -151,12 +152,12 @@ function GlobalMapEditContextProvider(props) {
     }
 
     mapEdit.loadProperties = (featureIndex) => {
-      console.log("whats going onnnn", featureIndex)
       /*
         1st part -> dont bother changing if we are at the same index
         2nd part -> changing from one feature to another then save
         3rd part -> changing from a feature to no feature (clicking outside geojson) then save
       */
+      console.log(mapEdit)
       if(mapEdit.featureIndex !== featureIndex && ((mapEdit.featureIndex !== null && featureIndex !== null) || (mapEdit.featureIndex !== null && featureIndex === null))){
         store.editProperties(mapEdit.featureIndex, mapEdit.currProperties)
       }
@@ -182,8 +183,10 @@ function GlobalMapEditContextProvider(props) {
     }
 
     mapEdit.editProperties = (propertyKey, value) => {
+      console.log(mapEdit)
       let tempProperties = JSON.parse(JSON.stringify(mapEdit.currProperties))
       tempProperties[propertyKey] = value
+
       mapEditReducer({
         type: GlobalMapEditActionType.EDIT_PROPERTY,
         payload:{
@@ -192,6 +195,7 @@ function GlobalMapEditContextProvider(props) {
         } 
       }); 
     }
+
 
    return (
     <GlobalMapEditContext.Provider value={{
