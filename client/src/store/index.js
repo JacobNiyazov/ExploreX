@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
+import { GlobalMapEditContext } from '../mapEdit'
 import maps from '../store/map-request-api';
 
 export const GlobalStoreContext = createContext({});
@@ -65,6 +66,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     const { auth } = useContext(AuthContext);
+    const { mapEdit } = useContext(GlobalMapEditContext);
     const navigate = useNavigate();
 
 
@@ -286,6 +288,27 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         console.log("map: ",response.data.map);
                         if(response.data.success){
+                            let tempMap = response.data.map;
+                            let styles = {
+                                title: tempMap.title,
+                                hasStroke: tempMap.graphics.stroke.hasStroke,
+                                strokeColor: tempMap.graphics.stroke.strokeColor,
+                                strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                                strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                                hasFill: tempMap.graphics.fill.hasFill,
+                                fillColor: tempMap.graphics.fill.fillColor,
+                                fillOpacity: tempMap.graphics.fill.fillOpacity,
+                                textColor: tempMap.graphics.text.textColor,
+                                textSize: tempMap.graphics.text.textSize,
+                                textFont: tempMap.graphics.text.textFont,
+                                // legendFillColor: '',
+                                // legendBorderColor: '',
+                                legendTitle: tempMap.graphics.legend.legendTitle,
+                                // legendBorderWidth: '',
+                                legendFields: []
+                            }
+                            mapEdit.loadStyles(styles);
+
                             storeReducer({
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
                                 payload: {
@@ -453,6 +476,32 @@ function GlobalStoreContextProvider(props) {
           window.removeEventListener('DOMContentLoaded', updateCurrentPage);
         };
       }, [storeRef]);
+    //   useEffect(() => {
+    //     if(store.currentPage === store.currentPageType.editAccScreen){
+    //         let tempMap = store.currentMap;
+    //         let styles = {
+    //             title: tempMap.title,
+    //             hasStroke: tempMap.graphics.stroke.hasStroke,
+    //             strokeColor: tempMap.graphics.stroke.strokeColor,
+    //             strokeWeight: tempMap.graphics.stroke.strokeWeight,
+    //             strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+    //             hasFill: tempMap.graphics.fill.hasFill,
+    //             fillColor: tempMap.graphics.fill.fillColor,
+    //             fillOpacity: tempMap.graphics.fill.fillOpacity,
+    //             textColor: tempMap.graphics.text.textColor,
+    //             textSize: tempMap.graphics.text.textSize,
+    //             textFont: tempMap.graphics.text.textFont,
+    //             // legendFillColor: '',
+    //             // legendBorderColor: '',
+    //             legendTitle: tempMap.graphics.legend.legendTitle,
+    //             // legendBorderWidth: '',
+    //             legendFields: []
+    //         }
+    //         console.log(styles)
+    //         mapEdit.loadStyles(styles);
+    //     }
+        
+    //     }, [store.currentMap]);
 
     store.setCurrentEditMap = (currentPage) =>{
         console.log("current Page: ", currentPage);

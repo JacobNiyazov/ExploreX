@@ -193,11 +193,11 @@ createMap = async (req,res) =>{
         graphic.legend =
             {
                 hideLegend: false,
-                fillColor: "#FFFFFF",
-                borderColor: "#FFFFFF",
-                borderWidth: 1,
-                title: "Example Title",
-                fields:[
+                legendFillColor: "#FFFFFF",
+                legendBorderColor: "#ff24bd",
+                legendBorderWidth: 1,
+                legendTitle: "Example Title",
+                legendFields:[
                 {
                     fieldColor:"#FF0000",
                     fieldText:"Field 1"
@@ -228,16 +228,21 @@ createMap = async (req,res) =>{
                 spikeLegend: null,
                 chloroLegend: null,
         }
-        graphic.region = {
-                fillColor: "#FFFFFF",
-                borderColor: "#FFFFFF",
-                borderWidth: 1,
-                size: 12
+        graphic.fill = {
+                hasFill: true,
+                fillColor: "#B9B0B0",
+                fillOpacity: 0.7,
             }
+        graphic.stroke = {
+            hasStroke: true,
+            strokeColor: "#B9B0B0",
+            strokeWeight: 3.0,
+            strokeOpacity: 1.0,
+        }
         graphic.text = {
-                color: "#FFFFFF",
-                font: "Nova Square",
-                size: 12
+                textColor: "#B9B0B0",
+                textFont: "Nova Square",
+                textSize: 12
             }
         graphic.ownerUsername = body.ownerUsername
 
