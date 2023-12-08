@@ -73,7 +73,8 @@ export const LegendContainer = styled(Box)({
     borderRadius: "10px",
     marginRight: "10px",
     alignItems: 'center',
-    overflow: 'auto'
+    overflow: 'auto',
+    justifyContent: 'center'
 })
 
 export const LegendTextField = styled(TextField)({

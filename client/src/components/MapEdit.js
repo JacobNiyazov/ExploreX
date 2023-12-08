@@ -18,32 +18,42 @@ import SpikeMap from './SpikeMap.js';
 import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
-import GlobalMapEditContext from '../mapEdit/index.js'
+import SpikeLegend from "./SpikeLegend.js";
+import DotDistLegend from "./DotDistLegend.js";
 
-
-const MapEditInner = () =>{
+const MapEditInner = ({
+    colors,
+    sizes,
+    opacities,
+    hasStroke,
+    hasFill,
+    range,
+    hideLegend,}) =>{
     const { store } = useContext(GlobalStoreContext);
-    const {mapEdit} = useContext(GlobalMapEditContext)
-    function getRandomShade(){
-        // Generate random values for the red and green components
-        const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-        const green = Math.floor(Math.random() * 128); // Random green value (0-127)
-      
-        // Create a random shade of orange-red by combining red and green
-        const blue = 0; // Set blue to 0 for shades of orange
-        const alpha = 1; // Alpha (opacity) value
-      
-        // Construct the RGB color string
-        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-      
-        return color;
-    }
 
-    const map = useMap();
 
-    function loadMap(geojson){
+    // const map = useMap();
+    // const layerRef = useRef(null);
+    // useEffect(() => {
+    //     if (layerRef.current) {
+    //         // If there's an existing layer, remove it
+    //         layerRef.current.remove();
+    //     }
+
+    //     // Load the new layer
+    //     layerRef.current = loadMap(store.currentMap.graphics.geojson, map, colors, sizes, opacities, hasStroke, hasFill);
+
+    //     // Cleanup function to remove the layer when the component unmounts or dependencies change
+    //     return () => {
+    //         if (layerRef.current) {
+    //             layerRef.current.remove();
+    //         }
+    //     };
+    // }, [store, colors, sizes, opacities, hasStroke, hasFill]);
+
+    function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
         
-        L.geoJSON(geojson, {
+        const regionLayer = L.geoJSON(geojson, {
             onEachFeature: function (feature, layer) {
                 
                 // Customize popup content
@@ -60,26 +70,40 @@ const MapEditInner = () =>{
                 }).join(""), {
                     maxHeight: 200
                 });
-                if(feature.geometry.type === 'Polygon'){
-                var shade = getRandomShade();
-                layer.setStyle({
-                fillColor: shade,
-                weight: 3,
-                opacity: 1,
-                color: shade,
-                fillOpacity: 0.5
-                });}
+                if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+                    // var shade = getRandomShade();
+                    layer.setStyle({
+                    stroke: hasStroke,
+                    color: colors.StrokeColor,
+                    weight: sizes.StrokeWeight,
+                    opacity: opacities.StrokeOpacity,
+                    fill: hasFill,
+                    fillColor: colors.FillColor,
+                    fillOpacity: opacities.FillOpacity,
+                    });
+                }
                 console.log(feature, layer)
             }
         }).addTo(map);
         map.fitBounds(L.geoJSON(geojson).getBounds());
+        return regionLayer;
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistMap/>
+        return <DotDistMap 
+        colors={colors}
+        sizes={sizes}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap/>
+        return <SpikeMap
+        colors={colors}
+        sizes={sizes}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
@@ -92,19 +116,31 @@ const MapEditInner = () =>{
     else if(store.currentMap.type === "Voronoi Map"){
         return <VoronoiMap />
     }
-    else{
-        loadMap(store.currentMap.graphics.geojson);
-    }
+    // else{
+    //     loadMap(store.currentMap.graphics.geojson);
+    // }
+
     return null;
+}
+
+const DynamicLegend = ({colors}) => {
+    const { store } = useContext(GlobalStoreContext);
+
+    if(store.currentMap.type === "Spike Map"){
+        return <SpikeLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Dot Distribution Map"){
+        return <DotDistLegend colors={colors}/>
+    }
 }
 
 const MapEdit = ({
     colors,
-    font,
-    size,
+    sizes,
+    opacities,
+    hasStroke,
+    hasFill,
     range,
-    borderWidth,
-    selectAll,
     hideLegend,
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
@@ -243,7 +279,15 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner />
+                <MapEditInner 
+                colors={colors}
+                sizes={sizes}
+                opacities={opacities}
+                hasStroke={hasStroke}
+                hasFill={hasFill}
+                range={range}
+                hideLegend={hideLegend}
+                />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -281,7 +325,7 @@ const MapEdit = ({
                         </BaseMapContainer>
                         <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} >
                             <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
-                            <Box sx={{display:'flex', alignItems: 'center'}}>
+                            {/* <Box sx={{display:'flex', alignItems: 'center'}}>
                                 <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
                                 <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
                                 <Popover 
@@ -349,7 +393,8 @@ const MapEdit = ({
                                         renderers={false}
                                     />
                                 </Popover>
-                            </Box>
+                            </Box> */}
+                            <DynamicLegend colors={colors}/>
                         </LegendContainer>
                     </ControlGrid>
                     :null

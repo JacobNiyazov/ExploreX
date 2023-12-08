@@ -284,6 +284,7 @@ function GlobalStoreContextProvider(props) {
                         if(response.data.success){
                             let tempMap = response.data.map;
                             let styles = {
+                                id: tempMap._id,
                                 title: tempMap.title,
                                 hasStroke: tempMap.graphics.stroke.hasStroke,
                                 strokeColor: tempMap.graphics.stroke.strokeColor,
@@ -299,7 +300,9 @@ function GlobalStoreContextProvider(props) {
                                 // legendBorderColor: '',
                                 legendTitle: tempMap.graphics.legend.legendTitle,
                                 // legendBorderWidth: '',
-                                legendFields: []
+                                legendFields: [],
+                                dotColor: tempMap.graphics.typeSpecific.dotColor,
+                                spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                             }
                             mapEdit.loadStyles(styles);
 
@@ -328,7 +331,7 @@ function GlobalStoreContextProvider(props) {
                     payload: {
                         currentPage: currentPage,
                         currentMaps: store.currentMaps,
-                        currentMap: store.currentMap
+                        currentMap: null
                     }
                 }
             );
@@ -419,6 +422,29 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(id);
                         console.log("map: ",response.data.map);
                         if(response.data.success){
+                            let tempMap = response.data.map;
+                            let styles = {
+                                id: tempMap._id,
+                                title: tempMap.title,
+                                hasStroke: tempMap.graphics.stroke.hasStroke,
+                                strokeColor: tempMap.graphics.stroke.strokeColor,
+                                strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                                strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                                hasFill: tempMap.graphics.fill.hasFill,
+                                fillColor: tempMap.graphics.fill.fillColor,
+                                fillOpacity: tempMap.graphics.fill.fillOpacity,
+                                textColor: tempMap.graphics.text.textColor,
+                                textSize: tempMap.graphics.text.textSize,
+                                textFont: tempMap.graphics.text.textFont,
+                                // legendFillColor: '',
+                                // legendBorderColor: '',
+                                legendTitle: tempMap.graphics.legend.legendTitle,
+                                // legendBorderWidth: '',
+                                legendFields: [],
+                                dotColor: tempMap.graphics.typeSpecific.dotColor,
+                                spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                            }
+                            mapEdit.loadStyles(styles);
                             storeReducer({
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
                                 payload: {
@@ -443,7 +469,7 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentPage: dict[pageURL],
                     currentMaps: store.currentMaps,
-                    currentMap: store.currentMap
+                    currentMap: null
 
                 }
             });
@@ -607,7 +633,8 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,
                     payload: {
                         currentPage: store.currentPageType.mapFeed,
-                        currentMaps: filteredMaps
+                        currentMaps: filteredMaps,
+                        currentMap: null
                     },
                 });
                 navigate('/feed');
@@ -656,6 +683,29 @@ function GlobalStoreContextProvider(props) {
             let response = await maps.forkMap(id);
             if(response.data.success)
             {
+                let tempMap = response.data.map;
+                let styles = {
+                    id: tempMap._id,
+                    title: tempMap.title,
+                    hasStroke: tempMap.graphics.stroke.hasStroke,
+                    strokeColor: tempMap.graphics.stroke.strokeColor,
+                    strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                    strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                    hasFill: tempMap.graphics.fill.hasFill,
+                    fillColor: tempMap.graphics.fill.fillColor,
+                    fillOpacity: tempMap.graphics.fill.fillOpacity,
+                    textColor: tempMap.graphics.text.textColor,
+                    textSize: tempMap.graphics.text.textSize,
+                    textFont: tempMap.graphics.text.textFont,
+                    // legendFillColor: '',
+                    // legendBorderColor: '',
+                    legendTitle: tempMap.graphics.legend.legendTitle,
+                    // legendBorderWidth: '',
+                    legendFields: [],
+                    dotColor: tempMap.graphics.typeSpecific.dotColor,
+                    spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                }
+                mapEdit.loadStyles(styles);
                 await storeReducer({
                     type: GlobalStoreActionType.FORK_MAP,
                     payload: {
@@ -717,7 +767,8 @@ function GlobalStoreContextProvider(props) {
                                 type: GlobalStoreActionType.DELETE_MAP,
                                 payload: {
                                     currentPage: currentPage,
-                                    currentMaps: mapList
+                                    currentMaps: mapList,
+                                    currentMap: null
                                 },
                             });
             }

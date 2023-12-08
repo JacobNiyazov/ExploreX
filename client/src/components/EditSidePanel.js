@@ -236,7 +236,7 @@ const EditSidePanel = ({
 
                 {/* Edit Fill Options */}
                 {console.log(store.currentMap)}{
-                    store.currentMap.type !== "Heat Map" ?
+                    store.currentMap.type !== "Choropleth Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Fill</Typography>
@@ -275,7 +275,7 @@ const EditSidePanel = ({
 
                 {/* Edit Stroke Options */}
                 {
-                    store.currentMap.type !== "Heat Map" ?
+                    
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Stroke</Typography>
@@ -324,7 +324,6 @@ const EditSidePanel = ({
                             </CustomList>
                         </AccordionDetails>
                     </EditAccordion>
-                    : null
                 }
 
                 {/* Edit Heat Map options */}
@@ -363,7 +362,7 @@ const EditSidePanel = ({
 
                 {/* Edit Dot Map Options */}
                 {
-                    store.currentMap.type === "Dot Map" ?
+                    store.currentMap.type === "Dot Distribution Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion dot-map">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Dot Map Options</Typography>
