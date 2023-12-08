@@ -14,6 +14,7 @@ const ChoroLegend = ({
     handleNewColor,
 }) => {
     console.log("MADE IT")
+    console.log(legendFields)
     const generateLegendBoxes = () => {
         const boxes = [];
         for (let i = 0; i < legendFields.length; i++) {
