@@ -17,6 +17,46 @@ const DotDistMap = ({
   const map = useMap();
 
   useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              layer.setStyle({
+              stroke: hasStroke,
+              color: colors.StrokeColor,
+              weight: sizes.StrokeWeight,
+              opacity: opacities.StrokeOpacity,
+              fill: hasFill,
+              fillColor: colors.FillColor,
+              fillOpacity: opacities.FillOpacity,
+              });
+          }
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+      try{
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+    }
+
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    updateLayers(geojsonData);
+    return () => {
+      // dotsLayerGroup.remove();
+      regionLayerGroup.remove();
+    };
+
+
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
+  
+
+  useEffect(() => {
     function calculateMedian(values) {
       values.sort((a, b) => a - b);
       var half = Math.floor(values.length / 2);
@@ -114,39 +154,40 @@ const DotDistMap = ({
       };
     }
     const dotsLayerGroup = L.featureGroup().addTo(map);
-    const regionLayerGroup = L.featureGroup().addTo(map);
 
     const updateLayers = (geojsonData, dotDensityData) => {
       // Clear existing layers
       dotsLayerGroup.clearLayers();
-      regionLayerGroup.clearLayers();
+      // regionLayerGroup.clearLayers();
       L.geoJSON(dotDensityData, {
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, {
               radius: 3,
-              fillColor: "#ff24bd",
+              fillColor: colors.DotMap,
               color: "#000",
               weight: 1,
               opacity: 1,
               fillOpacity: 0.8
-          })
+          }).bringToFront();
         },
       }).addTo(dotsLayerGroup);
-      L.geoJSON(geojsonData, {
-        onEachFeature: function (feature, layer) {
-          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
-              layer.setStyle({
-              stroke: hasStroke,
-              color: colors.StrokeColor,
-              weight: sizes.StrokeWeight,
-              opacity: opacities.StrokeOpacity,
-              fill: hasFill,
-              fillColor: colors.FillColor,
-              fillOpacity: opacities.FillOpacity,
-              });
-          }
-          }
-      }).addTo(regionLayerGroup);
+      dotsLayerGroup.bringToFront();
+
+      // L.geoJSON(geojsonData, {
+      //   onEachFeature: function (feature, layer) {
+      //     if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+      //         layer.setStyle({
+      //         stroke: hasStroke,
+      //         color: colors.StrokeColor,
+      //         weight: sizes.StrokeWeight,
+      //         opacity: opacities.StrokeOpacity,
+      //         fill: hasFill,
+      //         fillColor: colors.FillColor,
+      //         fillOpacity: opacities.FillOpacity,
+      //         });
+      //     }
+      //     }
+      // }).addTo(regionLayerGroup);
       try{
         map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
@@ -166,9 +207,11 @@ const DotDistMap = ({
 
     return () => {
       dotsLayerGroup.remove();
-      regionLayerGroup.remove();
+      // regionLayerGroup.remove();
     };
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
+  }, [map, storeRef, colors.DotMap]);
+
+  
 
   return null;
 }

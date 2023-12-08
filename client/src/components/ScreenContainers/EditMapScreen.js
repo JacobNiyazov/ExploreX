@@ -27,8 +27,8 @@ const EditScreen = () => {
         // LegendBorder: mapEdit.legendBorderColor,
         FillColor: mapEdit.fillColor,
         StrokeColor: mapEdit.strokeColor,
-        DotMap: '#FFFFFF',
-        SpikeMap: '#FFFFFF',
+        DotMap: mapEdit.dotColor,
+        SpikeMap: mapEdit.spikeColor,
         VoronoiMap: '#FFFFFF'
     })
     const [sizes,setSizes] = useState({
@@ -60,7 +60,7 @@ const EditScreen = () => {
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap.title !== mapEdit.title)) {
+        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap._id !== mapEdit.id)) {
           // Wait until authentication check is completed
           await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
           waitForAuthCheck(); // Re-check status
@@ -82,8 +82,8 @@ const EditScreen = () => {
                 // LegendBorder: mapEdit.legendBorderColor,
                 FillColor: mapEdit.fillColor,
                 StrokeColor: mapEdit.strokeColor,
-                DotMap: '#FFFFFF',
-                SpikeMap: '#FFFFFF',
+                DotMap: mapEdit.dotColor,
+                SpikeMap: mapEdit.dotColor,
                 VoronoiMap: '#FFFFFF'
             });
             setSizes({

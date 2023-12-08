@@ -15,6 +15,7 @@ export const GlobalMapEditActionType = {
 
 function GlobalMapEditContextProvider(props) {
     const [mapEdit, setMapEdit] = useState({
+        id: '',
         title: '',
         hasStroke: true,
         strokeColor: '',
@@ -31,6 +32,8 @@ function GlobalMapEditContextProvider(props) {
         legendTitle: '',
         // legendBorderWidth: '',
         legendFields: [],
+        dotColor: '',
+        spikeColor: '',
         chloroData: {}
     });
 
@@ -42,6 +45,7 @@ function GlobalMapEditContextProvider(props) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
                 return setMapEdit({
+                  id: payload.id,
                   title: payload.title,
                   hasStroke: payload.hasStroke,
                   strokeColor: payload.strokeColor,
@@ -58,11 +62,14 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields,
-                  chloroData: payload.chloroData
+                  chloroData: payload.chloroData,
+                  dotColor: payload.dotColor,
+                  spikeColor: payload.spikeColor,
                 });
             }
             case GlobalMapEditActionType.LOAD: {
                 return setMapEdit({
+                  id: payload.id,
                   title: payload.title,
                   hasStroke: payload.hasStroke,
                   strokeColor: payload.strokeColor,
@@ -79,11 +86,14 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields,
-                  chloroData: payload.chloroData
+                  chloroData: payload.chloroData,
+                  dotColor: payload.dotColor,
+                  spikeColor: payload.spikeColor,
                 });
             }
             default: {
                 return setMapEdit({
+                  id: '',
                   title: '',
                   hasStroke: true,
                   strokeColor: '',
@@ -100,7 +110,9 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: '',
                   // legendBorderWidth: '',
                   legendFields: [],
-                  chloroData: {}
+                  chloroData: {},
+                  dotColor: '',
+                  spikeColor: '',
                 });
             }
 

@@ -5,11 +5,57 @@ import GlobalStoreContext from '../store/index.js';
 const turf = require('@turf/turf');
 
 
-const SpikeMap = () => {
+const SpikeMap = ({
+  colors,
+  sizes,
+  opacities,
+  hasStroke,
+  hasFill,
+}) => {
 
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
+
+  useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              layer.setStyle({
+              stroke: hasStroke,
+              color: colors.StrokeColor,
+              weight: sizes.StrokeWeight,
+              opacity: opacities.StrokeOpacity,
+              fill: hasFill,
+              fillColor: colors.FillColor,
+              fillOpacity: opacities.FillOpacity,
+              }).bringToBack();
+          }
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+
+      try{
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+    }
+
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    updateLayers(geojsonData);
+    return () => {
+      // dotsLayerGroup.remove();
+      regionLayerGroup.remove();
+    };
+
+
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
 
   function getRepresentativeValues(geojsonData, propertyKey) {
       // Extract the property values, parse them as numbers, and sort them
@@ -77,7 +123,6 @@ const SpikeMap = () => {
       const spikeData = [];
       var medianValue = getMedianPropertyValue(geojsonData, propertyKey);
       var scaleFactor = medianValue / 10;
-      console.log(scaleFactor)
   
       geojsonData.features.forEach(feature => {
           try{
@@ -144,30 +189,33 @@ const SpikeMap = () => {
       // Create the triangle polygon and add it to the map
       trianglePoints.forEach(spike => {
         L.polygon(spike, {
-          color: '#ff24bd',
-          fillColor: '#ff24bd',
-          fillOpacity: 0.1  // Reduced opacity for more transparency
+          color: '#000',
+          fillColor: colors.SpikeMap,
+          fillOpacity: 0.5  // Reduced opacity for more transparency
         }).addTo(spikeLayerGroup);   
       });
+
+      spikeLayerGroup.bringToFront();
+
   
-      L.geoJSON(geojsonData, {
-        style: function (feature) {
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-                case 'LineString':
-                case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
-                default:
-                    return {};
-            }
-        },
-        // Ensure that no default marker is created for point features
-        pointToLayer: function (feature, latlng) {
-          return null;
-        }
-      }).addTo(map);
+      // L.geoJSON(geojsonData, {
+      //   style: function (feature) {
+      //       switch (feature.geometry.type) {
+      //           case 'Polygon':
+      //           case 'MultiPolygon':
+      //               return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+      //           case 'LineString':
+      //           case 'MultiLineString':
+      //               return { color: "#f55", weight: 2, opacity: 0.8 };
+      //           default:
+      //               return {};
+      //       }
+      //   },
+      //   // Ensure that no default marker is created for point features
+      //   pointToLayer: function (feature, latlng) {
+      //     return null;
+      //   }
+      // }).addTo(map);
       try{
         map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
@@ -188,7 +236,8 @@ const SpikeMap = () => {
     return () => {
       spikeLayerGroup.remove();
     };
-  }, [map, storeRef ]);
+  }, [map, storeRef, colors.SpikeMap]);
+
 
   return null;
 }
