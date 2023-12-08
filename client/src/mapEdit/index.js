@@ -30,7 +30,8 @@ function GlobalMapEditContextProvider(props) {
         // legendBorderColor: '',
         legendTitle: '',
         // legendBorderWidth: '',
-        legendFields: []
+        legendFields: [],
+        chloroData: {}
     });
 
     const { auth } = useContext(AuthContext);
@@ -56,7 +57,8 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: payload.legendBorderColor,
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
-                  legendFields: payload.legendFields
+                  legendFields: payload.legendFields,
+                  chloroData: payload.chloroData
                 });
             }
             case GlobalMapEditActionType.LOAD: {
@@ -76,7 +78,8 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: payload.legendBorderColor,
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
-                  legendFields: payload.legendFields
+                  legendFields: payload.legendFields,
+                  chloroData: payload.chloroData
                 });
             }
             default: {
@@ -96,7 +99,8 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderColor: '',
                   legendTitle: '',
                   // legendBorderWidth: '',
-                  legendFields: []
+                  legendFields: [],
+                  chloroData: {}
                 });
             }
 
@@ -111,7 +115,6 @@ function GlobalMapEditContextProvider(props) {
     };
 
     mapEdit.loadStyles = async (styles) => {
-      console.log(styles)
       mapEditReducer({
         type: GlobalMapEditActionType.LOAD,
         payload: styles

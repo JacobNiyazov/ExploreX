@@ -51,12 +51,18 @@ const EditSidePanel = ({
     }
 
     const handleOpacity = (event, label) => {
-        setOpacities({
-            ...opacities,
-            [label]: event.target.value
-        })
-    }
-
+        let newValue = parseFloat(event.target.value);
+    
+        if (!isNaN(newValue)) {
+            newValue = Math.min(1, Math.max(0, newValue));
+    
+            setOpacities({
+                ...opacities,
+                [label]: newValue,
+            });
+        }
+    };
+    
     const handleRange = (event) => {
         setRange(event.target.value)
     }
