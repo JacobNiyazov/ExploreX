@@ -18,8 +18,6 @@ const EditScreen = () => {
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
     
-    console.log("MAP EDIT FIELDS")
-    console.log(mapEdit.legendFields)
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -83,7 +81,7 @@ const EditScreen = () => {
                 FillColor: mapEdit.fillColor,
                 StrokeColor: mapEdit.strokeColor,
                 DotMap: mapEdit.dotColor,
-                SpikeMap: mapEdit.dotColor,
+                SpikeMap: mapEdit.spikeColor,
                 VoronoiMap: '#FFFFFF'
             });
             setSizes({
@@ -110,7 +108,7 @@ const EditScreen = () => {
             setHasFill(mapEdit.hasFill);
             setLegendTitle(mapEdit.legendTitle)
             if(mapEdit.legendFields){
-                setLegendFields([legendFields])
+                setLegendFields([...legendFields])
             }
             if(mapEdit.chloroData){
                 let chloroInfo = mapEdit.chloroData.isString

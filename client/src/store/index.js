@@ -435,7 +435,7 @@ function GlobalStoreContextProvider(props) {
                                 // legendBorderColor: '',
                                 legendTitle: tempMap.graphics.legend.legendTitle,
                                 // legendBorderWidth: '',
-                                legendFields: [],
+                                legendFields: tempMap.graphics.legend.legendFields,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                             }
@@ -694,7 +694,7 @@ function GlobalStoreContextProvider(props) {
                     // legendBorderColor: '',
                     legendTitle: tempMap.graphics.legend.legendTitle,
                     // legendBorderWidth: '',
-                    legendFields: [],
+                    legendFields: tempMap.graphics.legend.legendFields,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                 }
@@ -869,9 +869,10 @@ function GlobalStoreContextProvider(props) {
                     legendTitle: tempMap.graphics.legend.legendTitle,
                     // legendBorderWidth: '',
                     legendFields: tempMap.graphics.legend.legendFields,
-                    chloroData: tempMap.graphics.typeSpecific.chloroLegend
+                    chloroData: tempMap.graphics.typeSpecific.chloroLegend,
+                    dotColor: tempMap.graphics.typeSpecific.dotColor,
+                    spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                 }
-
                 mapEdit.loadStyles(styles);
 
                 storeReducer({

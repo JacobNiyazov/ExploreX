@@ -8,9 +8,6 @@ import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoConta
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import IconButton from '@mui/material/IconButton';
-import { Square } from "./StyleSheets/ColorSelectorStyles";
-import { ChromePicker } from "react-color";
-import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
