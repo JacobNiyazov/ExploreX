@@ -3,7 +3,7 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 
-const ChloroplethMap = () => {
+const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
@@ -132,8 +132,21 @@ const ChloroplethMap = () => {
             coloring = chloroInfo
           
           }        
-      
+            let i = 0
             L.geoJSON(geojsonData, {
+                onEachFeature: function(feature, layer){
+                  let tempi = i
+                  layer.on({
+                      click: (e) => {
+                          if(feature.geometry.type !== 'Point'){
+                              L.DomEvent.stopPropagation(e);
+                              // Here we set the index to tempi
+                              handlePropertyDataLoad(tempi)
+                          }
+                      },
+                  })
+                  i+=1
+                },
                 style: (feature) => {
                     let fillColor;
                     let propertyValue;
@@ -163,6 +176,12 @@ const ChloroplethMap = () => {
                   return null;
                 }
               }).addTo(chloroLayerGroup);
+
+              map.on('click',function(e) {
+                console.log('clicked on map', e);
+                // Here we set the index to null
+                handlePropertyDataLoad(null)
+              });
 
             try{
                 map.fitBounds(chloroLayerGroup.getBounds());
@@ -198,9 +217,10 @@ const ChloroplethMap = () => {
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, result.colors);
         } 
         return () => {
-            chloroLayerGroup.remove();
+            map.eachLayer(function (layer) {map.removeLayer(layer);});
+            map.off('click')
           };
-    }, [map, storeRef]);
+    }, [map, storeRef, propertyData, handlePropertyDataLoad]);
 
     return null;    
 }

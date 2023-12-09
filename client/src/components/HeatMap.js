@@ -6,7 +6,7 @@ import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
 import "leaflet.heat";
 
-const HeatMap = ({ geojsonData, property }) => {
+const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData}) => {
   const map = useMap();
   console.log("what is property: ", property)
   
@@ -41,6 +41,8 @@ const HeatMap = ({ geojsonData, property }) => {
     
     L.heatLayer(heatPoints).addTo(map);
 
+
+    let i = 0
     // Customize popups
     var geojsonLayer = L.geoJSON(geojsonData, {
       onEachFeature: function (feature, layer) {
@@ -58,6 +60,18 @@ const HeatMap = ({ geojsonData, property }) => {
             maxHeight: 200
           }
         );
+
+        let tempi = i
+            layer.on({
+                click: (e) => {
+                    if(feature.geometry.type !== 'Point'){
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        handlePropertyDataLoad(tempi)
+                    }
+                },
+            })
+            i+=1
       },
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
@@ -71,6 +85,13 @@ const HeatMap = ({ geojsonData, property }) => {
       }
     }).addTo(map);
 
+    map.on('click',function(e) {
+      L.DomEvent.stopPropagation(e);
+      console.log('clicked on map', e);
+      // Here we set the index to null
+      handlePropertyDataLoad(null)
+    });
+
     // Fit the map to the heat layer bounds
     map.fitBounds(geojsonLayer.getBounds());
 
@@ -80,7 +101,12 @@ const HeatMap = ({ geojsonData, property }) => {
         layer.setStyle({fillColor:"transparent",color:"pink" });
       }
     });
-  }, [geojsonData, map, property]);
+
+    return () => {
+      map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.off('click')
+    };
+  }, [geojsonData, map, property, propertyData, handlePropertyDataLoad]);
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {

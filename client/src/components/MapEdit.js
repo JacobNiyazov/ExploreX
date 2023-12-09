@@ -19,7 +19,7 @@ import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
 
-const MapEditInner = () =>{
+const MapEditInner = ({handlePropertyDataLoad, propertyData}) =>{
     const { store } = useContext(GlobalStoreContext);
 
     function getRandomShade(){
@@ -74,21 +74,21 @@ const MapEditInner = () =>{
     }
 
     if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistMap/>
+        return <DotDistMap handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Spike Map"){
-        return <SpikeMap/>
+        return <SpikeMap handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
-            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property}/>
+            return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property} handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
         }
     }
     else if(store.currentMap.type === "Chloropleth Map"){
-        return <ChloroplethMap/>
+        return <ChloroplethMap handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
-        return <VoronoiMap />
+        return <VoronoiMap handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
     }
     else{
         loadMap(store.currentMap.graphics.geojson);
@@ -104,6 +104,8 @@ const MapEdit = ({
     borderWidth,
     selectAll,
     hideLegend,
+    handlePropertyDataLoad,
+    propertyData,
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
@@ -232,7 +234,7 @@ const MapEdit = ({
                     />
                     :null
                 }
-                <MapEditInner />
+                <MapEditInner handlePropertyDataLoad = {handlePropertyDataLoad} propertyData={propertyData}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?

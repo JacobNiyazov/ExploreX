@@ -21,7 +21,7 @@ export const GlobalStoreActionType = {
    CREATE_MAP: "CREATE_MAP",
    UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
    FORK_MAP: "FORK_MAP",
-
+   EDIT_MAP: "EDIT_MAP",
 }
 
 
@@ -177,6 +177,17 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.FORK_MAP:{
                 return setStore({
                     currentPage: payload.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.EDIT_MAP:{
+                return setStore({
+                    currentPage: store.currentPage,
                     modalMessage: null,
                     modalOpen: false,
                     modalConfirmButton: false,
@@ -844,6 +855,20 @@ function GlobalStoreContextProvider(props) {
         }
             
     }
+
+    store.editProperties = (featureIndex, properties) =>{
+        console.log("WE IN HERE", featureIndex, properties)
+        let tempMap = JSON.parse(JSON.stringify(store.currentMap))
+        tempMap.graphics.geojson.features[featureIndex].properties = JSON.parse(JSON.stringify(properties))
+        storeReducer({
+            type: GlobalStoreActionType.EDIT_MAP,
+            payload: {
+                currentMap: tempMap
+            }
+        }
+        ); 
+    }
+
    return (
     <GlobalStoreContext.Provider value={{
         store

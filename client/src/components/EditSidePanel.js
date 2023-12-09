@@ -3,13 +3,14 @@ import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
+import { PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
 //import PublishMapModal from './PublishMapModal.js'
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
+import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
 
 const EditSidePanel = ({
     title,
@@ -32,6 +33,8 @@ const EditSidePanel = ({
     setRange,
     hideLegend,
     setHideLegend,
+    handleEditProperties, 
+    propertyData
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -185,7 +188,30 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
-                
+                {/* Edit Text Options */}
+                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyData.featureIndex==null}>
+                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                        <Typography variant="inherit">Properties</Typography>
+                    </EditAccordionSummary>
+                    <PropertyDetails sx={{padding:0}}>
+                        <CustomList>
+                            {
+                                propertyData.featureIndex !== null ?
+                                Object.keys(propertyData.properties).map((k, index, array)=>{
+                                    return (
+                                        <div key={k}>
+                                            <CustomListItem>
+                                                <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
+                                                <ColorTextField variant="standard" value={propertyData.properties[k]} onChange={(e) => {handleEditProperties(k, e.target.value)}}/>
+                                            </CustomListItem>
+                                            {index !== array.length - 1 && <Divider sx={{ borderColor: "white" }} />}
+                                        </div>
+                                    );
+                                }) : null
+                            }
+                        </CustomList>
+                    </PropertyDetails>
+                </EditAccordion>
 
                 {/* Edit Legend Options */}
                 <EditAccordion disableGutters data-testid="edit-accordion">

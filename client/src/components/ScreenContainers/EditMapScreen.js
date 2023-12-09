@@ -87,6 +87,51 @@ const EditScreen = () => {
 
     const [range, setRange] = React.useState(5)
 
+    const [propertyData, setPropertyData] = React.useState({properties: {}, featureIndex: null})
+
+    function handlePropertyDataLoad(featureIndex){
+        setPropertyData(propertyData =>{
+            console.log(featureIndex, propertyData)
+            if(propertyData.featureIndex !== featureIndex && ((propertyData.featureIndex !== null && featureIndex !== null) || (propertyData.featureIndex !== null && featureIndex === null))){
+                store.editProperties(propertyData.featureIndex, propertyData.properties)
+            }
+
+            if(featureIndex !== null){
+                return(
+                    {
+                        properties: JSON.parse(JSON.stringify(store.currentMap.graphics.geojson.features[featureIndex].properties)),
+                        featureIndex: featureIndex
+                    }
+                ); 
+            }
+            else{
+                return(
+                    {
+                        properties: {},
+                        featureIndex: featureIndex
+                    }
+                ); 
+            }
+        })
+        
+        /*
+            1st part -> dont bother changing if we are at the same index
+            2nd part -> changing from one feature to another then save
+            3rd part -> changing from a feature to no feature (clicking outside geojson) then save
+        */
+        
+    }
+
+    const handleEditProperties = (key, value) => {
+        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
+        tempProperties[key] = value
+        setPropertyData(
+            {
+                properties: tempProperties,
+                featureIndex: propertyData.featureIndex
+            }
+        ); 
+    }
     
     console.log(store.currentPage)
     console.log(mapEdit.title)
@@ -115,7 +160,9 @@ const EditScreen = () => {
                     // borderWidth={borderWidth}
                     // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
-                    setHideLegend={setHideLegend}/>
+                    setHideLegend={setHideLegend}
+                    handleEditProperties = {handleEditProperties}
+                    propertyData = {propertyData}/>
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}
@@ -123,7 +170,9 @@ const EditScreen = () => {
                     hasStroke={hasStroke}
                     hasFill={hasFill}
                     range={range}
-                    hideLegend={hideLegend}/>
+                    hideLegend={hideLegend}
+                    handlePropertyDataLoad = {handlePropertyDataLoad}
+                    propertyData={propertyData}/>
             </Grid>
         );
     }

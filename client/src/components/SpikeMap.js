@@ -5,7 +5,7 @@ import GlobalStoreContext from '../store/index.js';
 const turf = require('@turf/turf');
 
 
-const SpikeMap = () => {
+const SpikeMap = ({handlePropertyDataLoad, propertyData}) => {
 
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
@@ -149,8 +149,21 @@ const SpikeMap = () => {
           fillOpacity: 0.1  // Reduced opacity for more transparency
         }).addTo(spikeLayerGroup);   
       });
-  
+      let i = 0
       L.geoJSON(geojsonData, {
+        onEachFeature: function(feature, layer){
+          let tempi = i
+            layer.on({
+                click: (e) => {
+                    if(feature.geometry.type !== 'Point'){
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        handlePropertyDataLoad(tempi)
+                    }
+                },
+            })
+            i+=1
+        },
         style: function (feature) {
             switch (feature.geometry.type) {
                 case 'Polygon':
@@ -168,12 +181,20 @@ const SpikeMap = () => {
           return null;
         }
       }).addTo(map);
-      try{
+
+      map.on('click',function(e) {
+        L.DomEvent.stopPropagation(e);
+        console.log('clicked on map', e);
+        // Here we set the index to null
+        handlePropertyDataLoad(null)
+      });
+
+      /*try{
         map.fitBounds(L.geoJSON(geojsonData).getBounds());
       }
       catch (err){
         console.log(err)
-      }
+      }*/
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
@@ -186,11 +207,23 @@ const SpikeMap = () => {
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
-      spikeLayerGroup.remove();
+      map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.off('click')
     };
-  }, [map, storeRef ]);
+  }, [map, storeRef, propertyData, handlePropertyDataLoad]);
+
+  map.whenReady(function(){
+    try{
+      map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
+    }
+    catch (err){
+      console.log(err)
+    }
+  });
+  
 
   return null;
 }
+
 
 export default SpikeMap;
