@@ -183,12 +183,6 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
                 handlePropertyDataLoad(null)
               });
 
-            try{
-                map.fitBounds(chloroLayerGroup.getBounds());
-            }
-            catch (err){
-                console.log(err)
-            }
             if(!flag){
               coloring["isString"] = false;
               return {
@@ -217,10 +211,18 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, result.colors);
         } 
         return () => {
-            map.eachLayer(function (layer) {map.removeLayer(layer);});
+          map.eachLayer(function (layer) {
+            if(!layer._url){
+                map.removeLayer(layer);
+            }
+          });
             map.off('click')
           };
     }, [map, storeRef, propertyData, handlePropertyDataLoad]);
+
+    useEffect(()=>{
+      map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
+    }, [map])
 
     return null;    
 }

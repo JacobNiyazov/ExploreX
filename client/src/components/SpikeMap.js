@@ -188,13 +188,6 @@ const SpikeMap = ({handlePropertyDataLoad, propertyData}) => {
         // Here we set the index to null
         handlePropertyDataLoad(null)
       });
-
-      /*try{
-        map.fitBounds(L.geoJSON(geojsonData).getBounds());
-      }
-      catch (err){
-        console.log(err)
-      }*/
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
@@ -207,19 +200,18 @@ const SpikeMap = ({handlePropertyDataLoad, propertyData}) => {
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
-      map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.eachLayer(function (layer) {
+        if(!layer._url){
+            map.removeLayer(layer);
+        }
+      });
       map.off('click')
     };
   }, [map, storeRef, propertyData, handlePropertyDataLoad]);
 
-  map.whenReady(function(){
-    try{
-      map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
-    }
-    catch (err){
-      console.log(err)
-    }
-  });
+  useEffect(()=>{
+    map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
+  }, [map])
   
 
   return null;

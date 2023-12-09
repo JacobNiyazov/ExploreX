@@ -1,13 +1,15 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOMServer from 'react-dom/server';
+import GlobalStoreContext from '../store/index.js';
 import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
 import "leaflet.heat";
 
 const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData}) => {
   const map = useMap();
+  const { store } = useContext(GlobalStoreContext);
   console.log("what is property: ", property)
   
   useEffect(() => {
@@ -92,9 +94,6 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
       handlePropertyDataLoad(null)
     });
 
-    // Fit the map to the heat layer bounds
-    map.fitBounds(geojsonLayer.getBounds());
-
     // Remove default border styles for each region
     map.eachLayer((layer) => {
       if (layer.setStyle) {
@@ -103,7 +102,11 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
     });
 
     return () => {
-      map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.eachLayer(function (layer) {
+        if(!layer._url){
+            map.removeLayer(layer);
+        }
+      });
       map.off('click')
     };
   }, [geojsonData, map, property, propertyData, handlePropertyDataLoad]);
@@ -125,6 +128,9 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
   }
 };
 
+  useEffect(()=>{
+    map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
+  }, [map])
 
   return null;
 }

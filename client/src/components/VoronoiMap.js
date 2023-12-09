@@ -115,7 +115,6 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
                 });
             }
         }).addTo(map);
-        map.fitBounds(L.geoJSON(clippedPolygons).getBounds());
 
         map.on('click',function(e) {
             L.DomEvent.stopPropagation(e);
@@ -125,11 +124,18 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
         });
 
         return () => {
-            map.eachLayer(function (layer) {map.removeLayer(layer);});
+            map.eachLayer(function (layer) {
+                if(!layer._url){
+                    map.removeLayer(layer);
+                }
+            });
             map.off('click')
           };
     }, [map, /*storeRef,*/ propertyData, handlePropertyDataLoad])
     
+    useEffect(()=>{
+        map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
+      }, [map])
 
     return null
 }
