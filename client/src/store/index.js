@@ -853,6 +853,7 @@ function GlobalStoreContextProvider(props) {
             if(res.data.success){
                 let tempMap = res.data.map;
                 let styles = {
+                    id: tempMap._id,
                     title: tempMap.title,
                     hasStroke: tempMap.graphics.stroke.hasStroke,
                     strokeColor: tempMap.graphics.stroke.strokeColor,
@@ -873,6 +874,8 @@ function GlobalStoreContextProvider(props) {
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                 }
+                console.log("STYLES1")
+                console.log(styles)
                 mapEdit.loadStyles(styles);
 
                 storeReducer({
