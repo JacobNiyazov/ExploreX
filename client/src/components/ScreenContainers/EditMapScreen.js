@@ -121,17 +121,6 @@ const EditScreen = () => {
         */
         
     }
-
-    const handleEditProperties = (key, value) => {
-        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
-        tempProperties[key] = value
-        setPropertyData(
-            {
-                properties: tempProperties,
-                featureIndex: propertyData.featureIndex
-            }
-        ); 
-    }
     
     console.log(store.currentPage)
     console.log(mapEdit.title)
@@ -161,7 +150,7 @@ const EditScreen = () => {
                     // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
-                    handleEditProperties = {handleEditProperties}
+                    setPropertyData={setPropertyData}
                     propertyData = {propertyData}/>
                 <MapEdit 
                     colors={colors}

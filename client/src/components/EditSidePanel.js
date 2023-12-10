@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
+import { CreateButton, DeleteButton, PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
@@ -33,7 +33,7 @@ const EditSidePanel = ({
     setRange,
     hideLegend,
     setHideLegend,
-    handleEditProperties, 
+    setPropertyData, 
     propertyData
   }) => {  
     const { store } = useContext(GlobalStoreContext);
@@ -73,7 +73,12 @@ const EditSidePanel = ({
     const handleHideStroke = () => {
         setHasStroke(!hasStroke)
     }
-
+    function alertModal(header, paragraph){
+        store.displayModal(<div>
+            <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>{header}</h4>
+            <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
+        </div>, false);
+    }
     const handleOpenPublish = () => {
         let publishMessage = (
             <div>
@@ -93,6 +98,53 @@ const EditSidePanel = ({
         )
         store.displayModal(saveMessage, true);
     }
+
+    const handleDeleteProperty = (key) =>{
+        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
+        delete tempProperties[key]
+        setPropertyData(
+            {
+                properties: tempProperties,
+                featureIndex: propertyData.featureIndex
+            }
+        ); 
+    }
+
+    const handleEditProperties = (key, value) => {
+        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
+        tempProperties[key] = value
+        setPropertyData(
+            {
+                properties: tempProperties,
+                featureIndex: propertyData.featureIndex
+            }
+        ); 
+    }
+    const [key, setKey] = useState('')
+    const [value, setValue] = useState('')
+
+    const handleCreateProperties = () => {
+        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
+
+        if(key in tempProperties || key === ""){
+            //handle error modal
+            alertModal("Try Again", "Key was empty or already exists within the properties.");
+        }
+        else{
+            tempProperties[key] = value
+            setPropertyData(
+                {
+                    properties: tempProperties,
+                    featureIndex: propertyData.featureIndex
+                }
+            ); 
+            
+        }
+        setKey('')
+        setValue('')
+    }
+
+    
 
     const commonFonts = [
         'Arial',
@@ -189,12 +241,21 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Text Options */}
-                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyData.featureIndex==null}>
-                    <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
+                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
+                    <EditAccordionSummary >
                         <Typography variant="inherit">Properties</Typography>
                     </EditAccordionSummary>
                     <PropertyDetails sx={{padding:0}}>
                         <CustomList>
+                            <CustomListItem>
+                                <ColorTextField label={"Key"} sx={{marginRight:'auto', input:{textAlign:'left'}}} variant="standard" value={key} onChange={(e) => {setKey(e.target.value)}}/>
+                                <ColorTextField label={"Value"} variant="standard" value={value} onChange={(e) => {setValue(e.target.value)}}/>
+                                <CreateButton variant="text" onClick={handleCreateProperties}>
+                                        <Typography variant='inherit'>Create</Typography>
+                                </CreateButton>
+                                
+                            </CustomListItem>
+                            <Divider sx={{ borderColor: "white" }} />
                             {
                                 propertyData.featureIndex !== null ?
                                 Object.keys(propertyData.properties).map((k, index, array)=>{
@@ -203,6 +264,9 @@ const EditSidePanel = ({
                                             <CustomListItem>
                                                 <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
                                                 <ColorTextField variant="standard" value={propertyData.properties[k]} onChange={(e) => {handleEditProperties(k, e.target.value)}}/>
+                                                <DeleteButton variant="text" onClick={()=>{handleDeleteProperty(k)}}>
+                                                        <Typography variant='inherit'>X</Typography>
+                                                </DeleteButton>
                                             </CustomListItem>
                                             {index !== array.length - 1 && <Divider sx={{ borderColor: "white" }} />}
                                         </div>

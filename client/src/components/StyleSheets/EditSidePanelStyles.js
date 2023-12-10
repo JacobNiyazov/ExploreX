@@ -68,7 +68,43 @@ export const Buttons = styled(Button)({
   color: "#ff24bd",
   fontSize: "25px",
   textTransform: 'none',
-  fontStyle: 'inherit'
+  fontStyle: 'inherit',
+});
+
+export const DeleteButton = styled(Button)({
+  backgroundColor: "#000000",
+  border: "1px solid #ff24bd",
+  borderRadius: "10px",
+  textAlign: "center",
+  color: "#ff24bd",
+  fontSize: "15px",
+  textTransform: 'none',
+  fontStyle: 'inherit',
+  padding: "0px",
+  marginLeft: "8px",
+  maxWidth: '30px', 
+  maxHeight: '30px', 
+  minWidth: '30px', 
+  minHeight: '30px',
+  '&:hover': {
+    backgroundColor: '#404040',
+  },
+});
+
+export const CreateButton = styled(Button)({
+  backgroundColor: "#000000",
+  border: "1px solid #ff24bd",
+  borderRadius: "10px",
+  textAlign: "center",
+  color: "#ff24bd",
+  fontSize: "15px",
+  textTransform: 'none',
+  fontStyle: 'inherit',
+  padding: "0px",
+  marginLeft: "8px",
+  '&:hover': {
+    backgroundColor: '#404040',
+  },
 });
 
 export const ExpandMore = styled(ExpandMoreIcon)({
