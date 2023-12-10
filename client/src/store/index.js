@@ -781,13 +781,11 @@ function GlobalStoreContextProvider(props) {
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
-            
         }
-
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
@@ -806,6 +804,10 @@ function GlobalStoreContextProvider(props) {
         }
         if(chloroLegend !== null){
             currentMap.graphics.typeSpecific.chloroLegend = chloroLegend;
+        }
+        if(voronoi !== null){
+            graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
+            graphics['geojson'] = voronoi.geojson;
         }
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend

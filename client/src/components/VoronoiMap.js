@@ -27,94 +27,102 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
     const { store } = useContext(GlobalStoreContext);
     const map = useMap();
     useEffect(()=>{
-        let geojson = store.currentMap.graphics.geojson;
-        var options = {bbox : [0, 0, 0, 0]}
+        if(store.currentMap.graphics.typeSpecific.voronoiBound === null){
+            let geojson = store.currentMap.graphics.geojson;
+            var options = {bbox : [0, 0, 0, 0]}
 
-        // Get polygon inside geojson, should only have one
-        const polygon = geojson.features.filter(feature=>{
-            return feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"
-        })
+            // Get polygon inside geojson, should only have one
+            const polygon = geojson.features.filter(feature=>{
+                return feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon"
+            })
 
-        let polygonGeo = {"type": "FeatureCollection", "features":[polygon[0]]}
-        options.bbox = turf.bbox(polygonGeo)
+            let polygonGeo = {"type": "FeatureCollection", "features":[polygon[0]]}
 
-        const geoPoints = geojson.features.filter(feature=>{
-            return feature.geometry.type === "Point"
-        })
-        let points = {"type": "FeatureCollection", "features": geoPoints}
+            options.bbox = turf.bbox(polygonGeo)
 
-        let voronoiPolygons = turf.voronoi(points, options);
+            const geoPoints = geojson.features.filter(feature=>{
+                return feature.geometry.type === "Point"
+            })
+            let points = {"type": "FeatureCollection", "features": geoPoints}
 
-        var clippedPolygons = {"type":"FeatureCollection", "features": []}
-        
-        // Only get intersection within the polygon
-        voronoiPolygons.features.forEach(feature=>{
-            let clipped = turf.intersect(polygon[0], feature)
+            let voronoiPolygons = turf.voronoi(points, options);
 
-            // returns null if no intersection exists, so ignore
-            if(clipped != null){
-                clippedPolygons.features.push(clipped);
-            }
-        })
-
-        points.features.forEach(feature=>{
-            clippedPolygons.features.push(feature)
-        })
-        let i = 0
-        L.geoJSON(clippedPolygons, {
-            onEachFeature: function (feature, layer) {
-                // Customize popup content
-                layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+            var clippedPolygons = {"type":"FeatureCollection", "features": []}
             
-                    return (
-                    ReactDOMServer.renderToString(
-                        <Box sx={{display:'flex', alignItems:'center'}}>
-                            <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                            <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                        </Box>
-                    )
-                    )
-                }).join(""), {
-                    maxHeight: 200
-                });
+            // Only get intersection within the polygon
+            voronoiPolygons.features.forEach(feature=>{
+                let clipped = turf.intersect(polygon[0], feature)
 
-                let tempi = i
-                layer.on({
-                    click: (e) => {
-                        if(feature.geometry.type !== 'Point'){
-                            L.DomEvent.stopPropagation(e);
-                            // Here we set the index to tempi
-                            handlePropertyDataLoad(tempi)
-                        }
-                    },
-                })
-                i+=1
-                if(feature.geometry.type === 'Polygon'){
-                    layer.setStyle({
-                    fillColor: '#FFFFFF',
-                    weight: 3,
-                    opacity: 1,
-                    color: '#808080',
-                    fillOpacity: 0.5
-                    });}
-                /*if(feature.geometry.type === 'Point'){
-                    layer.setStyle({
-                    fillColor: '#000000',
-                    weight: 3,
-                    color: '#000000',
-                    });}*/
-            },
-            pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, {
-                    radius: 5,
-                    fillColor: "#000000",
-                    color: "#000",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                });
-            }
-        }).addTo(map);
+                // returns null if no intersection exists, so ignore
+                if(clipped != null){
+                    clippedPolygons.features.push(clipped);
+                }
+            })
+
+            points.features.forEach(feature=>{
+                clippedPolygons.features.push(feature)
+            })
+
+            store.updateMapGraphics(null, null, null, null, null, null, null, {voronoiBound: polygonGeo, geojson: clippedPolygons});
+        }
+        else{
+            console.log(store.currentMap.graphics.typeSpecific.voronoiBound)
+            let i = 0
+            L.geoJSON(store.currentMap.graphics.geojson, {
+                onEachFeature: function (feature, layer) {
+                    // Customize popup content
+                    layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+                
+                        return (
+                        ReactDOMServer.renderToString(
+                            <Box sx={{display:'flex', alignItems:'center'}}>
+                                <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+                                <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+                            </Box>
+                        )
+                        )
+                    }).join(""), {
+                        maxHeight: 200
+                    });
+
+                    let tempi = i
+                    layer.on({
+                        click: (e) => {
+                            if(feature.geometry.type !== 'Point'){
+                                L.DomEvent.stopPropagation(e);
+                                // Here we set the index to tempi
+                                handlePropertyDataLoad(tempi)
+                            }
+                        },
+                    })
+                    i+=1
+                    if(feature.geometry.type === 'Polygon'){
+                        layer.setStyle({
+                        fillColor: '#FFFFFF',
+                        weight: 3,
+                        opacity: 1,
+                        color: '#808080',
+                        fillOpacity: 0.5
+                        });}
+                    /*if(feature.geometry.type === 'Point'){
+                        layer.setStyle({
+                        fillColor: '#000000',
+                        weight: 3,
+                        color: '#000000',
+                        });}*/
+                },
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 5,
+                        fillColor: "#000000",
+                        color: "#000",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    });
+                }
+            }).addTo(map);
+        }
 
         map.on('click',function(e) {
             L.DomEvent.stopPropagation(e);
