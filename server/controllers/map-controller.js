@@ -173,7 +173,7 @@ createMap = async (req,res) =>{
             }
         }
 
-        if(body.mapType == "Chloropleth Map"){
+        if(body.mapType == "Choropleth Map"){
             let message = Convert.checkChloroplethMap(geojsonData)
             if(message != ""){
                 return res.status(400).json({
@@ -196,7 +196,7 @@ createMap = async (req,res) =>{
                 legendFillColor: "#FFFFFF",
                 legendBorderColor: "#ff24bd",
                 legendBorderWidth: 1,
-                legendTitle: "Example Title",
+                legendTitle: "Legend Title",
                 legendFields:[
                 {
                     fieldColor:"#FF0000",
@@ -620,6 +620,8 @@ updateMapById = async (req, res) => {
                     map.publishDate = body.map.publishDate;
                 if(body.chloro)
                     body.map.graphics.typeSpecific.chloroLegend = body.chloro
+                    body.map.graphics.legend.legendFields = body.chloro
+
                 
                 map
                     .save()

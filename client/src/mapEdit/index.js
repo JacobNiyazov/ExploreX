@@ -40,6 +40,7 @@ function GlobalMapEditContextProvider(props) {
         legendFields: [],
         dotColor: '',
         spikeColor: '',
+        chloroData: {}
     });
 
     const { auth } = useContext(AuthContext);
@@ -67,6 +68,7 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields,
+                  chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
                   spikeColor: payload.spikeColor,
                 });
@@ -90,6 +92,7 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: payload.legendTitle,
                   // legendBorderWidth: payload.legendBorderWidth,
                   legendFields: payload.legendFields,
+                  chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
                   spikeColor: payload.spikeColor,
                 });
@@ -113,6 +116,7 @@ function GlobalMapEditContextProvider(props) {
                   legendTitle: '',
                   // legendBorderWidth: '',
                   legendFields: [],
+                  chloroData: {},
                   dotColor: '',
                   spikeColor: '',
                 });
@@ -152,19 +156,19 @@ function GlobalMapEditContextProvider(props) {
         tps.doTransaction();
     }
     mapEdit.editStyles = async (styles) => {
-        mapEditReducer({
-          type: GlobalMapEditActionType.EDIT,
-          payload: styles
-        }); 
-      };
-  
-      mapEdit.loadStyles = async (styles) => {
-        console.log(styles)
-        mapEditReducer({
-          type: GlobalMapEditActionType.LOAD,
-          payload: styles
-        }); 
-      }
+      mapEditReducer({
+        type: GlobalMapEditActionType.EDIT,
+        payload: styles
+      }); 
+    };
+
+    mapEdit.loadStyles = async (styles) => {
+      mapEditReducer({
+        type: GlobalMapEditActionType.LOAD,
+        payload: styles
+      }); 
+    }
+
    return (
     <GlobalMapEditContext.Provider value={{
         mapEdit

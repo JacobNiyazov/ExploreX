@@ -10,7 +10,6 @@ import MenuItem from '@mui/material/MenuItem';
 //import PublishMapModal from './PublishMapModal.js'
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
-import GlobalMapEditContext from '../mapEdit/index.js';
 
 const EditSidePanel = ({
     title,
@@ -35,72 +34,47 @@ const EditSidePanel = ({
     setHideLegend,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    const {mapEdit} = useContext(GlobalMapEditContext);
     
-    function handleEditMap(){
-        let newMapData = {
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.strokeColor,
-            strokeWeight: sizes.strokeWeight,
-            strokeOpacity: opacities.strokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.fillColor,
-            fillOpacity: opacities.fillOpacity,
-            textColor: colors.textColor,
-            textSize: sizes.textSize,
-            textFont: textFont,
-            //legendFillColor: mapEdit.legendFillColor,
-            //legendBorderColor: mapEdit.legendBorderColor,
-            legendTitle: mapEdit.legendTitle,
-            //legendBorderWidth: mapEdit.legendBorderWidth,
-            legendFields: mapEdit.legendFields
-        }
-        console.log("newMapData: ", newMapData)
-        mapEdit.addUpdateMapTransaction(newMapData); 
-    }
-    const handleTitle= (event) => {
-        setTitle(event.target.value)
-        handleEditMap()
-    }
-
-    const handleFont= (event, label) => {
+    const handleFont = (event) => {
         setTextFont(event.target.value)
-        handleEditMap() 
     }
-
-    const handleSize= (event, label) => {
+    
+    const handleTitle = (event) => {
+        setTitle(event.target.value)
+    }
+    
+    const handleSize = (event, label) => {
         setSizes({
             ...sizes,
             [label]: event.target.value
         })
-        handleEditMap() 
     }
 
     const handleOpacity = (event, label) => {
-        setOpacities({
-            ...opacities,
-            [label]: event.target.value
-        })
-        handleEditMap() 
-    }
-
+        let newValue = parseFloat(event.target.value);
+    
+        if (!isNaN(newValue)) {
+            newValue = Math.min(1, Math.max(0, newValue));
+    
+            setOpacities({
+                ...opacities,
+                [label]: newValue,
+            });
+        }
+    };
+    
     const handleRange = (event) => {
         setRange(event.target.value)
-        handleEditMap() 
     }
 
     const handleHideLegend = () => {
         setHideLegend(!hideLegend)
-        handleEditMap() 
-    }
-    const handleHideStroke = () => {
-        setHasStroke(!hasStroke)
-        handleEditMap() 
     }
     const handleHideFill = () => {
         setHasFill(!hasFill)
-        handleEditMap() 
+    }
+    const handleHideStroke = () => {
+        setHasStroke(!hasStroke)
     }
 
     const handleOpenPublish = () => {
@@ -379,9 +353,9 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={sizes.DotMap}
+                                        value={size.DotMap}
                                         onChange={(event)=>{handleSize(event, "DotMap")}}
-                                        error={sizes.DotMap === ""}
+                                        error={size.DotMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} /> */}
@@ -418,9 +392,9 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={sizes.SpikeMap}
+                                        value={size.SpikeMap}
                                         onChange={(event)=>{handleSize(event, "SpikeMap")}}
-                                        error={sizes.SpikeMap === ""}
+                                        error={size.SpikeMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} /> */}
@@ -458,9 +432,9 @@ const EditSidePanel = ({
                                             shrink: true,
                                         }}
                                         variant="standard"
-                                        value={sizes.VoronoiMap}
+                                        value={size.VoronoiMap}
                                         onChange={(event)=>{handleSize(event, "VoronoiMap")}}
-                                        error={sizes.VoronoiMap === ""}
+                                        error={size.VoronoiMap === ""}
                                     />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} /> */}

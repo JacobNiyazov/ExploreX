@@ -1,9 +1,9 @@
-describe('Chloropleth Map Tests', () => {
+describe('Choropleth Map Tests', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000');
     });
   
-    it('should create Chloropleth map', () => {
+    it('should create Choropleth map', () => {
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();
@@ -46,7 +46,7 @@ describe('Chloropleth Map Tests', () => {
       /* ==== End Cypress Studio ==== */
     });
 
-    it('should delete created Chloropleth map', () =>{
+    it('should delete created Choropleth map', () =>{
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();
@@ -58,7 +58,7 @@ describe('Chloropleth Map Tests', () => {
       cy.get('[data-testid="confirm-delete-button"]').click();
       /* ==== End Cypress Studio ==== */
     })
-    it('should fail to create Chloropleth map', () => {
+    it('should fail to create Choropleth map', () => {
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();

@@ -3,7 +3,13 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 
-const ChloroplethMap = () => {
+const ChloroplethMap = ({
+  colors,
+  sizes,
+  opacities,
+  hasStroke,
+  hasFill,
+}) => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
@@ -86,11 +92,11 @@ const ChloroplethMap = () => {
           if(!chloroInfo){
             geojsonData.features.forEach(feature => {
               if (flag){
-                if (counter < 10){
+                // if (counter < 25){
                   color = generateColor(usedColors);
                   usedColors.push(color)
                   counter = counter + 1;
-                }
+                // }
                 coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
 
               }
@@ -119,8 +125,6 @@ const ChloroplethMap = () => {
               colorScheme.forEach((color, index) => {
                 coloring[tempcoloring[index]] = color;
               });
-              console.log("COMBINED")
-              console.log(coloring)
 
             }
 
@@ -153,10 +157,11 @@ const ChloroplethMap = () => {
                   
                     return {
                       fillColor,
-                      weight: 2,
-                      opacity: 1,
-                      color: 'white',
-                      fillOpacity: 0.7,
+                      stroke: hasStroke,
+                      color: colors.StrokeColor,
+                      weight: sizes.StrokeWeight,
+                      opacity: opacities.StrokeOpacity,
+                      fillOpacity: 0.8 
                     };
                 },
                 pointToLayer: function (feature, latlng) {
@@ -177,7 +182,6 @@ const ChloroplethMap = () => {
               };
             }
             coloring["isString"] = true;
-            console.log("RETURNING ", coloring)
             return {
               colors: coloring
             };
@@ -200,7 +204,7 @@ const ChloroplethMap = () => {
         return () => {
             chloroLayerGroup.remove();
           };
-    }, [map, storeRef]);
+    }, [map, storeRef, colors, sizes, opacities, hasStroke]);
 
     return null;    
 }

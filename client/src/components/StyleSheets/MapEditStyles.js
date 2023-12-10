@@ -46,7 +46,7 @@ export const BaseMapSwitch = styled(Switch)({
 
 export const BaseMapContainer = styled(Box)({
     gridColumnStart: '4',
-    gridRowStart:'1',
+    gridRowStart:'1.5',
     marginTop: '10px',
     marginLeft: '33%',
     zIndex:'1000',
@@ -62,7 +62,7 @@ export const BaseMapBlur = styled(Box)({
 
 export const LegendContainer = styled(Box)({
     gridColumnStart: '4',
-    gridRowStart:'3',
+    gridRowStart:'2',
     display: 'flex',
     flexDirection: 'column',
     gap: "10px",

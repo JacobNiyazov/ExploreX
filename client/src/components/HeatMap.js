@@ -1,15 +1,64 @@
-import { useEffect } from "react";
+import { useEffect, useContext, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOMServer from 'react-dom/server';
 import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
+import GlobalStoreContext from '../store/index.js';
 import "leaflet.heat";
 
-const HeatMap = ({ geojsonData, property }) => {
+const HeatMap = ({ geojsonData, 
+  property, 
+  colors,
+  sizes,
+  opacities,
+  hasFill,
+  hasStroke
+}) => {
   const map = useMap();
+  const { store } = useContext(GlobalStoreContext);
+  const storeRef = useRef(store);
   console.log("what is property: ", property)
-  
+  useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              /*layer.setStyle({
+              stroke: hasStroke,
+              color: colors.StrokeColor,
+              weight: sizes.StrokeWeight,
+              opacity: opacities.StrokeOpacity,
+              fill: hasFill,
+              fillColor: colors.FillColor,
+              fillOpacity: opacities.FillOpacity,
+              }).bringToBack();*/
+              layer.setStyle({color: "transparent", fillColor: "transparent"})
+          }
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+
+      try{
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+    }
+    updateLayers(geojsonData);
+    return () => {
+      regionLayerGroup.remove();
+    };
+
+
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
+
+    
+
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
@@ -39,7 +88,7 @@ const HeatMap = ({ geojsonData, property }) => {
       return extractCoordsFromFeature(feature, property);
     });
     
-    L.heatLayer(heatPoints).addTo(map);
+    const heatlayer = L.heatLayer(heatPoints).addTo(map);
 
     // Customize popups
     var geojsonLayer = L.geoJSON(geojsonData, {
@@ -74,12 +123,6 @@ const HeatMap = ({ geojsonData, property }) => {
     // Fit the map to the heat layer bounds
     map.fitBounds(geojsonLayer.getBounds());
 
-    // Remove default border styles for each region
-    map.eachLayer((layer) => {
-      if (layer.setStyle) {
-        layer.setStyle({fillColor:"transparent",color:"pink" });
-      }
-    });
   }, [geojsonData, map, property]);
 
   // Helper function to extract coordinates from a Polygon
