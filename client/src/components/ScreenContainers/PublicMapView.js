@@ -339,7 +339,7 @@ const PublicMapView = () => {
             return <HeatMap geojsonData ={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
         }
     }
-    else if(map.type === "Chloropleth Map"){
+    else if(map.type === "Choropleth Map"){
         return <ChloroplethMap/>
     }
     else if(map.type === "Voronoi Map"){

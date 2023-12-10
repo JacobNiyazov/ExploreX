@@ -16,6 +16,7 @@ const EditScreen = () => {
 
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
+    const [legendFields, setLegendFields] = useState([])
     
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
@@ -105,6 +106,44 @@ const EditScreen = () => {
             setTextFont(mapEdit.textFont);
             setHasStroke(mapEdit.hasStroke);
             setHasFill(mapEdit.hasFill);
+            setLegendTitle(mapEdit.legendTitle)
+            if(mapEdit.legendFields){
+                setLegendFields([...legendFields])
+            }
+            if(mapEdit.chloroData){
+                let chloroInfo = mapEdit.chloroData.isString
+                let flag = true;
+                let previous = ""
+                const keys = Object.keys(mapEdit.chloroData)
+                    .filter(key => key !== "isString")
+                    .reverse();
+                const temp = keys.map(key => {
+                    if (chloroInfo) {
+                        return {
+                            fieldColor: mapEdit.chloroData[key],
+                            fieldText: key,
+                        };
+                    } else {
+                        if(flag){
+                            flag = false;
+                            previous = key;
+                            return {
+                                fieldColor: mapEdit.chloroData[key],
+                                fieldText: ">" + key,
+                            };
+                        }
+                        let temp = previous;
+                        previous = key;
+                
+                        return {
+                            fieldColor: mapEdit.chloroData[key],
+                            fieldText: "(" + key + "," + temp + "]",
+                        };
+                    }
+                });
+                setLegendFields(temp)
+
+            }
         }
       };
   
@@ -124,9 +163,6 @@ const EditScreen = () => {
     
 
     
-    console.log(store.currentPage)
-    console.log(mapEdit.title)
-    console.log(title)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>
@@ -152,7 +188,10 @@ const EditScreen = () => {
                     // borderWidth={borderWidth}
                     // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
-                    setHideLegend={setHideLegend}/>
+                    setHideLegend={setHideLegend}
+
+                    />
+
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}
@@ -160,7 +199,12 @@ const EditScreen = () => {
                     hasStroke={hasStroke}
                     hasFill={hasFill}
                     range={range}
-                    hideLegend={hideLegend}/>
+                    hideLegend={hideLegend}
+                    legendTitle = {legendTitle}
+                    setLegendTitle = {setLegendTitle}
+                    legendFields = {legendFields}
+                    setLegendFields = {setLegendFields}
+                    />
             </Grid>
         );
     }

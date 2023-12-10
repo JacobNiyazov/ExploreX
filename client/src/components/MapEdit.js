@@ -8,9 +8,6 @@ import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoConta
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import IconButton from '@mui/material/IconButton';
-import { Square } from "./StyleSheets/ColorSelectorStyles";
-import { ChromePicker } from "react-color";
-import Popover from '@mui/material/Popover';
 import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
@@ -18,6 +15,7 @@ import SpikeMap from './SpikeMap.js';
 import HeatMap from "./HeatMap.js";
 import ChloroplethMap from './ChloroplethMap.js';
 import VoronoiMap from './VoronoiMap.js';
+import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
 
@@ -27,8 +25,7 @@ const MapEditInner = ({
     opacities,
     hasStroke,
     hasFill,
-    range,
-    hideLegend,}) =>{
+    }) =>{
     const { store } = useContext(GlobalStoreContext);
 
 
@@ -110,8 +107,13 @@ const MapEditInner = ({
             return <HeatMap geojsonData ={store.currentMap.graphics.geojson} property = {store.currentMap.graphics.typeSpecific.property}/>
         }
     }
-    else if(store.currentMap.type === "Chloropleth Map"){
-        return <ChloroplethMap/>
+    else if(store.currentMap.type === "Choropleth Map"){
+        return <ChloroplethMap 
+        colors={colors}
+        sizes={sizes}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
         return <VoronoiMap />
@@ -123,16 +125,6 @@ const MapEditInner = ({
     return null;
 }
 
-const DynamicLegend = ({colors}) => {
-    const { store } = useContext(GlobalStoreContext);
-
-    if(store.currentMap.type === "Spike Map"){
-        return <SpikeLegend colors={colors}/>
-    }
-    else if(store.currentMap.type === "Dot Distribution Map"){
-        return <DotDistLegend colors={colors}/>
-    }
-}
 
 const MapEdit = ({
     colors,
@@ -142,6 +134,10 @@ const MapEdit = ({
     hasFill,
     range,
     hideLegend,
+    legendTitle,
+    setLegendTitle,
+    legendFields,
+    setLegendFields,
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
@@ -149,31 +145,48 @@ const MapEdit = ({
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
 
+    const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
+        const { store } = useContext(GlobalStoreContext);
+    
+        if(store.currentMap.type === "Spike Map"){
+            return <SpikeLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Dot Distribution Map"){
+            return <DotDistLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Choropleth Map"){
+            console.log("LEGEND")
+            return <ChoroLegend
+                legendFields = {legendFields}
+                legendAnchors = {legendAnchors}
+                handleLegendClick = {handleLegendClick}
+                handleTextChange = {handleTextChange}
+                handleClose = {handleClose}
+                handleNewColor = {handleNewColor}>
+                </ChoroLegend>
+        }
+    }
+    
+    const [legendAnchors, setLegendAnchors] = useState(() => {
+        if(legendFields){
+            const initialAnchors = {};
+            legendFields.forEach((_, index) => {
+                initialAnchors[`label${index}`] = null;
+            });
+            return initialAnchors;
+        }
+    });
 
-    const [legendColor, setLegendColor] = useState({
-        label1: "#FF0000",
-        label2: "#13412D",
-        label3: "#141341"
-    })
 
-    const [legendAnchors, setLegendAnchors] = useState({
-        label1: null,
-        label2: null,
-        label3: null
-    })
-
-    const [legendColorPicker, setLegendColorPicker] = useState({
-        label1: false,
-        label2: false,
-        label3: false
-    })
-
-    const [legendText, setLegendText] = useState({
-        title: "Example Title",
-        label1: "Field 1",
-        label2: "Field 2",
-        label3: "Field 3"
-    })
+    const [legendColorPicker, setLegendColorPicker] = useState(() => {
+        if(legendFields){
+            const initialColorPickers = {};
+            legendFields.forEach((_, index) => {
+                initialColorPickers[`label${index}`] = false;
+            });
+            return initialColorPickers;
+        }
+    });
 
     const handleLegendClick = (event, label) => {
         setLegendColorPicker({
@@ -193,22 +206,24 @@ const MapEdit = ({
         });
     };
 
-    const handleNewColor = (event, label) => {
-        setLegendColor({
-            ...legendColor,
-            [label] : event.hex
-        })
-    }
-
     const handleBaseMap = () =>{
         setBaseMap(!baseMap)
     }
 
-    const handleTextChange= (event, label) => {
-        setLegendText({
-            ...legendText,
-            [label]: event.target.value
-        })
+    const handleTextChange = (e, index) => {
+        const updatedFields = [...legendFields];
+        updatedFields[index].fieldText = e.target.value;
+        setLegendFields(updatedFields);
+    };
+
+    const handleNewColor = (event, index) => {
+        const updatedFields = [...legendFields];
+        updatedFields[index].fieldColor = event.hex;
+        setLegendFields(updatedFields);
+    };
+
+    const handleTitleChange = (event) => {
+        setLegendTitle(event.target.value)
     }
 
     const mapContainerRef = useRef(null);
@@ -255,7 +270,7 @@ const MapEdit = ({
 
         waitForMapLoad();
       }, [captureMapAsImage, photo ]);
-
+    
 
     return(
         <Grid item xs = {8}>
@@ -310,78 +325,21 @@ const MapEdit = ({
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
-                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} >
-                            <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendText.title} onChange={(e) => handleTextChange(e, "title")}></LegendTextField>
-                            {/* <Box sx={{display:'flex', alignItems: 'center'}}>
-                                <Square sx={{backgroundColor: legendColor.label1, '&:hover':{backgroundColor: legendColor.label1}}} onClick={(e) => handleLegendClick(e, "label1")}></Square>
-                                <LegendTextField variant="standard" value={legendText.label1} onChange={(e) => handleTextChange(e, "label1")}></LegendTextField>
-                                <Popover 
-                                    open={Boolean(legendAnchors.label1)} 
-                                    onClose={()=>handleClose("label1")}
-                                    anchorEl={legendAnchors.label1} 
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'left',
-                                    }}>
-                                    <ChromePicker
-                                        color={legendColor !== null && legendColor.label1}
-                                        onChange={(e)=>handleNewColor(e, "label1")}
-                                        disableAlpha
-                                        renderers={false}
-                                    />
-                                </Popover>
-                            </Box>
-                            <Box sx={{display:'flex', alignItems: 'center'}}>
-                                <Square sx={{backgroundColor: legendColor.label2, '&:hover':{backgroundColor: legendColor.label2}}} onClick={(e) => handleLegendClick(e, "label2")}></Square>
-                                <LegendTextField variant="standard" value={legendText.label2} onChange={(e) => handleTextChange(e, "label2")}></LegendTextField>
-                                <Popover 
-                                    open={Boolean(legendAnchors.label2)} 
-                                    onClose={()=>handleClose("label2")}
-                                    anchorEl={legendAnchors.label2} 
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'left',
-                                    }}>
-                                    <ChromePicker
-                                        color={legendColor !== null && legendColor.label2}
-                                        onChange={(e)=>handleNewColor(e,"label2")}
-                                        disableAlpha
-                                        renderers={false}
-                                    />
-                                </Popover>
-                            </Box>
-                            <Box sx={{display:'flex', alignItems: 'center'}}>
-                                <Square sx={{backgroundColor: legendColor.label3, '&:hover':{backgroundColor: legendColor.label3}}} onClick={(e) => handleLegendClick(e, "label3")}></Square>
-                                <LegendTextField variant="standard" value={legendText.label3} onChange={(e) => handleTextChange(e, "label3")}></LegendTextField>
-                                <Popover 
-                                    open={Boolean(legendAnchors.label3)} 
-                                    onClose={()=>handleClose("label3")}
-                                    anchorEl={legendAnchors.label3} 
-                                    anchorOrigin={{
-                                        vertical: 'bottom',
-                                        horizontal: 'left',
-                                    }}
-                                    transformOrigin={{
-                                        vertical: 'top',
-                                        horizontal: 'left',
-                                    }}>
-                                    <ChromePicker
-                                        color={legendColor !== null && legendColor.label3}
-                                        onChange={(e)=>handleNewColor(e,"label3")}
-                                        disableAlpha
-                                        renderers={false}
-                                    />
-                                </Popover>
-                            </Box> */}
-                            <DynamicLegend colors={colors}/>
+                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                            }}>
+                            <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
+                            <div style={{ overflow: 'auto' }}>
+                            <DynamicLegend colors={colors} 
+                                            legendFields = {legendFields}
+                                            legendAnchors = {legendAnchors}
+                                            handleLegendClick = {handleLegendClick}
+                                            handleTextChange = {handleTextChange}
+                                            handleClose = {handleClose}
+                                            handleNewColor = {handleNewColor}/>
+                            </div>
+                            
                         </LegendContainer>
                     </ControlGrid>
                     :null

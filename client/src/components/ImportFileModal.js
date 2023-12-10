@@ -234,7 +234,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                             >
                                 <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth Map"control={<StyledRadio/>} label="Chloropleth Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Choropleth Map"control={<StyledRadio/>} label="Choropleth Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Voronoi Map" control={<StyledRadio/>} label="Voronoi Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Spike Map" control={<StyledRadio/>} label="Spike Map" />
                             </RadioGroup>
