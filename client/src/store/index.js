@@ -38,7 +38,7 @@ function GlobalStoreContextProvider(props) {
    const dict = {
     "/login": "Login",
     "/register": "RegisterScreen",
-    "/faq" : "FAQScreen",
+    "/FAQ" : "FAQScreen",
     "/forgotPassword" : "ForgotPasswordScreen",
     "/passwordReset" : "ResetPasswordScreen",
     "/feed" : "MapFeed",
@@ -73,6 +73,7 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         console.log(type)
+        console.log(payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -459,6 +460,7 @@ function GlobalStoreContextProvider(props) {
             getMap()
         }
         else{
+            console.log(pageURL)
             storeReducer({
                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
                 payload: {

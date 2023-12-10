@@ -80,7 +80,7 @@ const EditScreen = () => {
                 FillColor: mapEdit.fillColor,
                 StrokeColor: mapEdit.strokeColor,
                 DotMap: mapEdit.dotColor,
-                SpikeMap: mapEdit.dotColor,
+                SpikeMap: mapEdit.spikeColor,
                 VoronoiMap: '#FFFFFF'
             });
             setSizes({
