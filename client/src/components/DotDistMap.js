@@ -4,11 +4,81 @@ import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 
-const DotDistMap = ({handlePropertyDataLoad, propertyData}) => {
+const DotDistMap = ({
+  colors,
+  sizes,
+  opacities,
+  hasStroke,
+  hasFill,
+  handlePropertyDataLoad,
+  propertyData
+}) => {
 
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
+
+  useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      let i = 0;
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              layer.setStyle({
+              stroke: hasStroke,
+              color: colors.StrokeColor,
+              weight: sizes.StrokeWeight,
+              opacity: opacities.StrokeOpacity,
+              fill: hasFill,
+              fillColor: colors.FillColor,
+              fillOpacity: opacities.FillOpacity,
+              });
+
+              let tempi = i
+              layer.on({
+                  click: (e) => {
+                      if(feature.geometry.type !== 'Point'){
+                          L.DomEvent.stopPropagation(e);
+                          // Here we set the index to tempi
+                          handlePropertyDataLoad(tempi)
+                      }
+                  },
+                })
+            }
+            i+=1
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+      try{
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+    }
+
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    updateLayers(geojsonData);
+    map.on('click',function(e) {
+      L.DomEvent.stopPropagation(e);
+      console.log('clicked on map', e);
+      // Here we set the index to null
+      handlePropertyDataLoad(null)
+    });
+    return () => {
+      
+      // dotsLayerGroup.remove();
+      regionLayerGroup.remove();
+      //map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.off('click')
+    };
+
+
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, propertyData, handlePropertyDataLoad]);
+  
 
   useEffect(() => {
     function calculateMedian(values) {
@@ -112,59 +182,42 @@ const DotDistMap = ({handlePropertyDataLoad, propertyData}) => {
     const updateLayers = (geojsonData, dotDensityData) => {
       // Clear existing layers
       dotsLayerGroup.clearLayers();
+      // regionLayerGroup.clearLayers();
       L.geoJSON(dotDensityData, {
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, {
               radius: 3,
-              fillColor: "#ff24bd",
+              fillColor: colors.DotMap,
               color: "#000",
               weight: 1,
               opacity: 1,
               fillOpacity: 0.8
-          })
+          }).bringToFront();
         },
       }).addTo(dotsLayerGroup);
+      dotsLayerGroup.bringToFront();
 
-      let i = 0
-      L.geoJSON(geojsonData, {
-        onEachFeature: function (feature, layer){
-          let tempi = i
-            layer.on({
-                click: (e) => {
-                    if(feature.geometry.type !== 'Point'){
-                        L.DomEvent.stopPropagation(e);
-                        // Here we set the index to tempi
-                        handlePropertyDataLoad(tempi)
-                    }
-                },
-            })
-            i+=1
-        },
-        style: function (feature) {
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-                case 'LineString':
-                case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
-                default:
-                    return {}; // Point geometries, if any, are already handled in dot density layer
-            }
-        },
-        // Ensure that no default marker is created for point features
-        pointToLayer: function (feature, latlng) {
-          return null;
-        }
-      }).addTo(map);
-
-      map.on('click',function(e) {
-        L.DomEvent.stopPropagation(e);
-        console.log('clicked on map', e);
-        // Here we set the index to null
-        handlePropertyDataLoad(null)
-      });
-
+      // L.geoJSON(geojsonData, {
+      //   onEachFeature: function (feature, layer) {
+      //     if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+      //         layer.setStyle({
+      //         stroke: hasStroke,
+      //         color: colors.StrokeColor,
+      //         weight: sizes.StrokeWeight,
+      //         opacity: opacities.StrokeOpacity,
+      //         fill: hasFill,
+      //         fillColor: colors.FillColor,
+      //         fillOpacity: opacities.FillOpacity,
+      //         });
+      //     }
+      //     }
+      // }).addTo(regionLayerGroup);
+      try{
+        map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
@@ -177,18 +230,16 @@ const DotDistMap = ({handlePropertyDataLoad, propertyData}) => {
     updateLayers(geojsonData, dotDensityData);
 
     return () => {
-      console.log(dotsLayerGroup)
-      //dotsLayerGroup.remove();
-      map.eachLayer(function (layer) {map.removeLayer(layer);});
-      map.off('click')
+      dotsLayerGroup.remove();
+      // regionLayerGroup.remove();
     };
-  }, [map, storeRef, propertyData, handlePropertyDataLoad]);
+  }, [map, storeRef, colors.DotMap]);
+
+  
 
   useEffect(()=>{
     map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
   }, [map])
-  
-
   return null;
 }
 

@@ -3,7 +3,15 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 
-const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
+const ChloroplethMap = ({
+  colors,
+  sizes,
+  opacities,
+  hasStroke,
+  hasFill,
+  handlePropertyDataLoad,
+  propertyData
+}) => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
@@ -86,11 +94,11 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
           if(!chloroInfo){
             geojsonData.features.forEach(feature => {
               if (flag){
-                if (counter < 10){
+                // if (counter < 25){
                   color = generateColor(usedColors);
                   usedColors.push(color)
                   counter = counter + 1;
-                }
+                // }
                 coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
 
               }
@@ -119,8 +127,6 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
               colorScheme.forEach((color, index) => {
                 coloring[tempcoloring[index]] = color;
               });
-              console.log("COMBINED")
-              console.log(coloring)
 
             }
 
@@ -166,10 +172,11 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
                   
                     return {
                       fillColor,
-                      weight: 2,
-                      opacity: 1,
-                      color: 'white',
-                      fillOpacity: 0.7,
+                      stroke: hasStroke,
+                      color: colors.StrokeColor,
+                      weight: sizes.StrokeWeight,
+                      opacity: opacities.StrokeOpacity,
+                      fillOpacity: 0.8 
                     };
                 },
                 pointToLayer: function (feature, latlng) {
@@ -190,7 +197,6 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
               };
             }
             coloring["isString"] = true;
-            console.log("RETURNING ", coloring)
             return {
               colors: coloring
             };
@@ -218,7 +224,7 @@ const ChloroplethMap = ({handlePropertyDataLoad, propertyData}) => {
           });
             map.off('click')
           };
-    }, [map, storeRef, propertyData, handlePropertyDataLoad]);
+    }, [map, storeRef, colors, sizes, opacities, hasStroke, propertyData, handlePropertyDataLoad]);
 
     useEffect(()=>{
       map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());

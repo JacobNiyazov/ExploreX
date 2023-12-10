@@ -92,12 +92,12 @@ function checkChloroplethMap(json){
             pointCount+=1
         }
         else{
-            return "Chloropleth Map only allows Polygon/MultiPolygon features in geojson file."
+            return "Choropleth Map only allows Polygon/MultiPolygon features in geojson file."
         }
     })
 
     if(polyCount <= 0){
-        return "Chloropleth Map requires at least one Polygon feature."
+        return "Choropleth Map requires at least one Polygon feature."
     }
 
     return ""

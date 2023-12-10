@@ -14,41 +14,9 @@ const EditScreen = () => {
     const { auth } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate();
-    useEffect(() => {
-      const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap.title !== mapEdit.title)) {
-          // Wait until authentication check is completed
-          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-          waitForAuthCheck(); // Re-check status
-        } else {
-          if (!auth.loggedIn) {
-            store.setCurrentPage(store.currentPageType.login);
-            navigate('/login');
-          }
-          if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
-            store.setCurrentPage(store.currentPageType.profileScreen);
-            navigate('/profile');
-          }
-          setLoading(false);
-        }
-      };
-  
-      waitForAuthCheck();
-    }, [auth, navigate, store]);
-    useEffect(() => {
-        const waitForCurrentMap = async () => {
-            while (loading) {
-                // Wait until currentMap is available
-                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-            }
-        };
-
-        waitForCurrentMap();
-    }, [store, store.currentMap, loading]);
-
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
+    const [legendFields, setLegendFields] = useState([])
     
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
@@ -57,8 +25,8 @@ const EditScreen = () => {
         // LegendBorder: mapEdit.legendBorderColor,
         FillColor: mapEdit.fillColor,
         StrokeColor: mapEdit.strokeColor,
-        DotMap: '#FFFFFF',
-        SpikeMap: '#FFFFFF',
+        DotMap: mapEdit.dotColor,
+        SpikeMap: mapEdit.spikeColor,
         VoronoiMap: '#FFFFFF'
     })
     const [sizes,setSizes] = useState({
@@ -86,6 +54,113 @@ const EditScreen = () => {
     const [hideLegend, setHideLegend] = React.useState(false)
 
     const [range, setRange] = React.useState(5)
+
+    const navigate = useNavigate();
+    useEffect(() => {
+      const waitForAuthCheck = async () => {
+        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap._id !== mapEdit.id)) {
+          // Wait until authentication check is completed
+          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+          waitForAuthCheck(); // Re-check status
+        } else {
+            if (!auth.loggedIn) {
+                store.setCurrentPage(store.currentPageType.login);
+                navigate('/login');
+            }
+            if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+                store.setCurrentPage(store.currentPageType.profileScreen);
+                navigate('/profile');
+            }
+            setLoading(false);
+            setTitle(mapEdit.title);
+            setColors({
+                TextColor: mapEdit.textColor,
+                HeatMap: '#FFFFFF',
+                // LegendFill: mapEdit.legendFillColor,
+                // LegendBorder: mapEdit.legendBorderColor,
+                FillColor: mapEdit.fillColor,
+                StrokeColor: mapEdit.strokeColor,
+                DotMap: mapEdit.dotColor,
+                SpikeMap: mapEdit.spikeColor,
+                VoronoiMap: '#FFFFFF'
+            });
+            setSizes({
+                TextSize: mapEdit.textSize,
+                StrokeWeight: mapEdit.strokeWeight,
+            });
+            setOpacities({
+                StrokeOpacity: mapEdit.strokeOpacity,
+                FillOpacity: mapEdit.fillOpacity,
+            });
+            setAnchors({
+                Text: null,
+                HeatMap: null,
+                // LegendFill: null,
+                // LegendBorder: null,
+                RegionFill: null,
+                RegionBorder: null,
+                DotMap: null,
+                SpikeMap: null,
+                VoronoiMap: null
+            });
+            setTextFont(mapEdit.textFont);
+            setHasStroke(mapEdit.hasStroke);
+            setHasFill(mapEdit.hasFill);
+            setLegendTitle(mapEdit.legendTitle)
+            if(mapEdit.legendFields){
+                setLegendFields([...legendFields])
+            }
+            if(mapEdit.chloroData){
+                let chloroInfo = mapEdit.chloroData.isString
+                let flag = true;
+                let previous = ""
+                const keys = Object.keys(mapEdit.chloroData)
+                    .filter(key => key !== "isString")
+                    .reverse();
+                const temp = keys.map(key => {
+                    if (chloroInfo) {
+                        return {
+                            fieldColor: mapEdit.chloroData[key],
+                            fieldText: key,
+                        };
+                    } else {
+                        if(flag){
+                            flag = false;
+                            previous = key;
+                            return {
+                                fieldColor: mapEdit.chloroData[key],
+                                fieldText: ">" + key,
+                            };
+                        }
+                        let temp = previous;
+                        previous = key;
+                
+                        return {
+                            fieldColor: mapEdit.chloroData[key],
+                            fieldText: "(" + key + "," + temp + "]",
+                        };
+                    }
+                });
+                setLegendFields(temp)
+
+            }
+        }
+      };
+  
+      waitForAuthCheck();
+    }, [auth, navigate, store]);
+    useEffect(() => {
+        const waitForCurrentMap = async () => {
+            while (loading) {
+                // Wait until currentMap is available
+                await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            }
+        };
+
+        waitForCurrentMap();
+    }, [store, store.currentMap, loading]);
+
+    
 
     const [propertyData, setPropertyData] = React.useState({properties: {}, featureIndex: null})
 
@@ -122,8 +197,6 @@ const EditScreen = () => {
         
     }
     
-    console.log(store.currentPage)
-    console.log(mapEdit.title)
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>
@@ -160,6 +233,10 @@ const EditScreen = () => {
                     hasFill={hasFill}
                     range={range}
                     hideLegend={hideLegend}
+                    legendTitle = {legendTitle}
+                    setLegendTitle = {setLegendTitle}
+                    legendFields = {legendFields}
+                    setLegendFields = {setLegendFields}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
                     propertyData={propertyData}/>
             </Grid>
