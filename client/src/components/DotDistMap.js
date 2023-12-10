@@ -52,12 +52,12 @@ const DotDistMap = ({
           }
       }).addTo(regionLayerGroup);
       regionLayerGroup.bringToBack();
-      try{
-        map.fitBounds(L.geoJSON(geojsonData).getBounds());
-      }
-      catch (err){
-        console.log(err)
-      }
+      //try{
+      //  map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      //}
+      //catch (err){
+      //  console.log(err)
+      //}
     }
 
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
@@ -212,12 +212,12 @@ const DotDistMap = ({
       //     }
       //     }
       // }).addTo(regionLayerGroup);
-      try{
-        map.fitBounds(L.geoJSON(geojsonData).getBounds());
-      }
-      catch (err){
-        console.log(err)
-      }
+      //try{
+      //  map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      //}
+      //catch (err){
+      //  console.log(err)
+      //}
     }
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
