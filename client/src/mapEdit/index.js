@@ -36,11 +36,13 @@ function GlobalMapEditContextProvider(props) {
         spikeColor: '',
         chloroData: {}
     });
+    console.log("NEW ", mapEdit)
 
     const { auth } = useContext(AuthContext);
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;
+        console.log("CALLIGN REDUCCER WITH ", payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
@@ -127,6 +129,8 @@ function GlobalMapEditContextProvider(props) {
     };
 
     mapEdit.loadStyles = async (styles) => {
+      console.log("LOADINGSSS")
+      console.log(styles)
       mapEditReducer({
         type: GlobalMapEditActionType.LOAD,
         payload: styles

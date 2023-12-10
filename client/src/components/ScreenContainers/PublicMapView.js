@@ -375,7 +375,7 @@ const PublicMapView = () => {
             return <HeatMap geojsonData ={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
         }
     }
-    else if(map.type === "Chloropleth Map"){
+    else if(map.type === "Choropleth Map"){
         console.log("SHOWING MAP")
         let data = store.currentMap.graphics.typeSpecific.chloroLegend;
         return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
