@@ -18,6 +18,8 @@ const EditScreen = () => {
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
     
+    const [chloroData, setChloroData] = useState(null);
+
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -110,13 +112,24 @@ const EditScreen = () => {
             if(mapEdit.legendFields){
                 setLegendFields([...legendFields])
             }
-            if(mapEdit.chloroData){
+            if(!chloroData && mapEdit.chloroData){
                 let chloroInfo = mapEdit.chloroData.isString
                 let flag = true;
                 let previous = ""
-                const keys = Object.keys(mapEdit.chloroData)
+                let keys;
+                if(chloroInfo){
+                    keys = Object.keys(mapEdit.chloroData)
                     .filter(key => key !== "isString")
                     .reverse();
+                }
+                else{
+                    keys = Object.keys(mapEdit.chloroData)
+                    .filter(key => key !== "isString")
+                    .map(Number) // Convert string keys to numbers
+                    .sort((a, b) => b - a) // Sort in descending numerical order
+                    .map(String); // Convert back to strings if needed
+                }
+
                 const temp = keys.map(key => {
                     if (chloroInfo) {
                         return {
@@ -142,7 +155,7 @@ const EditScreen = () => {
                     }
                 });
                 setLegendFields(temp)
-
+                setChloroData(mapEdit.chloroData)
             }
         }
       };
@@ -238,7 +251,9 @@ const EditScreen = () => {
                     legendFields = {legendFields}
                     setLegendFields = {setLegendFields}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
-                    propertyData={propertyData}/>
+                    propertyData={propertyData}
+                    chloroData = {chloroData}
+                    setChloroData = {setChloroData}/>
             </Grid>
         );
     }

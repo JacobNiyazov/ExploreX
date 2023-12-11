@@ -26,7 +26,8 @@ const MapEditInner = ({
     hasStroke,
     hasFill,
     handlePropertyDataLoad, 
-    propertyData
+    propertyData,
+    chloroData
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -125,7 +126,8 @@ const MapEditInner = ({
         hasStroke={hasStroke}
         hasFill={hasFill} 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
-        propertyData={propertyData}/>
+        propertyData={propertyData}
+        chloroProperty={chloroData}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
         return <VoronoiMap 
@@ -154,6 +156,8 @@ const MapEdit = ({
     setLegendFields,
     handlePropertyDataLoad,
     propertyData,
+    chloroData,
+    setChloroData
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
@@ -206,16 +210,32 @@ const MapEdit = ({
         setBaseMap(!baseMap)
     }
 
-    const handleTextChange = (e, index) => {
-        const updatedFields = [...legendFields];
-        updatedFields[index].fieldText = e.target.value;
-        setLegendFields(updatedFields);
-    };
+    function extractFirstNumber(str) {
+        const match = str.match(/-?\d+(\.\d+)?/);
+        return match ? parseFloat(match[0]) : null;
+      }
 
     const handleNewColor = (event, index) => {
         const updatedFields = [...legendFields];
         updatedFields[index].fieldColor = event.hex;
         setLegendFields(updatedFields);
+        if(chloroData.isString){
+            let newColor = updatedFields[index].fieldText
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+
+            setChloroData(temp)
+            // store.currentMap.graphics.typeSpecific.chloroLegend[newColor] = event.hex
+        }
+        else{
+            let newColor = extractFirstNumber(updatedFields[index].fieldText)
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+            setChloroData(temp)
+
+            // store.currentMap.graphics.typeSpecific.chloroLegend[temp] = event.hex
+
+        }
     };
 
     const handleTitleChange = (event) => {
@@ -307,7 +327,8 @@ const MapEdit = ({
                 range={range}
                 hideLegend={hideLegend}
                 handlePropertyDataLoad = {handlePropertyDataLoad} 
-                propertyData={propertyData}/>
+                propertyData={propertyData}
+                chloroData={chloroData}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -339,10 +360,13 @@ const MapEdit = ({
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
-                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                        <LegendContainer sx={hideLegend? {zIndex:0} : {zIndex:1000}} 
+                            
+                            style={{
                                 maxHeight: '200px',
                                 overflowY: 'auto',
-                            }}>
+                            }}
+                            >
                             <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
                             <div style={{ overflow: 'auto' }}>
                             {DynamicLegend}
