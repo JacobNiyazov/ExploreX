@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import ReactDOMServer from 'react-dom/server';
@@ -7,15 +7,82 @@ import { Box } from "@mui/material";
 import { Typography } from "@mui/material";
 import "leaflet.heat";
 
-const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData}) => {
+const HeatMap = ({
+    handlePropertyDataLoad, 
+    propertyData,
+    colors,
+    sizes,
+    opacities,
+    hasStroke,
+    hasFill,
+  }) => {
+    const { store } = useContext(GlobalStoreContext);
+  const storeRef = useRef(store);
+
   const map = useMap();
-  const { store } = useContext(GlobalStoreContext);
-  console.log("what is property: ", property)
-  
+  console.log("radius in heat: ", sizes.radius)
+  const geojsonData = storeRef.current.currentMap.graphics.geojson;
+  const property = storeRef.current.currentMap.graphics.typeSpecific.property;
+  useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      let i = 0
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              layer.setStyle({
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: hasFill,
+                fillColor: colors.FillColor,
+                fillOpacity: opacities.FillOpacity,
+              }).bringToBack();
+              let tempi = i
+            layer.on({
+                click: (e) => {
+                    if(feature.geometry.type !== 'Point'){
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        handlePropertyDataLoad(tempi)
+                    }
+                },
+            })
+            
+          }
+          i+=1
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+    }
+    map.eachLayer((layer) => {
+      if (layer !== regionLayerGroup) {
+        layer.bringToFront();
+      }
+    });
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    updateLayers(geojsonData);
+
+    map.on('click',function(e) {
+      L.DomEvent.stopPropagation(e);
+      console.log('clicked on map', e);
+      // Here we set the index to null
+      handlePropertyDataLoad(null)
+    });
+    return () => {
+      regionLayerGroup.remove();
+      map.off('click')
+    };
+
+
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, propertyData, handlePropertyDataLoad]);
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
-    const extractCoordsFromFeature = (feature, property) => {
+    const extractCoordsFromFeature = (feature, property,props) => {
       const propertyValue = feature.properties[property];
 
       // Skip features without the selected property or with non-numeric property values
@@ -23,9 +90,15 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
         console.log("is this property a number?")
         return [];
       }
-
+      let allProps = []
+      for(let i = 0; i < props.length; i++){
+        allProps.push(props[i].properties[property])
+      }
+      //console.log("ALL PROPS" , allProps)
+      let min = Math.min(...allProps)
+      let max = Math.max(...allProps)
       const intensity = parseFloat(propertyValue);
-
+      
       // Handle MultiPolygon geometries
       if (feature.geometry.type === "MultiPolygon") {
         return feature.geometry.coordinates.flatMap((polygonCoords) =>
@@ -36,17 +109,28 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
       // Handle Polygon geometries
       return extractCoordsFromPolygon(feature.geometry.coordinates, intensity);
     };
-
+    let allProps = geojsonData.features
     const heatPoints = geojsonData.features.flatMap((feature) => {
-      return extractCoordsFromFeature(feature, property);
+      return extractCoordsFromFeature(feature, property, allProps);
     });
-    
-    L.heatLayer(heatPoints).addTo(map);
 
+    console.log("colors: ", colors)
+    const heatLayerOptions = {
+      //blur: 25,
+      //radius: 15,
+      gradient:{
+        0.25: colors.lowGradient,
+        0.75: colors.mediumGradient,
+        1: colors.highGradient
+      }
+  };
+
+  const heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
+  heatLayer.addTo(map)
 
     let i = 0
     // Customize popups
-    var geojsonLayer = L.geoJSON(geojsonData, {
+    L.geoJSON(geojsonData, {
       onEachFeature: function (feature, layer) {
         layer.bindPopup(
           Object.keys(feature.properties).map(function (k) {
@@ -78,8 +162,8 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
       pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, {
             radius: 5,
-            fillColor: "#00000",
-            color: "#000",
+            fillColor: "transparent",
+            color: "transparent",
             weight: 1,
             opacity: 1,
             fillOpacity: 0.8
@@ -95,11 +179,11 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
     });
 
     // Remove default border styles for each region
-    map.eachLayer((layer) => {
+    /*map.eachLayer((layer) => {
       if (layer.setStyle) {
         layer.setStyle({fillColor:"transparent",color:"pink" });
       }
-    });
+    });*/
 
     return () => {
       map.eachLayer(function (layer) {
@@ -130,7 +214,7 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
 
   useEffect(()=>{
     map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
-  }, [map])
+  }, [map, store.currentMap.graphics.geojson])
 
   return null;
 }

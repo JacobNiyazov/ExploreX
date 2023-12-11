@@ -29,6 +29,9 @@ const GraphicsSchema = new Schema(
             spikeLegend: {type: [Number], required:false},
             chloroLegend: {type: Object, required:false},
             voronoiBound: {type: Object, required: false},
+            lowGradient: {type:String, required: true},
+            mediumGradient: {type:String, required: true},
+            highGradient: {type:String, required: true}
         },
         stroke:{
             hasStroke: {type: Boolean, required: true},

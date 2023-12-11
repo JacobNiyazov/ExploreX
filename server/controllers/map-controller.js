@@ -228,6 +228,9 @@ createMap = async (req,res) =>{
                 spikeLegend: null,
                 chloroLegend: null,
                 voronoiBound: null,
+                lowGradient: "#0000FF",
+                mediumGradient:"#FFEA00",
+                highGradient: "#FF0000"
         }
         graphic.fill = {
                 hasFill: true,

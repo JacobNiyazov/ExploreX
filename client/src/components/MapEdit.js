@@ -18,6 +18,7 @@ import VoronoiMap from './VoronoiMap.js';
 import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
+import HeatMapLegend from "./HeatMapLegend.js";
 
 const MapEditInner = ({
     colors,
@@ -111,10 +112,14 @@ const MapEditInner = ({
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
             return <HeatMap 
-            geojsonData ={store.currentMap.graphics.geojson} 
-            property = {store.currentMap.graphics.typeSpecific.property} 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
-            propertyData={propertyData}/>
+            propertyData={propertyData}
+            colors={colors}
+            sizes={sizes}
+            opacities={opacities}
+            hasStroke={hasStroke}
+            hasFill={hasFill} 
+            />
         }
     }
     else if(store.currentMap.type === "Choropleth Map"){
@@ -180,6 +185,12 @@ const MapEdit = ({
                 handleClose = {handleClose}
                 handleNewColor = {handleNewColor}>
                 </ChoroLegend>
+        }
+        else if(store.currentMap.type === "Heat Map"){
+            return <HeatMapLegend
+            colors={colors}
+            >
+            </HeatMapLegend>
         }
     }
     

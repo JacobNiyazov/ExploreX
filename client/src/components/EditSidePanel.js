@@ -34,7 +34,7 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
     setPropertyData, 
-    propertyData
+    propertyData,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -184,7 +184,6 @@ const EditSidePanel = ({
         'Brush Script MT',
         'Nova Square', 
       ];
-
     return (
         <SidePanelGrid container direction="column" item xs={4}>
             
@@ -400,24 +399,20 @@ const EditSidePanel = ({
                         <AccordionDetails sx={{padding:0}}>
                         <CustomList>
                                 <CustomListItem>
-                                    <Typography>Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                    <Typography>Low Gradient</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="lowGradient"/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Range</Typography>
-                                    <NumberSelector
-                                        data-testid="heat-map-selector"
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={range}
-                                        onChange={(event)=>{handleRange(event)}}
-                                        error={range === ""}
-                                    />
+                                    <Typography>Medium Gradient</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="mediumGradient"/>
                                 </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>High Gradient</Typography>
+                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="highGradient"/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
                             </CustomList>
                         </AccordionDetails>
                     </EditAccordion>

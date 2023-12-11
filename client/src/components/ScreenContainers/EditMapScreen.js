@@ -17,7 +17,7 @@ const EditScreen = () => {
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
-    
+    console.log("map edit radius: ", mapEdit.radius)
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -27,7 +27,10 @@ const EditScreen = () => {
         StrokeColor: mapEdit.strokeColor,
         DotMap: mapEdit.dotColor,
         SpikeMap: mapEdit.spikeColor,
-        VoronoiMap: '#FFFFFF'
+        VoronoiMap: '#FFFFFF',
+        lowGradient: mapEdit.lowGradient,
+        mediumGradient: mapEdit.mediumGradient,
+        highGradient: mapEdit.highGradient
     })
     const [sizes,setSizes] = useState({
         TextSize: mapEdit.textSize,
@@ -54,7 +57,7 @@ const EditScreen = () => {
     const [hideLegend, setHideLegend] = React.useState(false)
 
     const [range, setRange] = React.useState(5)
-
+    console.log("radius in screen: ", mapEdit.radius)
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
@@ -82,7 +85,10 @@ const EditScreen = () => {
                 StrokeColor: mapEdit.strokeColor,
                 DotMap: mapEdit.dotColor,
                 SpikeMap: mapEdit.spikeColor,
-                VoronoiMap: '#FFFFFF'
+                VoronoiMap: '#FFFFFF',
+                lowGradient: mapEdit.lowGradient,
+                mediumGradient: mapEdit.mediumGradient,
+                highGradient: mapEdit.highGradient
             });
             setSizes({
                 TextSize: mapEdit.textSize,
@@ -224,7 +230,8 @@ const EditScreen = () => {
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
                     setPropertyData={setPropertyData}
-                    propertyData = {propertyData}/>
+                    propertyData = {propertyData}
+                    />
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}

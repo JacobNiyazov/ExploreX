@@ -34,7 +34,10 @@ function GlobalMapEditContextProvider(props) {
         legendFields: [],
         dotColor: '',
         spikeColor: '',
-        chloroData: {}
+        chloroData: {},
+        lowGradient:'',
+        mediumGradient: '',
+        highGradient: ''
     });
 
     const { auth } = useContext(AuthContext);
@@ -65,9 +68,13 @@ function GlobalMapEditContextProvider(props) {
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
                   spikeColor: payload.spikeColor,
+                  lowGradient:payload.lowGradient,
+                  mediumGradient: payload.mediumGradient,
+                  highGradient: payload.highGradient
                 });
             }
             case GlobalMapEditActionType.LOAD: {
+              console.log("load radius: ", payload.radius)
                 return setMapEdit({
                   id: payload.id,
                   title: payload.title,
@@ -89,6 +96,9 @@ function GlobalMapEditContextProvider(props) {
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
                   spikeColor: payload.spikeColor,
+                  lowGradient:payload.lowGradient,
+                  mediumGradient: payload.mediumGradient,
+                  highGradient: payload.highGradient
                 });
             }
             default: {
@@ -113,6 +123,9 @@ function GlobalMapEditContextProvider(props) {
                   chloroData: {},
                   dotColor: '',
                   spikeColor: '',
+                  lowGradient:'',
+                  mediumGradient: '',
+                  highGradient: ''
                 });
             }
 

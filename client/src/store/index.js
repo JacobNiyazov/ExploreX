@@ -288,6 +288,7 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         if(response.data.success){
                             let tempMap = response.data.map;
+                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
@@ -309,6 +310,9 @@ function GlobalStoreContextProvider(props) {
                                 chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                                mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                                highGradient: tempMap.graphics.typeSpecific.highGradient
                             }
                            mapEdit.loadStyles(styles);
 
@@ -429,6 +433,7 @@ function GlobalStoreContextProvider(props) {
                         console.log("map: ",response.data.map);
                         if(response.data.success){
                             let tempMap = response.data.map;
+                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
@@ -449,6 +454,9 @@ function GlobalStoreContextProvider(props) {
                                 legendFields: tempMap.graphics.legend.legendFields,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                                mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                                highGradient: tempMap.graphics.typeSpecific.highGradient
                             }
                             mapEdit.loadStyles(styles);
                             storeReducer({
@@ -708,6 +716,9 @@ function GlobalStoreContextProvider(props) {
                     legendFields: tempMap.graphics.legend.legendFields,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                    mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                    highGradient: tempMap.graphics.typeSpecific.highGradient
                 }
                 mapEdit.loadStyles(styles);
                 await storeReducer({
@@ -860,6 +871,7 @@ function GlobalStoreContextProvider(props) {
             graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
             graphics['geojson'] = voronoi.geojson;
         }
+        
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
             let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
@@ -885,6 +897,9 @@ function GlobalStoreContextProvider(props) {
                     chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                    mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                    highGradient: tempMap.graphics.typeSpecific.highGradient
                 }
                 mapEdit.loadStyles(styles);
 
