@@ -130,7 +130,12 @@ const MapEditInner = ({
     else if(store.currentMap.type === "Voronoi Map"){
         return <VoronoiMap 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
-        propertyData={propertyData}/>
+        propertyData={propertyData}
+        colors={colors}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}
+        sizes={sizes} />
     }
     // else{
     //     loadMap(store.currentMap.graphics.geojson);

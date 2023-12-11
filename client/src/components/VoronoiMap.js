@@ -6,7 +6,15 @@ import * as turf from '@turf/turf'
 import * as ReactDOMServer from 'react-dom/server';
 import { Box, Typography } from '@mui/material';
 
-const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
+const VoronoiMap = ({
+    handlePropertyDataLoad, 
+    propertyData,
+    colors,
+    opacities,
+    hasStroke,
+    hasFill,
+    sizes,
+}) => {
 
     /*function getRandomShade(){
         // Generate random values for the red and green components
@@ -98,12 +106,15 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
                     i+=1
                     if(feature.geometry.type === 'Polygon'){
                         layer.setStyle({
-                        fillColor: '#FFFFFF',
-                        weight: 3,
-                        opacity: 1,
-                        color: '#808080',
-                        fillOpacity: 0.5
-                        });}
+                            stroke: hasStroke,
+                            color: colors.StrokeColor,
+                            weight: sizes.StrokeWeight,
+                            opacity: opacities.StrokeOpacity,
+                            fill: hasFill,
+                            fillColor: colors.FillColor,
+                            fillOpacity: opacities.FillOpacity,
+                          });
+                    }
                     /*if(feature.geometry.type === 'Point'){
                         layer.setStyle({
                         fillColor: '#000000',
@@ -113,8 +124,8 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
                 },
                 pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {
-                        radius: 5,
-                        fillColor: "#000000",
+                        radius: 3,
+                        fillColor: colors.VoronoiMap,
                         color: "#000",
                         weight: 1,
                         opacity: 1,
@@ -139,11 +150,42 @@ const VoronoiMap = ({handlePropertyDataLoad, propertyData}) => {
             });
             map.off('click')
           };
-    }, [map, /*storeRef,*/ propertyData, handlePropertyDataLoad])
+    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, handlePropertyDataLoad])
     
     useEffect(()=>{
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
       }, [map])
+    
+    useEffect(() =>{
+        const propertyLayerGroup = L.featureGroup().addTo(map);
+        if(store.currentMap && propertyData.featureIndex !== null){
+            let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
+            L.geoJSON(selected, {
+            onEachFeature: function (feature, layer) {
+                console.log(":(")
+                if(colors.StrokeColor === '#000000'){
+                layer.setStyle({
+                    color: "#FFFFFF",
+                    weight: '6',
+                    opacity: '1',
+                });
+                }
+                else{
+                layer.setStyle({
+                    color: "#000000",
+                    weight: '6',
+                    opacity: '1',
+                });
+                }
+            }
+            }).addTo(propertyLayerGroup);
+        }
+        propertyLayerGroup.bringToFront();
+        return () => {
+            propertyLayerGroup.remove();
+        };
+    
+    }, [propertyData, store, map, colors.StrokeColor])
 
     return null
 }

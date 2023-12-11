@@ -228,6 +228,7 @@ createMap = async (req,res) =>{
                 spikeLegend: null,
                 chloroLegend: null,
                 voronoiBound: null,
+                voronoiColor: "#ff24bd",
         }
         graphic.fill = {
                 hasFill: true,

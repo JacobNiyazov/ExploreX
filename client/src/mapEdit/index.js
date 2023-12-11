@@ -34,6 +34,7 @@ function GlobalMapEditContextProvider(props) {
         legendFields: [],
         dotColor: '',
         spikeColor: '',
+        voronoiColor:'',
         chloroData: {}
     });
 
@@ -64,6 +65,7 @@ function GlobalMapEditContextProvider(props) {
                   legendFields: payload.legendFields,
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
+                  voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                 });
             }
@@ -88,6 +90,7 @@ function GlobalMapEditContextProvider(props) {
                   legendFields: payload.legendFields,
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
+                  voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                 });
             }
@@ -113,6 +116,7 @@ function GlobalMapEditContextProvider(props) {
                   chloroData: {},
                   dotColor: '',
                   spikeColor: '',
+                  voronoiColor: '',
                 });
             }
 
