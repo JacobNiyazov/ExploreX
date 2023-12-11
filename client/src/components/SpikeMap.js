@@ -294,11 +294,7 @@ const SpikeMap = ({
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
-      map.eachLayer(function (layer) {
-        if(!layer._url){
-            map.removeLayer(layer);
-        }
-      });
+      spikeLayerGroup.remove()
       map.off('click')
     };
   }, [map, storeRef, colors.SpikeMap]);

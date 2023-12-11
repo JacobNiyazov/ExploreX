@@ -217,11 +217,7 @@ const ChloroplethMap = ({
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, result.colors);
         } 
         return () => {
-          map.eachLayer(function (layer) {
-            if(!layer._url){
-                map.removeLayer(layer);
-            }
-          });
+            chloroLayerGroup.remove();
             map.off('click')
           };
     }, [map, storeRef, colors, sizes, opacities, hasStroke, propertyData, handlePropertyDataLoad]);
@@ -255,7 +251,9 @@ const ChloroplethMap = ({
           }
         }).addTo(propertyLayerGroup);
       }
-      propertyLayerGroup.bringToFront();
+      map.on("layeradd", function (event) {
+        propertyLayerGroup.bringToFront();
+      });
       return () => {
         propertyLayerGroup.remove();
       };

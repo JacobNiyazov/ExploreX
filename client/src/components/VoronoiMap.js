@@ -35,6 +35,7 @@ const VoronoiMap = ({
     const { store } = useContext(GlobalStoreContext);
     const map = useMap();
     useEffect(()=>{
+        const regionLayerGroup = L.featureGroup().addTo(map);
         if(store.currentMap.graphics.typeSpecific.voronoiBound === null){
             let geojson = store.currentMap.graphics.geojson;
             var options = {bbox : [0, 0, 0, 0]}
@@ -132,7 +133,7 @@ const VoronoiMap = ({
                         fillOpacity: 0.8
                     });
                 }
-            }).addTo(map);
+            }).addTo(regionLayerGroup);
         }
 
         map.on('click',function(e) {
@@ -142,12 +143,9 @@ const VoronoiMap = ({
             handlePropertyDataLoad(null)
         });
 
+
         return () => {
-            map.eachLayer(function (layer) {
-                if(!layer._url){
-                    map.removeLayer(layer);
-                }
-            });
+            regionLayerGroup.remove();
             map.off('click')
           };
     }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, handlePropertyDataLoad])
@@ -158,6 +156,7 @@ const VoronoiMap = ({
     
     useEffect(() =>{
         const propertyLayerGroup = L.featureGroup().addTo(map);
+        console.log(propertyData.featureIndex)
         if(store.currentMap && propertyData.featureIndex !== null){
             let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
             L.geoJSON(selected, {
@@ -180,9 +179,12 @@ const VoronoiMap = ({
             }
             }).addTo(propertyLayerGroup);
         }
-        propertyLayerGroup.bringToFront();
+        map.on("layeradd", function (event) {
+            propertyLayerGroup.bringToFront();
+        });
         return () => {
             propertyLayerGroup.remove();
+            map.off("layeradd")
         };
     
     }, [propertyData, store, map, colors.StrokeColor])

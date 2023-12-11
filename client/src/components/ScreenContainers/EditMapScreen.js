@@ -176,7 +176,7 @@ const EditScreen = () => {
             if(featureIndex !== null){
                 return(
                     {
-                        properties: JSON.parse(JSON.stringify(store.currentMap.graphics.geojson.features[featureIndex].properties)),
+                        properties: store.currentMap.graphics.geojson.features[featureIndex].properties,
                         featureIndex: featureIndex
                     }
                 ); 
