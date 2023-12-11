@@ -92,7 +92,27 @@ export const LegendTextField = styled(TextField)({
     },
     input:{
         textAlign: 'center'
-    }
+    },
+
+});
+
+export const LegendBox = styled(Box)({
+    '& label.Mui-focused': {
+      color: "#ff24bd"
+    },
+    '& label': {
+      color: "#ff24bd"
+    },
+    '& .MuiInputBase-root':{
+      color: "#ff24bd",
+    },
+    '& .css-v4u5dn-MuiInputBase-root-MuiInput-root:after':{
+      borderBottom: "2px solid #ff24bd"
+    },
+    input:{
+        textAlign: 'center'
+    },
+    padding: '10px'
 
 });
 

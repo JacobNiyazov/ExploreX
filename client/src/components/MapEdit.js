@@ -166,27 +166,7 @@ const MapEdit = ({
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
 
-    const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
-        const { store } = useContext(GlobalStoreContext);
     
-        if(store.currentMap.type === "Spike Map"){
-            return <SpikeLegend colors={colors}/>
-        }
-        else if(store.currentMap.type === "Dot Distribution Map"){
-            return <DotDistLegend colors={colors}/>
-        }
-        else if(store.currentMap.type === "Choropleth Map"){
-            console.log("LEGEND")
-            return <ChoroLegend
-                legendFields = {legendFields}
-                legendAnchors = {legendAnchors}
-                handleLegendClick = {handleLegendClick}
-                handleTextChange = {handleTextChange}
-                handleClose = {handleClose}
-                handleNewColor = {handleNewColor}>
-                </ChoroLegend>
-        }
-    }
     
     const [legendAnchors, setLegendAnchors] = useState(() => {
         if(legendFields){
@@ -293,6 +273,23 @@ const MapEdit = ({
       }, [captureMapAsImage, photo ]);
     
 
+    let DynamicLegend = null;
+
+    if(store.currentMap.type === "Spike Map"){
+        DynamicLegend = <SpikeLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Dot Distribution Map"){
+        DynamicLegend = <DotDistLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Choropleth Map"){
+        DynamicLegend = <ChoroLegend
+            legendFields = {legendFields}
+            legendAnchors = {legendAnchors}
+            handleLegendClick = {handleLegendClick}
+            handleClose = {handleClose}
+            handleNewColor = {handleNewColor}>
+            </ChoroLegend>
+    }
     return(
         <Grid item xs = {8}>
 
@@ -353,13 +350,7 @@ const MapEdit = ({
                             }}>
                             <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
                             <div style={{ overflow: 'auto' }}>
-                            <DynamicLegend colors={colors} 
-                                            legendFields = {legendFields}
-                                            legendAnchors = {legendAnchors}
-                                            handleLegendClick = {handleLegendClick}
-                                            handleTextChange = {handleTextChange}
-                                            handleClose = {handleClose}
-                                            handleNewColor = {handleNewColor}/>
+                            {DynamicLegend}
                             </div>
                             
                         </LegendContainer>
