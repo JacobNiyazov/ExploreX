@@ -309,6 +309,7 @@ function GlobalStoreContextProvider(props) {
                                 chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                             }
                            mapEdit.loadStyles(styles);
 
@@ -449,6 +450,7 @@ function GlobalStoreContextProvider(props) {
                                 legendFields: tempMap.graphics.legend.legendFields,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                             }
                             mapEdit.loadStyles(styles);
                             storeReducer({
@@ -708,6 +710,7 @@ function GlobalStoreContextProvider(props) {
                     legendFields: tempMap.graphics.legend.legendFields,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                 }
                 mapEdit.loadStyles(styles);
                 await storeReducer({
@@ -886,6 +889,7 @@ function GlobalStoreContextProvider(props) {
                     chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                 }
                 console.log("STYLES1")
                 console.log(styles)

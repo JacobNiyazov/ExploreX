@@ -29,7 +29,7 @@ const EditScreen = () => {
         StrokeColor: mapEdit.strokeColor,
         DotMap: mapEdit.dotColor,
         SpikeMap: mapEdit.spikeColor,
-        VoronoiMap: '#FFFFFF'
+        VoronoiMap: mapEdit.voronoiColor,
     })
     const [sizes,setSizes] = useState({
         TextSize: mapEdit.textSize,
@@ -73,6 +73,8 @@ const EditScreen = () => {
                 store.setCurrentPage(store.currentPageType.profileScreen);
                 navigate('/profile');
             }
+
+            console.log(mapEdit)
             setLoading(false);
             setTitle(mapEdit.title);
             setColors({
@@ -84,7 +86,7 @@ const EditScreen = () => {
                 StrokeColor: mapEdit.strokeColor,
                 DotMap: mapEdit.dotColor,
                 SpikeMap: mapEdit.spikeColor,
-                VoronoiMap: '#FFFFFF'
+                VoronoiMap: mapEdit.voronoiColor,
             });
             setSizes({
                 TextSize: mapEdit.textSize,
@@ -187,7 +189,7 @@ const EditScreen = () => {
             if(featureIndex !== null){
                 return(
                     {
-                        properties: JSON.parse(JSON.stringify(store.currentMap.graphics.geojson.features[featureIndex].properties)),
+                        properties: store.currentMap.graphics.geojson.features[featureIndex].properties,
                         featureIndex: featureIndex
                     }
                 ); 
