@@ -109,7 +109,8 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
       });
       map.off('click')
     };
-  }, [geojsonData, map, property, propertyData, handlePropertyDataLoad]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojsonData, map, property, store.currentMap.graphics.geojson]);
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {
@@ -130,6 +131,7 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
 
   useEffect(()=>{
     map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map])
 
   /*useEffect(() =>{

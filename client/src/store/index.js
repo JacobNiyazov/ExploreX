@@ -310,6 +310,7 @@ function GlobalStoreContextProvider(props) {
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                                 voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
                            mapEdit.loadStyles(styles);
 
@@ -451,6 +452,7 @@ function GlobalStoreContextProvider(props) {
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                                 voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
                             mapEdit.loadStyles(styles);
                             storeReducer({
@@ -711,6 +713,7 @@ function GlobalStoreContextProvider(props) {
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
                 mapEdit.loadStyles(styles);
                 await storeReducer({
@@ -890,6 +893,7 @@ function GlobalStoreContextProvider(props) {
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
                 console.log("STYLES1")
                 console.log(styles)
@@ -952,13 +956,17 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
     }
-    store.updateLocalMap = (dotScale=null, spikeLegend=null) => {
+    store.updateLocalMap = (dotScale=null, spikeLegend=null, voronoiMap=null) => {
         let map = store.currentMap;
         if(dotScale !== null && map){
             map.graphics.typeSpecific.dotScale = dotScale;
         }
         if(spikeLegend !== null && map){
             map.graphics.typeSpecific.spikeLegend = spikeLegend;
+        }
+        if(voronoiMap !== null && map){
+            map = JSON.parse(JSON.stringify(store.currentMap))
+            map.graphics.geojson = voronoiMap
         }
         storeReducer({
             type: GlobalStoreActionType.EDIT_MAP,

@@ -220,7 +220,8 @@ const ChloroplethMap = ({
             chloroLayerGroup.remove();
             map.off('click')
           };
-    }, [map, storeRef, colors, sizes, opacities, hasStroke, propertyData, handlePropertyDataLoad]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [map, storeRef, colors, sizes, opacities, hasStroke]);
 
     useEffect(()=>{
       map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
@@ -258,7 +259,7 @@ const ChloroplethMap = ({
         propertyLayerGroup.remove();
       };
       
-    }, [propertyData, store, map, colors.StrokeColor])
+    }, [ store.currentMap, map, colors.StrokeColor])
 
     return null;    
 }

@@ -91,8 +91,8 @@ const DotDistMap = ({
       map.off('click')
     };
 
-
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, handlePropertyDataLoad]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, store.currentMap.graphics.geojson]);
   
   useEffect(() =>{
     const propertyLayerGroup = L.featureGroup().addTo(map);
@@ -267,6 +267,7 @@ const DotDistMap = ({
 
   useEffect(()=>{
     map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map])
   return null;
 }

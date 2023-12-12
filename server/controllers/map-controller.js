@@ -229,6 +229,7 @@ createMap = async (req,res) =>{
                 chloroLegend: null,
                 voronoiBound: null,
                 voronoiColor: "#ff24bd",
+                voronoiValue: "Cellphone Towers",
         }
         graphic.fill = {
                 hasFill: true,

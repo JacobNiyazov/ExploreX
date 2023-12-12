@@ -18,6 +18,7 @@ import VoronoiMap from './VoronoiMap.js';
 import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
+import VoronoiLegend from "./VoronoiLegend.js";
 
 const MapEditInner = ({
     colors,
@@ -26,7 +27,8 @@ const MapEditInner = ({
     hasStroke,
     hasFill,
     handlePropertyDataLoad, 
-    propertyData
+    propertyData,
+    voronoiPointToggle,
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -136,7 +138,8 @@ const MapEditInner = ({
         opacities={opacities}
         hasStroke={hasStroke}
         hasFill={hasFill}
-        sizes={sizes} />
+        sizes={sizes}
+        voronoiPointToggle={voronoiPointToggle}/>
     }
     // else{
     //     loadMap(store.currentMap.graphics.geojson);
@@ -160,6 +163,9 @@ const MapEdit = ({
     setLegendFields,
     handlePropertyDataLoad,
     propertyData,
+    voronoiPointToggle,
+    voronoiValue,
+    setVoronoiValue,
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
@@ -208,7 +214,9 @@ const MapEdit = ({
         });
     };
 
-    const handleBaseMap = () =>{
+    const handleBaseMap = (e) =>{
+        console.log(e)
+        e.stopPropagation();
         setBaseMap(!baseMap)
     }
 
@@ -282,6 +290,12 @@ const MapEdit = ({
     else if(store.currentMap.type === "Dot Distribution Map"){
         DynamicLegend = <DotDistLegend colors={colors}/>
     }
+    else if(store.currentMap.type === "Voronoi Map"){
+        DynamicLegend = <VoronoiLegend 
+                            colors={colors}
+                            voronoiValue={voronoiValue}
+                            setVoronoiValue={setVoronoiValue}/>
+    }
     else if(store.currentMap.type === "Choropleth Map"){
         DynamicLegend = <ChoroLegend
             legendFields = {legendFields}
@@ -313,7 +327,8 @@ const MapEdit = ({
                 range={range}
                 hideLegend={hideLegend}
                 handlePropertyDataLoad = {handlePropertyDataLoad} 
-                propertyData={propertyData}/>
+                propertyData={propertyData}
+                voronoiPointToggle={voronoiPointToggle}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -326,13 +341,15 @@ const MapEdit = ({
                         <UndoRedoContainer>
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    {/*please leave id i need for voronoi*/}
+                                    <IconButton id="undobutton" sx={{color: "#000000"}}>
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    {/*please leave id i need for voronoi*/}
+                                    <IconButton id={"redobutton"} sx={{color: "#000000"}}>
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>
@@ -341,17 +358,19 @@ const MapEdit = ({
                         </UndoRedoContainer>
                         <BaseMapContainer >
                             <BaseMapBlur>
-                                <BaseMapSwitch onChange={handleBaseMap}></BaseMapSwitch>
+                                {/*please leave id i need for voronoi*/}
+                                <BaseMapSwitch id={"basemapswitch"} onChange={handleBaseMap}></BaseMapSwitch>
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
-                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                        {/*id for voronoi stuff :)*/}
+                        <LegendContainer id="legendcontainer" sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
                                 maxHeight: '500px',
                                 maxWidth: '500px',
                                 overflowY: 'auto',
                             }}>
-                            <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
-                            <div style={{ overflow: 'auto' }}>
+                            <LegendTextField id="legendtitle" variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
+                            <div id="legenddiv" style={{ overflow: 'auto' }}>
                             {DynamicLegend}
                             </div>
                             

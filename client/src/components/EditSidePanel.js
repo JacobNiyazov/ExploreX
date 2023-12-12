@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { CreateButton, DeleteButton, PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck} from './StyleSheets/EditSidePanelStyles';
+import { CreateButton, DeleteButton, PropertyDetails, NumberSelector, FontSelector, SidePanelGrid, ButtonContainer, Buttons, EditAccordion, ExpandMore, CustomList, CustomListItem, EditAccordionSummary, TitleTextField, TitleContainer, AccordianContainer, SelectAllCheck, VoronoiSwitch} from './StyleSheets/EditSidePanelStyles';
 import Grid from '@mui/material/Grid';
 import ColorSelector from './ColorSelector.js';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
+import { BaseMapSwitch } from './StyleSheets/MapEditStyles';
 
 const EditSidePanel = ({
     title,
@@ -34,7 +35,8 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
     setPropertyData, 
-    propertyData
+    propertyData,
+    setVoronoiPointToggle
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -149,7 +151,9 @@ const EditSidePanel = ({
         setValue('')
     }
 
-    
+    const handleVoronoiToggle = () =>{
+        setVoronoiPointToggle(toggle=>(!toggle))
+    }
 
     const commonFonts = [
         'Arial',
@@ -507,31 +511,21 @@ const EditSidePanel = ({
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
-                                {/* <CustomListItem>
-                                    <Typography>Select All</Typography>
-                                    <SelectAllCheck onChange={()=> {handleSelectAll("VoronoiMap")}}></SelectAllCheck>
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Size</Typography>
-                                    <NumberSelector
-                                        data-testid="voronoi-map-selector"
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={size.VoronoiMap}
-                                        onChange={(event)=>{handleSize(event, "VoronoiMap")}}
-                                        error={size.VoronoiMap === ""}
-                                    />
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
                                     <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
                                 </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem sx={{display:'flex', justifyContent:'center'}}>
+                                    <Typography sx={{fontSize:"0.6em", fontStyle:'italic', textAlign:'center'}}>*Click On Points To Delete Or On Map To Add Points*</Typography>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Edit Points</Typography>
+                                    <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
+                                </CustomListItem>
                             </CustomList>
+                            
                         </AccordionDetails>
                     </EditAccordion>
                     : null

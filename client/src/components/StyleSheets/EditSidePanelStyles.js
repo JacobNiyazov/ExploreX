@@ -9,6 +9,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import { Switch } from '@mui/material';
 
 
 export const SidePanelGrid = styled(Grid)({
@@ -237,3 +238,20 @@ export const PropertyDetails = styled(AccordionDetails)({
   scrollbarWidth: 'thin',
   scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
 });
+
+export const VoronoiSwitch = styled(Switch)({
+  '& .MuiSwitch-colorPrimary':{
+      color: '#404040',
+
+      "&.Mui-checked": {
+          color:'#ff24bd',
+      }
+  },
+  '& .css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track':{
+      backgroundColor:"#FFFFFF",
+  },
+  '& .MuiSwitch-track':{
+    backgroundColor:"#ff24bd",
+  },
+  marginLeft: 'auto'
+})

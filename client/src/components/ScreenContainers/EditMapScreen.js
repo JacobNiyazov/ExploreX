@@ -55,6 +55,8 @@ const EditScreen = () => {
 
     const [range, setRange] = React.useState(5)
 
+    const [voronoiValue, setVoronoiValue] = React.useState(mapEdit.voronoiValue)
+
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
@@ -110,6 +112,7 @@ const EditScreen = () => {
                 setHasStroke(mapEdit.hasStroke);
                 setHasFill(mapEdit.hasFill);
                 setLegendTitle(mapEdit.legendTitle);
+                setVoronoiValue(mapEdit.voronoiValue);
 
                 if(mapEdit.legendFields){
                     setLegendFields([...legendFields])
@@ -146,7 +149,7 @@ const EditScreen = () => {
                         }
                     });
                     setLegendFields(temp)
-    
+                    
                 }
                 setLoading(false);
             }
@@ -205,6 +208,8 @@ const EditScreen = () => {
         
     }
     
+    const [voronoiPointToggle, setVoronoiPointToggle] = React.useState(false)
+    
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
             <Grid container sx={{height:"100%"}}>
@@ -232,7 +237,8 @@ const EditScreen = () => {
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
                     setPropertyData={setPropertyData}
-                    propertyData = {propertyData}/>
+                    propertyData = {propertyData}
+                    setVoronoiPointToggle={setVoronoiPointToggle}/>
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}
@@ -246,7 +252,10 @@ const EditScreen = () => {
                     legendFields = {legendFields}
                     setLegendFields = {setLegendFields}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
-                    propertyData={propertyData}/>
+                    propertyData={propertyData}
+                    voronoiPointToggle={voronoiPointToggle}
+                    voronoiValue={voronoiValue}
+                    setVoronoiValue={setVoronoiValue}/>
             </Grid>
         );
     }

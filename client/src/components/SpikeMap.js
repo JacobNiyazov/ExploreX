@@ -105,8 +105,8 @@ const SpikeMap = ({
       map.off('click')
     };
 
-
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, propertyData, handlePropertyDataLoad]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, store.currentMap.graphics.geojson]);
 
   useEffect(() =>{
     const propertyLayerGroup = L.featureGroup().addTo(map);

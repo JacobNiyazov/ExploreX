@@ -30,6 +30,7 @@ const GraphicsSchema = new Schema(
             chloroLegend: {type: Object, required:false},
             voronoiBound: {type: Object, required: false},
             voronoiColor:{type: String, required: true},
+            voronoiValue:{type: String, required: true},
         },
         stroke:{
             hasStroke: {type: Boolean, required: true},
