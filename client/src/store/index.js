@@ -74,6 +74,7 @@ function GlobalStoreContextProvider(props) {
     const storeReducer = (action) => {
         const { type, payload } = action;
         console.log(type)
+        console.log(payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -449,6 +450,7 @@ function GlobalStoreContextProvider(props) {
                                 legendTitle: tempMap.graphics.legend.legendTitle,
                                 // legendBorderWidth: '',
                                 legendFields: tempMap.graphics.legend.legendFields,
+                                chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                                 voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
@@ -709,6 +711,7 @@ function GlobalStoreContextProvider(props) {
                     legendTitle: tempMap.graphics.legend.legendTitle,
                     // legendBorderWidth: '',
                     legendFields: tempMap.graphics.legend.legendFields,
+                    chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
@@ -892,8 +895,7 @@ function GlobalStoreContextProvider(props) {
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                 }
-                console.log("STYLES1")
-                console.log(styles)
+
                 mapEdit.loadStyles(styles);
 
                 storeReducer({
@@ -942,9 +944,6 @@ function GlobalStoreContextProvider(props) {
             map.isPublic = isPublish;
             map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
-            if(res.data.success){
-                console.log(res.data.map)
-            }
             if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){

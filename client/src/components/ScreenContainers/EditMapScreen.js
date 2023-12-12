@@ -117,9 +117,13 @@ const EditScreen = () => {
                 store.setCurrentPage(store.currentPageType.login);
                 navigate('/login');
             }
-            if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+            if(store.currentMap.ownerUsername !== auth.user.username){
                 store.setCurrentPage(store.currentPageType.profileScreen);
                 navigate('/profile');
+            }
+            else if(store.currentMap.isPublic){
+                store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
+                navigate('/map?id=${store.currentMap._id}');
             }
             
             if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || store.currentMap.graphics.typeSpecific.chloroLegend!==null || store.currentMap.graphics.typeSpecific.voronoi!==null)){
