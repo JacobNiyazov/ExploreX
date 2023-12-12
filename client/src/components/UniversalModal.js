@@ -14,7 +14,10 @@ function UniversalModal(){
   
     const handleConfirm = () => {
         if(store.modalAction === store.modalActionTypes.publish){
-            store.publishMap(store.currentMap);
+            store.publishMap(store.currentMap, true);
+        }
+        if(store.modalAction === store.modalActionTypes.save){
+            store.publishMap(store.currentMap, false);
         }
         store.closeModal();
     };

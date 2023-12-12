@@ -50,6 +50,7 @@ function GlobalStoreContextProvider(props) {
 
    store.modalActionTypes = {
         publish: "Publish",
+        save: "Save",
    }
 
    store.currentPageType = {
@@ -907,7 +908,8 @@ function GlobalStoreContextProvider(props) {
         }
             
     }
-    store.publishMap = async (map) =>{
+
+    store.publishMap = async (map, isPublish) =>{
         console.log(map)
 
         if(!map){
@@ -915,7 +917,7 @@ function GlobalStoreContextProvider(props) {
             else map = store.currentMap;
         }
         try {
-            map.isPublic = true;
+            map.isPublic = isPublish;
             map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success){
