@@ -49,7 +49,7 @@ const ColorSelector = ({colors, setColors, anchors, setAnchors, label}) =>{
                 }}>
                 <ChromePicker
                     color={colors !== null && colors[label]}
-                    onChange={handleNewColor}
+                    onChangeComplete={handleNewColor}
                     disableAlpha
                     renderers={false}
                 />

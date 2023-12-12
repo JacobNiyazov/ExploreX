@@ -196,10 +196,14 @@ const EditSidePanel = ({
                 {/* Edit Text Options */}
                 <EditAccordion disableGutters data-testid="edit-accordion">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                        <Typography variant="inherit">Text</Typography>
+                        <Typography variant="inherit">Popup Text</Typography>
                     </EditAccordionSummary>
                     <AccordionDetails sx={{padding:0}}>
                         <CustomList>
+                            <CustomListItem>
+                                <Typography color='grey'>These changes will only be relected/visible on published maps</Typography>
+                            </CustomListItem>
+                            <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
                                 <Typography>Color</Typography>
                                 <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="TextColor"/>
@@ -246,7 +250,7 @@ const EditSidePanel = ({
                     </AccordionDetails>
                 </EditAccordion>
 
-                {/* Edit Text Options */}
+                {/* Edit Properties Options */}
                 <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
                     <EditAccordionSummary >
                         <Typography variant="inherit">Properties</Typography>
@@ -303,7 +307,7 @@ const EditSidePanel = ({
                     store.currentMap.type !== "Choropleth Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Fill</Typography>
+                            <Typography variant="inherit">Region Fill</Typography>
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
@@ -342,22 +346,22 @@ const EditSidePanel = ({
                     
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
-                            <Typography variant="inherit">Stroke</Typography>
+                            <Typography variant="inherit">Borders</Typography>
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
                                 <CustomListItem>
-                                    <Typography>Hide Stroke</Typography>
+                                    <Typography>Hide Borders</Typography>
                                     <SelectAllCheck onChange={()=> {handleHideStroke()}}></SelectAllCheck>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Stroke Color</Typography>
+                                    <Typography>Border Color</Typography>
                                     <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="StrokeColor"/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Stroke Size</Typography>
+                                    <Typography>Border Thickness</Typography>
                                     <NumberSelector
                                         data-testid="region-selector1"
                                         type="number"
@@ -372,7 +376,7 @@ const EditSidePanel = ({
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Stroke Opacity</Typography>
+                                    <Typography>Border Opacity</Typography>
                                     <NumberSelector
                                         data-testid="region-selector1"
                                         type="number"

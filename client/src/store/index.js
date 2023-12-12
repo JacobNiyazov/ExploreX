@@ -38,7 +38,7 @@ function GlobalStoreContextProvider(props) {
    const dict = {
     "/login": "Login",
     "/register": "RegisterScreen",
-    "/faq" : "FAQScreen",
+    "/FAQ" : "FAQScreen",
     "/forgotPassword" : "ForgotPasswordScreen",
     "/passwordReset" : "ResetPasswordScreen",
     "/feed" : "MapFeed",

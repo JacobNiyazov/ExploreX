@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import faqStyle from '../StyleSheets/faqStyle'; 
 import { GlobalStoreContext } from '../../store';
 import { AuthContext } from '../../auth';
-import { Accordion, AccordionSummary, AccordionDetails, Typography, Container } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Typography, Container, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const FAQScreen = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -43,21 +44,21 @@ const FAQScreen = () => {
             <Accordion style = {faqStyle.accordion}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="faq1-content"
-                id="faq1-header"
+                aria-controls="faq4-content"
+                id="faq4-header"
               >
                 <Typography variant="h6">What files are supported for uploading?</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>GeoJSON, KML, and shapefiles</Typography>
+                <Typography>GeoJSON, KML, and Shapefiles</Typography>
               </AccordionDetails>
             </Accordion>
 
             <Accordion style = {faqStyle.accordion}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="faq2-content"
-                id="faq2-header"
+                aria-controls="faq4-content"
+                id="faq4-header"
               >
                 <Typography variant="h6">Do I need an account to view maps?</Typography>
               </AccordionSummary>
@@ -77,14 +78,26 @@ const FAQScreen = () => {
                 <Typography>Voronoi, Heat, Choropleth, Spike and Dot Maps</Typography>
               </AccordionDetails>
             </Accordion>
+            <Accordion style = {faqStyle.accordion}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="faq4-content"
+                id="faq4-header"
+              >
+                <Typography variant="h6">More questions?</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>Contact us at ExploreX@gmail.com</Typography>
+              </AccordionDetails>
+            </Accordion>
           </div>
 
           <div style = {faqStyle.column}>
             <Accordion style = {faqStyle.accordion}>
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
-                aria-controls="faq3-content"
-                id="faq3-header"
+                aria-controls="faq4-content"
+                id="faq4-header"
               >
                 <Typography variant="h6">Why should I make an account?</Typography>
               </AccordionSummary>
@@ -99,10 +112,10 @@ const FAQScreen = () => {
                 aria-controls="faq4-content"
                 id="faq4-header"
               >
-                <Typography variant="h6">Is this free?</Typography>
+                <Typography variant="h6">How can I create a map?</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>Yes, ExploreX is free for all to use.</Typography>
+                <Typography>Click the "Create Map" button on your profile page or the Map Feed. Upload a vector file and select a type of map to create. Select a property from your file to visualize. Done!</Typography>
               </AccordionDetails>
             </Accordion>
 
@@ -112,12 +125,26 @@ const FAQScreen = () => {
                 aria-controls="faq4-content"
                 id="faq4-header"
               >
-                <Typography variant="h6">More questions?</Typography>
+                <Typography variant="h6">Can I change the property of my map?</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography>Contact us at ExploreX@gmail.com</Typography>
+                <Typography>Unfortunately, once you create a map with a specified property, you cannot change this. You could create a new map with the desired property.</Typography>
               </AccordionDetails>
             </Accordion>
+
+            <Accordion style = {faqStyle.accordion}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="faq4-content"
+                id="faq4-header"
+              >
+                <Typography variant="h6">Can a published map be unpublished?</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>Once you publish a map, it can't be unpublished. You could choose to delete the map if you'd like.</Typography>
+              </AccordionDetails>
+            </Accordion>
+
           </div>
         </div>
         
@@ -125,7 +152,12 @@ const FAQScreen = () => {
     );
   }
   else{
-    return <div></div>
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
 };
 

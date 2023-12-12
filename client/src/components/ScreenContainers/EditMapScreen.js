@@ -7,6 +7,8 @@ import { GlobalStoreContext } from '../../store'
 import { GlobalMapEditContext } from '../../mapEdit'
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const EditScreen = () => {
     const { store } = useContext(GlobalStoreContext);
@@ -251,7 +253,12 @@ const EditScreen = () => {
         );
     }
     else{
-        return <div>Loading...</div>
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+              <CircularProgress style={{'color':'#ff24bd'}}/>
+              Loading...
+            </Box>
+          );
     }
    
 }
