@@ -367,7 +367,7 @@ const ChloroplethMap = ({
         propertyLayerGroup.remove();
       };
       
-    }, [ store.currentMap, map, colors.StrokeColor])
+    }, [ propertyData, store.currentMap, map, colors.StrokeColor])
 
     return null;    
 }
