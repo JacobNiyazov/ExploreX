@@ -35,6 +35,8 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
     // is triggered in edit side panel
     doTransaction() {
         console.log("we redoing")
+        // add if statements to check if the props are equal so that theyre not repeating
+        
         this.setTitle(this.newMapData.title);
         this.setColors(this.newMapData.colors);
         this.setSizes(this.newMapData.sizes);
