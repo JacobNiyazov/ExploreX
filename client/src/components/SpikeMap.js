@@ -28,17 +28,39 @@ const SpikeMap = ({
       L.geoJSON(geojsonData, {
         onEachFeature: function (feature, layer) {
           if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+            if(hasFill){
               layer.setStyle({
-              stroke: hasStroke,
-              color: colors.StrokeColor,
-              weight: sizes.StrokeWeight,
-              opacity: opacities.StrokeOpacity,
-              fill: hasFill,
-              fillColor: colors.FillColor,
-              fillOpacity: opacities.FillOpacity,
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: opacities.FillOpacity,
               }).bringToBack();
+            }
+            else{
+              layer.setStyle({
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: 0.01,
+              }).bringToBack();
+            }
+              // layer.setStyle({
+              // stroke: hasStroke,
+              // color: colors.StrokeColor,
+              // weight: sizes.StrokeWeight,
+              // opacity: opacities.StrokeOpacity,
+              // fill: hasFill,
+              // fillColor: colors.FillColor,
+              // fillOpacity: opacities.FillOpacity,
+              // }).bringToBack();
 
-              let tempi = i
+            let tempi = i
             layer.on({
                 click: (e) => {
                     if(feature.geometry.type !== 'Point'){
@@ -283,11 +305,12 @@ const SpikeMap = ({
       //  console.log(err)
       //}
     }
-    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    var geojsonData = store.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
+    store.updateLocalMap(null, legend);
     if(storeRef.current.currentMap.graphics.typeSpecific.spikeData === null || storeRef.current.currentMap.graphics.typeSpecific.spikeLegend === null){
       storeRef.current.updateMapGraphics(null, null, null, null, trianglePoints, legend);
     }
@@ -297,7 +320,8 @@ const SpikeMap = ({
       spikeLayerGroup.remove()
       map.off('click')
     };
-  }, [map, storeRef, colors.SpikeMap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, store.currentMap.graphics.geojson, colors.SpikeMap]);
 
 
   useEffect(()=>{
