@@ -19,7 +19,55 @@ const EditScreen = () => {
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
-    
+    const [chloroData, setChloroData] = useState(null);
+
+    const handleNewColors = (newData) => {
+        let chloroInfo = newData.isString
+        let flag = true;
+        let previous = ""
+        let keys;
+        if(chloroInfo){
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .reverse();
+        }
+        else{
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .map(Number) // Convert string keys to numbers
+            .sort((a, b) => b - a) // Sort in descending numerical order
+            .map(String); // Convert back to strings if needed
+        }
+
+        const temp = keys.map(key => {
+            if (chloroInfo) {
+                return {
+                    fieldColor: newData[key],
+                    fieldText: key,
+                };
+            } else {
+                if(flag){
+                    flag = false;
+                    previous = key;
+                    return {
+                        fieldColor: newData[key],
+                        fieldText: ">" + key,
+                    };
+                }
+                let temp = previous;
+                previous = key;
+        
+                return {
+                    fieldColor: newData[key],
+                    fieldText: "(" + key + "," + temp + "]",
+                };
+            }
+        });
+        setLegendFields(temp)
+        setChloroData(newData)
+        
+    };
+
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -154,6 +202,48 @@ const EditScreen = () => {
             }
             
             
+            setLoading(false);
+            setTitle(mapEdit.title);
+            setColors({
+                TextColor: mapEdit.textColor,
+                HeatMap: '#FFFFFF',
+                // LegendFill: mapEdit.legendFillColor,
+                // LegendBorder: mapEdit.legendBorderColor,
+                FillColor: mapEdit.fillColor,
+                StrokeColor: mapEdit.strokeColor,
+                DotMap: mapEdit.dotColor,
+                SpikeMap: mapEdit.spikeColor,
+                VoronoiMap: mapEdit.voronoiColor,
+            });
+            setSizes({
+                TextSize: mapEdit.textSize,
+                StrokeWeight: mapEdit.strokeWeight,
+            });
+            setOpacities({
+                StrokeOpacity: mapEdit.strokeOpacity,
+                FillOpacity: mapEdit.fillOpacity,
+            });
+            setAnchors({
+                Text: null,
+                HeatMap: null,
+                // LegendFill: null,
+                // LegendBorder: null,
+                RegionFill: null,
+                RegionBorder: null,
+                DotMap: null,
+                SpikeMap: null,
+                VoronoiMap: null
+            });
+            setTextFont(mapEdit.textFont);
+            setHasStroke(mapEdit.hasStroke);
+            setHasFill(mapEdit.hasFill);
+            setLegendTitle(mapEdit.legendTitle)
+            if(!legendFields && mapEdit.legendFields){
+                setLegendFields([...legendFields])
+            }
+            if(!chloroData && mapEdit.chloroData){
+                handleNewColors(mapEdit.chloroData)
+            }
         }
       };
   
@@ -248,7 +338,10 @@ const EditScreen = () => {
                     legendFields = {legendFields}
                     setLegendFields = {setLegendFields}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
-                    propertyData={propertyData}/>
+                    propertyData={propertyData}
+                    chloroData = {chloroData}
+                    setChloroData = {setChloroData}
+                    handleNewColors = {handleNewColors}/>
             </Grid>
         );
     }
