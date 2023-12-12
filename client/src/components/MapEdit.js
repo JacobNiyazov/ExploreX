@@ -128,6 +128,7 @@ const MapEditInner = ({
         propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
+        console.log(colors)
         return <VoronoiMap 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
         propertyData={propertyData}

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback } from 'react';
 import Grid from '@mui/material/Grid';
 
 import EditSidePanel from '../EditSidePanel.js';
@@ -166,7 +166,7 @@ const EditScreen = () => {
 
     const [propertyData, setPropertyData] = React.useState({properties: {}, featureIndex: null})
 
-    function handlePropertyDataLoad(featureIndex){
+    const handlePropertyDataLoad = (featureIndex) =>{
         setPropertyData(propertyData =>{
             console.log(featureIndex, propertyData)
             if(propertyData.featureIndex !== featureIndex && ((propertyData.featureIndex !== null && featureIndex !== null) || (propertyData.featureIndex !== null && featureIndex === null))){
@@ -176,7 +176,7 @@ const EditScreen = () => {
             if(featureIndex !== null){
                 return(
                     {
-                        properties: store.currentMap.graphics.geojson.features[featureIndex].properties,
+                        properties: JSON.parse(JSON.stringify(store.currentMap.graphics.geojson.features[featureIndex].properties)),
                         featureIndex: featureIndex
                     }
                 ); 

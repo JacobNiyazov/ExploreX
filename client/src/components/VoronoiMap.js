@@ -5,6 +5,7 @@ import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 import * as ReactDOMServer from 'react-dom/server';
 import { Box, Typography } from '@mui/material';
+// eslint-disable-next-line react-hooks/exhaustive-deps
 
 const VoronoiMap = ({
     handlePropertyDataLoad, 
@@ -35,6 +36,7 @@ const VoronoiMap = ({
     const { store } = useContext(GlobalStoreContext);
     const map = useMap();
     useEffect(()=>{
+        console.log(colors)
         const regionLayerGroup = L.featureGroup().addTo(map);
         if(store.currentMap.graphics.typeSpecific.voronoiBound === null){
             let geojson = store.currentMap.graphics.geojson;
@@ -79,20 +81,20 @@ const VoronoiMap = ({
             let i = 0
             L.geoJSON(store.currentMap.graphics.geojson, {
                 onEachFeature: function (feature, layer) {
-                    // Customize popup content
-                    layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+                    // // Customize popup content
+                    // layer.bindPopup(Object.keys(feature.properties).map(function(k) {
                 
-                        return (
-                        ReactDOMServer.renderToString(
-                            <Box sx={{display:'flex', alignItems:'center'}}>
-                                <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                                <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                            </Box>
-                        )
-                        )
-                    }).join(""), {
-                        maxHeight: 200
-                    });
+                    //     return (
+                    //     ReactDOMServer.renderToString(
+                    //         <Box sx={{display:'flex', alignItems:'center'}}>
+                    //             <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+                    //             <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+                    //         </Box>
+                    //     )
+                    //     )
+                    // }).join(""), {
+                    //     maxHeight: 200
+                    // });
 
                     let tempi = i
                     layer.on({
@@ -148,10 +150,13 @@ const VoronoiMap = ({
             regionLayerGroup.remove();
             map.off('click')
           };
-    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, handlePropertyDataLoad])
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill])
     
     useEffect(()=>{
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [map])
     
     useEffect(() =>{

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
@@ -116,16 +116,15 @@ const EditSidePanel = ({
         ); 
     }
 
-    const handleEditProperties = (key, value) => {
-        let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
-        tempProperties[key] = value
-        setPropertyData(
+    const handleEditProperties = useCallback((key, value) => {
+        setPropertyData( prev =>
             {
-                properties: tempProperties,
-                featureIndex: propertyData.featureIndex
+                let temp = {...prev}
+                temp.properties[key] = value;
+                return(temp)
             }
         ); 
-    }
+    }, [setPropertyData])
     const [key, setKey] = useState('')
     const [value, setValue] = useState('')
 
@@ -269,7 +268,7 @@ const EditSidePanel = ({
                                         <div key={k}>
                                             <CustomListItem>
                                                 <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
-                                                <ColorTextField variant="standard" value={propertyData.properties[k]} onChange={(e) => {handleEditProperties(k, e.target.value)}}/>
+                                                <ColorTextField key = {k} variant="standard" value={propertyData.properties[k]} onChange={(e) => {handleEditProperties(k, e.target.value)}}/>
                                                 <DeleteButton variant="text" onClick={()=>{handleDeleteProperty(k)}}>
                                                         <Typography variant='inherit'>X</Typography>
                                                 </DeleteButton>
