@@ -345,7 +345,8 @@ const MapEdit = ({
                             </BaseMapBlur>
                         </BaseMapContainer>
                         <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
-                                maxHeight: '200px',
+                                maxHeight: '500px',
+                                maxWidth: '500px',
                                 overflowY: 'auto',
                             }}>
                             <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>

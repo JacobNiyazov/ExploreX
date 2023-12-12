@@ -952,6 +952,23 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
     }
+    store.updateLocalMap = (dotScale=null, spikeLegend=null) => {
+        let map = store.currentMap;
+        if(dotScale !== null && map){
+            map.graphics.typeSpecific.dotScale = dotScale;
+        }
+        if(spikeLegend !== null && map){
+            map.graphics.typeSpecific.spikeLegend = spikeLegend;
+        }
+        storeReducer({
+            type: GlobalStoreActionType.EDIT_MAP,
+            payload: {
+                currentMap: map
+            }
+        }
+        ); 
+
+    }
 
    return (
     <GlobalStoreContext.Provider value={{
