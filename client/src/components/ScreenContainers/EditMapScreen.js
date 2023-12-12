@@ -121,8 +121,6 @@ const EditScreen = () => {
                 store.setCurrentPage(store.currentPageType.profileScreen);
                 navigate('/profile');
             }
-
-            console.log(mapEdit)
             
             if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || store.currentMap.graphics.typeSpecific.chloroLegend!==null || store.currentMap.graphics.typeSpecific.voronoi!==null)){
                 setTitle(mapEdit.title);
@@ -161,89 +159,17 @@ const EditScreen = () => {
                 setHasFill(mapEdit.hasFill);
                 setLegendTitle(mapEdit.legendTitle);
 
-                if(mapEdit.legendFields){
+                if(!legendFields && mapEdit.legendFields){
                     setLegendFields([...legendFields])
                 }
-                if(mapEdit.chloroData){
-                    let chloroInfo = mapEdit.chloroData.isString
-                    let flag = true;
-                    let previous = ""
-                    const keys = Object.keys(mapEdit.chloroData)
-                        .filter(key => key !== "isString")
-                        .reverse();
-                    const temp = keys.map(key => {
-                        if (chloroInfo) {
-                            return {
-                                fieldColor: mapEdit.chloroData[key],
-                                fieldText: key,
-                            };
-                        } else {
-                            if(flag){
-                                flag = false;
-                                previous = key;
-                                return {
-                                    fieldColor: mapEdit.chloroData[key],
-                                    fieldText: ">" + key,
-                                };
-                            }
-                            let temp = previous;
-                            previous = key;
-                    
-                            return {
-                                fieldColor: mapEdit.chloroData[key],
-                                fieldText: "(" + key + "," + temp + "]",
-                            };
-                        }
-                    });
-                    setLegendFields(temp)
-    
+                if(!chloroData && mapEdit.chloroData){
+                    handleNewColors(mapEdit.chloroData)
                 }
                 setLoading(false);
             }
             
-            
-            setLoading(false);
-            setTitle(mapEdit.title);
-            setColors({
-                TextColor: mapEdit.textColor,
-                HeatMap: '#FFFFFF',
-                // LegendFill: mapEdit.legendFillColor,
-                // LegendBorder: mapEdit.legendBorderColor,
-                FillColor: mapEdit.fillColor,
-                StrokeColor: mapEdit.strokeColor,
-                DotMap: mapEdit.dotColor,
-                SpikeMap: mapEdit.spikeColor,
-                VoronoiMap: mapEdit.voronoiColor,
-            });
-            setSizes({
-                TextSize: mapEdit.textSize,
-                StrokeWeight: mapEdit.strokeWeight,
-            });
-            setOpacities({
-                StrokeOpacity: mapEdit.strokeOpacity,
-                FillOpacity: mapEdit.fillOpacity,
-            });
-            setAnchors({
-                Text: null,
-                HeatMap: null,
-                // LegendFill: null,
-                // LegendBorder: null,
-                RegionFill: null,
-                RegionBorder: null,
-                DotMap: null,
-                SpikeMap: null,
-                VoronoiMap: null
-            });
-            setTextFont(mapEdit.textFont);
-            setHasStroke(mapEdit.hasStroke);
-            setHasFill(mapEdit.hasFill);
-            setLegendTitle(mapEdit.legendTitle)
-            if(!legendFields && mapEdit.legendFields){
-                setLegendFields([...legendFields])
-            }
-            if(!chloroData && mapEdit.chloroData){
-                handleNewColors(mapEdit.chloroData)
-            }
+
+           
         }
       };
   
@@ -296,6 +222,48 @@ const EditScreen = () => {
         */
         
     }
+    const handleOpenPublishSave = (isPublish) => {
+        let publishMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
+            </div>
+        )
+        let saveMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Save Edits?</span><br></br>They'll be there forever...
+            </div>
+        )
+        let styles = {
+            id: store.currentMap._id,
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: legendTitle,
+            legendFields: legendFields,
+            chloroData: chloroData,
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            voronoiColor: colors.VoronoiMap,
+        }
+        mapEdit.loadStyles(styles);
+        
+        if(isPublish){
+            store.displayModal(publishMessage, true, store.modalActionTypes.publish);
+        }
+        else{
+            store.displayModal(saveMessage, true, store.modalActionTypes.save);
+        }
+    }
     
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
@@ -324,7 +292,8 @@ const EditScreen = () => {
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
                     setPropertyData={setPropertyData}
-                    propertyData = {propertyData}/>
+                    propertyData = {propertyData}
+                    handleOpenPublishSave={handleOpenPublishSave}/>
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}

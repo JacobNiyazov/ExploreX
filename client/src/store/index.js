@@ -910,17 +910,42 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.publishMap = async (map, isPublish) =>{
-        console.log(map)
-
         if(!map){
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
         try {
+            let styles = mapEdit;
+            map.graphics.typeSpecific.dotColor = styles.dotColor;
+            map.graphics.typeSpecific.spikeColor = styles.spikeColor;
+            map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
+            map.graphics.typeSpecific.chloroLegend = styles.chloroData;
+
+            map.graphics.legend.legendTitle = styles.legendTitle;
+            map.graphics.legend.legendFields = styles.legendFields;
+
+            map.graphics.fill.hasFill = styles.hasFill;
+            map.graphics.fill.fillColor = styles.fillColor;
+            map.graphics.fill.fillOpacity = styles.fillOpacity;
+
+            map.graphics.stroke.hasStroke = styles.hasStroke;
+            map.graphics.stroke.strokeColor = styles.strokeColor;
+            map.graphics.stroke.strokeWeight = styles.strokeWeight;
+            map.graphics.stroke.strokeOpacity = styles.strokeOpacity;
+
+            map.graphics.text.textColor = styles.textColor;
+            map.graphics.text.textFont = styles.textFont;
+            map.graphics.text.textSize = styles.textSize;
+
+            map.title = styles.title;
+
             map.isPublic = isPublish;
             map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success){
+                console.log(res.data.map)
+            }
+            if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
                     storeReducer({

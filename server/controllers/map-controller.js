@@ -196,7 +196,7 @@ createMap = async (req,res) =>{
                 legendFillColor: "#FFFFFF",
                 legendBorderColor: "#ff24bd",
                 legendBorderWidth: 1,
-                legendTitle: "Legend Title",
+                legendTitle: "Legend",
                 legendFields:[
                 {
                     fieldColor:"#FF0000",

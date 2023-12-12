@@ -34,7 +34,8 @@ const EditSidePanel = ({
     hideLegend,
     setHideLegend,
     setPropertyData, 
-    propertyData
+    propertyData,
+    handleOpenPublishSave
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -85,24 +86,16 @@ const EditSidePanel = ({
             <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{paragraph}</p>
         </div>, false);
     }
-    const handleOpenPublish = () => {
-        let publishMessage = (
-            <div>
-                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
-                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
-            </div>
-        )
-        store.displayModal(publishMessage, true, store.modalActionTypes.publish);
-    }
+    
 
     const handleOpenSave= () => {
-        let saveMessage = (
-            <div>
-                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
-                Save Edits?</span><br></br>They'll be there forever...
-            </div>
-        )
-        store.displayModal(saveMessage, true);
+        handleOpenPublishSave(false);
+        console.log("savingggg")
+    }
+    const handleOpenPublish= () => {
+        handleOpenPublishSave(true);
+        console.log("publishinggg")
+
     }
 
     const handleDeleteProperty = (key) =>{
