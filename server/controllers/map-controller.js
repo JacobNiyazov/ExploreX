@@ -356,6 +356,7 @@ forkMap = async (req, res) =>{
                             graphics: newGraphics._id,
                             isPublic: false,
                             type: map.type,
+                            publishDate: Date.now()
                         })
                         copiedMap.save()
                             .then((newMap) => {

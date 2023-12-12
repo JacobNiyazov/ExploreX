@@ -383,6 +383,7 @@ const EditSidePanel = ({
                                     <NumberSelector
                                         data-testid="region-selector1"
                                         type="number"
+                                        inputProps={{step: "0.1"}}
                                         InputLabelProps={{
                                             shrink: true,
                                         }}

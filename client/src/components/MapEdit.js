@@ -28,6 +28,8 @@ const MapEditInner = ({
     hasFill,
     handlePropertyDataLoad, 
     propertyData,
+    chloroData,
+    handleNewColors,
     voronoiPointToggle,
     }) =>{
     const { store } = useContext(GlobalStoreContext);
@@ -127,7 +129,9 @@ const MapEditInner = ({
         hasStroke={hasStroke}
         hasFill={hasFill} 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
-        propertyData={propertyData}/>
+        propertyData={propertyData}
+        chloroProperty={chloroData}
+        setChloroProperty = {handleNewColors}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
         console.log(colors)
@@ -163,10 +167,15 @@ const MapEdit = ({
     setLegendFields,
     handlePropertyDataLoad,
     propertyData,
+    chloroData,
+    setChloroData,
+    handleNewColors,
     voronoiPointToggle,
     voronoiValue,
     setVoronoiValue,
   }) =>{
+
+    
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const [photo, setPhoto] = useState(false)
@@ -220,16 +229,32 @@ const MapEdit = ({
         setBaseMap(!baseMap)
     }
 
-    const handleTextChange = (e, index) => {
-        const updatedFields = [...legendFields];
-        updatedFields[index].fieldText = e.target.value;
-        setLegendFields(updatedFields);
-    };
+    function extractFirstNumber(str) {
+        const match = str.match(/-?\d+(\.\d+)?/);
+        return match ? parseFloat(match[0]) : null;
+      }
 
     const handleNewColor = (event, index) => {
         const updatedFields = [...legendFields];
         updatedFields[index].fieldColor = event.hex;
         setLegendFields(updatedFields);
+        if(chloroData.isString){
+            let newColor = updatedFields[index].fieldText
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+
+            setChloroData(temp)
+            // store.currentMap.graphics.typeSpecific.chloroLegend[newColor] = event.hex
+        }
+        else{
+            let newColor = extractFirstNumber(updatedFields[index].fieldText)
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+            setChloroData(temp)
+
+            // store.currentMap.graphics.typeSpecific.chloroLegend[temp] = event.hex
+
+        }
     };
 
     const handleTitleChange = (event) => {
@@ -297,6 +322,8 @@ const MapEdit = ({
                             setVoronoiValue={setVoronoiValue}/>
     }
     else if(store.currentMap.type === "Choropleth Map"){
+        console.log("legendfields")
+        console.log(legendFields)
         DynamicLegend = <ChoroLegend
             legendFields = {legendFields}
             legendAnchors = {legendAnchors}
@@ -328,6 +355,8 @@ const MapEdit = ({
                 hideLegend={hideLegend}
                 handlePropertyDataLoad = {handlePropertyDataLoad} 
                 propertyData={propertyData}
+                chloroData={chloroData}
+                handleNewColors = {handleNewColors}
                 voronoiPointToggle={voronoiPointToggle}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
