@@ -3,6 +3,8 @@ import launchStyle from '../StyleSheets/launchStyle';
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
   Typography,
@@ -44,7 +46,12 @@ const RegisterScreen = () => {
   }, [auth, navigate, store]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
   const handleRegister = (e) => {
     e.preventDefault();

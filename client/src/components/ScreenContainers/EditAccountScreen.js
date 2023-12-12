@@ -3,10 +3,12 @@ import Grid from '@mui/material/Grid';
 import { Typography } from '@mui/material';
 import {FormControl} from '@mui/material';
 import {InputLabel} from '@mui/material';
+import Box from '@mui/material/Box';
 import { StyledInput, StyledBio, StyledInfo, StyledSubmitButton} from '../StyleSheets/EditAccountScreenStyles';
 import { GlobalStoreContext } from '../../store'
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 function EditAccountScreen(){
@@ -121,7 +123,12 @@ function EditAccountScreen(){
         paddingTop:"5vh",
     }
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+              <CircularProgress style={{'color':'#ff24bd'}}/>
+              Loading...
+            </Box>
+          );
     }
     if (store.currentPage === store.currentPageType.editAccScreen){
         return(

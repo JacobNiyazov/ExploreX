@@ -15,6 +15,8 @@ import HeatMap from "../HeatMap.js";
 import VoronoiMap from '../VoronoiMap.js';
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
+import CircularProgress from '@mui/material/CircularProgress';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 import {
   StyledCard,
@@ -95,7 +97,12 @@ const PublicMapView = () => {
   // }, [likes, dislikes, auth.user?.username]);
   console.log(store.currentMap)
   if (!store.currentMap || loading) {
-    return <div>Loading...</div>; // or any loading indicator
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
   let map = store.currentMap;
   likes = store.currentMap.reactions.likes;
@@ -489,7 +496,8 @@ const PublicMapView = () => {
             }} 
             onClick = {handleOpenExport}
             data-testid="export-button" >
-            <StyledTypography variant="h5">
+            <StyledTypography variant="h5" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+              <FileDownloadIcon/>
               Export
             </StyledTypography>
           </StyledForkButton>
@@ -511,7 +519,12 @@ const PublicMapView = () => {
     );
   }
   else{
-    return <div>Loading...</div>
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
 };
 
