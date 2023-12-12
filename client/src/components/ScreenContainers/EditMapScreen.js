@@ -20,6 +20,53 @@ const EditScreen = () => {
     
     const [chloroData, setChloroData] = useState(null);
 
+    const handleNewColors = (newData) => {
+        let chloroInfo = newData.isString
+        let flag = true;
+        let previous = ""
+        let keys;
+        if(chloroInfo){
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .reverse();
+        }
+        else{
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .map(Number) // Convert string keys to numbers
+            .sort((a, b) => b - a) // Sort in descending numerical order
+            .map(String); // Convert back to strings if needed
+        }
+
+        const temp = keys.map(key => {
+            if (chloroInfo) {
+                return {
+                    fieldColor: newData[key],
+                    fieldText: key,
+                };
+            } else {
+                if(flag){
+                    flag = false;
+                    previous = key;
+                    return {
+                        fieldColor: newData[key],
+                        fieldText: ">" + key,
+                    };
+                }
+                let temp = previous;
+                previous = key;
+        
+                return {
+                    fieldColor: newData[key],
+                    fieldText: "(" + key + "," + temp + "]",
+                };
+            }
+        });
+        setLegendFields(temp)
+        setChloroData(newData)
+        
+    };
+
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -74,7 +121,6 @@ const EditScreen = () => {
                 navigate('/profile');
             }
 
-            console.log(mapEdit)
             setLoading(false);
             setTitle(mapEdit.title);
             setColors({
@@ -111,53 +157,11 @@ const EditScreen = () => {
             setHasStroke(mapEdit.hasStroke);
             setHasFill(mapEdit.hasFill);
             setLegendTitle(mapEdit.legendTitle)
-            if(mapEdit.legendFields){
+            if(!legendFields && mapEdit.legendFields){
                 setLegendFields([...legendFields])
             }
             if(!chloroData && mapEdit.chloroData){
-                let chloroInfo = mapEdit.chloroData.isString
-                let flag = true;
-                let previous = ""
-                let keys;
-                if(chloroInfo){
-                    keys = Object.keys(mapEdit.chloroData)
-                    .filter(key => key !== "isString")
-                    .reverse();
-                }
-                else{
-                    keys = Object.keys(mapEdit.chloroData)
-                    .filter(key => key !== "isString")
-                    .map(Number) // Convert string keys to numbers
-                    .sort((a, b) => b - a) // Sort in descending numerical order
-                    .map(String); // Convert back to strings if needed
-                }
-
-                const temp = keys.map(key => {
-                    if (chloroInfo) {
-                        return {
-                            fieldColor: mapEdit.chloroData[key],
-                            fieldText: key,
-                        };
-                    } else {
-                        if(flag){
-                            flag = false;
-                            previous = key;
-                            return {
-                                fieldColor: mapEdit.chloroData[key],
-                                fieldText: ">" + key,
-                            };
-                        }
-                        let temp = previous;
-                        previous = key;
-                
-                        return {
-                            fieldColor: mapEdit.chloroData[key],
-                            fieldText: "(" + key + "," + temp + "]",
-                        };
-                    }
-                });
-                setLegendFields(temp)
-                setChloroData(mapEdit.chloroData)
+                handleNewColors(mapEdit.chloroData)
             }
         }
       };
@@ -255,7 +259,8 @@ const EditScreen = () => {
                     handlePropertyDataLoad = {handlePropertyDataLoad}
                     propertyData={propertyData}
                     chloroData = {chloroData}
-                    setChloroData = {setChloroData}/>
+                    setChloroData = {setChloroData}
+                    handleNewColors = {handleNewColors}/>
             </Grid>
         );
     }

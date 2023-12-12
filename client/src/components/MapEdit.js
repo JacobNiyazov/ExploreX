@@ -27,7 +27,8 @@ const MapEditInner = ({
     hasFill,
     handlePropertyDataLoad, 
     propertyData,
-    chloroData
+    chloroData,
+    handleNewColors
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -127,7 +128,8 @@ const MapEditInner = ({
         hasFill={hasFill} 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
         propertyData={propertyData}
-        chloroProperty={chloroData}/>
+        chloroProperty={chloroData}
+        setChloroProperty = {handleNewColors}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
         return <VoronoiMap 
@@ -162,8 +164,11 @@ const MapEdit = ({
     handlePropertyDataLoad,
     propertyData,
     chloroData,
-    setChloroData
+    setChloroData,
+    handleNewColors
   }) =>{
+
+    
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const [photo, setPhoto] = useState(false)
@@ -302,6 +307,8 @@ const MapEdit = ({
         DynamicLegend = <DotDistLegend colors={colors}/>
     }
     else if(store.currentMap.type === "Choropleth Map"){
+        console.log("legendfields")
+        console.log(legendFields)
         DynamicLegend = <ChoroLegend
             legendFields = {legendFields}
             legendAnchors = {legendAnchors}
@@ -333,7 +340,8 @@ const MapEdit = ({
                 hideLegend={hideLegend}
                 handlePropertyDataLoad = {handlePropertyDataLoad} 
                 propertyData={propertyData}
-                chloroData={chloroData}/>
+                chloroData={chloroData}
+                handleNewColors = {handleNewColors}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
