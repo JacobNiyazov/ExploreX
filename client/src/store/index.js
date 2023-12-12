@@ -5,6 +5,7 @@ import api from './store-request-api'
 import { AuthContext } from '../auth'
 import { GlobalMapEditContext } from '../mapEdit'
 import maps from '../store/map-request-api';
+import jsTPS from '../transactions/jsTPS';
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -23,7 +24,7 @@ export const GlobalStoreActionType = {
    FORK_MAP: "FORK_MAP",
    EDIT_MAP: "EDIT_MAP",
 }
-
+const tps = new jsTPS();
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
@@ -212,6 +213,10 @@ function GlobalStoreContextProvider(props) {
     }
 
    store.setCurrentPage = (currentPage, map=null) => {
+        if(store.currentPage === "EditMapScreen"){
+            console.log("tps is cleared!")
+            tps.clearAllTransactions()
+        }
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
@@ -562,6 +567,7 @@ function GlobalStoreContextProvider(props) {
 
     store.createMap = async (files, mapType, fileType, property) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
+        tps.clearAllTransactions()
         let ownerUsername = auth.user.username;
         let publishDate = Date.now();
         // No need to create graphics create map takes care of this
@@ -690,6 +696,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.handleFork = async () => {
+        tps.clearAllTransactions()
         let id = store.currentMap._id;
         try{
             let response = await maps.forkMap(id);
@@ -843,7 +850,7 @@ function GlobalStoreContextProvider(props) {
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null, lowGradient=null, mediumGradient=null, highGradient=null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
@@ -871,7 +878,15 @@ function GlobalStoreContextProvider(props) {
             graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
             graphics['geojson'] = voronoi.geojson;
         }
-        
+        if(lowGradient !== null){
+            graphics['typeSpecific']['lowGradient'] = lowGradient;
+        }
+        if(mediumGradient !== null){
+            graphics['typeSpecific']['mediumGradient'] = mediumGradient;
+        }
+        if(highGradient !== null){
+            graphics['typeSpecific']['hgihGradient'] = highGradient;
+        }
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
             let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);

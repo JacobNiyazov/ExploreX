@@ -16,13 +16,16 @@ const HeatMap = ({
     hasStroke,
     hasFill,
   }) => {
-    const { store } = useContext(GlobalStoreContext);
+  const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
-
   const map = useMap();
   console.log("radius in heat: ", sizes.radius)
   const geojsonData = storeRef.current.currentMap.graphics.geojson;
   const property = storeRef.current.currentMap.graphics.typeSpecific.property;
+  const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
+  const med = storeRef.current.currentMap.graphics.typeSpecific.mediumGradient;
+  const high = storeRef.current.currentMap.graphics.typeSpecific.highGradient;
+  
   useEffect(() => {
     const regionLayerGroup = L.featureGroup().addTo(map);
     const updateLayers = (geojsonData) => {
@@ -58,11 +61,11 @@ const HeatMap = ({
       }).addTo(regionLayerGroup);
       regionLayerGroup.bringToBack();
     }
-    map.eachLayer((layer) => {
+    /*map.eachLayer((layer) => {
       if (layer !== regionLayerGroup) {
         layer.bringToFront();
       }
-    });
+    });*/
     var geojsonData = storeRef.current.currentMap.graphics.geojson;
     updateLayers(geojsonData);
 
@@ -110,80 +113,31 @@ const HeatMap = ({
       return extractCoordsFromPolygon(feature.geometry.coordinates, intensity);
     };
     let allProps = geojsonData.features
-    const heatPoints = geojsonData.features.flatMap((feature) => {
+    const heatPoints = geojsonData?.features?.flatMap((feature) => {
       return extractCoordsFromFeature(feature, property, allProps);
     });
 
     console.log("colors: ", colors)
-    const heatLayerOptions = {
-      //blur: 25,
-      //radius: 15,
-      gradient:{
-        0.25: colors.lowGradient,
-        0.75: colors.mediumGradient,
-        1: colors.highGradient
+    let heatLayerOptions = {}
+    if(heatPoints && heatPoints.length > 0){
+      heatLayerOptions = {
+        blur: 25,
+        radius: 15,
+        gradient:{
+          0.25: colors.lowGradient,
+          0.75: colors.mediumGradient,
+          1: colors.highGradient
+        }
       }
+    if(low !== colors.lowGradient||
+      med !==colors.mediumGradient ||
+      high !== colors.highGradient){
+        store.updateMapGraphics(null, null, null, null, null, null, null, null, low, med, high)
+    }
   };
 
   const heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
   heatLayer.addTo(map)
-
-    let i = 0
-    // Customize popups
-    L.geoJSON(geojsonData, {
-      onEachFeature: function (feature, layer) {
-        layer.bindPopup(
-          Object.keys(feature.properties).map(function (k) {
-            return (
-              ReactDOMServer.renderToString(
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
-                  <input style={{ width: "80px", marginLeft: 'auto' }} defaultValue={feature.properties[k]}></input>
-                </Box>
-              )
-            );
-          }).join(""), {
-            maxHeight: 200
-          }
-        );
-
-        let tempi = i
-            layer.on({
-                click: (e) => {
-                    if(feature.geometry.type !== 'Point'){
-                        L.DomEvent.stopPropagation(e);
-                        // Here we set the index to tempi
-                        handlePropertyDataLoad(tempi)
-                    }
-                },
-            })
-            i+=1
-      },
-      pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "transparent",
-            color: "transparent",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
-        });
-      }
-    }).addTo(map);
-
-    map.on('click',function(e) {
-      L.DomEvent.stopPropagation(e);
-      console.log('clicked on map', e);
-      // Here we set the index to null
-      handlePropertyDataLoad(null)
-    });
-
-    // Remove default border styles for each region
-    /*map.eachLayer((layer) => {
-      if (layer.setStyle) {
-        layer.setStyle({fillColor:"transparent",color:"pink" });
-      }
-    });*/
 
     return () => {
       map.eachLayer(function (layer) {

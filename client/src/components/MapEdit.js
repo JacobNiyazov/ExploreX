@@ -19,6 +19,8 @@ import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
 import HeatMapLegend from "./HeatMapLegend.js";
+import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
+import jsTPS from "../transactions/jsTPS.js";
 
 const MapEditInner = ({
     colors,
@@ -165,6 +167,8 @@ const MapEdit = ({
     const [photo, setPhoto] = useState(false)
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
+    const {mapEdit} = useContext(GlobalMapEditContext)
+    const tps = new jsTPS()
 
     const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
         const { store } = useContext(GlobalStoreContext);
@@ -297,7 +301,14 @@ const MapEdit = ({
 
         waitForMapLoad();
       }, [captureMapAsImage, photo ]);
-    
+    function handleUndo(){
+        console.log("undo happening rn")
+        tps.undoTransaction()
+    }
+    function handleRedo(){
+        console.log("redo happening rn")
+        tps.doTransaction()
+    }
 
     return(
         <Grid item xs = {8}>
@@ -334,13 +345,13 @@ const MapEdit = ({
                         <UndoRedoContainer>
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    <IconButton sx={{color: "#000000"}} onClick = {handleUndo}>
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
-                                    <IconButton sx={{color: "#000000"}}>
+                                    <IconButton sx={{color: "#000000"}} onClick = {handleRedo}>
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>

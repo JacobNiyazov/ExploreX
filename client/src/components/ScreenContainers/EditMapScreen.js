@@ -1,6 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
-
+import jsTPS from '../../transactions/jsTPS.js';
+import EditMap_Transaction from '../../transactions/EditMap_Transaction.js';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
 import { GlobalStoreContext } from '../../store'
@@ -9,6 +10,7 @@ import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 
 const EditScreen = () => {
+    const tps = new jsTPS();
     const { store } = useContext(GlobalStoreContext);
     const { mapEdit } = useContext(GlobalMapEditContext);
     const { auth } = useContext(AuthContext);
@@ -55,9 +57,50 @@ const EditScreen = () => {
     const [hasStroke, setHasStroke] = React.useState(mapEdit.hasStroke)
     const [hasFill, setHasFill] = React.useState(mapEdit.hasFill)
     const [hideLegend, setHideLegend] = React.useState(false)
-
     const [range, setRange] = React.useState(5)
-    console.log("radius in screen: ", mapEdit.radius)
+    const originalStatesRef = useRef({
+        title: mapEdit.title,
+        colors: {
+            TextColor: mapEdit.textColor,
+            HeatMap: '#FFFFFF',
+            // LegendFill: mapEdit.legendFillColor,
+            // LegendBorder: mapEdit.legendBorderColor,
+            FillColor: mapEdit.fillColor,
+            StrokeColor: mapEdit.strokeColor,
+            DotMap: mapEdit.dotColor,
+            SpikeMap: mapEdit.spikeColor,
+            VoronoiMap: '#FFFFFF',
+            lowGradient: mapEdit.lowGradient,
+            mediumGradient: mapEdit.mediumGradient,
+            highGradient: mapEdit.highGradient
+        },
+        sizes: {
+            TextSize: mapEdit.textSize,
+            StrokeWeight: mapEdit.strokeWeight,
+        },
+        opacities: {
+            StrokeOpacity: mapEdit.strokeOpacity,
+            FillOpacity: mapEdit.fillOpacity,
+        },
+        anchors: {
+            Text: null,
+            HeatMap: null,
+            // LegendFill: null,
+            // LegendBorder: null,
+            RegionFill: null,
+            RegionBorder: null,
+            DotMap: null,
+            SpikeMap: null,
+            VoronoiMap: null
+        },
+        textFont: mapEdit.textFont,
+        hasStroke: mapEdit.hasStroke,
+        hasFill: mapEdit.hasFill,
+        hideLegend: false, // Set to the default value
+        range: 5, // Set to the default value
+        legendTitle: mapEdit.legendTitle,
+        legendFields: [], // Set to the default value
+    });
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
@@ -202,6 +245,41 @@ const EditScreen = () => {
         */
         
     }
+    useEffect(() => {
+        console.log("hai guys, we made it to the undo redo process #1");
+        let oldMapData = originalStatesRef.current;
+        let newMapData = {
+            title: title,
+            colors: colors,
+            sizes: sizes,
+            opacities: opacities,
+            anchors: anchors,
+            textFont: textFont,
+            hasStroke: hasStroke,
+            hasFill: hasFill,
+            hideLegend: hideLegend,
+            range: range,
+            legendTitle: legendTitle,
+            legendFields: [...legendFields],
+        };
+
+        let transaction = new EditMap_Transaction(oldMapData,
+            newMapData,
+            setTitle, 
+            setLegendTitle, 
+            setLegendFields, 
+            setColors, 
+            setSizes,
+            setOpacities,
+            setAnchors,
+            setTextFont,
+            setHasStroke, 
+            setHasFill,
+            setHideLegend,
+            setRange);
+        tps.addTransaction(transaction);
+        originalStatesRef.current = {...newMapData}
+    }, [title, colors, sizes, opacities, anchors, textFont, hasStroke, hasFill, hideLegend, range, legendTitle, legendFields]);
     
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
@@ -229,6 +307,8 @@ const EditScreen = () => {
                     // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
+                    legendTitle = {legendTitle}
+                    legendFields = {legendFields}
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
                     />

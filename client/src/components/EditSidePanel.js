@@ -11,6 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
+import { GlobalMapEditContext } from '../mapEdit'
 
 const EditSidePanel = ({
     title,
@@ -37,23 +38,140 @@ const EditSidePanel = ({
     propertyData,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    
+    const { mapEdit } = useContext(GlobalMapEditContext);
+    /*function newTransaction(oldMapData, field, value){
+        let newMapData = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: mapEdit.strokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: mapEdit.fillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: mapEdit.textColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: mapEdit.dotColor,
+            spikeColor: mapEdit.spikeColor,
+            lowGradient: mapEdit.lowGradient,
+            mediumGradient: mapEdit.mediumGradient,
+            highGradient: mapEdit.highGradient
+        }
+        mapEdit.addUpdateMapTransaction(oldMapData, newMapData)
+    }*/
     const handleFont = (event) => {
+        //get the map before the setFont is done
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         setTextFont(event.target.value)
+        //newTransaction(oldMap, "textFont", event.target.value)
     }
     
     const handleTitle = (event) => {
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         setTitle(event.target.value)
+        //newTransaction(oldMap, "title", event.target.value)
     }
     
     const handleSize = (event, label) => {
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         setSizes({
             ...sizes,
             [label]: event.target.value
         })
+        //newTransaction(oldMap, label, event.target.value)
     }
 
     const handleOpacity = (event, label) => {
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         let newValue = parseFloat(event.target.value);
     
         if (!isNaN(newValue)) {
@@ -64,20 +182,64 @@ const EditSidePanel = ({
                 [label]: newValue,
             });
         }
+        //newTransaction(oldMap, label, newValue)
     };
-    
-    const handleRange = (event) => {
-        setRange(event.target.value)
-    }
 
     const handleHideLegend = () => {
+        // need to figure out what to do for this transaction
         setHideLegend(!hideLegend)
     }
     const handleHideFill = () => {
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         setHasFill(!hasFill)
+        //newTransaction(oldMap, "hasFill", !hasFill)
     }
     const handleHideStroke = () => {
+        /*let oldMap = {
+            id: store.currentMap._id, // not sure if im supposed to passing this id or not
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: mapEdit.legendTitle,
+            legendFields: mapEdit.legendFields,
+            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient,
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient
+        }*/
         setHasStroke(!hasStroke)
+        //newTransaction(oldMap, "hasStroke", !hasStroke)
     }
     function alertModal(header, paragraph){
         store.displayModal(<div>
@@ -117,6 +279,7 @@ const EditSidePanel = ({
     }
 
     const handleEditProperties = (key, value) => {
+        // might have to add a transaction for this after tonight 
         let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))
         tempProperties[key] = value
         setPropertyData(

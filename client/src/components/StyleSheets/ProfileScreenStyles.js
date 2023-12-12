@@ -11,6 +11,10 @@ export const StyledTypography2 = styled(Typography)({
     fontSize: "2vh",
     paddingLeft: "4vw"
 });
+export const StyledTypography3 = styled(Typography)({
+    fontSize: "3vh",
+    paddingTop: "3vh"
+});
 export const StyledButton = styled(Button)({
     backgroundColor: "#f57fd9",
     color: "black",

@@ -1,7 +1,12 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import React from 'react';
+import api from '../store/index'
 import { AuthContext } from '../auth'
+import maps from '../store/map-request-api';
+import EditMap_Transaction from '../transactions/EditMap_Transaction';
+import jsTPS from '../transactions/jsTPS';
+import GlobalStoreContext from '../store/index'
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -12,6 +17,7 @@ export const GlobalMapEditActionType = {
 
 }
 
+const tps = new jsTPS();
 
 function GlobalMapEditContextProvider(props) {
     const [mapEdit, setMapEdit] = useState({
@@ -35,13 +41,13 @@ function GlobalMapEditContextProvider(props) {
         dotColor: '',
         spikeColor: '',
         chloroData: {},
-        lowGradient:'',
-        mediumGradient: '',
-        highGradient: ''
+        lowGradient:'#0000FF',
+        mediumGradient: '#FEEA00',
+        highGradient: '#FF0000'
     });
 
     const { auth } = useContext(AuthContext);
-
+    const {store} = useContext(GlobalStoreContext)
     const mapEditReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
@@ -74,7 +80,6 @@ function GlobalMapEditContextProvider(props) {
                 });
             }
             case GlobalMapEditActionType.LOAD: {
-              console.log("load radius: ", payload.radius)
                 return setMapEdit({
                   id: payload.id,
                   title: payload.title,
@@ -123,15 +128,15 @@ function GlobalMapEditContextProvider(props) {
                   chloroData: {},
                   dotColor: '',
                   spikeColor: '',
-                  lowGradient:'',
-                  mediumGradient: '',
-                  highGradient: ''
+                  lowGradient:'#0000FF',
+                  mediumGradient: '#FEEA00',
+                  highGradient: '#FF0000'
                 });
             }
 
         }
     }
-
+    
     mapEdit.editStyles = async (styles) => {
       mapEditReducer({
         type: GlobalMapEditActionType.EDIT,
