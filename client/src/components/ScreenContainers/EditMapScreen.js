@@ -126,7 +126,7 @@ const EditScreen = () => {
                 navigate('/map?id=${store.currentMap._id}');
             }
             
-            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || store.currentMap.graphics.typeSpecific.chloroLegend!==null || store.currentMap.graphics.typeSpecific.voronoi!==null)){
+            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
                 setTitle(mapEdit.title);
                 setColors({
                     TextColor: mapEdit.textColor,
@@ -164,7 +164,7 @@ const EditScreen = () => {
                 setLegendTitle(mapEdit.legendTitle);
 
                 if(!legendFields && mapEdit.legendFields){
-                    setLegendFields([...legendFields])
+                    setLegendFields([...mapEdit.legendFields])
                 }
                 if(!chloroData && mapEdit.chloroData){
                     handleNewColors(mapEdit.chloroData)
