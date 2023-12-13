@@ -36,7 +36,7 @@ function GlobalMapEditContextProvider(props) {
         spikeColor: '',
         voronoiColor:'',
         chloroData: {},
-        voronoiValue:'',,
+        voronoiValue:'',
         screenShot: '',
     });
     console.log("NEW ", mapEdit)
