@@ -10,10 +10,7 @@ const GraphicsSchema = new Schema(
             // legendBorderColor: {type: String, required:true},
             // legendBorderWidth: {type: Number, required:true},
             legendTitle: {type: String, required: true},
-            legendFields:[{
-                fieldColor:{type: String, required: true},
-                fieldText:{type: String, required: true}
-            }]
+            legendFields:{type: Object, required:false}
         },
         typeSpecific:{
             selectAll: {type: Boolean, required: true},

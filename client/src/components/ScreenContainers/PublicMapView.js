@@ -36,6 +36,7 @@ import { useNavigate } from 'react-router-dom';
 import SpikeLegend from '../SpikeLegend';
 import DotDistLegend from '../DotDistLegend';
 import VoronoiLegend from '../VoronoiLegend';
+import ChoroLegend from '../ChoroLegend';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -567,6 +568,7 @@ const PublicMapView = () => {
     SpikeMap: graphics.typeSpecific.spikeColor,
     VoronoiMap: graphics.typeSpecific.voronoiColor,
   }
+  let legendFields = graphics.typeSpecific.chloroLegend
   let voronoiValue =  graphics.typeSpecific.voronoiValue
   if(store.currentMap.type === "Spike Map"){
       DynamicLegend = <SpikeLegend colors={colors}/>
@@ -580,17 +582,16 @@ const PublicMapView = () => {
                           voronoiValue={voronoiValue}
                           setVoronoiValue={null}/>
   }
-  /*else if(store.currentMap.type === "Choropleth Map"){
-      console.log("legendfields")
+  else if(store.currentMap.type === "Choropleth Map"){
       console.log(legendFields)
       DynamicLegend = <ChoroLegend
           legendFields = {legendFields}
-          legendAnchors = {legendAnchors}
-          handleLegendClick = {handleLegendClick}
-          handleClose = {handleClose}
-          handleNewColor = {handleNewColor}>
+          legendAnchors = {null}
+          handleLegendClick = {null}
+          handleClose = {null}
+          handleNewColor = {null}>
           </ChoroLegend>
-  }*/
+  }
 
   let forkButton = ""
   let commentSection = ""

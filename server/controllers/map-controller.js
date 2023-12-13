@@ -596,7 +596,6 @@ updateMapById = async (req, res) => {
 
                 map.title = body.map.title;
                 // console.log(body.map.title)
-
                 let temp1 = map.reactions;
                 let temp2 = body.map.reactions;
 
@@ -622,11 +621,10 @@ updateMapById = async (req, res) => {
                 // map.imageBuffer = body.map.imageBuffer
                 if(body.map.publishDate)
                     map.publishDate = body.map.publishDate;
-                if(body.chloro)
-                    body.map.graphics.typeSpecific.chloroLegend = body.chloro
-                    body.map.graphics.legend.legendFields = body.chloro
-
-                
+                if(body.chloro){
+                    body.map.graphics.typeSpecific.chloroLegend = {...body.chloro}
+                    body.map.graphics.legend.legendFields = {...body.chloro}
+                }
                 map
                     .save()
                     .then(() => {
@@ -642,9 +640,9 @@ updateMapById = async (req, res) => {
                             map.graphics,
                             body.map.graphics,
                             // { new: true }
-                        ).then(() => {
+                        ).then((graphics) => {
                             let tempMap = {...map}._doc
-                            
+                            console.log(graphics)
                             tempMap.graphics = tempGraphics;
                             tempMap.imageBuffer = body.map.imageBuffer
                             return res.status(200).json({
