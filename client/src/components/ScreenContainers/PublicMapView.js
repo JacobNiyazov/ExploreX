@@ -8,7 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import DeleteIcon from '@mui/icons-material/Delete'
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
-import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
+import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur, LegendContainer }from '../StyleSheets/MapEditStyles.js'
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
@@ -33,6 +33,9 @@ import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import SpikeLegend from '../SpikeLegend';
+import DotDistLegend from '../DotDistLegend';
+import VoronoiLegend from '../VoronoiLegend';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -217,6 +220,21 @@ const PublicMapView = () => {
         // Ensure that no default marker is created for point features
         pointToLayer: function (feature, latlng) {
           return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+      
+              return (
+              ReactDOMServer.renderToString(
+                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                  </Box>
+              )
+              )
+          }).join(""), {
+              maxHeight: 200
+          });
         }
       }).addTo(leafletMap);
       try{
@@ -231,7 +249,7 @@ const PublicMapView = () => {
         if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, leafletMap]);
+    }, [typeData, regionData, leafletMap, stroke, fill, typeSpecific, text]);
   
     return null;
   };
@@ -309,11 +327,11 @@ const PublicMapView = () => {
         if(typeData) spikeFeatureGroup.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, leafletMap]);
+    }, [typeData, regionData, leafletMap, stroke, fill, typeSpecific, text]);
   
     return null;
   };
-  const ChloroLayer = ({ typeData, regionData, property }) => {
+  const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text }) => {
     const leafletMap = useMap();
  
     useEffect(() => {
@@ -379,14 +397,30 @@ const PublicMapView = () => {
           
             return {
               fillColor,
-              weight: 2,
-              opacity: 1,
-              color: 'white',
-              fillOpacity: 0.7,
+              stroke: stroke.hasStroke,
+              weight: stroke.strokeWeight,
+              opacity: stroke.strokeOpacity,
+              color: stroke.strokeColor,
+              fillOpacity: fill.fillOpacity,
             };
         },
         pointToLayer: function (feature, latlng) {
           return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+      
+              return (
+              ReactDOMServer.renderToString(
+                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                  </Box>
+              )
+              )
+          }).join(""), {
+              maxHeight: 200
+          });
         }
       }).addTo(leafletMap);
       try{
@@ -401,49 +435,68 @@ const PublicMapView = () => {
         // if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, property, leafletMap]);
+    }, [typeData, regionData, property, leafletMap, stroke, fill, text]);
   
     return null;
   };
 
-  /*const VoronoiLayer = ({ geojson, property }) => {
+  const VoronoiLayer = ({ geojson, fill, dot, stroke, text, value }) => {
     const leafletMap = useMap();
  
     useEffect(() => {
       leafletMap.invalidateSize();
 
-      const regionLayer = L.geoJSON(regionData, {
-        style: function (feature) {
-            let fillColor;
-            let propertyValue;
-            if (flag){
-              fillColor = coloring[feature.properties[property]];;
-            }
-            else if(typeof(feature.properties[property]) === 'string'){
-                propertyValue = convertStringToNumber(feature.properties[property]);
-            }
-            else{
-                propertyValue = feature.properties[property];
-            }
-            if (!flag){
-              fillColor = getColor(propertyValue, coloring);
-            }
+      const regionLayer = L.geoJSON(geojson, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon'){
+            layer.setStyle({
+                stroke: stroke.hasStroke,
+                color: stroke.strokeColor,
+                weight: stroke.strokeWeight,
+                opacity: stroke.strokeOpacity,
+                fill: fill.hasFill,
+                fillColor: fill.fillColor,
+                fillOpacity: fill.fillOpacity,
+              });
+          }
 
-          
-            return {
-              fillColor,
-              weight: 2,
-              opacity: 1,
-              color: 'white',
-              fillOpacity: 0.7,
-            };
+           // // Customize popup content
+           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+              if(feature.geometry.type === 'Point'){
+                return (
+                  ReactDOMServer.renderToString(
+                      <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                          <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{'Represents: ' + value}</Typography>
+                      </Box>
+                  ))
+              }
+              else{
+                return (
+                ReactDOMServer.renderToString(
+                    <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                        <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                    </Box>
+                ))
+              }
+              
+            
+        }).join(""), {
+            maxHeight: 200
+        });
         },
         pointToLayer: function (feature, latlng) {
-          return null;
-        }
+          return L.circleMarker(latlng, {
+              radius: 4,
+              fillColor: dot,
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+          });
+      }
       }).addTo(leafletMap);
       try{
-        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+        leafletMap.fitBounds(L.geoJSON(geojson).getBounds());
       }
       catch (err){
         console.log(err)
@@ -454,17 +507,21 @@ const PublicMapView = () => {
         // if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, property, leafletMap]);
+    }, [geojson, leafletMap, fill, dot, stroke, text]);
   
     return null;
-  };*/
+  };
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
+      let fill = store.currentMap.graphics.fill;
+      let stroke = store.currentMap.graphics.stroke;
+      let typeSpecific = store.currentMap.graphics.typeSpecific;
+      let text = store.currentMap.graphics.text
       let data = {
         type: 'FeatureCollection',
         features: store.currentMap.graphics.typeSpecific.dotPoints[0],
       };
-      return <DotLayer typeData={data} regionData={map.graphics.geojson}/>;
+      return <DotLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
 
     }
     else if(map.type === "Spike Map"){
@@ -483,15 +540,57 @@ const PublicMapView = () => {
     else if(map.type === "Choropleth Map"){
         console.log("SHOWING MAP")
         let data = store.currentMap.graphics.typeSpecific.chloroLegend;
-        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let text = store.currentMap.graphics.text
+        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property} fill={fill} stroke={stroke} text={text}/>
     }
     else if(map.type === "Voronoi Map"){
-      console.log(map)
-        return <VoronoiMap />
+        let dot = store.currentMap.graphics.typeSpecific.voronoiColor
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let text = store.currentMap.graphics.text
+        let geojson = store.currentMap.graphics.geojson;
+        let value = store.currentMap.graphics.typeSpecific.voronoiValue;
+        return <VoronoiLayer geojson={geojson} fill={fill} stroke={stroke} text={text} dot={dot} value={value}/>
     }
     return null;
   }
   
+  let DynamicLegend = null;
+  let graphics = store.currentMap.graphics
+  let colors = {
+    TextColor: graphics.text.textColor,
+    FillColor: graphics.fill.fillColor,
+    StrokeColor: graphics.stroke.strokeColor,
+    DotMap: graphics.typeSpecific.dotColor,
+    SpikeMap: graphics.typeSpecific.spikeColor,
+    VoronoiMap: graphics.typeSpecific.voronoiColor,
+  }
+  let voronoiValue =  graphics.typeSpecific.voronoiValue
+  if(store.currentMap.type === "Spike Map"){
+      DynamicLegend = <SpikeLegend colors={colors}/>
+  }
+  else if(store.currentMap.type === "Dot Distribution Map"){
+      DynamicLegend = <DotDistLegend colors={colors}/>
+  }
+  else if(store.currentMap.type === "Voronoi Map"){
+      DynamicLegend = <VoronoiLegend 
+                          colors={colors}
+                          voronoiValue={voronoiValue}
+                          setVoronoiValue={null}/>
+  }
+  /*else if(store.currentMap.type === "Choropleth Map"){
+      console.log("legendfields")
+      console.log(legendFields)
+      DynamicLegend = <ChoroLegend
+          legendFields = {legendFields}
+          legendAnchors = {legendAnchors}
+          handleLegendClick = {handleLegendClick}
+          handleClose = {handleClose}
+          handleNewColor = {handleNewColor}>
+          </ChoroLegend>
+  }*/
 
   let forkButton = ""
   let commentSection = ""
@@ -557,6 +656,18 @@ const PublicMapView = () => {
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
+
+                        <LegendContainer id="legendcontainer" sx={store.currentMap.graphics.legend.hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                                maxHeight: '500px',
+                                maxWidth: '500px',
+                                overflowY: 'auto',
+                            }}>
+                            <Typography>{store.currentMap.graphics.legend.legendTitle}</Typography>
+                            <div id="legenddiv" style={{ overflow: 'auto' }}>
+                            {DynamicLegend}
+                            </div>
+                            
+                        </LegendContainer>
                       </ControlGrid>
                 </MapContainer>
             </Grid>

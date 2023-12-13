@@ -21,7 +21,13 @@ const VoronoiLegend = ({colors, voronoiValue, setVoronoiValue}) => {
                 <Typography id="voronoilegendlabel" variant="body2">{'Points represent'}</Typography>
                 
             </Box>
-            <ColorTextField id="voronoilegendtextfield" variant='standard' value={voronoiValue} onChange={(e) =>{setVoronoiValue(e.target.value)}} sx={{width:"100%", input:{textAlign:'center'}, marginTop: "10px"}}></ColorTextField>
+            {
+                setVoronoiValue !== null ?
+                <ColorTextField id="voronoilegendtextfield" variant='standard' value={voronoiValue} onChange={(e) =>{setVoronoiValue(e.target.value)}} sx={{width:"100%", input:{textAlign:'center'}, marginTop: "10px"}}></ColorTextField>
+                : 
+                <Typography id="voronoilegendlabel" variant="body2" sx={{width:"100%", textAlign:'center', marginTop: "10px"}}>{voronoiValue}</Typography>
+            }
+            
         </Box>
 
       
