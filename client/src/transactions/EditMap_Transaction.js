@@ -13,8 +13,7 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
          setTextFont, 
          setHasStroke,
          setHasFill, 
-         setHideLegend, 
-         setRange) {
+         setHideLegend) {
         super();
         this.oldMapData = oldMapData;
         this.newMapData = newMapData;
@@ -29,14 +28,12 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
         this.setHasFill = setHasFill;
         this.setHasStroke = setHasStroke;
         this.setHideLegend = setHideLegend;
-        this.setRange = setRange;
     }
     // need to add a edit map transaction every time a onChange or smth
     // is triggered in edit side panel
     doTransaction() {
         console.log("we redoing")
         // add if statements to check if the props are equal so that theyre not repeating
-        
         this.setTitle(this.newMapData.title);
         this.setColors(this.newMapData.colors);
         this.setSizes(this.newMapData.sizes);

@@ -17,8 +17,6 @@ export const GlobalMapEditActionType = {
 
 }
 
-const tps = new jsTPS();
-
 function GlobalMapEditContextProvider(props) {
     const [mapEdit, setMapEdit] = useState({
         id: '',

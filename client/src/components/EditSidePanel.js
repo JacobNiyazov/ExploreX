@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
 import { GlobalMapEditContext } from '../mapEdit'
+import EditMap_Transaction from '../transactions/EditMap_Transaction.js';
 
 const EditSidePanel = ({
     title,
@@ -36,142 +37,88 @@ const EditSidePanel = ({
     setHideLegend,
     setPropertyData, 
     propertyData,
+    originalStatesRef,
+    setLegendTitle,
+    setLegendFields
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     const { mapEdit } = useContext(GlobalMapEditContext);
-    /*function newTransaction(oldMapData, field, value){
+    let tps = store.currentTps
+    function newTransaction(field, value){
+        // instead of the mapEdit replace that with originalStatesRef.current
         let newMapData = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: mapEdit.strokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: mapEdit.fillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: mapEdit.textColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: mapEdit.dotColor,
-            spikeColor: mapEdit.spikeColor,
-            lowGradient: mapEdit.lowGradient,
-            mediumGradient: mapEdit.mediumGradient,
-            highGradient: mapEdit.highGradient
+            title: field === "title"? value:title,
+            colors: {
+                TextColor: originalStatesRef.current.colors.TextColor,
+                FillColor: originalStatesRef.current.colors.FillColor,
+                StrokeColor: originalStatesRef.current.colors.StrokeColor,
+                DotMap: originalStatesRef.current.colors.DotMap,
+                SpikeMap: originalStatesRef.current.colors.SpikeMap,
+                lowGradient: originalStatesRef.current.colors.lowGradient,
+                mediumGradient: originalStatesRef.current.colors.mediumGradient,
+                highGradient: originalStatesRef.current.colors.highGradient
+            },
+            sizes:{
+                TextSize: field === "TextSize"? value:sizes.TextSize,
+                StrokeWeight: field==="StrokeWeight"?value:sizes.StrokeWeight,
+            },
+            opacities:{
+                StrokeOpacity: field === "StrokeOpacity"?value:opacities.StrokeOpacity,
+                FillOpacity: field === "FillOpacity"?value:opacities.FillOpacity,
+            },
+            hasStroke: field==="hasStroke"?value:hasStroke,
+            hasFill: field === "hasFill"?value:hasFill,
+            textFont: field === "textFont"? value:textFont,
+            legendTitle: originalStatesRef.current.legendTitle,
+            legendFields: originalStatesRef.current.legendFields,
+            // focusing on the non-typespefic stuff first
+            chloroData: mapEdit.chloroData, // not sure what to set this to rn
         }
-        mapEdit.addUpdateMapTransaction(oldMapData, newMapData)
-    }*/
+        console.log("old data: ", originalStatesRef.current)
+        console.log("new data: ", newMapData)
+        let transaction = new EditMap_Transaction(originalStatesRef.current, 
+            newMapData,
+            setTitle, 
+            setLegendTitle, 
+            setLegendFields, 
+            setColors, 
+            setSizes,
+            setOpacities,
+            setAnchors,
+            setTextFont,
+            setHasStroke, 
+            setHasFill,
+            setHideLegend,)
+        // add this transaction to the jsTPS stack
+        console.log("old data: ", originalStatesRef.current)
+        console.log("new data: ", newMapData)
+
+        tps.addTransaction(transaction)
+        console.log("tps in side panel: ", tps)
+        // change the originalStatesRef to the newMapData
+        originalStatesRef.current = {...newMapData}
+        console.log("original state after the changes: ",originalStatesRef.current)
+    }
     const handleFont = (event) => {
         //get the map before the setFont is done
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setTextFont(event.target.value)
-        //newTransaction(oldMap, "textFont", event.target.value)
+        newTransaction("textFont", event.target.value)
     }
     
     const handleTitle = (event) => {
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setTitle(event.target.value)
-        //newTransaction(oldMap, "title", event.target.value)
+        newTransaction("title", event.target.value)
     }
     
     const handleSize = (event, label) => {
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setSizes({
             ...sizes,
             [label]: event.target.value
         })
-        //newTransaction(oldMap, label, event.target.value)
+        newTransaction(label, event.target.value)
     }
 
     const handleOpacity = (event, label) => {
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         let newValue = parseFloat(event.target.value);
     
         if (!isNaN(newValue)) {
@@ -181,8 +128,8 @@ const EditSidePanel = ({
                 ...opacities,
                 [label]: newValue,
             });
+            newTransaction(label, newValue)
         }
-        //newTransaction(oldMap, label, newValue)
     };
 
     const handleHideLegend = () => {
@@ -190,56 +137,12 @@ const EditSidePanel = ({
         setHideLegend(!hideLegend)
     }
     const handleHideFill = () => {
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setHasFill(!hasFill)
-        //newTransaction(oldMap, "hasFill", !hasFill)
+        newTransaction("hasFill", !hasFill)
     }
     const handleHideStroke = () => {
-        /*let oldMap = {
-            id: store.currentMap._id, // not sure if im supposed to passing this id or not
-            title: title,
-            hasStroke: hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: sizes.StrokeWeight,
-            strokeOpacity: opacities.StrokeOpacity,
-            hasFill: hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: opacities.FillOpacity,
-            textColor: colors.TextColor,
-            textSize: sizes.TextSize,
-            textFont: textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData, // not sure if this is being edited or not
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setHasStroke(!hasStroke)
-        //newTransaction(oldMap, "hasStroke", !hasStroke)
+        newTransaction("hasStroke", !hasStroke)
     }
     function alertModal(header, paragraph){
         store.displayModal(<div>
@@ -364,7 +267,22 @@ const EditSidePanel = ({
                         <CustomList>
                             <CustomListItem>
                                 <Typography>Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="TextColor"/>
+                                <ColorSelector originalStatesRef = {originalStatesRef} 
+                                colors={colors} 
+                                setColors={setColors} 
+                                anchors={anchors} 
+                                setAnchors={setAnchors} 
+                                label="TextColor"
+                                setTitle={setTitle}
+                                setSizes={setSizes}
+                                setOpacities={setOpacities}
+                                setTextFont={setTextFont}
+                                setHasStroke={setHasStroke}
+                                setHasFill={setHasFill}
+                                setHideLegend={setHideLegend}
+                                setLegendTitle = {setLegendTitle}
+                                setLegendFields = {setLegendFields}
+                                />
                             </CustomListItem>
                             <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
@@ -476,7 +394,21 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Fill Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="FillColor"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="FillColor"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
@@ -515,7 +447,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Stroke Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="StrokeColor"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="StrokeColor"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
@@ -563,17 +510,60 @@ const EditSidePanel = ({
                         <CustomList>
                                 <CustomListItem>
                                     <Typography>Low Gradient</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="lowGradient"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="lowGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Medium Gradient</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="mediumGradient"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="mediumGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>High Gradient</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="highGradient"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="highGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                             </CustomList>
@@ -609,7 +599,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="DotMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -648,7 +653,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Spike Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="SpikeMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -688,7 +708,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="VoronoiMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>

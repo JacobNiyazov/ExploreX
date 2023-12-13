@@ -197,7 +197,7 @@ const MapEdit = ({
             </HeatMapLegend>
         }
     }
-    
+    // come back to undo/redo in here for legends if this fix is good
     const [legendAnchors, setLegendAnchors] = useState(() => {
         if(legendFields){
             const initialAnchors = {};

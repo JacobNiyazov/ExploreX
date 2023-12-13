@@ -5,36 +5,79 @@ import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 import { GlobalMapEditContext } from '../mapEdit'
 import GlobalStoreContext from '../store/index.js';
+import EditMap_Transaction from '../transactions/EditMap_Transaction.js';
 
-const ColorSelector = ({colors, setColors, anchors, setAnchors, label}) =>{
+const ColorSelector = ({originalStatesRef, 
+    label,
+    colors,
+    setColors,
+    anchors,
+    setAnchors, 
+    setTitle,
+    setSizes,
+    setOpacities,
+    setTextFont,
+    setHasStroke,
+    setHasFill,
+    setHideLegend,
+    setLegendTitle,
+    setLegendFields
+}) =>{
     const { mapEdit } = useContext(GlobalMapEditContext);
     const { store } = useContext(GlobalStoreContext);
-    /*function newTransaction(oldMapData, hex){
-        console.log("colors should have changed: ", colors.highGradient)
+    let tps = store.currentTps
+    function newTransaction(hex){
         let newMapData = {
-            id: store.currentMap._id,
-            title: mapEdit.title,
-            hasStroke: mapEdit.hasStroke,
-            strokeColor: label === "StrokeColor"? hex:colors.StrokeColor,
-            strokeWeight: mapEdit.strokeWeight,
-            strokeOpacity: mapEdit.strokeOpacity,
-            hasFill: mapEdit.hasFill,
-            fillColor: label === "FillColor" ? hex:colors.FillColor,
-            fillOpacity: mapEdit.fillOpacity,
-            textColor: label === "TextColor" ? hex:colors.TextColor,
-            textSize: mapEdit.TextSize,
-            textFont: mapEdit.textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
+            title: originalStatesRef.current.title,
+            colors:{
+                StrokeColor: label === "StrokeColor"? hex:colors.StrokeColor,
+                FillColor: label === "FillColor" ? hex:colors.FillColor,
+                TextColor: label === "TextColor" ? hex:colors.TextColor,
+                DotMap: label === "DotMap"?hex:colors.DotMap,
+                SpikeMap: label === "SpikeMap"?hex:colors.SpikeMap,
+                lowGradient: label === "lowGradient"?hex:colors.lowGradient,
+                mediumGradient: label === "mediumGradient"?hex:colors.mediumGradient,
+                highGradient: label === "highGradient"?hex:colors.highGradient
+            },
+            sizes:{
+                TextSize: originalStatesRef.current.sizes.TextSize,
+                StrokeWeight: originalStatesRef.current.sizes.StrokeWeight,
+            },
+            opacities:{
+                StrokeOpacity: originalStatesRef.current.opacities.StrokeOpacity,
+                fillOpacity: originalStatesRef.current.opacities.FillOpacity,
+            },
+            hasStroke: originalStatesRef.current.hasStroke,
+            hasFill: originalStatesRef.current.hasFill,
+            textFont: originalStatesRef.current.textFont,
+            legendTitle: originalStatesRef.current.legendTitle,
+            legendFields: originalStatesRef.current.legendFields,
             chloroData: mapEdit.chloroData,
-            dotColor: label === "DotMap"?hex:colors.DotMap,
-            spikeColor: label === "SpikeMap"?hex:colors.SpikeMap,
-            lowGradient: label === "lowGradient"?hex:colors.lowGradient,
-            mediumGradient: label === "mediumGradient"?hex:colors.mediumGradient,
-            highGradient: label === "highGradient"?hex:colors.highGradient
         }
-        mapEdit.addUpdateMapTransaction(oldMapData, newMapData)
-    }*/
+        console.log("old data: ", originalStatesRef.current)
+        console.log("new data: ", newMapData)
+        let transaction = new EditMap_Transaction(originalStatesRef.current, 
+            newMapData,
+            setTitle, 
+            setLegendTitle, 
+            setLegendFields, 
+            setColors, 
+            setSizes,
+            setOpacities,
+            setAnchors,
+            setTextFont,
+            setHasStroke, 
+            setHasFill,
+            setHideLegend,
+            )
+            
+        // get tps from the store
+        tps.addTransaction(transaction)
+        console.log("tps in side panel: ", tps)
+        // set the originalStatesRef to the newMapData
+        originalStatesRef.current = {...newMapData}
+        console.log("original state after the changes: ",originalStatesRef.current)
+    }
     const handleClick = (event) => {
         setAnchors({
             ...anchors,
@@ -50,64 +93,20 @@ const ColorSelector = ({colors, setColors, anchors, setAnchors, label}) =>{
     };
 
     const handleNewColor = (event) => {
-        /*let oldMapData = {
-            id: store.currentMap._id,
-            title: mapEdit.title,
-            hasStroke: mapEdit.hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: mapEdit.strokeWeight,
-            strokeOpacity: mapEdit.strokeOpacity,
-            hasFill: mapEdit.hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: mapEdit.fillOpacity,
-            textColor: colors.TextColor,
-            textSize: mapEdit.TextSize,
-            textFont: mapEdit.textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData,
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setColors({
             ...colors,
             [label] : event.hex
         })
         console.log("event.hex: ", event.hex)
-        //newTransaction(oldMapData, event.hex)
+        newTransaction(event.hex)
     }
 
     const handleTextColor = (event) => {
-        /*let oldMapData = {
-            id: store.currentMap._id,
-            title: mapEdit.title,
-            hasStroke: mapEdit.hasStroke,
-            strokeColor: colors.StrokeColor,
-            strokeWeight: mapEdit.strokeWeight,
-            strokeOpacity: mapEdit.strokeOpacity,
-            hasFill: mapEdit.hasFill,
-            fillColor: colors.FillColor,
-            fillOpacity: mapEdit.fillOpacity,
-            textColor: colors.TextColor,
-            textSize: mapEdit.TextSize,
-            textFont: mapEdit.textFont,
-            legendTitle: mapEdit.legendTitle,
-            legendFields: mapEdit.legendFields,
-            chloroData: mapEdit.chloroData,
-            dotColor: colors.DotMap,
-            spikeColor: colors.SpikeMap,
-            lowGradient: colors.lowGradient,
-            mediumGradient: colors.mediumGradient,
-            highGradient: colors.highGradient
-        }*/
         setColors({
             ...colors,
             [label]: "#" + event.target.value
         })
-       // newTransaction(oldMapData, "#"+event.target.value)
+       newTransaction("#"+event.target.value)
     }
     return (
         <Box sx={{marginLeft:'auto', display:'flex', alignItems: 'center'}}>

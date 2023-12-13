@@ -35,6 +35,7 @@ function GlobalStoreContextProvider(props) {
        modalAction: "",
        currentMap: null,
        currentMaps: [],
+       currentTps: tps
    });
    const dict = {
     "/login": "Login",
@@ -85,6 +86,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -96,6 +98,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -107,6 +110,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -118,6 +122,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -129,6 +134,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.DELETE_MAP: {       
@@ -140,6 +146,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: null,
                     currentMaps: payload.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
@@ -151,6 +158,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_GRAPHICS: {       
@@ -162,6 +170,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.CREATE_MAP:{
@@ -173,6 +182,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.FORK_MAP:{
@@ -184,6 +194,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.EDIT_MAP:{
@@ -195,6 +206,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             default: {
@@ -206,6 +218,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
 

@@ -10,7 +10,6 @@ import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 
 const EditScreen = () => {
-    const tps = new jsTPS();
     const { store } = useContext(GlobalStoreContext);
     const { mapEdit } = useContext(GlobalMapEditContext);
     const { auth } = useContext(AuthContext);
@@ -245,7 +244,7 @@ const EditScreen = () => {
         */
         
     }
-    useEffect(() => {
+    /*useEffect(() => {
         console.log("hai guys, we made it to the undo redo process #1");
         let oldMapData = originalStatesRef.current;
         let newMapData = {
@@ -279,7 +278,7 @@ const EditScreen = () => {
             setRange);
         tps.addTransaction(transaction);
         originalStatesRef.current = {...newMapData}
-    }, [title, colors, sizes, opacities, anchors, textFont, hasStroke, hasFill, hideLegend, range, legendTitle, legendFields]);
+    }, [title, colors, sizes, opacities, anchors, textFont, hasStroke, hasFill, hideLegend, range, legendTitle, legendFields]);*/
     
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
@@ -311,6 +310,9 @@ const EditScreen = () => {
                     legendFields = {legendFields}
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
+                    originalStatesRef = {originalStatesRef}
+                    setLegendTitle = {setLegendTitle}
+                    setLegendFields = {setLegendFields}
                     />
                 <MapEdit 
                     colors={colors}
@@ -324,6 +326,7 @@ const EditScreen = () => {
                     setLegendTitle = {setLegendTitle}
                     legendFields = {legendFields}
                     setLegendFields = {setLegendFields}
+                    originalStatesRef = {originalStatesRef}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
                     propertyData={propertyData}/>
             </Grid>
