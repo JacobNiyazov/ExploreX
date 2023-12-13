@@ -978,13 +978,19 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
     }
-    store.updateLocalMap = (dotScale=null, spikeLegend=null) => {
+    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null) => {
         let map = store.currentMap;
         if(dotScale !== null && map){
             map.graphics.typeSpecific.dotScale = dotScale;
         }
+        if(dotPoints !== null && map){
+            map.graphics.typeSpecific.dotPoints = dotPoints;
+        }
         if(spikeLegend !== null && map){
             map.graphics.typeSpecific.spikeLegend = spikeLegend;
+        }
+        if(spikeData !== null && map){
+            map.graphics.typeSpecific.spikeData = spikeData;
         }
         storeReducer({
             type: GlobalStoreActionType.EDIT_MAP,

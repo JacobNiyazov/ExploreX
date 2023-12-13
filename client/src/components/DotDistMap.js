@@ -249,8 +249,8 @@ const DotDistMap = ({
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
     var scale = dotDensityData.scale;
-    store.updateLocalMap(scale);
     delete dotDensityData['scale'];
+    store.updateLocalMap(dotDensityData['features'], scale);
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
       storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);
     }
