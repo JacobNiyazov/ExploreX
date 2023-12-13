@@ -36,7 +36,8 @@ function GlobalMapEditContextProvider(props) {
         spikeColor: '',
         voronoiColor:'',
         chloroData: {},
-        voronoiValue:'',
+        voronoiValue:'',,
+        screenShot: '',
     });
     console.log("NEW ", mapEdit)
 
@@ -71,6 +72,7 @@ function GlobalMapEditContextProvider(props) {
                   voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                   voronoiValue: payload.voronoiValue,
+                  screenShot : ''
                 });
             }
             case GlobalMapEditActionType.LOAD: {
@@ -97,6 +99,7 @@ function GlobalMapEditContextProvider(props) {
                   voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                   voronoiValue: payload.voronoiValue,
+                  screenShot: payload.screenShot
                 });
             }
             default: {
@@ -137,8 +140,6 @@ function GlobalMapEditContextProvider(props) {
     };
 
     mapEdit.loadStyles = async (styles) => {
-      console.log("LOADINGSSS")
-      console.log(styles)
       mapEditReducer({
         type: GlobalMapEditActionType.LOAD,
         payload: styles

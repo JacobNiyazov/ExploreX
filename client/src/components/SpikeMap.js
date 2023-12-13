@@ -310,7 +310,7 @@ const SpikeMap = ({
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
-    store.updateLocalMap(null, legend);
+    store.updateLocalMap(null, null, trianglePoints, legend);
     if(storeRef.current.currentMap.graphics.typeSpecific.spikeData === null || storeRef.current.currentMap.graphics.typeSpecific.spikeLegend === null){
       storeRef.current.updateMapGraphics(null, null, null, null, trianglePoints, legend);
     }

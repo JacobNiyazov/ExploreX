@@ -73,7 +73,7 @@ const ChloroplethMap = ({
           delete temp.isString;
           const keys = Object.keys(temp).map(Number).sort((a, b) => b - a);
           for (let i = 0; i < keys.length; i++) {
-              if (d > keys[i]) {
+              if (d >= keys[i]) {
                   return temp[keys[i]];
               }
           }

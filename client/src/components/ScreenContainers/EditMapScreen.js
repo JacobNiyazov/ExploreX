@@ -1,5 +1,6 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import Grid from '@mui/material/Grid';
+import domtoimage from 'dom-to-image';
 
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
@@ -20,6 +21,9 @@ const EditScreen = () => {
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
     const [chloroData, setChloroData] = useState(null);
+
+    const [screenShot, setScreenShot] = useState (null);
+    const [photo, setPhoto] = useState(false)
 
     const handleNewColors = (newData) => {
         let chloroInfo = newData.isString
@@ -119,14 +123,16 @@ const EditScreen = () => {
                 store.setCurrentPage(store.currentPageType.login);
                 navigate('/login');
             }
-            if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+            if(store.currentMap.ownerUsername !== auth.user.username){
                 store.setCurrentPage(store.currentPageType.profileScreen);
                 navigate('/profile');
             }
-
-            console.log(mapEdit)
+            else if(store.currentMap.isPublic){
+                store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
+                navigate('/map?id=${store.currentMap._id}');
+            }
             
-            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || store.currentMap.graphics.typeSpecific.chloroLegend!==null || store.currentMap.graphics.typeSpecific.voronoi!==null)){
+            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
                 setTitle(mapEdit.title);
                 setColors({
                     TextColor: mapEdit.textColor,
@@ -164,89 +170,17 @@ const EditScreen = () => {
                 setLegendTitle(mapEdit.legendTitle);
                 setVoronoiValue(mapEdit.voronoiValue);
 
-                if(mapEdit.legendFields){
-                    setLegendFields([...legendFields])
+                if(!legendFields && mapEdit.legendFields){
+                    setLegendFields([...mapEdit.legendFields])
                 }
-                if(mapEdit.chloroData){
-                    let chloroInfo = mapEdit.chloroData.isString
-                    let flag = true;
-                    let previous = ""
-                    const keys = Object.keys(mapEdit.chloroData)
-                        .filter(key => key !== "isString")
-                        .reverse();
-                    const temp = keys.map(key => {
-                        if (chloroInfo) {
-                            return {
-                                fieldColor: mapEdit.chloroData[key],
-                                fieldText: key,
-                            };
-                        } else {
-                            if(flag){
-                                flag = false;
-                                previous = key;
-                                return {
-                                    fieldColor: mapEdit.chloroData[key],
-                                    fieldText: ">" + key,
-                                };
-                            }
-                            let temp = previous;
-                            previous = key;
-                    
-                            return {
-                                fieldColor: mapEdit.chloroData[key],
-                                fieldText: "(" + key + "," + temp + "]",
-                            };
-                        }
-                    });
-                    setLegendFields(temp)
-                    
+                if(!chloroData && mapEdit.chloroData){
+                    handleNewColors(mapEdit.chloroData)
                 }
                 setLoading(false);
             }
             
-            
-            setLoading(false);
-            setTitle(mapEdit.title);
-            setColors({
-                TextColor: mapEdit.textColor,
-                HeatMap: '#FFFFFF',
-                // LegendFill: mapEdit.legendFillColor,
-                // LegendBorder: mapEdit.legendBorderColor,
-                FillColor: mapEdit.fillColor,
-                StrokeColor: mapEdit.strokeColor,
-                DotMap: mapEdit.dotColor,
-                SpikeMap: mapEdit.spikeColor,
-                VoronoiMap: mapEdit.voronoiColor,
-            });
-            setSizes({
-                TextSize: mapEdit.textSize,
-                StrokeWeight: mapEdit.strokeWeight,
-            });
-            setOpacities({
-                StrokeOpacity: mapEdit.strokeOpacity,
-                FillOpacity: mapEdit.fillOpacity,
-            });
-            setAnchors({
-                Text: null,
-                HeatMap: null,
-                // LegendFill: null,
-                // LegendBorder: null,
-                RegionFill: null,
-                RegionBorder: null,
-                DotMap: null,
-                SpikeMap: null,
-                VoronoiMap: null
-            });
-            setTextFont(mapEdit.textFont);
-            setHasStroke(mapEdit.hasStroke);
-            setHasFill(mapEdit.hasFill);
-            setLegendTitle(mapEdit.legendTitle)
-            if(!legendFields && mapEdit.legendFields){
-                setLegendFields([...legendFields])
-            }
-            if(!chloroData && mapEdit.chloroData){
-                handleNewColors(mapEdit.chloroData)
-            }
+
+           
         }
       };
   
@@ -301,6 +235,87 @@ const EditScreen = () => {
     }
     
     const [voronoiPointToggle, setVoronoiPointToggle] = React.useState(false)
+
+    const captureMapAsImage = async () => {        
+        const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
+            console.log("map container: ",mapContainer)
+            if (mapContainer) {
+            // Use dom-to-image to convert the MapContainer element to an image
+            domtoimage.toPng(mapContainer, {
+                width: mapContainer.clientWidth * 1,
+                height: mapContainer.clientHeight * 1,
+            })
+                .then(async function (dataUrl) {
+                    if(screenShot == null){
+                        store.updateMapGraphics(null, dataUrl)
+                        setScreenShot(dataUrl)
+                    }
+                    else{
+                        setScreenShot(dataUrl)
+                        console.log("BADSHB")
+                        store.updateScreenShot(dataUrl)
+
+                    }
+                    console.log("DONE")
+                })
+                .catch(function (error) {
+                // Handle any errors that occurred during image conversion
+                console.error('Error capturing screenshot:', error);
+                });
+            } else {
+            console.error('MapContainer element not found');
+            }
+            //console.log("set photo")
+            setPhoto(true);
+
+        }
+
+    const handleOpenPublishSave = (isPublish) => {
+        setPhoto(false);
+        console.log(">>>")
+       
+        let publishMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
+            </div>
+        )
+        let saveMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Save Edits?</span><br></br>They'll be there forever...
+            </div>
+        )
+
+        let styles = {
+            id: store.currentMap._id,
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: legendTitle,
+            legendFields: legendFields,
+            chloroData: chloroData,
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            voronoiColor: colors.VoronoiMap,
+            screenShot : screenShot
+        }
+        mapEdit.loadStyles(styles);
+        if(isPublish){
+            store.displayModal(publishMessage, true, store.modalActionTypes.publish);
+        }
+        else{
+            store.displayModal(saveMessage, true, store.modalActionTypes.save);
+        }
+    }
     
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
@@ -330,6 +345,7 @@ const EditScreen = () => {
                     setHideLegend={setHideLegend}
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
+                    handleOpenPublishSave={handleOpenPublishSave}
                     setVoronoiPointToggle={setVoronoiPointToggle}/>
                 <MapEdit 
                     colors={colors}
@@ -348,6 +364,9 @@ const EditScreen = () => {
                     chloroData = {chloroData}
                     setChloroData = {setChloroData}
                     handleNewColors = {handleNewColors}
+                    photo = {photo}
+                    setPhoto= {setPhoto}
+                    captureMapAsImage = {captureMapAsImage}
                     voronoiPointToggle={voronoiPointToggle}
                     voronoiValue={voronoiValue}
                     setVoronoiValue={setVoronoiValue}/>
