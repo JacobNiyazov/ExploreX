@@ -22,6 +22,7 @@ export const GlobalStoreActionType = {
    UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
    FORK_MAP: "FORK_MAP",
    EDIT_MAP: "EDIT_MAP",
+   ADD_SCREENSHOT: "ADD_SCREENSHOT"
 }
 
 
@@ -73,8 +74,6 @@ function GlobalStoreContextProvider(props) {
 
     const storeReducer = (action) => {
         const { type, payload } = action;
-        console.log(type)
-        console.log(payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -194,6 +193,17 @@ function GlobalStoreContextProvider(props) {
                     modalOpen: false,
                     modalConfirmButton: false,
                     modalAction: "",
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.ADD_SCREENSHOT:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: store.modalOpen,
+                    modalConfirmButton: store.modalConfirmButton,
+                    modalAction: store.modalAction,
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
                 });
@@ -918,6 +928,9 @@ function GlobalStoreContextProvider(props) {
         }
         try {
             let styles = mapEdit;
+
+            // map.imageBuffer = styles.screenShot;
+
             map.graphics.typeSpecific.dotColor = styles.dotColor;
             map.graphics.typeSpecific.spikeColor = styles.spikeColor;
             map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
@@ -1000,6 +1013,20 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
 
+    }
+    store.updateScreenShot = (screenShot) => {
+        let map = store.currentMap;
+        console.log(screenShot)
+        console.log("MIRA")
+        map.imageBuffer = screenShot
+        storeReducer({
+            type: GlobalStoreActionType.ADD_SCREENSHOT,
+            payload: {
+                currentMap: map
+            }
+            }
+        ); 
+        
     }
 
    return (

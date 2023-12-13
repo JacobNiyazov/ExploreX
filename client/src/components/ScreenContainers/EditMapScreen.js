@@ -1,5 +1,6 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import Grid from '@mui/material/Grid';
+import domtoimage from 'dom-to-image';
 
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
@@ -20,6 +21,9 @@ const EditScreen = () => {
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
     const [chloroData, setChloroData] = useState(null);
+
+    const [screenShot, setScreenShot] = useState (null);
+    const [photo, setPhoto] = useState(false)
 
     const handleNewColors = (newData) => {
         let chloroInfo = newData.isString
@@ -226,7 +230,45 @@ const EditScreen = () => {
         */
         
     }
+
+    const captureMapAsImage = async () => {        
+        const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
+            console.log("map container: ",mapContainer)
+            if (mapContainer) {
+            // Use dom-to-image to convert the MapContainer element to an image
+            domtoimage.toPng(mapContainer, {
+                width: mapContainer.clientWidth * 1,
+                height: mapContainer.clientHeight * 1,
+            })
+                .then(async function (dataUrl) {
+                    if(screenShot == null){
+                        store.updateMapGraphics(null, dataUrl)
+                        setScreenShot(dataUrl)
+                    }
+                    else{
+                        setScreenShot(dataUrl)
+                        console.log("BADSHB")
+                        store.updateScreenShot(dataUrl)
+
+                    }
+                    console.log("DONE")
+                })
+                .catch(function (error) {
+                // Handle any errors that occurred during image conversion
+                console.error('Error capturing screenshot:', error);
+                });
+            } else {
+            console.error('MapContainer element not found');
+            }
+            //console.log("set photo")
+            setPhoto(true);
+
+        }
+
     const handleOpenPublishSave = (isPublish) => {
+        setPhoto(false);
+        console.log(">>>")
+       
         let publishMessage = (
             <div>
                 <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
@@ -239,6 +281,7 @@ const EditScreen = () => {
                 Save Edits?</span><br></br>They'll be there forever...
             </div>
         )
+
         let styles = {
             id: store.currentMap._id,
             title: title,
@@ -258,9 +301,9 @@ const EditScreen = () => {
             dotColor: colors.DotMap,
             spikeColor: colors.SpikeMap,
             voronoiColor: colors.VoronoiMap,
+            screenShot : screenShot
         }
         mapEdit.loadStyles(styles);
-        
         if(isPublish){
             store.displayModal(publishMessage, true, store.modalActionTypes.publish);
         }
@@ -314,7 +357,10 @@ const EditScreen = () => {
                     propertyData={propertyData}
                     chloroData = {chloroData}
                     setChloroData = {setChloroData}
-                    handleNewColors = {handleNewColors}/>
+                    handleNewColors = {handleNewColors}
+                    photo = {photo}
+                    setPhoto= {setPhoto}
+                    captureMapAsImage = {captureMapAsImage}/>
             </Grid>
         );
     }

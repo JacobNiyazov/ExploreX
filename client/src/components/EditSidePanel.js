@@ -90,11 +90,9 @@ const EditSidePanel = ({
 
     const handleOpenSave= () => {
         handleOpenPublishSave(false);
-        console.log("savingggg")
     }
     const handleOpenPublish= () => {
         handleOpenPublishSave(true);
-        console.log("publishinggg")
 
     }
 
