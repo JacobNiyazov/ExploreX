@@ -17,6 +17,8 @@ import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
 import CircularProgress from '@mui/material/CircularProgress';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import * as ReactDOMServer from 'react-dom/server';
+
 
 import {
   StyledCard,
@@ -166,7 +168,7 @@ const PublicMapView = () => {
     console.log(store.currentMap._id)
     navigate(`/editMap?id=${store.currentMap._id}`)
   }
-  const DotLayer = ({ typeData, regionData }) => {
+  const DotLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text }) => {
     const leafletMap = useMap();
  
     useEffect(() => {
@@ -177,7 +179,7 @@ const PublicMapView = () => {
           pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, {
                 radius: 3,
-                fillColor: "#ff24bd",
+                fillColor: typeSpecific.dotColor,
                 color: "#000",
                 weight: 1,
                 opacity: 1,
@@ -190,12 +192,24 @@ const PublicMapView = () => {
       const regionLayer = L.geoJSON(regionData, {
         style: function (feature) {
             switch (feature.geometry.type) {
-                case 'Polygon':
+              case 'Polygon':
                 case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: fill.fillOpacity, };
                 case 'LineString':
                 case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: 0.01, };
                 default:
                     return {}; // Point geometries, if any, are already handled in dot density layer
             }
@@ -221,7 +235,7 @@ const PublicMapView = () => {
   
     return null;
   };
-  const SpikeLayer = ({ typeData, regionData }) => {
+  const SpikeLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text}) => {
     const leafletMap = useMap();
  
     useEffect(() => {
@@ -231,9 +245,9 @@ const PublicMapView = () => {
         spikeFeatureGroup = L.featureGroup().addTo(leafletMap);
         typeData.forEach(spike => {
           const spikeLayer = L.polygon(spike.map(point => [point.lat, point.lng]), {
-            color: '#ff24bd',
-            fillColor: '#ff24bd',
-            fillOpacity: 0.1  // Reduced opacity for more transparency
+            color: '#000',
+            fillColor: typeSpecific.spikeColor,
+            fillOpacity: 0.5  // Reduced opacity for more transparency
           });
           spikeLayer.addTo(spikeFeatureGroup);
         });
@@ -243,10 +257,22 @@ const PublicMapView = () => {
             switch (feature.geometry.type) {
                 case 'Polygon':
                 case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: fill.fillOpacity, };
                 case 'LineString':
                 case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: 0.01, };
                 default:
                     return {}; // Point geometries, if any, are already handled in dot density layer
             }
@@ -254,6 +280,21 @@ const PublicMapView = () => {
         // Ensure that no default marker is created for point features
         pointToLayer: function (feature, latlng) {
           return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+      
+              return (
+              ReactDOMServer.renderToString(
+                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                  </Box>
+              )
+              )
+          }).join(""), {
+              maxHeight: 200
+          });
         }
       }).addTo(leafletMap);
       try{
@@ -364,6 +405,59 @@ const PublicMapView = () => {
   
     return null;
   };
+
+  /*const VoronoiLayer = ({ geojson, property }) => {
+    const leafletMap = useMap();
+ 
+    useEffect(() => {
+      leafletMap.invalidateSize();
+
+      const regionLayer = L.geoJSON(regionData, {
+        style: function (feature) {
+            let fillColor;
+            let propertyValue;
+            if (flag){
+              fillColor = coloring[feature.properties[property]];;
+            }
+            else if(typeof(feature.properties[property]) === 'string'){
+                propertyValue = convertStringToNumber(feature.properties[property]);
+            }
+            else{
+                propertyValue = feature.properties[property];
+            }
+            if (!flag){
+              fillColor = getColor(propertyValue, coloring);
+            }
+
+          
+            return {
+              fillColor,
+              weight: 2,
+              opacity: 1,
+              color: 'white',
+              fillOpacity: 0.7,
+            };
+        },
+        pointToLayer: function (feature, latlng) {
+          return null;
+        }
+      }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+      // if(typeData.features) dotLayer.bringToFront();
+  
+      return () => {
+        // if(typeData.features) dotLayer.remove();
+        regionLayer.remove();
+      };
+    }, [typeData, regionData, property, leafletMap]);
+  
+    return null;
+  };*/
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
       let data = {
@@ -375,7 +469,11 @@ const PublicMapView = () => {
     }
     else if(map.type === "Spike Map"){
         let data = store.currentMap.graphics.typeSpecific.spikeData;
-        return <SpikeLayer typeData={data} regionData={map.graphics.geojson}/>;
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let typeSpecific = store.currentMap.graphics.typeSpecific;
+        let text = store.currentMap.graphics.text
+        return <SpikeLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
     }
     else if(map.type === "Heat Map"){
         if(map.graphics.geojson){
