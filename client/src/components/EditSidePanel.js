@@ -178,6 +178,7 @@ const EditSidePanel = ({
         'Brush Script MT',
         'Nova Square', 
       ];
+    let currProperty = store.currentMap.graphics.typeSpecific.property;
 
     return (
         <SidePanelGrid container direction="column" item xs={4}>
@@ -261,21 +262,71 @@ const EditSidePanel = ({
                             </CustomListItem>
                             <Divider sx={{ borderColor: "white" }} />
                             {
-                                propertyData.featureIndex !== null ?
-                                Object.keys(propertyData.properties).map((k, index, array)=>{
+                            propertyData.featureIndex !== null &&
+                            <>
+                                {/* Render the highlighted key-value pair first */}
+                                {
+                                currProperty in propertyData.properties && (
+                                    <div key={currProperty}>
+                                    <CustomListItem>
+                                        <Typography
+                                        sx={{
+                                            marginRight: 'auto',
+                                            fontWeight: 'bold', // Add styles for highlighting
+                                            color: 'white', // Change the color as needed
+                                        }}
+                                        >
+                                        {currProperty + ':'}
+                                        </Typography>
+                                        <ColorTextField
+                                        key={currProperty}
+                                        variant="standard"
+                                        value={propertyData.properties[currProperty]}
+                                        onChange={(e) => {
+                                            handleEditProperties(currProperty, e.target.value);
+                                        }}
+                                        />
+                                    </CustomListItem>
+                                    <Divider sx={{ borderColor: 'white' }} />
+                                    </div>
+                                )
+                                }
+
+                                {/* Render the rest of the key-value pairs */}
+                                {
+                                Object.keys(propertyData.properties).map((k, index, array) => {
+                                    if (k !== currProperty) { // Exclude the highlighted key
                                     return (
                                         <div key={k}>
-                                            <CustomListItem>
-                                                <Typography sx={{ marginRight: 'auto' }}>{k + ':'}</Typography>
-                                                <ColorTextField key = {k} variant="standard" value={propertyData.properties[k]} onChange={(e) => {handleEditProperties(k, e.target.value)}}/>
-                                                <DeleteButton variant="text" onClick={()=>{handleDeleteProperty(k)}}>
-                                                        <Typography variant='inherit'>X</Typography>
-                                                </DeleteButton>
-                                            </CustomListItem>
-                                            {index !== array.length - 1 && <Divider sx={{ borderColor: "white" }} />}
+                                        <CustomListItem>
+                                            <Typography
+                                            sx={{
+                                                marginRight: 'auto',
+                                            }}
+                                            >
+                                            {k + ':'}
+                                            </Typography>
+                                            <ColorTextField
+                                            key={k}
+                                            variant="standard"
+                                            value={propertyData.properties[k]}
+                                            onChange={(e) => {
+                                                handleEditProperties(k, e.target.value);
+                                            }}
+                                            />
+                                            {/* Render "X" button for non-highlighted key-value pairs */}
+                                            <DeleteButton variant="text" onClick={() => { handleDeleteProperty(k); }}>
+                                            <Typography variant="inherit">X</Typography>
+                                            </DeleteButton>
+                                        </CustomListItem>
+                                        {index !== array.length - 1 && <Divider sx={{ borderColor: 'white' }} />}
                                         </div>
                                     );
-                                }) : null
+                                    }
+                                    return null; // Skip the highlighted key in the regular mapping
+                                })
+                                }
+                            </>
                             }
                         </CustomList>
                     </PropertyDetails>
