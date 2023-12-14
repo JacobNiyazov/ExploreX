@@ -241,7 +241,7 @@ const EditScreen = () => {
             console.log("map container: ",mapContainer)
             if (mapContainer) {
             // Use dom-to-image to convert the MapContainer element to an image
-            domtoimage.toPng(mapContainer, {
+            await domtoimage.toPng(mapContainer, {
                 width: mapContainer.clientWidth * 1,
                 height: mapContainer.clientHeight * 1,
             })
@@ -252,11 +252,9 @@ const EditScreen = () => {
                     }
                     else{
                         setScreenShot(dataUrl)
-                        console.log("BADSHB")
                         store.updateScreenShot(dataUrl)
 
                     }
-                    console.log("DONE")
                 })
                 .catch(function (error) {
                 // Handle any errors that occurred during image conversion
@@ -272,7 +270,6 @@ const EditScreen = () => {
 
     const handleOpenPublishSave = (isPublish) => {
         setPhoto(false);
-        console.log(">>>")
        
         let publishMessage = (
             <div>
