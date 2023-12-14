@@ -270,7 +270,7 @@ const EditScreen = () => {
 
     const handleOpenPublishSave = (isPublish) => {
         setPhoto(false);
-       
+        handlePropertyDataLoad(null);
         let publishMessage = (
             <div>
                 <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
