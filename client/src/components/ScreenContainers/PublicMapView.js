@@ -229,23 +229,24 @@ const PublicMapView = () => {
         },
         onEachFeature: function (feature, layer) {
           // // Customize popup content
-          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-            return (
-              ReactDOMServer.renderToString(
-              <div className="leaflet-popup-content">
-                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
-              </div>)
-            );
-              // return (
-              // ReactDOMServer.renderToString(
-              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-              //     </Box>
-              // )
-              // )
-          }).join(""), {
-              maxHeight: 200
-          });
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+            }).join(""), {maxHeight: 200}
+          )
         }
       }).addTo(leafletMap);
       try{
@@ -317,23 +318,24 @@ const PublicMapView = () => {
         },
         onEachFeature: function (feature, layer) {
           // // Customize popup content
-          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-            return (
-              ReactDOMServer.renderToString(
-              <div className="leaflet-popup-content">
-                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
-              </div>)
-            );
-              // return (
-              // ReactDOMServer.renderToString(
-              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-              //     </Box>
-              // )
-              // )
-          }).join(""), {
-              maxHeight: 200
-          });
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+            }).join(""), {maxHeight: 200}
+          )
         }
       }).addTo(leafletMap);
       try{
@@ -352,7 +354,7 @@ const PublicMapView = () => {
   
     return null;
   };
-  const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text }) => {
+  const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text, typeSpecific }) => {
     const leafletMap = useMap();
     const textStyles = {
       color: text.textColor,
@@ -435,24 +437,24 @@ const PublicMapView = () => {
         },
         onEachFeature: function (feature, layer) {
           // // Customize popup content
-          layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-            return (
-              ReactDOMServer.renderToString(
-              <div className="leaflet-popup-content">
-                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
-              </div>)
-            );
-      
-              // return (
-              // ReactDOMServer.renderToString(
-              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-              //     </Box>
-              // )
-              // )
-          }).join(""), {
-              maxHeight: 200
-          });
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+            }).join(""), {maxHeight: 200}
+          )
         }
       }).addTo(leafletMap);
       try{
@@ -591,8 +593,9 @@ const PublicMapView = () => {
         let data = store.currentMap.graphics.typeSpecific.chloroLegend;
         let fill = store.currentMap.graphics.fill;
         let stroke = store.currentMap.graphics.stroke;
+        let typeSpecific = store.currentMap.graphics.typeSpecific;
         let text = store.currentMap.graphics.text
-        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property} fill={fill} stroke={stroke} text={text}/>
+        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property} typeSpecific={typeSpecific} fill={fill} stroke={stroke} text={text}/>
     }
     else if(map.type === "Voronoi Map"){
         let dot = store.currentMap.graphics.typeSpecific.voronoiColor

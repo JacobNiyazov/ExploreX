@@ -106,7 +106,7 @@ const VoronoiMap = ({
                     // });
 
                     let tempi = i
-                    if(voronoiPointToggle){
+                    if(voronoiPointToggle){  
                         layer.on({
                             click: (e) => {
                                 let voronoiPoint = turf.point([e.latlng.lng, e.latlng.lat]);
@@ -127,8 +127,6 @@ const VoronoiMap = ({
                                         return
                                     }
                                 }
-
-                                console.log("no")
 
                                 let points = {"type": "FeatureCollection", "features": geoPoints}
                 
@@ -153,7 +151,7 @@ const VoronoiMap = ({
                                     geojson.features.push(feature)
                                 })
                 
-                                store.updateLocalMap(null, null, geojson)
+                                store.updateLocalMap(null, null, null, null, geojson)
                             },
                         })
                     }

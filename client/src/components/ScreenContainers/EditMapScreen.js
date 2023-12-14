@@ -306,7 +306,8 @@ const EditScreen = () => {
             dotColor: colors.DotMap,
             spikeColor: colors.SpikeMap,
             voronoiColor: colors.VoronoiMap,
-            screenShot : screenShot
+            screenShot : screenShot,
+            voronoiValue: voronoiValue,
         }
         mapEdit.loadStyles(styles);
         if(isPublish){

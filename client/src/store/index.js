@@ -939,6 +939,7 @@ function GlobalStoreContextProvider(props) {
             map.graphics.typeSpecific.spikeColor = styles.spikeColor;
             map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
             map.graphics.typeSpecific.chloroLegend = styles.chloroData;
+            map.graphics.typeSpecific.voronoiValue = styles.voronoiValue;
 
             map.graphics.legend.legendTitle = styles.legendTitle;
             map.graphics.legend.legendFields = styles.legendFields;
