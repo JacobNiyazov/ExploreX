@@ -22,7 +22,6 @@ export const createMap = (ownerUsername, files, mapType, publishDate, fileType, 
     },  {headers:headers})
 }
 export const updateMapById = (id, map, chloro) =>{
-    console.log("IM CRAZY", chloro)
     let crazyFix;
     if(!chloro){
         crazyFix = null;

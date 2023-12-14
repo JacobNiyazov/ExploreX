@@ -28,17 +28,39 @@ const SpikeMap = ({
       L.geoJSON(geojsonData, {
         onEachFeature: function (feature, layer) {
           if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+            if(hasFill){
               layer.setStyle({
-              stroke: hasStroke,
-              color: colors.StrokeColor,
-              weight: sizes.StrokeWeight,
-              opacity: opacities.StrokeOpacity,
-              fill: hasFill,
-              fillColor: colors.FillColor,
-              fillOpacity: opacities.FillOpacity,
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: opacities.FillOpacity,
               }).bringToBack();
+            }
+            else{
+              layer.setStyle({
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: 0.01,
+              }).bringToBack();
+            }
+              // layer.setStyle({
+              // stroke: hasStroke,
+              // color: colors.StrokeColor,
+              // weight: sizes.StrokeWeight,
+              // opacity: opacities.StrokeOpacity,
+              // fill: hasFill,
+              // fillColor: colors.FillColor,
+              // fillOpacity: opacities.FillOpacity,
+              // }).bringToBack();
 
-              let tempi = i
+            let tempi = i
             layer.on({
                 click: (e) => {
                     if(feature.geometry.type !== 'Point'){
@@ -51,7 +73,10 @@ const SpikeMap = ({
             
           }
           i+=1
-          }
+          },
+          pointToLayer: function (feature, latlng) {
+                return null;
+              }
       }).addTo(regionLayerGroup);
       regionLayerGroup.bringToBack();
 
@@ -83,8 +108,39 @@ const SpikeMap = ({
       map.off('click')
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, store.currentMap.graphics.geojson]);
 
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, propertyData, handlePropertyDataLoad]);
+  useEffect(() =>{
+    const propertyLayerGroup = L.featureGroup().addTo(map);
+    if(store.currentMap && propertyData.featureIndex !== null){
+      let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
+      L.geoJSON(selected, {
+        onEachFeature: function (feature, layer) {
+          console.log(":(")
+          if(colors.StrokeColor === '#000000'){
+            layer.setStyle({
+              color: "#FFFFFF",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+          else{
+            layer.setStyle({
+              color: "#000000",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+        }
+      }).addTo(propertyLayerGroup);
+    }
+    propertyLayerGroup.bringToFront();
+    return () => {
+      propertyLayerGroup.remove();
+    };
+    
+  }, [propertyData, store, map, colors.StrokeColor])
 
   function getRepresentativeValues(geojsonData, propertyKey) {
       // Extract the property values, parse them as numbers, and sort them
@@ -252,25 +308,23 @@ const SpikeMap = ({
       //  console.log(err)
       //}
     }
-    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    var geojsonData = store.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var spikeData = generateSpikeData(geojsonData, propertyKey);
     var trianglePoints = drawSpikes(spikeData);
     var legend = getRepresentativeValues(geojsonData, propertyKey);
+    store.updateLocalMap(null, null, trianglePoints, legend);
     if(storeRef.current.currentMap.graphics.typeSpecific.spikeData === null || storeRef.current.currentMap.graphics.typeSpecific.spikeLegend === null){
       storeRef.current.updateMapGraphics(null, null, null, null, trianglePoints, legend);
     }
     updateLayers(geojsonData, trianglePoints);
 
     return () => {
-      map.eachLayer(function (layer) {
-        if(!layer._url){
-            map.removeLayer(layer);
-        }
-      });
+      spikeLayerGroup.remove()
       map.off('click')
     };
-  }, [map, storeRef, colors.SpikeMap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, store.currentMap.graphics.geojson, colors.SpikeMap]);
 
 
   useEffect(()=>{

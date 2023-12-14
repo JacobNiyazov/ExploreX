@@ -172,7 +172,6 @@ const HeatMap = ({
 
   return null;
 }
-
 export default HeatMap;
 
 

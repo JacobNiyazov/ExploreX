@@ -10,14 +10,11 @@ const GraphicsSchema = new Schema(
             // legendBorderColor: {type: String, required:true},
             // legendBorderWidth: {type: Number, required:true},
             legendTitle: {type: String, required: true},
-            legendFields:[{
-                fieldColor:{type: String, required: true},
-                fieldText:{type: String, required: true}
-            }]
+            legendFields:{type: Object, required:false}
         },
         typeSpecific:{
             selectAll: {type: Boolean, required: true},
-            size: {type: Number, required: true},
+            size: {type: Number, required: true}, 
             dotColor: {type: String, required: true},
             color: {type:String, required: true},
             range:{type: Number, required: true},
@@ -29,9 +26,12 @@ const GraphicsSchema = new Schema(
             spikeLegend: {type: [Number], required:false},
             chloroLegend: {type: Object, required:false},
             voronoiBound: {type: Object, required: false},
+            voronoiColor:{type: String, required: true},
+            voronoiValue:{type: String, required: true},
             lowGradient: {type:String, required: true},
             mediumGradient: {type:String, required: true},
-            highGradient: {type:String, required: true}
+            highGradient: {type:String, required: true},
+
         },
         stroke:{
             hasStroke: {type: Boolean, required: true},

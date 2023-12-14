@@ -6,7 +6,7 @@ import ImportFileModal from '../ImportFileModal';
 import PersonalMapCard from '../PersonalMapCard';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-//import Typography from '@mui/material/Typography';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 //import {TabIndicatorProps} from "@mui/material"
@@ -14,6 +14,7 @@ import { GlobalStoreContext } from '../../store';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 import SelectPropModal from '../SelectPropModal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -64,7 +65,7 @@ function ProfileScreen(){
               if(!auth.loggedIn){
                   store.setCurrentPage(store.currentPageType.login)
                   navigate("/login");
-              }   
+              }
               setLoading(false);
               
           }
@@ -106,6 +107,14 @@ function ProfileScreen(){
     }
     let drafts = mapValues.filter((map) => !map.isPublic);
     let posted = mapValues.filter((map) => map.isPublic);
+    if (loading) {
+      return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+          <CircularProgress style={{'color':'#ff24bd'}}/>
+          Loading...
+        </Box>
+      );
+    }
     drafts.sort((a,b)=>{
       let dateA = new Date(a.publishDate);
       let dateB = new Date(b.publishDate);
@@ -182,7 +191,17 @@ function ProfileScreen(){
                       <StyledTypography3>No current drafts</StyledTypography3>
                     ) : (
                       <Grid id="map-cards" container spacing={1}>
-                        {drafts.map((map, index) => (
+                        {drafts.length === 0 ? (
+                          <Typography color="grey" variant='h6' display="flex"
+                          flexDirection="column"
+                          justifyContent="center"
+                          alignItems="center"
+                          height="50vh"
+                          width="90vw">
+                            Nothing to see here. Create a map to get started!
+                          </Typography>
+                        )
+                        : (drafts.map((map, index) => (
                           <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
                             <PersonalMapCard
                               data-testid={`map-draft-${index}`}
@@ -190,7 +209,7 @@ function ProfileScreen(){
                               map={map}
                             />
                           </Grid>
-                        ))}
+                        )))}
                       </Grid>
                     )}
                   </CustomTabPanel>

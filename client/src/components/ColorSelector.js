@@ -127,7 +127,7 @@ const ColorSelector = ({originalStatesRef,
                 }}>
                 <ChromePicker
                     color={colors !== null && colors[label]}
-                    onChange={handleNewColor}
+                    onChangeComplete={handleNewColor}
                     disableAlpha
                     renderers={false}
                 />

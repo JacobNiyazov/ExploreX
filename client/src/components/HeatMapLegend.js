@@ -37,21 +37,21 @@ const HeatMapLegend = ({colors}) => {
           backgroundColor: low, // Circle color
           marginRight: '10px', // Space between the circle and the label
         }}></Box>
-        <Typography variant="body2">{min}{" < x < "}{sortedData[positions.k1]}</Typography>
+        <Typography variant="body2">{"("}{min}{", "}{sortedData[positions.k1]}{"]"}</Typography>
         <Box className="circle" style={{
           width: `20px`, // Diameter of the circle
           height: `20px`, // Diameter of the circle
           backgroundColor: med, // Circle color
           marginRight: '10px', // Space between the circle and the label
         }}></Box>
-        <Typography variant="body2">{sortedData[positions.k1]}{"< x <"}{sortedData[positions.k3]}</Typography>
+        <Typography variant="body2">{"("}{sortedData[positions.k1]}{", "}{sortedData[positions.k3]}{"]"}</Typography>
         <Box className="circle" style={{
           width: `20px`, // Diameter of the circle
           height: `20px`, // Diameter of the circle
           backgroundColor: high, // Circle color
           marginRight: '10px', // Space between the circle and the label
         }}></Box>
-        <Typography variant="body2">{sortedData[positions.k3]}{" < x < "}{max}</Typography>
+        <Typography variant="body2">{""}{sortedData[positions.k3]}{", "}{max}{"]"}</Typography>
       </Box>
     );
 };

@@ -38,16 +38,21 @@ function GlobalMapEditContextProvider(props) {
         legendFields: [],
         dotColor: "#ff24bd",
         spikeColor: "#ff24bd",
+        voronoiColor:'',
         chloroData: {},
         lowGradient:'#0000FF',
         mediumGradient: '#FEEA00',
-        highGradient: '#FF0000'
+        highGradient: '#FF0000',
+        voronoiValue:'',
+        screenShot: '',
     });
+    console.log("NEW ", mapEdit)
 
     const { auth } = useContext(AuthContext);
     const {store} = useContext(GlobalStoreContext)
     const mapEditReducer = (action) => {
         const { type, payload } = action;
+        console.log("CALLIGN REDUCCER WITH ", payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
@@ -71,10 +76,13 @@ function GlobalMapEditContextProvider(props) {
                   legendFields: payload.legendFields,
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
+                  voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                   lowGradient:payload.lowGradient,
                   mediumGradient: payload.mediumGradient,
-                  highGradient: payload.highGradient
+                  highGradient: payload.highGradient,
+                  voronoiValue: payload.voronoiValue,
+                  screenShot : ''
                 });
             }
             case GlobalMapEditActionType.LOAD: {
@@ -98,10 +106,13 @@ function GlobalMapEditContextProvider(props) {
                   legendFields: payload.legendFields,
                   chloroData: payload.chloroData,
                   dotColor: payload.dotColor,
+                  voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
                   lowGradient:payload.lowGradient,
                   mediumGradient: payload.mediumGradient,
-                  highGradient: payload.highGradient
+                  highGradient: payload.highGradient,
+                  voronoiValue: payload.voronoiValue,
+                  screenShot: payload.screenShot
                 });
             }
             default: {
@@ -128,7 +139,9 @@ function GlobalMapEditContextProvider(props) {
                   spikeColor: "#ff24bd",
                   lowGradient:'#0000FF',
                   mediumGradient: '#FEEA00',
-                  highGradient: '#FF0000'
+                  highGradient: '#FF0000',
+                  voronoiColor: '',
+                  voronoiValue: '',
                 });
             }
 

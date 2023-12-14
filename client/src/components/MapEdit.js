@@ -21,6 +21,7 @@ import DotDistLegend from "./DotDistLegend.js";
 import HeatMapLegend from "./HeatMapLegend.js";
 import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
 import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
+import VoronoiLegend from "./VoronoiLegend.js";
 
 const MapEditInner = ({
     colors,
@@ -30,6 +31,9 @@ const MapEditInner = ({
     hasFill,
     handlePropertyDataLoad, 
     propertyData,
+    chloroData,
+    handleNewColors,
+    voronoiPointToggle,
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -113,6 +117,7 @@ const MapEditInner = ({
     }
     else if(store.currentMap.type === "Heat Map"){
         if(store.currentMap.graphics.geojson){
+            console.log("colors inside current map type: ", colors)
             return <HeatMap 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
             propertyData={propertyData}
@@ -132,12 +137,21 @@ const MapEditInner = ({
         hasStroke={hasStroke}
         hasFill={hasFill} 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
-        propertyData={propertyData}/>
+        propertyData={propertyData}
+        chloroProperty={chloroData}
+        setChloroProperty = {handleNewColors}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
+        console.log(colors)
         return <VoronoiMap 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
-        propertyData={propertyData}/>
+        propertyData={propertyData}
+        colors={colors}
+        opacities={opacities}
+        hasStroke={hasStroke}
+        hasFill={hasFill}
+        sizes={sizes}
+        voronoiPointToggle={voronoiPointToggle}/>
     }
     // else{
     //     loadMap(store.currentMap.graphics.geojson);
@@ -161,6 +175,14 @@ const MapEdit = ({
     setLegendFields,
     handlePropertyDataLoad,
     propertyData,
+    chloroData,
+    setChloroData,
+    handleNewColors,
+    voronoiPointToggle,
+    voronoiValue,
+    setVoronoiValue,
+    photo,
+    captureMapAsImage,
     originalStatesRef,
     setTitle,
     setColors,
@@ -172,14 +194,15 @@ const MapEdit = ({
     setHasFill,
     setHideLegend
   }) =>{
+
+    
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
-    const [photo, setPhoto] = useState(false)
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
     const tps = store.currentTps;
 
-    const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
+    /*const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
         const { store } = useContext(GlobalStoreContext);
     
         if(store.currentMap.type === "Spike Map"){
@@ -199,14 +222,8 @@ const MapEdit = ({
                 handleNewColor = {handleNewColor}>
                 </ChoroLegend>
         }
-        else if(store.currentMap.type === "Heat Map"){
-            return <HeatMapLegend
-            colors={colors}
-            >
-            </HeatMapLegend>
-        }
-    }
-    // come back to undo/redo in here for legends if this fix is good
+    }*/
+    
     const [legendAnchors, setLegendAnchors] = useState(() => {
         if(legendFields){
             const initialAnchors = {};
@@ -246,20 +263,38 @@ const MapEdit = ({
         });
     };
 
-    const handleBaseMap = () =>{
+    const handleBaseMap = (e) =>{
+        console.log(e)
+        e.stopPropagation();
         setBaseMap(!baseMap)
     }
 
-    const handleTextChange = (e, index) => {
-        const updatedFields = [...legendFields];
-        updatedFields[index].fieldText = e.target.value;
-        setLegendFields(updatedFields);
-    };
+    function extractFirstNumber(str) {
+        const match = str.match(/-?\d+(\.\d+)?/);
+        return match ? parseFloat(match[0]) : null;
+      }
 
     const handleNewColor = (event, index) => {
         const updatedFields = [...legendFields];
         updatedFields[index].fieldColor = event.hex;
         setLegendFields(updatedFields);
+        if(chloroData.isString){
+            let newColor = updatedFields[index].fieldText
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+
+            setChloroData(temp)
+            // store.currentMap.graphics.typeSpecific.chloroLegend[newColor] = event.hex
+        }
+        else{
+            let newColor = extractFirstNumber(updatedFields[index].fieldText)
+            let temp = {...chloroData}
+            temp[newColor] = event.hex;
+            setChloroData(temp)
+
+            // store.currentMap.graphics.typeSpecific.chloroLegend[temp] = event.hex
+
+        }
     };
 
     const handleTitleChange = (event) => {
@@ -267,31 +302,6 @@ const MapEdit = ({
     }
 
     const mapContainerRef = useRef(null);
-    const captureMapAsImage = useCallback(async () => {        
-        const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
-            console.log("map container: ",mapContainer)
-            if (mapContainer) {
-            // Use dom-to-image to convert the MapContainer element to an image
-            domtoimage.toPng(mapContainer, {
-                width: mapContainer.clientWidth * 1,
-                height: mapContainer.clientHeight * 1,
-            })
-                .then(async function (dataUrl) {
-                // 'dataUrl' now contains the image data in base64 format
-                // You can send this dataUrl to the backend or use it as needed
-                storeRef.current.updateMapGraphics(null, dataUrl)
-                })
-                .catch(function (error) {
-                // Handle any errors that occurred during image conversion
-                console.error('Error capturing screenshot:', error);
-                });
-            } else {
-            console.error('MapContainer element not found');
-            }
-            //console.log("set photo")
-            setPhoto(true);
-
-        }, [storeRef]);
 
       useEffect(() => {
         const waitForMapLoad = async () => {
@@ -310,7 +320,9 @@ const MapEdit = ({
 
         waitForMapLoad();
       }, [captureMapAsImage, photo ]);
-    function handleUndo(){
+    
+
+      function handleUndo(){
         console.log("undo happening rn")
         tps.undoTransaction()
     }
@@ -319,6 +331,36 @@ const MapEdit = ({
         tps.doTransaction()
     }
 
+    let DynamicLegend = null;
+
+    if(store.currentMap.type === "Spike Map"){
+        DynamicLegend = <SpikeLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Dot Distribution Map"){
+        DynamicLegend = <DotDistLegend colors={colors}/>
+    }
+    else if(store.currentMap.type === "Voronoi Map"){
+        DynamicLegend = <VoronoiLegend 
+                            colors={colors}
+                            voronoiValue={voronoiValue}
+                            setVoronoiValue={setVoronoiValue}/>
+    }
+    else if(store.currentMap.type === "Heat Map"){
+        DynamicLegend = <HeatMapLegend
+            colors = {colors}
+        />
+    }
+    else if(store.currentMap.type === "Choropleth Map"){
+        console.log("legendfields")
+        console.log(legendFields)
+        DynamicLegend = <ChoroLegend
+            legendFields = {legendFields}
+            legendAnchors = {legendAnchors}
+            handleLegendClick = {handleLegendClick}
+            handleClose = {handleClose}
+            handleNewColor = {handleNewColor}>
+            </ChoroLegend>
+    }
     return(
         <Grid item xs = {8}>
 
@@ -341,7 +383,10 @@ const MapEdit = ({
                 range={range}
                 hideLegend={hideLegend}
                 handlePropertyDataLoad = {handlePropertyDataLoad} 
-                propertyData={propertyData}/>
+                propertyData={propertyData}
+                chloroData={chloroData}
+                handleNewColors = {handleNewColors}
+                voronoiPointToggle={voronoiPointToggle}/>
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -354,13 +399,15 @@ const MapEdit = ({
                         <UndoRedoContainer>
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
-                                    <IconButton sx={{color: "#000000"}} onClick = {handleUndo}>
+                                    {/*please leave id i need for voronoi*/}
+                                    <IconButton id="undobutton" sx={{color: "#000000"}} onClick={handleUndo}>
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
-                                    <IconButton sx={{color: "#000000"}} onClick = {handleRedo}>
+                                    {/*please leave id i need for voronoi*/}
+                                    <IconButton id={"redobutton"} sx={{color: "#000000"}} onClick = {handleRedo}>
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>
@@ -369,23 +416,20 @@ const MapEdit = ({
                         </UndoRedoContainer>
                         <BaseMapContainer >
                             <BaseMapBlur>
-                                <BaseMapSwitch onChange={handleBaseMap}></BaseMapSwitch>
+                                {/*please leave id i need for voronoi*/}
+                                <BaseMapSwitch id={"basemapswitch"} onChange={handleBaseMap}></BaseMapSwitch>
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
-                        <LegendContainer sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
-                                maxHeight: '200px',
+                        {/*id for voronoi stuff :)*/}
+                        <LegendContainer id="legendcontainer" sx={hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                                maxHeight: '500px',
+                                maxWidth: '500px',
                                 overflowY: 'auto',
                             }}>
-                            <LegendTextField variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
-                            <div style={{ overflow: 'auto' }}>
-                            <DynamicLegend colors={colors} 
-                                            legendFields = {legendFields}
-                                            legendAnchors = {legendAnchors}
-                                            handleLegendClick = {handleLegendClick}
-                                            handleTextChange = {handleTextChange}
-                                            handleClose = {handleClose}
-                                            handleNewColor = {handleNewColor}/>
+                            <LegendTextField id="legendtitle" variant="standard" sx={{'& .MuiInputBase-root':{fontSize:"25px"}}} value={legendTitle} onChange={(e) => handleTitleChange(e)}></LegendTextField>
+                            <div id="legenddiv" style={{ overflow: 'auto' }}>
+                            {DynamicLegend}
                             </div>
                             
                         </LegendContainer>

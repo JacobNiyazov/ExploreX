@@ -1,11 +1,15 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import Grid from '@mui/material/Grid';
+import domtoimage from 'dom-to-image';
+
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
 import { GlobalStoreContext } from '../../store'
 import { GlobalMapEditContext } from '../../mapEdit'
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const EditScreen = () => {
     const { store } = useContext(GlobalStoreContext);
@@ -16,7 +20,58 @@ const EditScreen = () => {
     const [title, setTitle] = useState(mapEdit.title);
     const [legendTitle, setLegendTitle] = useState(mapEdit.legendTitle);
     const [legendFields, setLegendFields] = useState([])
-    console.log("map edit radius: ", mapEdit.radius)
+    const [chloroData, setChloroData] = useState(null);
+
+    const [screenShot, setScreenShot] = useState (null);
+    const [photo, setPhoto] = useState(false)
+
+    const handleNewColors = (newData) => {
+        let chloroInfo = newData.isString
+        let flag = true;
+        let previous = ""
+        let keys;
+        if(chloroInfo){
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .reverse();
+        }
+        else{
+            keys = Object.keys(newData)
+            .filter(key => key !== "isString")
+            .map(Number) // Convert string keys to numbers
+            .sort((a, b) => b - a) // Sort in descending numerical order
+            .map(String); // Convert back to strings if needed
+        }
+
+        const temp = keys.map(key => {
+            if (chloroInfo) {
+                return {
+                    fieldColor: newData[key],
+                    fieldText: key,
+                };
+            } else {
+                if(flag){
+                    flag = false;
+                    previous = key;
+                    return {
+                        fieldColor: newData[key],
+                        fieldText: ">" + key,
+                    };
+                }
+                let temp = previous;
+                previous = key;
+        
+                return {
+                    fieldColor: newData[key],
+                    fieldText: "(" + key + "," + temp + "]",
+                };
+            }
+        });
+        setLegendFields(temp)
+        setChloroData(newData)
+        
+    };
+
     const [colors,setColors] = useState({
         TextColor: mapEdit.textColor,
         HeatMap: '#FFFFFF',
@@ -26,7 +81,7 @@ const EditScreen = () => {
         StrokeColor: mapEdit.strokeColor,
         DotMap: mapEdit.dotColor,
         SpikeMap: mapEdit.spikeColor,
-        VoronoiMap: '#FFFFFF',
+        VoronoiMap: mapEdit.voronoiColor,
         lowGradient: mapEdit.lowGradient,
         mediumGradient: mapEdit.mediumGradient,
         highGradient: mapEdit.highGradient
@@ -55,6 +110,7 @@ const EditScreen = () => {
     const [hasFill, setHasFill] = React.useState(mapEdit.hasFill)
     const [hideLegend, setHideLegend] = React.useState(false)
     const [range, setRange] = React.useState(5)
+    const [voronoiValue, setVoronoiValue] = React.useState(mapEdit.voronoiValue)
     const originalStatesRef = useRef({
         title: mapEdit.title,
         colors: {
@@ -98,7 +154,7 @@ const EditScreen = () => {
         legendTitle: mapEdit.legendTitle,
         legendFields: [], // Set to the default value
     });
-    
+
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
@@ -111,10 +167,67 @@ const EditScreen = () => {
                 store.setCurrentPage(store.currentPageType.login);
                 navigate('/login');
             }
-            if(store.currentMap.ownerUsername !== auth.user.username || store.currentMap.isPublic){
+            if(store.currentMap.ownerUsername !== auth.user.username){
                 store.setCurrentPage(store.currentPageType.profileScreen);
                 navigate('/profile');
             }
+            else if(store.currentMap.isPublic){
+                store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
+                navigate('/map?id=${store.currentMap._id}');
+            }
+            
+            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
+                setTitle(mapEdit.title);
+                setColors({
+                    TextColor: mapEdit.textColor,
+                    HeatMap: '#FFFFFF',
+                    // LegendFill: mapEdit.legendFillColor,
+                    // LegendBorder: mapEdit.legendBorderColor,
+                    FillColor: mapEdit.fillColor,
+                    StrokeColor: mapEdit.strokeColor,
+                    DotMap: mapEdit.dotColor,
+                    SpikeMap: mapEdit.spikeColor,
+                    VoronoiMap: mapEdit.voronoiColor,
+                    lowGradient: mapEdit.lowGradient,
+                    mediumGradient: mapEdit.mediumGradient,
+                    highGradient: mapEdit.highGradient
+                });
+                setSizes({
+                    TextSize: mapEdit.textSize,
+                    StrokeWeight: mapEdit.strokeWeight,
+                });
+                setOpacities({
+                    StrokeOpacity: mapEdit.strokeOpacity,
+                    FillOpacity: mapEdit.fillOpacity,
+                });
+                setAnchors({
+                    Text: null,
+                    HeatMap: null,
+                    // LegendFill: null,
+                    // LegendBorder: null,
+                    RegionFill: null,
+                    RegionBorder: null,
+                    DotMap: null,
+                    SpikeMap: null,
+                    VoronoiMap: null
+                });
+                setTextFont(mapEdit.textFont);
+                setHasStroke(mapEdit.hasStroke);
+                setHasFill(mapEdit.hasFill);
+                setLegendTitle(mapEdit.legendTitle);
+                setVoronoiValue(mapEdit.voronoiValue);
+
+                if(!legendFields && mapEdit.legendFields){
+                    setLegendFields([...mapEdit.legendFields])
+                }
+                if(!chloroData && mapEdit.chloroData){
+                    handleNewColors(mapEdit.chloroData)
+                }
+                setLoading(false);
+            }
+            
+
+           
             setLoading(false);
             setTitle(mapEdit.title);
             setColors({
@@ -253,7 +366,7 @@ const EditScreen = () => {
 
     const [propertyData, setPropertyData] = React.useState({properties: {}, featureIndex: null})
 
-    function handlePropertyDataLoad(featureIndex){
+    const handlePropertyDataLoad = (featureIndex) =>{
         setPropertyData(propertyData =>{
             console.log(featureIndex, propertyData)
             if(propertyData.featureIndex !== featureIndex && ((propertyData.featureIndex !== null && featureIndex !== null) || (propertyData.featureIndex !== null && featureIndex === null))){
@@ -285,41 +398,87 @@ const EditScreen = () => {
         */
         
     }
-    /*useEffect(() => {
-        console.log("hai guys, we made it to the undo redo process #1");
-        let oldMapData = originalStatesRef.current;
-        let newMapData = {
-            title: title,
-            colors: colors,
-            sizes: sizes,
-            opacities: opacities,
-            anchors: anchors,
-            textFont: textFont,
-            hasStroke: hasStroke,
-            hasFill: hasFill,
-            hideLegend: hideLegend,
-            range: range,
-            legendTitle: legendTitle,
-            legendFields: [...legendFields],
-        };
+    
+    const [voronoiPointToggle, setVoronoiPointToggle] = React.useState(false)
 
-        let transaction = new EditMap_Transaction(oldMapData,
-            newMapData,
-            setTitle, 
-            setLegendTitle, 
-            setLegendFields, 
-            setColors, 
-            setSizes,
-            setOpacities,
-            setAnchors,
-            setTextFont,
-            setHasStroke, 
-            setHasFill,
-            setHideLegend,
-            setRange);
-        tps.addTransaction(transaction);
-        originalStatesRef.current = {...newMapData}
-    }, [title, colors, sizes, opacities, anchors, textFont, hasStroke, hasFill, hideLegend, range, legendTitle, legendFields]);*/
+    const captureMapAsImage = async () => {        
+        const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
+            console.log("map container: ",mapContainer)
+            if (mapContainer) {
+            // Use dom-to-image to convert the MapContainer element to an image
+            await domtoimage.toPng(mapContainer, {
+                width: mapContainer.clientWidth * 1,
+                height: mapContainer.clientHeight * 1,
+            })
+                .then(async function (dataUrl) {
+                    if(screenShot == null){
+                        store.updateMapGraphics(null, dataUrl)
+                        setScreenShot(dataUrl)
+                    }
+                    else{
+                        setScreenShot(dataUrl)
+                        store.updateScreenShot(dataUrl)
+
+                    }
+                })
+                .catch(function (error) {
+                // Handle any errors that occurred during image conversion
+                console.error('Error capturing screenshot:', error);
+                });
+            } else {
+            console.error('MapContainer element not found');
+            }
+            //console.log("set photo")
+            setPhoto(true);
+
+        }
+
+    const handleOpenPublishSave = (isPublish) => {
+        setPhoto(false);
+        handlePropertyDataLoad(null);
+        let publishMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Ready to Publish?</span><br></br>Once your map is published, it cannot be edited.
+            </div>
+        )
+        let saveMessage = (
+            <div>
+                <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
+                Save Edits?</span><br></br>They'll be there forever...
+            </div>
+        )
+
+        let styles = {
+            id: store.currentMap._id,
+            title: title,
+            hasStroke: hasStroke,
+            strokeColor: colors.StrokeColor,
+            strokeWeight: sizes.StrokeWeight,
+            strokeOpacity: opacities.StrokeOpacity,
+            hasFill: hasFill,
+            fillColor: colors.FillColor,
+            fillOpacity: opacities.FillOpacity,
+            textColor: colors.TextColor,
+            textSize: sizes.TextSize,
+            textFont: textFont,
+            legendTitle: legendTitle,
+            legendFields: legendFields,
+            chloroData: chloroData,
+            dotColor: colors.DotMap,
+            spikeColor: colors.SpikeMap,
+            voronoiColor: colors.VoronoiMap,
+            screenShot : screenShot,
+            voronoiValue: voronoiValue,
+        }
+        mapEdit.loadStyles(styles);
+        if(isPublish){
+            store.displayModal(publishMessage, true, store.modalActionTypes.publish);
+        }
+        else{
+            store.displayModal(saveMessage, true, store.modalActionTypes.save);
+        }
+    }
     
     if (store.currentPage === store.currentPageType.editMapScreen){
         return (
@@ -351,6 +510,9 @@ const EditScreen = () => {
                     legendFields = {legendFields}
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
+                    handleOpenPublishSave={handleOpenPublishSave}
+                    setVoronoiPointToggle={setVoronoiPointToggle}
+                    chloroData = {chloroData}
                     originalStatesRef = {originalStatesRef}
                     setLegendTitle = {setLegendTitle}
                     setLegendFields = {setLegendFields}
@@ -370,6 +532,15 @@ const EditScreen = () => {
                     originalStatesRef = {originalStatesRef}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
                     propertyData={propertyData}
+                    chloroData = {chloroData}
+                    setChloroData = {setChloroData}
+                    handleNewColors = {handleNewColors}
+                    photo = {photo}
+                    setPhoto= {setPhoto}
+                    captureMapAsImage = {captureMapAsImage}
+                    voronoiPointToggle={voronoiPointToggle}
+                    voronoiValue={voronoiValue}
+                    setVoronoiValue={setVoronoiValue}
                     setTitle={setTitle}
                     setColors={setColors}
                     setSizes={setSizes}
@@ -384,7 +555,12 @@ const EditScreen = () => {
         );
     }
     else{
-        return <div>Loading...</div>
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+              <CircularProgress style={{'color':'#ff24bd'}}/>
+              Loading...
+            </Box>
+          );
     }
    
 }

@@ -196,7 +196,7 @@ createMap = async (req,res) =>{
                 legendFillColor: "#FFFFFF",
                 legendBorderColor: "#ff24bd",
                 legendBorderWidth: 1,
-                legendTitle: "Legend Title",
+                legendTitle: "Legend",
                 legendFields:[
                 {
                     fieldColor:"#FF0000",
@@ -230,7 +230,9 @@ createMap = async (req,res) =>{
                 voronoiBound: null,
                 lowGradient: "#0000FF",
                 mediumGradient:"#FFEA00",
-                highGradient: "#FF0000"
+                highGradient: "#FF0000",
+                voronoiColor: "#ff24bd",
+                voronoiValue: "Site",
         }
         graphic.fill = {
                 hasFill: true,
@@ -244,7 +246,7 @@ createMap = async (req,res) =>{
             strokeOpacity: 1.0,
         }
         graphic.text = {
-                textColor: "#B9B0B0",
+                textColor: "#ff24bd",
                 textFont: "Nova Square",
                 textSize: 12
             }
@@ -357,6 +359,7 @@ forkMap = async (req, res) =>{
                             graphics: newGraphics._id,
                             isPublic: false,
                             type: map.type,
+                            publishDate: Date.now()
                         })
                         copiedMap.save()
                             .then((newMap) => {
@@ -596,7 +599,6 @@ updateMapById = async (req, res) => {
 
                 map.title = body.map.title;
                 // console.log(body.map.title)
-
                 let temp1 = map.reactions;
                 let temp2 = body.map.reactions;
 
@@ -622,11 +624,10 @@ updateMapById = async (req, res) => {
                 // map.imageBuffer = body.map.imageBuffer
                 if(body.map.publishDate)
                     map.publishDate = body.map.publishDate;
-                if(body.chloro)
-                    body.map.graphics.typeSpecific.chloroLegend = body.chloro
-                    body.map.graphics.legend.legendFields = body.chloro
-
-                
+                if(body.chloro){
+                    body.map.graphics.typeSpecific.chloroLegend = {...body.chloro}
+                    body.map.graphics.legend.legendFields = {...body.chloro}
+                }
                 map
                     .save()
                     .then(() => {
@@ -642,9 +643,9 @@ updateMapById = async (req, res) => {
                             map.graphics,
                             body.map.graphics,
                             // { new: true }
-                        ).then(() => {
+                        ).then((graphics) => {
                             let tempMap = {...map}._doc
-                            
+                            console.log(graphics)
                             tempMap.graphics = tempGraphics;
                             tempMap.imageBuffer = body.map.imageBuffer
                             return res.status(200).json({

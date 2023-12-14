@@ -23,6 +23,7 @@ export const GlobalStoreActionType = {
    UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
    FORK_MAP: "FORK_MAP",
    EDIT_MAP: "EDIT_MAP",
+   ADD_SCREENSHOT: "ADD_SCREENSHOT"
 }
 const tps = new jsTPS();
 
@@ -40,7 +41,7 @@ function GlobalStoreContextProvider(props) {
    const dict = {
     "/login": "Login",
     "/register": "RegisterScreen",
-    "/faq" : "FAQScreen",
+    "/FAQ" : "FAQScreen",
     "/forgotPassword" : "ForgotPasswordScreen",
     "/passwordReset" : "ResetPasswordScreen",
     "/feed" : "MapFeed",
@@ -52,6 +53,7 @@ function GlobalStoreContextProvider(props) {
 
    store.modalActionTypes = {
         publish: "Publish",
+        save: "Save",
    }
 
    store.currentPageType = {
@@ -74,7 +76,6 @@ function GlobalStoreContextProvider(props) {
 
     const storeReducer = (action) => {
         const { type, payload } = action;
-        console.log(type)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -209,6 +210,28 @@ function GlobalStoreContextProvider(props) {
                     currentTps: tps
                 });
             }
+            case GlobalStoreActionType.ADD_SCREENSHOT:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: store.modalOpen,
+                    modalConfirmButton: store.modalConfirmButton,
+                    modalAction: store.modalAction,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.ADD_SCREENSHOT:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: store.modalOpen,
+                    modalConfirmButton: store.modalConfirmButton,
+                    modalAction: store.modalAction,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
             default: {
                 return setStore({
                     currentPage: store.currentPage,
@@ -330,7 +353,9 @@ function GlobalStoreContextProvider(props) {
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                                 lowGradient:tempMap.graphics.typeSpecific.lowGradient,
                                 mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
-                                highGradient: tempMap.graphics.typeSpecific.highGradient
+                                highGradient: tempMap.graphics.typeSpecific.highGradient,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
                            mapEdit.loadStyles(styles);
 
@@ -470,11 +495,14 @@ function GlobalStoreContextProvider(props) {
                                 legendTitle: tempMap.graphics.legend.legendTitle,
                                 // legendBorderWidth: '',
                                 legendFields: tempMap.graphics.legend.legendFields,
+                                chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                                 lowGradient:tempMap.graphics.typeSpecific.lowGradient,
                                 mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
-                                highGradient: tempMap.graphics.typeSpecific.highGradient
+                                highGradient: tempMap.graphics.typeSpecific.highGradient,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
                             mapEdit.loadStyles(styles);
                             storeReducer({
@@ -734,11 +762,14 @@ function GlobalStoreContextProvider(props) {
                     legendTitle: tempMap.graphics.legend.legendTitle,
                     // legendBorderWidth: '',
                     legendFields: tempMap.graphics.legend.legendFields,
+                    chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     lowGradient:tempMap.graphics.typeSpecific.lowGradient,
                     mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
-                    highGradient: tempMap.graphics.typeSpecific.highGradient
+                    highGradient: tempMap.graphics.typeSpecific.highGradient,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
                 mapEdit.loadStyles(styles);
                 await storeReducer({
@@ -906,6 +937,7 @@ function GlobalStoreContextProvider(props) {
             if(res.data.success){
                 let tempMap = res.data.map;
                 let styles = {
+                    id: tempMap._id,
                     title: tempMap.title,
                     hasStroke: tempMap.graphics.stroke.hasStroke,
                     strokeColor: tempMap.graphics.stroke.strokeColor,
@@ -927,8 +959,11 @@ function GlobalStoreContextProvider(props) {
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
                     lowGradient:tempMap.graphics.typeSpecific.lowGradient,
                     mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
-                    highGradient: tempMap.graphics.typeSpecific.highGradient
+                    highGradient: tempMap.graphics.typeSpecific.highGradient,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
+
                 mapEdit.loadStyles(styles);
 
                 storeReducer({
@@ -943,18 +978,48 @@ function GlobalStoreContextProvider(props) {
         }
             
     }
-    store.publishMap = async (map) =>{
-        console.log(map)
 
+    store.publishMap = async (map, isPublish) =>{
         if(!map){
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
         try {
-            map.isPublic = true;
+            let styles = mapEdit;
+
+            // map.imageBuffer = styles.screenShot;
+
+            map.graphics.typeSpecific.dotColor = styles.dotColor;
+            map.graphics.typeSpecific.spikeColor = styles.spikeColor;
+            map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
+            map.graphics.typeSpecific.chloroLegend = styles.chloroData;
+            map.graphics.typeSpecific.voronoiValue = styles.voronoiValue;
+            map.graphics.typeSpecific.lowGradient = styles.lowGradient
+            map.graphics.typeSpecific.mediumGradient = styles.mediumGradient;
+            map.graphics.typeSpecfic.highGradient = styles.highGradient;
+
+            map.graphics.legend.legendTitle = styles.legendTitle;
+            map.graphics.legend.legendFields = styles.legendFields;
+
+            map.graphics.fill.hasFill = styles.hasFill;
+            map.graphics.fill.fillColor = styles.fillColor;
+            map.graphics.fill.fillOpacity = styles.fillOpacity;
+
+            map.graphics.stroke.hasStroke = styles.hasStroke;
+            map.graphics.stroke.strokeColor = styles.strokeColor;
+            map.graphics.stroke.strokeWeight = styles.strokeWeight;
+            map.graphics.stroke.strokeOpacity = styles.strokeOpacity;
+
+            map.graphics.text.textColor = styles.textColor;
+            map.graphics.text.textFont = styles.textFont;
+            map.graphics.text.textSize = styles.textSize;
+
+            map.title = styles.title;
+
+            map.isPublic = isPublish;
             map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
-            if(res.data.success){
+            if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
                     storeReducer({
@@ -987,6 +1052,47 @@ function GlobalStoreContextProvider(props) {
             }
         }
         ); 
+    }
+    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null) => {
+        let map = store.currentMap;
+        if(dotScale !== null && map){
+            map.graphics.typeSpecific.dotScale = dotScale;
+        }
+        if(dotPoints !== null && map){
+            map.graphics.typeSpecific.dotPoints = dotPoints;
+        }
+        if(spikeLegend !== null && map){
+            map.graphics.typeSpecific.spikeLegend = spikeLegend;
+        }
+        if(voronoiMap !== null && map){
+            map = JSON.parse(JSON.stringify(store.currentMap))
+            map.graphics.geojson = voronoiMap
+        }
+        if(spikeData !== null && map){
+            map.graphics.typeSpecific.spikeData = spikeData;
+        }
+        storeReducer({
+            type: GlobalStoreActionType.EDIT_MAP,
+            payload: {
+                currentMap: map
+            }
+        }
+        ); 
+
+    }
+    store.updateScreenShot = (screenShot) => {
+        let map = store.currentMap;
+        console.log(screenShot)
+        console.log("MIRA")
+        map.imageBuffer = screenShot
+        storeReducer({
+            type: GlobalStoreActionType.ADD_SCREENSHOT,
+            payload: {
+                currentMap: map
+            }
+            }
+        ); 
+        
     }
 
    return (

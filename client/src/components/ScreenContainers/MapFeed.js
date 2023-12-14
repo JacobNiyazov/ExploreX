@@ -1,12 +1,13 @@
 import React, {useContext, useState, useEffect} from 'react';
 import MapFeedCard from '../MapFeedCard';
-import { Grid } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import { StyledMapFeed, StyledCreateButton, HeaderBar } from '../StyleSheets/MapFeedStyles';
 import { GlobalStoreContext } from '../../store';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 import SelectPropModal from '../SelectPropModal';
 import ImportFileModal from '../ImportFileModal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 //import ImportFileModal from '../ImportFileModal';
 //import { StyledButton } from '../StyleSheets/ProfileScreenStyles';
@@ -61,7 +62,12 @@ const MapFeed = () => {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
   if (store.currentMaps && store.currentMaps.length !== 0) {
     mapValues = Object.values(store.currentMaps);

@@ -8,14 +8,17 @@ const ChloroplethMap = ({
   sizes,
   opacities,
   hasStroke,
-  hasFill,
   handlePropertyDataLoad,
-  propertyData
+  propertyData,
+  chloroProperty,
+  setChloroProperty
 }) => {
 
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
     const map = useMap();
+    let usedColors = [];
+
 
     useEffect(() => {
         function generateColor(usedColors) {
@@ -70,7 +73,7 @@ const ChloroplethMap = ({
           delete temp.isString;
           const keys = Object.keys(temp).map(Number).sort((a, b) => b - a);
           for (let i = 0; i < keys.length; i++) {
-              if (d > keys[i]) {
+              if (d >= keys[i]) {
                   return temp[keys[i]];
               }
           }
@@ -81,13 +84,13 @@ const ChloroplethMap = ({
 
         const updateLayers = (geojsonData, chloroInfo) => {
           chloroLayerGroup.clearLayers();
+          let changedFlag = false;
           let currentNum = 0;
           let chloroData = [];
           let flag = false;
           let coloring = []
           let counter = 0;
           let color;
-          let usedColors = [];
           let colorScheme = "";
 
 
@@ -99,18 +102,16 @@ const ChloroplethMap = ({
                   usedColors.push(color)
                   counter = counter + 1;
                 // }
-                coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
+                coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property].toLowerCase().trim()] = color;
 
               }
               else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
                   currentNum = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
                   if (currentNum === null){
                     flag = true;
-                    if (counter < 10){
-                      color = generateColor(usedColors);
-                      usedColors.push(color)
-                      counter = counter + 1;
-                    }
+                    color = generateColor(usedColors);
+                    usedColors.push(color)
+                    counter = counter + 1;
                     coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]] = color;
     
                   }
@@ -132,13 +133,89 @@ const ChloroplethMap = ({
 
           }
           else{
-            console.log("INFOMRATION")
-            console.log(chloroInfo)
             flag = chloroInfo.isString
             coloring = chloroInfo
+            if(!flag){
+              geojsonData.features.forEach(feature => {
+               if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
+                    currentNum = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
+                }
+                else{
+                    currentNum = feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property];
+                }
+                chloroData.push(currentNum)
+              })
+            
+                chloroData.sort(function(a, b) {
+                  const numericA = parseInt(a);
+                  const numericB = parseInt(b);
+
+                  if (numericA < 0 && numericB >= 0) {
+                    return -1; 
+                  } else if (numericB < 0 && numericA >= 0) {
+                    return 1; 
+                  } else {
+                    return numericA - numericB; 
+                  }
+                });
+                delete chloroInfo["isString"]
+
+                let keysInOrder = [];
+                let colorsInOrder = [];
+                Object.keys(chloroInfo).forEach(key => {
+                  keysInOrder.push(parseFloat(key)); 
+                });
+
+                keysInOrder.sort((a, b) => a - b);
+
+                keysInOrder.forEach(key => {
+                  colorsInOrder.push(chloroInfo[key]); 
+                });
+
+
+                colorScheme = colorsInOrder
+
+
+                let tempcoloring = generateColorRanges(chloroData)
+                tempcoloring.sort(function(a, b) {
+                  const numericA = parseInt(a);
+                  const numericB = parseInt(b);
+
+                  if (numericA < 0 && numericB >= 0) {
+                    return -1; // Place negative numbers before positive numbers
+                  } else if (numericB < 0 && numericA >= 0) {
+                    return 1; // Place positive numbers after negative numbers
+                  } else {
+                    return numericA - numericB; // Sort other numbers normally
+                  }
+                });
+              
+                coloring = {};
+                colorScheme.forEach((color, index) => {
+                  coloring[tempcoloring[index]] = color;
+                });
+                // changedFlag = true;
+                const keys1 = Object.keys(coloring);
+                const keys2 = Object.keys(chloroInfo);
+
+                changedFlag = false;
+
+                  // Check if the number of keys is the same
+                  if (keys1.length !== keys2.length) {
+                    changedFlag = true;
+                  }
+
+                  // Check if all keys and values are the same
+                  for (let key of keys1) {
+                    if (coloring[key] !== chloroInfo[key]) {
+                      changedFlag = true;
+                    }
+                  }
+              }
           
           }        
             let i = 0
+            const usedColorsSet = new Set();
             L.geoJSON(geojsonData, {
                 onEachFeature: function(feature, layer){
                   let tempi = i
@@ -157,7 +234,16 @@ const ChloroplethMap = ({
                     let fillColor;
                     let propertyValue;
                     if (flag){
-                      fillColor = coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]];;
+                      fillColor = coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property].toLowerCase().trim()];;
+                      if(!fillColor){
+                          changedFlag = true;
+                          color = generateColor(usedColors);
+                          counter = counter + 1;
+                          fillColor = color;
+                          coloring[feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property].toLowerCase().trim()] = color;
+                      }
+                      usedColorsSet.add(fillColor);
+
                     }
                     else if(typeof(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]) === 'string'){
                         propertyValue = convertStringToNumber(feature.properties[storeRef.current.currentMap.graphics.typeSpecific.property]);
@@ -193,42 +279,95 @@ const ChloroplethMap = ({
             if(!flag){
               coloring["isString"] = false;
               return {
-                colors: coloring
+                colors: coloring,
+                changedFlag: changedFlag
               };
             }
+
+            const usedColorsArray = Array.from(usedColorsSet);
+
+            const originalColoringLength = Object.keys(coloring).length - 1; 
+
+            const updatedColoring = Object.fromEntries(
+              Object.entries(coloring).filter(([key, value]) =>
+                usedColorsArray.includes(value)
+              )
+            );
+            // updatedColoring["isString"] = true;
+            const updatedColoringLength = Object.keys(updatedColoring).length; // Get updated length
+            const coloringChanged = originalColoringLength !== updatedColoringLength;
+            changedFlag = changedFlag || coloringChanged 
+
+            coloring = updatedColoring
             coloring["isString"] = true;
             return {
-              colors: coloring
+              colors: coloring,
+              changedFlag: changedFlag
             };
         }
-        var geojsonData = storeRef.current.currentMap.graphics.geojson;
+        var geojsonData = store.currentMap.graphics.geojson;
         var chloroInfo = storeRef.current.currentMap.graphics.typeSpecific.chloroLegend
 
         // console.log(geojsonData) 
 
-        console.log("SCHEME")
-        console.log(storeRef.current.currentMap.graphics)
-        console.log(chloroInfo)
+        if (chloroProperty){
+          chloroInfo = chloroProperty
+        }
         var result = updateLayers(geojsonData, chloroInfo)
-        console.log(result)
        
         if(storeRef.current.currentMap.graphics.typeSpecific.chloroLegend === null){
-          console.log("UPDATING NEW LEGEND")
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, result.colors);
         } 
+        else{
+          if(result.changedFlag){
+            setChloroProperty(result.colors)
+            console.log("NEW", result.colors)
+          }
+        }
         return () => {
-          map.eachLayer(function (layer) {
-            if(!layer._url){
-                map.removeLayer(layer);
-            }
-          });
+            chloroLayerGroup.remove();
             map.off('click')
           };
-    }, [map, storeRef, colors, sizes, opacities, hasStroke, propertyData, handlePropertyDataLoad]);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [map, storeRef, colors, sizes, opacities, hasStroke, chloroProperty, setChloroProperty, store.currentMap.graphics.geojson, usedColors]);
 
     useEffect(()=>{
       map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
     }, [map])
+
+    // Adding overlay for properties
+    useEffect(() =>{
+      const propertyLayerGroup = L.featureGroup().addTo(map);
+      if(store.currentMap && propertyData.featureIndex !== null){
+        let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
+        L.geoJSON(selected, {
+          onEachFeature: function (feature, layer) {
+            console.log(":(")
+            if(colors.StrokeColor === '#000000'){
+              layer.setStyle({
+                color: "#FFFFFF",
+                weight: '6',
+                opacity: '1',
+              });
+            }
+            else{
+              layer.setStyle({
+                color: "#000000",
+                weight: '6',
+                opacity: '1',
+              });
+            }
+          }
+        }).addTo(propertyLayerGroup);
+      }
+      map.on("layeradd", function (event) {
+        propertyLayerGroup.bringToFront();
+      });
+      return () => {
+        propertyLayerGroup.remove();
+      };
+      
+    }, [ propertyData, store.currentMap, map, colors.StrokeColor])
 
     return null;    
 }

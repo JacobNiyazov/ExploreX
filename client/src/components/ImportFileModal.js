@@ -8,6 +8,7 @@ import {Grid} from '@mui/material';
 import { StyledButton, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
 import styled from '@emotion/styled';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import GlobalStoreContext from '../store';
 import { useNavigate } from 'react-router-dom';
 
@@ -185,6 +186,16 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
         }
     }
+    const handleDeleteFile = (index) => {
+        const updatedFiles = [...files];
+        updatedFiles.splice(index, 1);
+        setFiles(updatedFiles);
+    
+        // Remove the corresponding file name from the state
+        const updatedFileNames = [...fileNames];
+        updatedFileNames.splice(index, 1);
+        setFileNames(updatedFileNames);
+      };
     return (     
         <Modal
             data-testid="import-modal"
@@ -213,9 +224,10 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                         {fileNames.length > 0 && (
                         <Box sx={{ color: 'white' }}>
                             {fileNames.map((file, index) => (
-                            <Typography key={index}>
-                                {file}
-                            </Typography>
+                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography style={{ marginRight: '10px' }}>{file}</Typography>
+                                <HighlightOffIcon onClick={() => handleDeleteFile(index)} style={{ cursor: 'pointer', color: 'white' }} />
+                            </div>
                             ))}
                         </Box>
                         )}
