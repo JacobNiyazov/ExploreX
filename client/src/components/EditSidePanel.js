@@ -69,6 +69,7 @@ const EditSidePanel = ({
             hasStroke: field==="hasStroke"?value:hasStroke,
             hasFill: field === "hasFill"?value:hasFill,
             textFont: field === "textFont"? value:textFont,
+            hideLegend: originalStatesRef.current.hideLegend,
             legendTitle: originalStatesRef.current.legendTitle,
             legendFields: originalStatesRef.current.legendFields,
             // focusing on the non-typespefic stuff first

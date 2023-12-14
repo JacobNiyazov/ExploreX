@@ -27,6 +27,7 @@ const ColorSelector = ({originalStatesRef,
     const { store } = useContext(GlobalStoreContext);
     let tps = store.currentTps
     function newTransaction(hex){
+        console.log("HELLO INSIDE COLOR SELECTOR: ", originalStatesRef.current)
         let newMapData = {
             title: originalStatesRef.current.title,
             colors:{
@@ -49,6 +50,7 @@ const ColorSelector = ({originalStatesRef,
             },
             hasStroke: originalStatesRef.current.hasStroke,
             hasFill: originalStatesRef.current.hasFill,
+            hideLegend: originalStatesRef.current.hideLegend,
             textFont: originalStatesRef.current.textFont,
             legendTitle: originalStatesRef.current.legendTitle,
             legendFields: originalStatesRef.current.legendFields,

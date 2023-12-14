@@ -20,7 +20,7 @@ import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
 import HeatMapLegend from "./HeatMapLegend.js";
 import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
-import jsTPS from "../transactions/jsTPS.js";
+import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
 
 const MapEditInner = ({
     colors,
@@ -29,7 +29,7 @@ const MapEditInner = ({
     hasStroke,
     hasFill,
     handlePropertyDataLoad, 
-    propertyData
+    propertyData,
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -161,14 +161,23 @@ const MapEdit = ({
     setLegendFields,
     handlePropertyDataLoad,
     propertyData,
+    originalStatesRef,
+    setTitle,
+    setColors,
+    setSizes,
+    setOpacities,
+    setAnchors,
+    setTextFont,
+    setHasStroke,
+    setHasFill,
+    setHideLegend
   }) =>{
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const [photo, setPhoto] = useState(false)
     const { store } = useContext(GlobalStoreContext);
     const storeRef = useRef(store);
-    const {mapEdit} = useContext(GlobalMapEditContext)
-    const tps = new jsTPS()
+    const tps = store.currentTps;
 
     const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
         const { store } = useContext(GlobalStoreContext);

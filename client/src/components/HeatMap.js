@@ -121,8 +121,8 @@ const HeatMap = ({
     let heatLayerOptions = {}
     if(heatPoints && heatPoints.length > 0){
       heatLayerOptions = {
-        blur: 25,
-        radius: 15,
+        //blur: 25,
+        //radius: 15,
         gradient:{
           0.25: colors.lowGradient,
           0.75: colors.mediumGradient,

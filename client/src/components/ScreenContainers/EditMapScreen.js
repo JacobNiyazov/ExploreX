@@ -1,7 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
-import jsTPS from '../../transactions/jsTPS.js';
-import EditMap_Transaction from '../../transactions/EditMap_Transaction.js';
 import EditSidePanel from '../EditSidePanel.js';
 import MapEdit from '../MapEdit.js';
 import { GlobalStoreContext } from '../../store'
@@ -100,6 +98,7 @@ const EditScreen = () => {
         legendTitle: mapEdit.legendTitle,
         legendFields: [], // Set to the default value
     });
+    
     const navigate = useNavigate();
     useEffect(() => {
       const waitForAuthCheck = async () => {
@@ -190,7 +189,49 @@ const EditScreen = () => {
                     }
                 });
                 setLegendFields(temp)
-
+                originalStatesRef.current = {
+                    title: mapEdit.title,
+                    colors: {
+                        TextColor: mapEdit.textColor,
+                        HeatMap: '#FFFFFF',
+                        // LegendFill: mapEdit.legendFillColor,
+                        // LegendBorder: mapEdit.legendBorderColor,
+                        FillColor: mapEdit.fillColor,
+                        StrokeColor: mapEdit.strokeColor,
+                        DotMap: mapEdit.dotColor,
+                        SpikeMap: mapEdit.spikeColor,
+                        VoronoiMap: '#FFFFFF',
+                        lowGradient: mapEdit.lowGradient,
+                        mediumGradient: mapEdit.mediumGradient,
+                        highGradient: mapEdit.highGradient
+                    },
+                    sizes: {
+                        TextSize: mapEdit.textSize,
+                        StrokeWeight: mapEdit.strokeWeight,
+                    },
+                    opacities: {
+                        StrokeOpacity: mapEdit.strokeOpacity,
+                        FillOpacity: mapEdit.fillOpacity,
+                    },
+                    anchors: {
+                        Text: null,
+                        HeatMap: null,
+                        // LegendFill: null,
+                        // LegendBorder: null,
+                        RegionFill: null,
+                        RegionBorder: null,
+                        DotMap: null,
+                        SpikeMap: null,
+                        VoronoiMap: null
+                    },
+                    textFont: mapEdit.textFont,
+                    hasStroke: mapEdit.hasStroke,
+                    hasFill: mapEdit.hasFill,
+                    hideLegend: false, // Set to the default value
+                    range: 5, // Set to the default value
+                    legendTitle: mapEdit.legendTitle,
+                    legendFields: [], // Set to the default value
+                }
             }
         }
       };
@@ -328,7 +369,17 @@ const EditScreen = () => {
                     setLegendFields = {setLegendFields}
                     originalStatesRef = {originalStatesRef}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
-                    propertyData={propertyData}/>
+                    propertyData={propertyData}
+                    setTitle={setTitle}
+                    setColors={setColors}
+                    setSizes={setSizes}
+                    setOpacities={setOpacities}
+                    setAnchors={setAnchors}
+                    setTextFont = {setTextFont}
+                    setHasStroke={setHasStroke}
+                    setHasFill={setHasFill}
+                    setHideLegend={setHideLegend}
+                    />
             </Grid>
         );
     }
