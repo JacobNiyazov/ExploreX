@@ -64,6 +64,9 @@ const DotDistMap = ({
               })
             }
             i+=1
+          },
+          pointToLayer: function (feature, latlng) {
+            return null;
           }
       }).addTo(regionLayerGroup);
       regionLayerGroup.bringToBack();

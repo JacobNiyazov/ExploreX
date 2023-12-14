@@ -174,6 +174,11 @@ const PublicMapView = () => {
   }
   const DotLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text }) => {
     const leafletMap = useMap();
+    const textStyles = {
+      color: text.textColor,
+      fontSize: text.textSize,
+      fontFamily: text.textFont
+    };
  
     useEffect(() => {
       leafletMap.invalidateSize();
@@ -225,14 +230,19 @@ const PublicMapView = () => {
         onEachFeature: function (feature, layer) {
           // // Customize popup content
           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-      
-              return (
+            return (
               ReactDOMServer.renderToString(
-                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-                  </Box>
-              )
-              )
+              <div className="leaflet-popup-content">
+                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+              </div>)
+            );
+              // return (
+              // ReactDOMServer.renderToString(
+              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+              //     </Box>
+              // )
+              // )
           }).join(""), {
               maxHeight: 200
           });
@@ -256,6 +266,11 @@ const PublicMapView = () => {
   };
   const SpikeLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text}) => {
     const leafletMap = useMap();
+    const textStyles = {
+      color: text.textColor,
+      fontSize: text.textSize,
+      fontFamily: text.textFont
+    };
  
     useEffect(() => {
       leafletMap.invalidateSize();
@@ -303,14 +318,19 @@ const PublicMapView = () => {
         onEachFeature: function (feature, layer) {
           // // Customize popup content
           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-      
-              return (
+            return (
               ReactDOMServer.renderToString(
-                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-                  </Box>
-              )
-              )
+              <div className="leaflet-popup-content">
+                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+              </div>)
+            );
+              // return (
+              // ReactDOMServer.renderToString(
+              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+              //     </Box>
+              // )
+              // )
           }).join(""), {
               maxHeight: 200
           });
@@ -334,6 +354,11 @@ const PublicMapView = () => {
   };
   const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text }) => {
     const leafletMap = useMap();
+    const textStyles = {
+      color: text.textColor,
+      fontSize: text.textSize,
+      fontFamily: text.textFont
+    };
  
     useEffect(() => {
       leafletMap.invalidateSize();
@@ -411,14 +436,20 @@ const PublicMapView = () => {
         onEachFeature: function (feature, layer) {
           // // Customize popup content
           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-      
-              return (
+            return (
               ReactDOMServer.renderToString(
-                  <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                      <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-                  </Box>
-              )
-              )
+              <div className="leaflet-popup-content">
+                <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+              </div>)
+            );
+      
+              // return (
+              // ReactDOMServer.renderToString(
+              //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+              //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+              //     </Box>
+              // )
+              // )
           }).join(""), {
               maxHeight: 200
           });
@@ -446,6 +477,11 @@ const PublicMapView = () => {
  
     useEffect(() => {
       leafletMap.invalidateSize();
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
 
       const regionLayer = L.geoJSON(geojson, {
         onEachFeature: function (feature, layer) {
@@ -466,18 +502,30 @@ const PublicMapView = () => {
               if(feature.geometry.type === 'Point'){
                 return (
                   ReactDOMServer.renderToString(
-                      <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                          <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{'Represents: ' + value}</Typography>
-                      </Box>
-                  ))
+                  <div className="leaflet-popup-content">
+                    <p style={textStyles}>{'Represents: ' + value}</p>
+                  </div>)
+                );
+                // return (
+                //   ReactDOMServer.renderToString(
+                //       <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                //           <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{'Represents: ' + value}</Typography>
+                //       </Box>
+                //   ))
               }
               else{
                 return (
-                ReactDOMServer.renderToString(
-                    <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                        <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-                    </Box>
-                ))
+                  ReactDOMServer.renderToString(
+                  <div className="leaflet-popup-content">
+                    <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                  </div>)
+                );
+                // return (
+                // ReactDOMServer.renderToString(
+                //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                //     </Box>
+                // ))
               }
               
             
