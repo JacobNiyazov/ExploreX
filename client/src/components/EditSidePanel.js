@@ -37,7 +37,7 @@ const EditSidePanel = ({
     setPropertyData, 
     propertyData,
     setVoronoiPointToggle,
-    handleOpenPublishSave
+    handleOpenPublishSave,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
     
@@ -109,17 +109,30 @@ const EditSidePanel = ({
         ); 
     }
 
-    const handleEditProperties = useCallback((key, value) => {
-        setPropertyData( prev =>
-            {
-                let temp = {...prev}
+    function isNumeric(str) {
+        if (typeof str != "string") return false 
+        if (str === "" || str.charCodeAt(0) === 8) return true;
+
+        return !isNaN(str) && 
+               !isNaN(parseFloat(str)) 
+      }
+
+    function handleEditProperties(key, value) {
+        if (store.currentMap.type == "Choropleth Map" && !(store.currentMap.graphics.typeSpecific.chloroLegend.isString) && !isNumeric(value)) {
+            alertModal("Try Again", "Numerical Choropleth Maps only support numbers in properties");
+
+        } else {
+            setPropertyData(prev => {
+                let temp = { ...prev };
                 temp.properties[key] = value;
-                return(temp)
-            }
-        ); 
-    }, [setPropertyData])
+                return temp;
+            });
+        }
+    }
     const [key, setKey] = useState('')
     const [value, setValue] = useState('')
+
+    
 
     const handleCreateProperties = () => {
         let tempProperties = JSON.parse(JSON.stringify(propertyData.properties))

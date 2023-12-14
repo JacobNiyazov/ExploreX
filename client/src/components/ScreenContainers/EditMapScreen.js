@@ -347,7 +347,9 @@ const EditScreen = () => {
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
                     handleOpenPublishSave={handleOpenPublishSave}
-                    setVoronoiPointToggle={setVoronoiPointToggle}/>
+                    setVoronoiPointToggle={setVoronoiPointToggle}
+                    chloroData = {chloroData}
+                    />
                 <MapEdit 
                     colors={colors}
                     sizes={sizes}
