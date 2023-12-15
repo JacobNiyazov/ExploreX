@@ -35,8 +35,12 @@ function ExportMapModal({map,open,onClose}){
             link.download = title + "_native_file.json";
             link.href = dataStr;
         }
-        else{
+        else if(exportType === "Image (PNG)"){
             link.download = title + "_image.png";
+            link.href = map.imageBuffer;
+        }
+        else{
+            link.download = title + "_image.jpg";
             link.href = map.imageBuffer;
         }
         link.click();
@@ -49,7 +53,7 @@ function ExportMapModal({map,open,onClose}){
         left: '50%',
         transform: 'translate(-50%, -50%)',
         width: 450,
-        height:90,
+        height:130,
         bgcolor: '#242526',
         border: '2px solid #000',
         boxShadow: 24,
@@ -94,6 +98,7 @@ function ExportMapModal({map,open,onClose}){
                         >
                             <FormControlLabel sx = {{color:"white"}} value = "Native File (JSON)" control={<StyledRadio/>} label="Native File (JSON)" />
                             <FormControlLabel sx = {{color:"white"}} value = "Image (PNG)"control={<StyledRadio/>} label="Image (PNG)" />
+                            <FormControlLabel sx = {{color:"white"}} value = "Image (JPG)"control={<StyledRadio/>} label="Image (JPG)" />
                         </RadioGroup>
                     </FormControl>
                 </Box>
