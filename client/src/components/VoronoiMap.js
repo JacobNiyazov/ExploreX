@@ -3,8 +3,6 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
-import * as ReactDOMServer from 'react-dom/server';
-import { Box, Typography } from '@mui/material';
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
 const VoronoiMap = ({
@@ -140,7 +138,7 @@ const VoronoiMap = ({
                                     }
                                 }
 
-                                console.log(properties)
+                                //console.log(properties)
 
                                 let points = {"type": "FeatureCollection", "features": geoPoints}
                 
@@ -233,10 +231,10 @@ const VoronoiMap = ({
 
         map.on('click',function(e) {
             // making sure its not buttons on top
-            console.log(e)
+            //console.log(e)
             if(e.originalEvent && e.originalEvent.target.id !== "basemapswitch" && e.originalEvent.target.id !== "undobutton" && e.originalEvent.target.id !== "redobutton" && !e.originalEvent.target.id.includes("legend")){
                 handlePropertyDataLoad(null)
-                console.log(e.originalEvent.target.id)
+                //console.log(e.originalEvent.target.id)
                 if(voronoiPointToggle){
                     alertModal("Point Out of Bounds", "Inserted Point was outside bounding polygon please click inside the polygon!")
                 }
@@ -253,7 +251,7 @@ const VoronoiMap = ({
           };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle])
+    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle, store, store.currentMap.graphics.geojson])
     
     useEffect(()=>{
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
@@ -262,12 +260,12 @@ const VoronoiMap = ({
     
     useEffect(() =>{
         const propertyLayerGroup = L.featureGroup().addTo(map);
-        console.log(propertyData.featureIndex)
+        //console.log(propertyData.featureIndex)
         if(store.currentMap && propertyData.featureIndex !== null && !voronoiPointToggle){
             let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
             L.geoJSON(selected, {
             onEachFeature: function (feature, layer) {
-                console.log(":(")
+                //console.log(":(")
                 if(colors.StrokeColor === '#000000'){
                 layer.setStyle({
                     color: "#FFFFFF",

@@ -1,14 +1,13 @@
-import { useState, React, useContext, useEffect, useRef, useCallback} from "react";
-import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
+import { useState, React, useContext, useEffect, useRef} from "react";
+import { MapContainer, TileLayer, ZoomControl} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import L from "leaflet";
-import domtoimage from 'dom-to-image';
+// import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import IconButton from '@mui/material/IconButton';
-import * as ReactDOMServer from 'react-dom/server';
+// import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
 import SpikeMap from './SpikeMap.js';
@@ -18,6 +17,9 @@ import VoronoiMap from './VoronoiMap.js';
 import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
+import HeatMapLegend from "./HeatMapLegend.js";
+import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
+import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
 import VoronoiLegend from "./VoronoiLegend.js";
 
 const MapEditInner = ({
@@ -31,6 +33,7 @@ const MapEditInner = ({
     chloroData,
     handleNewColors,
     voronoiPointToggle,
+    textFont
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -54,43 +57,43 @@ const MapEditInner = ({
     //     };
     // }, [store, colors, sizes, opacities, hasStroke, hasFill]);
 
-    function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
+    // function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
         
-        const regionLayer = L.geoJSON(geojson, {
-            onEachFeature: function (feature, layer) {
+    //     const regionLayer = L.geoJSON(geojson, {
+    //         onEachFeature: function (feature, layer) {
                 
-                // Customize popup content
-                layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+    //             // Customize popup content
+    //             layer.bindPopup(Object.keys(feature.properties).map(function(k) {
                 
-                    return (
-                    ReactDOMServer.renderToString(
-                        <Box sx={{display:'flex', alignItems:'center'}}>
-                            <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                            <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                        </Box>
-                    )
-                    )
-                }).join(""), {
-                    maxHeight: 200
-                });
-                if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
-                    // var shade = getRandomShade();
-                    layer.setStyle({
-                    stroke: hasStroke,
-                    color: colors.StrokeColor,
-                    weight: sizes.StrokeWeight,
-                    opacity: opacities.StrokeOpacity,
-                    fill: hasFill,
-                    fillColor: colors.FillColor,
-                    fillOpacity: opacities.FillOpacity,
-                    });
-                }
-                console.log(feature, layer)
-            }
-        }).addTo(map);
-        map.fitBounds(L.geoJSON(geojson).getBounds());
-        return regionLayer;
-    }
+    //                 return (
+    //                 ReactDOMServer.renderToString(
+    //                     <Box sx={{display:'flex', alignItems:'center'}}>
+    //                         <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+    //                         <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+    //                     </Box>
+    //                 )
+    //                 )
+    //             }).join(""), {
+    //                 maxHeight: 200
+    //             });
+    //             if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+    //                 // var shade = getRandomShade();
+    //                 layer.setStyle({
+    //                 stroke: hasStroke,
+    //                 color: colors.StrokeColor,
+    //                 weight: sizes.StrokeWeight,
+    //                 opacity: opacities.StrokeOpacity,
+    //                 fill: hasFill,
+    //                 fillColor: colors.FillColor,
+    //                 fillOpacity: opacities.FillOpacity,
+    //                 });
+    //             }
+    //             //console.log(feature, layer)
+    //         }
+    //     }).addTo(map);
+    //     map.fitBounds(L.geoJSON(geojson).getBounds());
+    //     return regionLayer;
+    // }
 
     if(store.currentMap.type === "Dot Distribution Map"){
         return <DotDistMap 
@@ -113,13 +116,18 @@ const MapEditInner = ({
         propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Heat Map"){
-        if(store.currentMap.graphics.geojson){
+        console.log("colors inside current map type: ", store.currentMap)
             return <HeatMap 
-            geojsonData ={store.currentMap.graphics.geojson} 
-            property = {store.currentMap.graphics.typeSpecific.property} 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
-            propertyData={propertyData}/>
-        }
+            propertyData={propertyData}
+            colors={colors}
+            sizes={sizes}
+            opacities={opacities}
+            hasStroke={hasStroke}
+            hasFill={hasFill} 
+            textFont = {textFont}
+            screenFlag = "edit"
+            />
     }
     else if(store.currentMap.type === "Choropleth Map"){
         return <ChloroplethMap 
@@ -134,7 +142,7 @@ const MapEditInner = ({
         setChloroProperty = {handleNewColors}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
-        console.log(colors)
+        //console.log(colors)
         return <VoronoiMap 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
         propertyData={propertyData}
@@ -174,16 +182,48 @@ const MapEdit = ({
     voronoiValue,
     setVoronoiValue,
     photo,
-    captureMapAsImage
+    captureMapAsImage,
+    originalStatesRef,
+    setTitle,
+    setColors,
+    setSizes,
+    setOpacities,
+    setAnchors,
+    setTextFont,
+    setHasStroke,
+    setHasFill,
+    setHideLegend,
+    textFont
   }) =>{
 
     
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const { store } = useContext(GlobalStoreContext);
-    const storeRef = useRef(store);
+    // const storeRef = useRef(store);
+    const tps = store.currentTps;
 
+    /*const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
+        const { store } = useContext(GlobalStoreContext);
     
+        if(store.currentMap.type === "Spike Map"){
+            return <SpikeLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Dot Distribution Map"){
+            return <DotDistLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Choropleth Map"){
+            console.log("LEGEND")
+            return <ChoroLegend
+                legendFields = {legendFields}
+                legendAnchors = {legendAnchors}
+                handleLegendClick = {handleLegendClick}
+                handleTextChange = {handleTextChange}
+                handleClose = {handleClose}
+                handleNewColor = {handleNewColor}>
+                </ChoroLegend>
+        }
+    }*/
     
     const [legendAnchors, setLegendAnchors] = useState(() => {
         if(legendFields){
@@ -225,7 +265,7 @@ const MapEdit = ({
     };
 
     const handleBaseMap = (e) =>{
-        console.log(e)
+        //console.log(e)
         e.stopPropagation();
         setBaseMap(!baseMap)
     }
@@ -283,6 +323,15 @@ const MapEdit = ({
       }, [captureMapAsImage, photo ]);
     
 
+      function handleUndo(){
+        console.log("undo happening rn")
+        tps.undoTransaction()
+    }
+    function handleRedo(){
+        console.log("redo happening rn")
+        tps.doTransaction()
+    }
+
     let DynamicLegend = null;
 
     if(store.currentMap.type === "Spike Map"){
@@ -297,9 +346,14 @@ const MapEdit = ({
                             voronoiValue={voronoiValue}
                             setVoronoiValue={setVoronoiValue}/>
     }
+    else if(store.currentMap.type === "Heat Map"){
+        DynamicLegend = <HeatMapLegend
+            colors = {colors}
+        />
+    }
     else if(store.currentMap.type === "Choropleth Map"){
-        console.log("legendfields")
-        console.log(legendFields)
+        //console.log("legendfields")
+        //console.log(legendFields)
         DynamicLegend = <ChoroLegend
             legendFields = {legendFields}
             legendAnchors = {legendAnchors}
@@ -333,7 +387,9 @@ const MapEdit = ({
                 propertyData={propertyData}
                 chloroData={chloroData}
                 handleNewColors = {handleNewColors}
-                voronoiPointToggle={voronoiPointToggle}/>
+                voronoiPointToggle={voronoiPointToggle}
+                textFont = {textFont}
+                />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -347,14 +403,14 @@ const MapEdit = ({
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
                                     {/*please leave id i need for voronoi*/}
-                                    <IconButton id="undobutton" sx={{color: "#000000"}}>
+                                    <IconButton id="undobutton" sx={{color: "#000000"}} onClick={handleUndo}>
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
                                     {/*please leave id i need for voronoi*/}
-                                    <IconButton id={"redobutton"} sx={{color: "#000000"}}>
+                                    <IconButton id={"redobutton"} sx={{color: "#000000"}} onClick = {handleRedo}>
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>

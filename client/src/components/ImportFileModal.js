@@ -99,7 +99,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             store.createMap(files, mapType, fileType)
                 .then((map)=>{
                     onClose();
-                    console.log(map)
+                    //console.log(map)
                     navigate(`/editMap?id=${map._id}`)
                 })
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
@@ -117,7 +117,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
 
     function handleSetMapType(mapType){
         setMapType(mapType)
-        if(mapType === "Voronoi Map" || mapType == "Native File"){
+        if(mapType === "Voronoi Map" || mapType === "Native File"){
             setButtonName('Create Map');
         }
         else{

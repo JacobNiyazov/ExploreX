@@ -24,6 +24,7 @@ describe('Fork Public Map Test', () => {
       /* ==== Generated with Cypress Studio ==== */
       cy.get('[data-testid="AccountCircleIcon"]').click();
       cy.get('[data-testid="My Profile"]').click();
+      cy.wait(200);
       cy.get('[data-testid="drafts-tab"]').click();
       cy.get('.MuiCardActions-root > [data-testid="delete-button"] > [data-testid="DeleteIcon"]').last().click();
       cy.get('[data-testid="confirm-delete-button"]').click();

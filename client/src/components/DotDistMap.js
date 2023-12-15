@@ -3,7 +3,6 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
-import { color } from "@mui/system";
 
 const DotDistMap = ({
   colors,
@@ -74,7 +73,7 @@ const DotDistMap = ({
       //  map.fitBounds(L.geoJSON(geojsonData).getBounds());
       //}
       //catch (err){
-      //  console.log(err)
+      //  //console.log(err)
       //}
     }
     
@@ -82,7 +81,7 @@ const DotDistMap = ({
     updateLayers(geojsonData);
     map.on('click',function(e) {
       L.DomEvent.stopPropagation(e);
-      console.log('clicked on map', e);
+      //console.log('clicked on map', e);
       // Here we set the index to null
       handlePropertyDataLoad(null)
     });
@@ -103,7 +102,7 @@ const DotDistMap = ({
       let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
       L.geoJSON(selected, {
         onEachFeature: function (feature, layer) {
-          console.log(":(")
+          //console.log(":(")
           if(colors.StrokeColor === '#000000'){
             layer.setStyle({
               color: "#FFFFFF",
@@ -253,6 +252,7 @@ const DotDistMap = ({
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
+    console.log("inside dot map: ", dotDensityData)
     store.updateLocalMap(dotDensityData['features'], scale);
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
       storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);

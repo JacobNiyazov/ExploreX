@@ -14,7 +14,7 @@ async function convertShapeFile(shpFile, dbfFile){
 }
 
 function convertKML(kmlFile){
-    console.log(kmlFile)
+    //console.log(kmlFile)
     var enc = new TextDecoder("utf-8");
     let text = enc.decode(kmlFile.buffer)
     const DOMParser = require("xmldom").DOMParser;

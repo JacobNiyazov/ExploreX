@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import domtoimage from 'dom-to-image';
 
@@ -82,6 +82,9 @@ const EditScreen = () => {
         DotMap: mapEdit.dotColor,
         SpikeMap: mapEdit.spikeColor,
         VoronoiMap: mapEdit.voronoiColor,
+        lowGradient: mapEdit.lowGradient,
+        mediumGradient: mapEdit.mediumGradient,
+        highGradient: mapEdit.highGradient
     })
     const [sizes,setSizes] = useState({
         TextSize: mapEdit.textSize,
@@ -106,10 +109,51 @@ const EditScreen = () => {
     const [hasStroke, setHasStroke] = React.useState(mapEdit.hasStroke)
     const [hasFill, setHasFill] = React.useState(mapEdit.hasFill)
     const [hideLegend, setHideLegend] = React.useState(false)
-
     const [range, setRange] = React.useState(5)
-
     const [voronoiValue, setVoronoiValue] = React.useState(mapEdit.voronoiValue)
+    const originalStatesRef = useRef({
+        title: mapEdit.title,
+        colors: {
+            TextColor: mapEdit.textColor,
+            HeatMap: '#FFFFFF',
+            // LegendFill: mapEdit.legendFillColor,
+            // LegendBorder: mapEdit.legendBorderColor,
+            FillColor: mapEdit.fillColor,
+            StrokeColor: mapEdit.strokeColor,
+            DotMap: mapEdit.dotColor,
+            SpikeMap: mapEdit.spikeColor,
+            VoronoiMap: '#FFFFFF',
+            lowGradient: mapEdit.lowGradient,
+            mediumGradient: mapEdit.mediumGradient,
+            highGradient: mapEdit.highGradient
+        },
+        sizes: {
+            TextSize: mapEdit.textSize,
+            StrokeWeight: mapEdit.strokeWeight,
+        },
+        opacities: {
+            StrokeOpacity: mapEdit.strokeOpacity,
+            FillOpacity: mapEdit.fillOpacity,
+        },
+        anchors: {
+            Text: null,
+            HeatMap: null,
+            // LegendFill: null,
+            // LegendBorder: null,
+            RegionFill: null,
+            RegionBorder: null,
+            DotMap: null,
+            SpikeMap: null,
+            VoronoiMap: null
+        },
+        textFont: mapEdit.textFont,
+        hasStroke: mapEdit.hasStroke,
+        hasFill: mapEdit.hasFill,
+        hideLegend: false, // Set to the default value
+        range: 5, // Set to the default value
+        legendTitle: mapEdit.legendTitle,
+        legendFields: [], // Set to the default value
+    });
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -129,7 +173,7 @@ const EditScreen = () => {
             }
             else if(store.currentMap.isPublic){
                 store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
-                navigate('/map?id=${store.currentMap._id}');
+                navigate(`/map?id=${store.currentMap._id}`);
             }
             
             if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
@@ -144,6 +188,9 @@ const EditScreen = () => {
                     DotMap: mapEdit.dotColor,
                     SpikeMap: mapEdit.spikeColor,
                     VoronoiMap: mapEdit.voronoiColor,
+                    lowGradient: mapEdit.lowGradient,
+                    mediumGradient: mapEdit.mediumGradient,
+                    highGradient: mapEdit.highGradient,
                 });
                 setSizes({
                     TextSize: mapEdit.textSize,
@@ -169,7 +216,49 @@ const EditScreen = () => {
                 setHasFill(mapEdit.hasFill);
                 setLegendTitle(mapEdit.legendTitle);
                 setVoronoiValue(mapEdit.voronoiValue);
-
+                originalStatesRef.current = {
+                    title: mapEdit.title,
+                    colors: {
+                        TextColor: mapEdit.textColor,
+                        HeatMap: '#FFFFFF',
+                        // LegendFill: mapEdit.legendFillColor,
+                        // LegendBorder: mapEdit.legendBorderColor,
+                        FillColor: mapEdit.fillColor,
+                        StrokeColor: mapEdit.strokeColor,
+                        DotMap: mapEdit.dotColor,
+                        SpikeMap: mapEdit.spikeColor,
+                        VoronoiMap: mapEdit.voronoiColor,
+                        lowGradient: mapEdit.lowGradient,
+                        mediumGradient: mapEdit.mediumGradient,
+                        highGradient: mapEdit.highGradient
+                    },
+                    sizes: {
+                        TextSize: mapEdit.textSize,
+                        StrokeWeight: mapEdit.strokeWeight,
+                    },
+                    opacities: {
+                        StrokeOpacity: mapEdit.strokeOpacity,
+                        FillOpacity: mapEdit.fillOpacity,
+                    },
+                    anchors: {
+                        Text: null,
+                        HeatMap: null,
+                        // LegendFill: null,
+                        // LegendBorder: null,
+                        RegionFill: null,
+                        RegionBorder: null,
+                        DotMap: null,
+                        SpikeMap: null,
+                        VoronoiMap: null
+                    },
+                    textFont: mapEdit.textFont,
+                    hasStroke: mapEdit.hasStroke,
+                    hasFill: mapEdit.hasFill,
+                    hideLegend: false, // Set to the default value
+                    range: 5, // Set to the default value
+                    legendTitle: mapEdit.legendTitle,
+                    legendFields: [], // Set to the default value
+                }
                 if(!legendFields && mapEdit.legendFields){
                     setLegendFields([...mapEdit.legendFields])
                 }
@@ -185,6 +274,7 @@ const EditScreen = () => {
       };
   
       waitForAuthCheck();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth, navigate, store]);
     useEffect(() => {
         const waitForCurrentMap = async () => {
@@ -203,7 +293,7 @@ const EditScreen = () => {
 
     const handlePropertyDataLoad = (featureIndex) =>{
         setPropertyData(propertyData =>{
-            console.log(featureIndex, propertyData)
+            //console.log(featureIndex, propertyData)
             if(propertyData.featureIndex !== featureIndex && ((propertyData.featureIndex !== null && featureIndex !== null) || (propertyData.featureIndex !== null && featureIndex === null))){
                 store.editProperties(propertyData.featureIndex, propertyData.properties)
             }
@@ -238,7 +328,7 @@ const EditScreen = () => {
 
     const captureMapAsImage = async () => {        
         const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
-            console.log("map container: ",mapContainer)
+            //console.log("map container: ",mapContainer)
             if (mapContainer) {
             // Use dom-to-image to convert the MapContainer element to an image
             await domtoimage.toPng(mapContainer, {
@@ -263,14 +353,13 @@ const EditScreen = () => {
             } else {
             console.error('MapContainer element not found');
             }
-            //console.log("set photo")
+            ////console.log("set photo")
             setPhoto(true);
 
         }
 
     const handleOpenPublishSave = (isPublish) => {
         setPhoto(false);
-        handlePropertyDataLoad(null);
         let publishMessage = (
             <div>
                 <span style={{ fontWeight: 'bold', fontStyle: 'italic',textDecoration: 'underline' }}>
@@ -302,6 +391,9 @@ const EditScreen = () => {
             chloroData: chloroData,
             dotColor: colors.DotMap,
             spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient, 
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient,
             voronoiColor: colors.VoronoiMap,
             screenShot : screenShot,
             voronoiValue: voronoiValue,
@@ -341,11 +433,16 @@ const EditScreen = () => {
                     // setBorderWidth={setBorderWidth}
                     hideLegend={hideLegend}
                     setHideLegend={setHideLegend}
+                    legendTitle = {legendTitle}
+                    legendFields = {legendFields}
                     setPropertyData={setPropertyData}
                     propertyData = {propertyData}
                     handleOpenPublishSave={handleOpenPublishSave}
                     setVoronoiPointToggle={setVoronoiPointToggle}
                     chloroData = {chloroData}
+                    originalStatesRef = {originalStatesRef}
+                    setLegendTitle = {setLegendTitle}
+                    setLegendFields = {setLegendFields}
                     />
                 <MapEdit 
                     colors={colors}
@@ -359,6 +456,7 @@ const EditScreen = () => {
                     setLegendTitle = {setLegendTitle}
                     legendFields = {legendFields}
                     setLegendFields = {setLegendFields}
+                    originalStatesRef = {originalStatesRef}
                     handlePropertyDataLoad = {handlePropertyDataLoad}
                     propertyData={propertyData}
                     chloroData = {chloroData}
@@ -369,7 +467,18 @@ const EditScreen = () => {
                     captureMapAsImage = {captureMapAsImage}
                     voronoiPointToggle={voronoiPointToggle}
                     voronoiValue={voronoiValue}
-                    setVoronoiValue={setVoronoiValue}/>
+                    setVoronoiValue={setVoronoiValue}
+                    setTitle={setTitle}
+                    setColors={setColors}
+                    setSizes={setSizes}
+                    setOpacities={setOpacities}
+                    setAnchors={setAnchors}
+                    setTextFont = {setTextFont}
+                    setHasStroke={setHasStroke}
+                    setHasFill={setHasFill}
+                    setHideLegend={setHideLegend}
+                    textFont = {textFont}
+                    />
             </Grid>
         );
     }

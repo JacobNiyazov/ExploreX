@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { useContext, useState } from 'react';
+import React from 'react';
+import { useContext, useState, useRef } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -11,6 +11,8 @@ import MenuItem from '@mui/material/MenuItem';
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
+import { GlobalMapEditContext } from '../mapEdit'
+import EditMap_Transaction from '../transactions/EditMap_Transaction.js';
 import { BaseMapSwitch } from './StyleSheets/MapEditStyles';
 
 const EditSidePanel = ({
@@ -36,17 +38,80 @@ const EditSidePanel = ({
     setHideLegend,
     setPropertyData, 
     propertyData,
+    originalStatesRef,
+    setLegendTitle,
+    setLegendFields,
     setVoronoiPointToggle,
     handleOpenPublishSave,
   }) => {  
     const { store } = useContext(GlobalStoreContext);
-    
+    const { mapEdit } = useContext(GlobalMapEditContext);
+    let tps = store.currentTps
+    function newTransaction(field, value){
+        // instead of the mapEdit replace that with originalStatesRef.current
+        let newMapData = {
+            title: field === "title"? value:title,
+            colors: {
+                TextColor: originalStatesRef.current.colors.TextColor,
+                FillColor: originalStatesRef.current.colors.FillColor,
+                StrokeColor: originalStatesRef.current.colors.StrokeColor,
+                DotMap: originalStatesRef.current.colors.DotMap,
+                SpikeMap: originalStatesRef.current.colors.SpikeMap,
+                lowGradient: originalStatesRef.current.colors.lowGradient,
+                mediumGradient: originalStatesRef.current.colors.mediumGradient,
+                highGradient: originalStatesRef.current.colors.highGradient
+            },
+            sizes:{
+                TextSize: field === "TextSize"? value:sizes.TextSize,
+                StrokeWeight: field==="StrokeWeight"?value:sizes.StrokeWeight,
+            },
+            opacities:{
+                StrokeOpacity: field === "StrokeOpacity"?value:opacities.StrokeOpacity,
+                FillOpacity: field === "FillOpacity"?value:opacities.FillOpacity,
+            },
+            hasStroke: field==="hasStroke"?value:hasStroke,
+            hasFill: field === "hasFill"?value:hasFill,
+            textFont: field === "textFont"? value:textFont,
+            hideLegend: originalStatesRef.current.hideLegend,
+            legendTitle: originalStatesRef.current.legendTitle,
+            legendFields: originalStatesRef.current.legendFields,
+            // focusing on the non-typespefic stuff first
+            chloroData: mapEdit.chloroData, // not sure what to set this to rn
+        }
+        console.log("old data: ", originalStatesRef.current)
+        console.log("new data: ", newMapData)
+        let transaction = new EditMap_Transaction(originalStatesRef.current, 
+            newMapData,
+            setTitle, 
+            setLegendTitle, 
+            setLegendFields, 
+            setColors, 
+            setSizes,
+            setOpacities,
+            setAnchors,
+            setTextFont,
+            setHasStroke, 
+            setHasFill,
+            setHideLegend,)
+        // add this transaction to the jsTPS stack
+        console.log("old data: ", originalStatesRef.current)
+        console.log("new data: ", newMapData)
+
+        tps.addTransaction(transaction)
+        console.log("tps in side panel: ", tps)
+        // change the originalStatesRef to the newMapData
+        originalStatesRef.current = {...newMapData}
+        console.log("original state after the changes: ",originalStatesRef.current)
+    }
     const handleFont = (event) => {
+        //get the map before the setFont is done
         setTextFont(event.target.value)
+        newTransaction("textFont", event.target.value)
     }
     
     const handleTitle = (event) => {
         setTitle(event.target.value)
+        newTransaction("title", event.target.value)
     }
     
     const handleSize = (event, label) => {
@@ -54,6 +119,7 @@ const EditSidePanel = ({
             ...sizes,
             [label]: event.target.value
         })
+        newTransaction(label, event.target.value)
     }
 
     const handleOpacity = (event, label) => {
@@ -66,21 +132,21 @@ const EditSidePanel = ({
                 ...opacities,
                 [label]: newValue,
             });
+            newTransaction(label, newValue)
         }
     };
-    
-    const handleRange = (event) => {
-        setRange(event.target.value)
-    }
 
     const handleHideLegend = () => {
+        // need to figure out what to do for this transaction
         setHideLegend(!hideLegend)
     }
     const handleHideFill = () => {
         setHasFill(!hasFill)
+        newTransaction("hasFill", !hasFill)
     }
     const handleHideStroke = () => {
         setHasStroke(!hasStroke)
+        newTransaction("hasStroke", !hasStroke)
     }
     function alertModal(header, paragraph){
         store.displayModal(<div>
@@ -118,7 +184,7 @@ const EditSidePanel = ({
       }
 
     function handleEditProperties(key, value) {
-        if (store.currentMap.type == "Choropleth Map" && !(store.currentMap.graphics.typeSpecific.chloroLegend.isString) && !isNumeric(value)) {
+        if (store.currentMap.type === "Choropleth Map" && !(store.currentMap.graphics.typeSpecific.chloroLegend.isString) && !isNumeric(value)) {
             alertModal("Try Again", "Numerical Choropleth Maps only support numbers in properties");
 
         } else {
@@ -214,7 +280,22 @@ const EditSidePanel = ({
                             <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
                                 <Typography>Color</Typography>
-                                <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="TextColor"/>
+                                <ColorSelector originalStatesRef = {originalStatesRef} 
+                                colors={colors} 
+                                setColors={setColors} 
+                                anchors={anchors} 
+                                setAnchors={setAnchors} 
+                                label="TextColor"
+                                setTitle={setTitle}
+                                setSizes={setSizes}
+                                setOpacities={setOpacities}
+                                setTextFont={setTextFont}
+                                setHasStroke={setHasStroke}
+                                setHasFill={setHasFill}
+                                setHideLegend={setHideLegend}
+                                setLegendTitle = {setLegendTitle}
+                                setLegendFields = {setLegendFields}
+                                />
                             </CustomListItem>
                             <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
@@ -361,7 +442,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Fill Options */}
-                {console.log(store.currentMap)}{
+                {
                     store.currentMap.type !== "Choropleth Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
@@ -376,7 +457,21 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Fill Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="FillColor"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="FillColor"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
@@ -384,6 +479,7 @@ const EditSidePanel = ({
                                     <NumberSelector
                                         data-testid="fill-opacity"
                                         type="number"
+                                        inputProps={{step: "0.1"}}
                                         InputLabelProps={{
                                             shrink: true,
                                         }}
@@ -415,7 +511,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Border Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="StrokeColor"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="StrokeColor"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
@@ -463,24 +574,63 @@ const EditSidePanel = ({
                         <AccordionDetails sx={{padding:0}}>
                         <CustomList>
                                 <CustomListItem>
-                                    <Typography>Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="HeatMap"/>
+                                    <Typography>Low Gradient</Typography>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="lowGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
-                                    <Typography>Range</Typography>
-                                    <NumberSelector
-                                        data-testid="heat-map-selector"
-                                        type="number"
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        variant="standard"
-                                        value={range}
-                                        onChange={(event)=>{handleRange(event)}}
-                                        error={range === ""}
+                                    <Typography>Medium Gradient</Typography>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="mediumGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}/>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>High Gradient</Typography>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="highGradient"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
                                     />
                                 </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
                             </CustomList>
                         </AccordionDetails>
                     </EditAccordion>
@@ -514,7 +664,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="DotMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="DotMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -553,7 +718,22 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} /> */}
                                 <CustomListItem>
                                     <Typography>Spike Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="SpikeMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="SpikeMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                             </CustomList>
                         </AccordionDetails>
@@ -571,9 +751,24 @@ const EditSidePanel = ({
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
-                                <CustomListItem>
+                             <CustomListItem>
                                     <Typography>Dot Color</Typography>
-                                    <ColorSelector colors={colors} setColors={setColors} anchors={anchors} setAnchors={setAnchors} label="VoronoiMap"/>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="VoronoiMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
                                 </CustomListItem>
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem sx={{display:'flex', justifyContent:'center'}}>
@@ -582,6 +777,32 @@ const EditSidePanel = ({
                                 <Divider sx={{borderColor:"white"}} />
                                 <CustomListItem>
                                     <Typography>Edit Points</Typography>
+                                    <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem sx={{display:'flex', justifyContent:'center'}}>
+                                    <Typography sx={{fontSize:"0.6em", fontStyle:'italic', textAlign:'center'}}>*Click On Points To Delete Or On Map To Add Points*</Typography>
+                                </CustomListItem>
+                                <Divider sx={{borderColor:"white"}} />
+                                <CustomListItem>
+                                    <Typography>Edit Points</Typography>
+                                    <ColorSelector originalStatesRef = {originalStatesRef} 
+                                    label="VoronoiMap"
+                                    colors={colors} 
+                                    setColors={setColors} 
+                                    anchors={anchors} 
+                                    setAnchors={setAnchors} 
+                                    setTitle={setTitle}
+                                    setSizes={setSizes}
+                                    setOpacities={setOpacities}
+                                    setTextFont={setTextFont}
+                                    setHasStroke={setHasStroke}
+                                    setHasFill={setHasFill}
+                                    setHideLegend={setHideLegend}
+                                    setLegendTitle = {setLegendTitle}
+                                    setLegendFields = {setLegendFields}
+                                    />
+                                    
                                     <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
                                 </CustomListItem>
                             </CustomList>

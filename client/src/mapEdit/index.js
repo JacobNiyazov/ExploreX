@@ -1,7 +1,5 @@
-import { createContext, useState, useContext, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState} from 'react'
 import React from 'react';
-import { AuthContext } from '../auth'
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -12,40 +10,42 @@ export const GlobalMapEditActionType = {
 
 }
 
-
 function GlobalMapEditContextProvider(props) {
     const [mapEdit, setMapEdit] = useState({
         id: '',
-        title: '',
+        title: 'Map Example',
         hasStroke: true,
-        strokeColor: '',
-        strokeWeight: '',
-        strokeOpacity: '',
+        strokeColor: "#B9B0B0",
+        strokeWeight: 3.0,
+        strokeOpacity: 1.0,
         hasFill: true,
-        fillColor: '',
+        fillColor: "#B9B0B0",
         fillOpacity: '',
-        textColor: '',
-        textSize: '',
+        textColor: "#B9B0B0",
+        textSize: 12,
         textFont: '',
         // legendFillColor: '',
         // legendBorderColor: '',
         legendTitle: '',
         // legendBorderWidth: '',
         legendFields: [],
-        dotColor: '',
-        spikeColor: '',
+        dotColor: "#ff24bd",
+        spikeColor: "#ff24bd",
         voronoiColor:'',
         chloroData: {},
+        lowGradient:'#0000FF',
+        mediumGradient: '#FEEA00',
+        highGradient: '#FF0000',
         voronoiValue:'',
+        voronoiColor: "#ff24bd",
         screenShot: '',
     });
-    console.log("NEW ", mapEdit)
+    //console.log("NEW ", mapEdit)
 
-    const { auth } = useContext(AuthContext);
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;
-        console.log("CALLIGN REDUCCER WITH ", payload)
+        //console.log("CALLIGN REDUCCER WITH ", payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {
@@ -71,6 +71,9 @@ function GlobalMapEditContextProvider(props) {
                   dotColor: payload.dotColor,
                   voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
+                  lowGradient:payload.lowGradient,
+                  mediumGradient: payload.mediumGradient,
+                  highGradient: payload.highGradient,
                   voronoiValue: payload.voronoiValue,
                   screenShot : ''
                 });
@@ -98,6 +101,9 @@ function GlobalMapEditContextProvider(props) {
                   dotColor: payload.dotColor,
                   voronoiColor: payload.voronoiColor,
                   spikeColor: payload.spikeColor,
+                  lowGradient:payload.lowGradient,
+                  mediumGradient: payload.mediumGradient,
+                  highGradient: payload.highGradient,
                   voronoiValue: payload.voronoiValue,
                   screenShot: payload.screenShot
                 });
@@ -105,16 +111,16 @@ function GlobalMapEditContextProvider(props) {
             default: {
                 return setMapEdit({
                   id: '',
-                  title: '',
+                  title: 'Map Example',
                   hasStroke: true,
-                  strokeColor: '',
-                  strokeWeight: '',
-                  strokeOpacity: '',
+                  strokeColor: "#B9B0B0",
+                  strokeWeight: 3.0,
+                  strokeOpacity: 1.0,
                   hasFill: true,
-                  fillColor: '',
+                  fillColor: "#B9B0B0",
                   fillOpacity: '',
-                  textColor: '',
-                  textSize: '',
+                  textColor:"#B9B0B0",
+                  textSize: 12,
                   textFont: '',
                   // legendFillColor: '',
                   // legendBorderColor: '',
@@ -122,16 +128,19 @@ function GlobalMapEditContextProvider(props) {
                   // legendBorderWidth: '',
                   legendFields: [],
                   chloroData: {},
-                  dotColor: '',
-                  spikeColor: '',
-                  voronoiColor: '',
+                  dotColor: "#ff24bd",
+                  spikeColor: "#ff24bd",
+                  lowGradient:'#0000FF',
+                  mediumGradient: '#FEEA00',
+                  highGradient: '#FF0000',
+                  voronoiColor: "#ff24bd",
                   voronoiValue: '',
                 });
             }
 
         }
     }
-
+    
     mapEdit.editStyles = async (styles) => {
       mapEditReducer({
         type: GlobalMapEditActionType.EDIT,
