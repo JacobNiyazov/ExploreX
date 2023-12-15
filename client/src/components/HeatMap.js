@@ -46,7 +46,7 @@ const HeatMap = ({ geojsonData, property, handlePropertyDataLoad, propertyData})
 
     let i = 0
     // Customize popups
-    var geojsonLayer = L.geoJSON(geojsonData, {
+    L.geoJSON(geojsonData, {
       onEachFeature: function (feature, layer) {
         layer.bindPopup(
           Object.keys(feature.properties).map(function (k) {

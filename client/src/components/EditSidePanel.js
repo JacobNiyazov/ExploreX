@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
@@ -11,7 +11,6 @@ import MenuItem from '@mui/material/MenuItem';
 //import FinishedEditingMapModal from './FinishedEditingMapModal.js'
 import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
-import { BaseMapSwitch } from './StyleSheets/MapEditStyles';
 
 const EditSidePanel = ({
     title,
@@ -118,7 +117,7 @@ const EditSidePanel = ({
       }
 
     function handleEditProperties(key, value) {
-        if (store.currentMap.type == "Choropleth Map" && !(store.currentMap.graphics.typeSpecific.chloroLegend.isString) && !isNumeric(value)) {
+        if (store.currentMap.type === "Choropleth Map" && !(store.currentMap.graphics.typeSpecific.chloroLegend.isString) && !isNumeric(value)) {
             alertModal("Try Again", "Numerical Choropleth Maps only support numbers in properties");
 
         } else {

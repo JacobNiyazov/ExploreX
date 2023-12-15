@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { LegendBox, LegendTextField }from './StyleSheets/MapEditStyles.js'
+import { LegendBox }from './StyleSheets/MapEditStyles.js'
 import { Square } from "./StyleSheets/ColorSelectorStyles";
 import Popover from '@mui/material/Popover';
 import ChromePicker from 'react-color';
