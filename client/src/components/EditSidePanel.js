@@ -259,7 +259,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Properties Options */}
-                <EditAccordion disableGutters data-testid="edit-accordion" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
+                <EditAccordion disableGutters data-testid="properties" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
                     <EditAccordionSummary >
                         <Typography variant="inherit">Properties</Typography>
                     </EditAccordionSummary>
@@ -346,7 +346,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters data-testid="edit-accordion">
+                <EditAccordion disableGutters data-testid="legend">
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -382,7 +382,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Fill Opacity</Typography>
                                     <NumberSelector
-                                        data-testid="region-selector1"
+                                        data-testid="fill-opacity"
                                         type="number"
                                         InputLabelProps={{
                                             shrink: true,
@@ -402,7 +402,7 @@ const EditSidePanel = ({
                 {/* Edit Stroke Options */}
                 {
                     
-                    <EditAccordion disableGutters data-testid="edit-accordion region" data->
+                    <EditAccordion disableGutters data-testid="edit-accordion borders" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Borders</Typography>
                         </EditAccordionSummary>
