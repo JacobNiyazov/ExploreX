@@ -1,12 +1,5 @@
-import { createContext, useState, useContext, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState} from 'react'
 import React from 'react';
-import api from '../store/index'
-import { AuthContext } from '../auth'
-import maps from '../store/map-request-api';
-import EditMap_Transaction from '../transactions/EditMap_Transaction';
-import jsTPS from '../transactions/jsTPS';
-import GlobalStoreContext from '../store/index'
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -44,12 +37,11 @@ function GlobalMapEditContextProvider(props) {
         mediumGradient: '#FEEA00',
         highGradient: '#FF0000',
         voronoiValue:'',
+        voronoiColor: "#ff24bd",
         screenShot: '',
     });
     console.log("NEW ", mapEdit)
 
-    const { auth } = useContext(AuthContext);
-    const {store} = useContext(GlobalStoreContext)
     const mapEditReducer = (action) => {
         const { type, payload } = action;
         console.log("CALLIGN REDUCCER WITH ", payload)
@@ -140,7 +132,7 @@ function GlobalMapEditContextProvider(props) {
                   lowGradient:'#0000FF',
                   mediumGradient: '#FEEA00',
                   highGradient: '#FF0000',
-                  voronoiColor: '',
+                  voronoiColor: "#ff24bd",
                   voronoiValue: '',
                 });
             }

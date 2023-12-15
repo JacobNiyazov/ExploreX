@@ -221,17 +221,6 @@ function GlobalStoreContextProvider(props) {
                     currentMaps: store.currentMaps,
                 });
             }
-            case GlobalStoreActionType.ADD_SCREENSHOT:{
-                return setStore({
-                    currentPage: store.currentPage,
-                    modalMessage: store.modalMessage,
-                    modalOpen: store.modalOpen,
-                    modalConfirmButton: store.modalConfirmButton,
-                    modalAction: store.modalAction,
-                    currentMap: payload.currentMap,
-                    currentMaps: store.currentMaps,
-                });
-            }
             default: {
                 return setStore({
                     currentPage: store.currentPage,
@@ -894,7 +883,7 @@ function GlobalStoreContextProvider(props) {
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null, lowGradient = null, mediumGradient = null, highGradient = null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
@@ -921,6 +910,15 @@ function GlobalStoreContextProvider(props) {
         if(voronoi !== null){
             graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
             graphics['geojson'] = voronoi.geojson;
+        }
+        if(lowGradient !== null){
+            graphics['typeSpecific']['lowGradient'] = lowGradient
+        }
+        if(mediumGradient !== null){
+            graphics['typeSpecific']['mediumGradient'] = mediumGradient
+        }
+        if(highGradient !== null){
+            graphics['typeSpecific']['highGradient'] = highGradient
         }
         /*if(heatPoints !== null){
             graphics["typeSpecfic"]["heatPoints"] = heatPoints
@@ -978,11 +976,13 @@ function GlobalStoreContextProvider(props) {
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
+        console.log("what the hell guys: ", map)
+        console.log("legit wha t is the hhell: ", isPublish)
         try {
             let styles = mapEdit;
-
+            console.log("STYLES BRUH: ",styles)
             // map.imageBuffer = styles.screenShot;
-
+            
             map.graphics.typeSpecific.dotColor = styles.dotColor;
             map.graphics.typeSpecific.spikeColor = styles.spikeColor;
             map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
@@ -990,7 +990,7 @@ function GlobalStoreContextProvider(props) {
             map.graphics.typeSpecific.voronoiValue = styles.voronoiValue;
             map.graphics.typeSpecific.lowGradient = styles.lowGradient
             map.graphics.typeSpecific.mediumGradient = styles.mediumGradient;
-            map.graphics.typeSpecfic.highGradient = styles.highGradient;
+            map.graphics.typeSpecific.highGradient = styles.highGradient;
 
             map.graphics.legend.legendTitle = styles.legendTitle;
             map.graphics.legend.legendFields = styles.legendFields;
@@ -1012,10 +1012,12 @@ function GlobalStoreContextProvider(props) {
 
             map.isPublic = isPublish;
             map.publishDate = Date.now();
+            console.log("IM RIPPINGMY HAIR OUT: ", map.graphics.typeSpecific.lowGradient)
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
+                    console.log("what the poop : ", mapList.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_CURRENT_PAGE,
                         payload: {
@@ -1025,6 +1027,7 @@ function GlobalStoreContextProvider(props) {
                         }
                     }
                     ); 
+                    console.log("after passing it to the reducer: ", res.data.map)
                     navigate(`/map?id=${res.data.map._id}`);
                 }
             }
@@ -1047,7 +1050,7 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
     }
-    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null) => {
+    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null, lowGradient = null, mediumGradient = null, highGradient = null) => {
         let map = store.currentMap;
         if(dotScale !== null && map){
             map.graphics.typeSpecific.dotScale = dotScale;
@@ -1064,6 +1067,15 @@ function GlobalStoreContextProvider(props) {
         }
         if(spikeData !== null && map){
             map.graphics.typeSpecific.spikeData = spikeData;
+        }
+        if(lowGradient !== null && map){
+            map.graphics.typeSpecific.lowGradient = lowGradient;
+        }
+        if(mediumGradient !== null && map){
+            map.graphics.typeSpecific.mediumGradient = mediumGradient;
+        }
+        if(highGradient !==null && map){
+            map.graphics.typeSpecific.highGradient = highGradient
         }
         /*if(heatPoints!==null && map){
             map.graphics.typeSpecific.heatPoints = heatPoints

@@ -15,11 +15,15 @@ const HeatMap = ({
     opacities,
     hasStroke,
     hasFill,
+    textFont,
+    screenFlag
   }) => {
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
-  console.log("radius in heat: ", sizes.radius)
+  
+  console.log("this is inside on top heat map: ", store.currentMap)
+  console.log("and this is storeref heat map: ", storeRef.current.currentMap)
   const geojsonData = storeRef.current.currentMap.graphics.geojson;
   const property = storeRef.current.currentMap.graphics.typeSpecific.property;
   const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
@@ -45,16 +49,17 @@ const HeatMap = ({
                 fillOpacity: opacities.FillOpacity,
               }).bringToBack();
               let tempi = i
-            layer.on({
-                click: (e) => {
-                    if(feature.geometry.type !== 'Point'){
-                        L.DomEvent.stopPropagation(e);
-                        // Here we set the index to tempi
-                        handlePropertyDataLoad(tempi)
-                    }
-                },
-            })
-            
+              if(screenFlag === "edit"){
+                layer.on({
+                  click: (e) => {
+                      if(feature.geometry.type !== 'Point'){
+                          L.DomEvent.stopPropagation(e);
+                          // Here we set the index to tempi
+                          handlePropertyDataLoad(tempi)
+                      }
+                  },
+                })
+              }           
           }
           i+=1
           }
@@ -70,10 +75,12 @@ const HeatMap = ({
     updateLayers(geojsonData);
 
     map.on('click',function(e) {
-      L.DomEvent.stopPropagation(e);
-      console.log('clicked on map', e);
-      // Here we set the index to null
-      handlePropertyDataLoad(null)
+      if(screenFlag === "edit"){
+        L.DomEvent.stopPropagation(e);
+        console.log('clicked on map', e);
+        // Here we set the index to null
+        handlePropertyDataLoad(null)
+      }
     });
     return () => {
       regionLayerGroup.remove();
@@ -81,7 +88,7 @@ const HeatMap = ({
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, textFont]);
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
@@ -119,18 +126,21 @@ const HeatMap = ({
     let heatLayerOptions = {}
     if(heatPoints && heatPoints.length > 0){
       heatLayerOptions = {
-        //blur: 25,
-        //radius: 15,
+        blur: 25,
+        radius: 15,
         gradient:{
           0.25: colors.lowGradient,
           0.75: colors.mediumGradient,
           1: colors.highGradient
         }
       }
-
-    /*if(storeRef.current.currentMap.graphics.typeSpecific.heatPoints === null){
-      storeRef.current.updateMapGraphics(null, null, null, null, null, null, null, null, heatPoints)
-    }*/
+      // have to do the store update local map here
+      console.log("what the f man: ", heatPoints)
+      store.updateLocalMap(null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
+      console.log("updated local map me thinks: ", store.currentMap)
+      if(low === null|| med === null|| high === null){
+          storeRef.current.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
+      }
   };
 
   const heatLayerGroup = L.featureGroup().addTo(map);

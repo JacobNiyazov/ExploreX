@@ -1,11 +1,8 @@
-import { React, useContext } from "react";
+import { React } from "react";
 import { Box, Typography } from '@mui/material';
-import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from "./StyleSheets/ColorSelectorStyles.js";
 
 const VoronoiLegend = ({colors, voronoiValue, setVoronoiValue}) => {
-    const { store } = useContext(GlobalStoreContext);
-    let value = store.currentMap.graphics.typeSpecific.voronoiValue;
     const circleRadius = 10;
   
     return (

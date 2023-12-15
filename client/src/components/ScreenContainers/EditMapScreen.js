@@ -176,21 +176,21 @@ const EditScreen = () => {
                   navigate('/map?id=${store.currentMap._id}');
               }
               
-              if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
+              if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null||store.currentMap.graphics.typeSpecific.lowGradient !== null||store.currentMap.graphics.typeSpecific.mediumGradient !== null, store.currentMap.graphics.typeSpecific.highGradient !== null)){
                   setTitle(mapEdit.title);
                   setColors({
-                      TextColor: mapEdit.textColor,
-                      HeatMap: '#FFFFFF',
-                      // LegendFill: mapEdit.legendFillColor,
-                      // LegendBorder: mapEdit.legendBorderColor,
-                      FillColor: mapEdit.fillColor,
-                      StrokeColor: mapEdit.strokeColor,
-                      DotMap: mapEdit.dotColor,
-                      SpikeMap: mapEdit.spikeColor,
-                      VoronoiMap: mapEdit.voronoiColor,
-                      lowGradient: mapEdit.lowGradient,
-                    mediumGradient: mapEdit.mediumGradient,
-                    highGradient: mapEdit.highGradient
+                        TextColor: mapEdit.textColor,
+                        HeatMap: '#FFFFFF',
+                        // LegendFill: mapEdit.legendFillColor,
+                        // LegendBorder: mapEdit.legendBorderColor,
+                        FillColor: mapEdit.fillColor,
+                        StrokeColor: mapEdit.strokeColor,
+                        DotMap: mapEdit.dotColor,
+                        SpikeMap: mapEdit.spikeColor,
+                        VoronoiMap: mapEdit.voronoiColor,
+                        lowGradient: mapEdit.lowGradient,
+                        mediumGradient: mapEdit.mediumGradient,
+                        highGradient: mapEdit.highGradient,
 
                   });
                   setSizes({
@@ -228,7 +228,7 @@ const EditScreen = () => {
                             StrokeColor: mapEdit.strokeColor,
                             DotMap: mapEdit.dotColor,
                             SpikeMap: mapEdit.spikeColor,
-                            VoronoiMap: '#FFFFFF',
+                            VoronoiMap: mapEdit.voronoiColor,
                             lowGradient: mapEdit.lowGradient,
                             mediumGradient: mapEdit.mediumGradient,
                             highGradient: mapEdit.highGradient
@@ -392,6 +392,9 @@ const EditScreen = () => {
             chloroData: chloroData,
             dotColor: colors.DotMap,
             spikeColor: colors.SpikeMap,
+            lowGradient: colors.lowGradient, 
+            mediumGradient: colors.mediumGradient,
+            highGradient: colors.highGradient,
             voronoiColor: colors.VoronoiMap,
             screenShot : screenShot,
             voronoiValue: voronoiValue,
@@ -475,6 +478,7 @@ const EditScreen = () => {
                     setHasStroke={setHasStroke}
                     setHasFill={setHasFill}
                     setHideLegend={setHideLegend}
+                    textFont = {textFont}
                     />
             </Grid>
         );

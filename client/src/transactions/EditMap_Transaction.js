@@ -66,6 +66,9 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
             if(prevColors.highGradient !== this.newMapData.highGradient){
                 return {...prevColors, ...this.newMapData.colors}
             }
+            if(prevColors.voronoiColor !== this.newMapData.voronoiColor){
+                return {...prevColors, ...this.newMapData.colors}
+            }
             return prevColors
         })
         this.setSizes(prevSizes =>{
@@ -158,6 +161,9 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
                 return {...prevColors, ...this.oldMapData.colors}
             }
             if(prevColors.highGradient !== this.oldMapData.highGradient){
+                return {...prevColors, ...this.oldMapData.colors}
+            }
+            if(prevColors.voronoiColor !== this.oldMapData.voronoiColor){
                 return {...prevColors, ...this.oldMapData.colors}
             }
             return prevColors

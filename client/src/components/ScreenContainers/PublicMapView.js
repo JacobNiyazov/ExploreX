@@ -37,6 +37,7 @@ import SpikeLegend from '../SpikeLegend';
 import DotDistLegend from '../DotDistLegend';
 import VoronoiLegend from '../VoronoiLegend';
 import ChoroLegend from '../ChoroLegend';
+import HeatMapLegend from '../HeatMapLegend.js';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -584,9 +585,39 @@ const PublicMapView = () => {
         return <SpikeLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
     }
     else if(map.type === "Heat Map"){
-        if(map.graphics.geojson){
-            return <HeatMap geojsonData ={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
-        }
+      console.log("HELLUR FROM INSIDE HEAT: ", store.currentMap)
+      let graphics = store.currentMap.graphics
+      let colors = {
+        TextColor: graphics.text.textColor,
+        FillColor: graphics.fill.fillColor,
+        StrokeColor: graphics.stroke.strokeColor,
+        DotMap: graphics.typeSpecific.dotColor,
+        SpikeMap: graphics.typeSpecific.spikeColor,
+        VoronoiMap: graphics.typeSpecific.voronoiColor,
+        lowGradient: graphics.typeSpecific.lowGradient,
+        mediumGradient: graphics.typeSpecific.mediumGradient,
+        highGradient: graphics.typeSpecific.highGradient
+      }
+      let sizes = {
+        StrokeWeight: graphics.stroke.strokeWeight,
+        TextSize: graphics.text.textSize
+      }
+      let opacities = {
+        FillOpacity: graphics.fill.fillOpacity,
+        StrokeOpacity: graphics.stroke.strokeOpacity
+      }
+      let hasStroke = graphics.stroke.hasStroke
+      let hasFill = graphics.fill.hasFill
+        return <HeatMap geojsonData ={map.graphics.geojson} 
+        property = {map.graphics.typeSpecific.property}
+        colors = {colors}
+        sizes = {sizes}
+        opacities = {opacities}
+        hasStroke = {hasStroke}
+        hasFill = {hasFill}
+        screenFlag = "pmv"
+        textFont = {store.currentMap.graphics.text.textFont}
+        />
     }
     else if(map.type === "Choropleth Map"){
         console.log("SHOWING MAP")
@@ -618,6 +649,9 @@ const PublicMapView = () => {
     DotMap: graphics.typeSpecific.dotColor,
     SpikeMap: graphics.typeSpecific.spikeColor,
     VoronoiMap: graphics.typeSpecific.voronoiColor,
+    lowGradient: graphics.typeSpecific.lowGradient,
+    mediumGradient: graphics.typeSpecific.mediumGradient,
+    highGradient: graphics.typeSpecific.highGradient
   }
   let legendFields = graphics.typeSpecific.chloroLegend
   let voronoiValue =  graphics.typeSpecific.voronoiValue
@@ -632,6 +666,9 @@ const PublicMapView = () => {
                           colors={colors}
                           voronoiValue={voronoiValue}
                           setVoronoiValue={null}/>
+  }
+  else if(store.currentMap.type === "Heat Map"){
+      DynamicLegend = <HeatMapLegend colors = {colors}/>
   }
   else if(store.currentMap.type === "Choropleth Map"){
       console.log(legendFields)

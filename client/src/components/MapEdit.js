@@ -34,6 +34,7 @@ const MapEditInner = ({
     chloroData,
     handleNewColors,
     voronoiPointToggle,
+    textFont
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -116,8 +117,7 @@ const MapEditInner = ({
         propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Heat Map"){
-        if(store.currentMap.graphics.geojson){
-            console.log("colors inside current map type: ", colors)
+        console.log("colors inside current map type: ", store.currentMap)
             return <HeatMap 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
             propertyData={propertyData}
@@ -126,8 +126,9 @@ const MapEditInner = ({
             opacities={opacities}
             hasStroke={hasStroke}
             hasFill={hasFill} 
+            textFont = {textFont}
+            screenFlag = "edit"
             />
-        }
     }
     else if(store.currentMap.type === "Choropleth Map"){
         return <ChloroplethMap 
@@ -192,7 +193,8 @@ const MapEdit = ({
     setTextFont,
     setHasStroke,
     setHasFill,
-    setHideLegend
+    setHideLegend,
+    textFont
   }) =>{
 
     
@@ -386,7 +388,9 @@ const MapEdit = ({
                 propertyData={propertyData}
                 chloroData={chloroData}
                 handleNewColors = {handleNewColors}
-                voronoiPointToggle={voronoiPointToggle}/>
+                voronoiPointToggle={voronoiPointToggle}
+                textFont = {textFont}
+                />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
