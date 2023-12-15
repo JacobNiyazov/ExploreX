@@ -106,7 +106,19 @@ function ProfileScreen(){
       mapValues = Object.values(store.currentMaps);
     }
     let drafts = mapValues.filter((map) => !map.isPublic);
+    drafts.sort((a, b) => {
+      let dateA = new Date(a.publishDate).getTime();
+      let dateB = new Date(b.publishDate).getTime();
+    
+      return dateA < dateB ? 1 : -1;
+    });
     let posted = mapValues.filter((map) => map.isPublic);
+    posted.sort((a, b) => {
+      let dateA = new Date(a.publishDate).getTime();
+      let dateB = new Date(b.publishDate).getTime();
+    
+      return dateA < dateB ? 1 : -1;
+    });
     if (loading) {
       return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>

@@ -72,10 +72,10 @@ const MapFeed = () => {
   if (store.currentMaps && store.currentMaps.length !== 0) {
     mapValues = Object.values(store.currentMaps);
     mapValues.sort((a, b) => {
-      let dateA = new Date(a.publishDate);
-      let dateB = new Date(b.publishDate);
+      let dateA = new Date(a.publishDate).getTime();
+      let dateB = new Date(b.publishDate).getTime();
     
-      return dateB - dateA;
+      return dateA < dateB ? 1 : -1;
     });
   }
   if (store.currentPage === store.currentPageType.mapFeed){
