@@ -96,7 +96,7 @@ const EditSidePanel = ({
         // add this transaction to the jsTPS stack
         console.log("old data: ", originalStatesRef.current)
         console.log("new data: ", newMapData)
-
+    
         tps.addTransaction(transaction)
         console.log("tps in side panel: ", tps)
         // change the originalStatesRef to the newMapData
@@ -135,6 +135,10 @@ const EditSidePanel = ({
             newTransaction(label, newValue)
         }
     };
+    
+    const handleRange = (event) => {
+        setRange(event.target.value)
+    }
 
     const handleHideLegend = () => {
         // need to figure out what to do for this transaction
@@ -751,7 +755,7 @@ const EditSidePanel = ({
                         </EditAccordionSummary>
                         <AccordionDetails sx={{padding:0}}>
                             <CustomList>
-                             <CustomListItem>
+                                <CustomListItem>
                                     <Typography>Dot Color</Typography>
                                     <ColorSelector originalStatesRef = {originalStatesRef} 
                                     label="VoronoiMap"

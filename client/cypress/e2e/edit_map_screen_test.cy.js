@@ -1,20 +1,20 @@
-// describe('Edit Map Screen Test', () => {
-//     beforeEach(() => {
-//       cy.visit('http://localhost:3000'); 
-//       cy.get('[data-testid="username-field"]').type('cypress');
-//       cy.get('[data-testid="password-field"]').type('abcd1234');
-//       cy.get('[data-testid="login-button"]').click();
-//       cy.get('[data-testid=user-icon]').click();
-//       cy.get('[data-testid="My Profile"]').click();
-//       cy.wait(200);
-//       cy.get('[data-testid=drafts-tab]').click();
-//       cy.get('[data-testid=edit-button]').first().click();
-//     });
+describe('Edit Map Screen Test', () => {
+    beforeEach(() => {
+      cy.visit('http://localhost:3000'); 
+      cy.get('[data-testid="username-field"]').type('cypress');
+      cy.get('[data-testid="password-field"]').type('abcd1234');
+      cy.get('[data-testid="login-button"]').click();
+      cy.get('[data-testid=user-icon]').click();
+      cy.get('[data-testid="My Profile"]').click();
+      cy.wait(200);
+      cy.get('[data-testid=drafts-tab]').click();
+      cy.get('[data-testid=edit-button]').first().click();
+    });
   
-//     it('can type into title', () => {
-//       cy.get('[data-testid=title-input]').click().type('{selectall}{backspace}').type('Example Title')
-//       cy.get('[data-testid=title-input]').find('input').should('have.value', 'Example Title');
-//     });
+    it('can type into title', () => {
+      cy.get('[data-testid=title-input]').click().type('{selectall}{backspace}').type('Example Title')
+      cy.get('[data-testid=title-input]').find('input').should('have.value', 'Example Title');
+    });
   
     it('Open color switch and change color', () => {
       cy.get('[data-testid=edit-accordion]').each((val, i, collection) => {
