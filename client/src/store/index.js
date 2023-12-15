@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import api from './store-request-api'
 import { AuthContext } from '../auth'
+import { GlobalMapEditContext } from '../mapEdit'
 import maps from '../store/map-request-api';
 
 export const GlobalStoreContext = createContext({});
@@ -20,7 +21,8 @@ export const GlobalStoreActionType = {
    CREATE_MAP: "CREATE_MAP",
    UPDATE_MAP_GRAPHICS: "UPDATE_MAP_GRAPHICS",
    FORK_MAP: "FORK_MAP",
-
+   EDIT_MAP: "EDIT_MAP",
+   ADD_SCREENSHOT: "ADD_SCREENSHOT"
 }
 
 
@@ -37,7 +39,7 @@ function GlobalStoreContextProvider(props) {
    const dict = {
     "/login": "Login",
     "/register": "RegisterScreen",
-    "/faq" : "FAQScreen",
+    "/FAQ" : "FAQScreen",
     "/forgotPassword" : "ForgotPasswordScreen",
     "/passwordReset" : "ResetPasswordScreen",
     "/feed" : "MapFeed",
@@ -49,6 +51,7 @@ function GlobalStoreContextProvider(props) {
 
    store.modalActionTypes = {
         publish: "Publish",
+        save: "Save",
    }
 
    store.currentPageType = {
@@ -65,12 +68,12 @@ function GlobalStoreContextProvider(props) {
     }
 
     const { auth } = useContext(AuthContext);
+    const { mapEdit } = useContext(GlobalMapEditContext);
     const navigate = useNavigate();
 
 
     const storeReducer = (action) => {
         const { type, payload } = action;
-        console.log(type)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalStoreActionType.SET_CURRENT_PAGE: {
@@ -183,6 +186,28 @@ function GlobalStoreContextProvider(props) {
                     currentMaps: store.currentMaps,
                 });
             }
+            case GlobalStoreActionType.EDIT_MAP:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: null,
+                    modalOpen: false,
+                    modalConfirmButton: false,
+                    modalAction: "",
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
+            case GlobalStoreActionType.ADD_SCREENSHOT:{
+                return setStore({
+                    currentPage: store.currentPage,
+                    modalMessage: store.modalMessage,
+                    modalOpen: store.modalOpen,
+                    modalConfirmButton: store.modalConfirmButton,
+                    modalAction: store.modalAction,
+                    currentMap: payload.currentMap,
+                    currentMaps: store.currentMaps,
+                });
+            }
             default: {
                 return setStore({
                     currentPage: store.currentPage,
@@ -203,9 +228,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getMapById(map._id)
-                    console.log("ATTEMPTING GET MAP")
+                    //console.log("ATTEMPTING GET MAP")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -218,7 +243,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -227,9 +252,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getUserMapIdPairs()
-                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    //console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -242,7 +267,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -263,7 +288,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
             }
             getMapPairs();
@@ -273,8 +298,34 @@ function GlobalStoreContextProvider(props) {
                 try{
                     async function setCurrentMapToEdit(){
                         let response = await maps.getMapById(map._id);
-                        console.log("map: ",response.data.map);
                         if(response.data.success){
+                            let tempMap = response.data.map;
+                            let styles = {
+                                id: tempMap._id,
+                                title: tempMap.title,
+                                hasStroke: tempMap.graphics.stroke.hasStroke,
+                                strokeColor: tempMap.graphics.stroke.strokeColor,
+                                strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                                strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                                hasFill: tempMap.graphics.fill.hasFill,
+                                fillColor: tempMap.graphics.fill.fillColor,
+                                fillOpacity: tempMap.graphics.fill.fillOpacity,
+                                textColor: tempMap.graphics.text.textColor,
+                                textSize: tempMap.graphics.text.textSize,
+                                textFont: tempMap.graphics.text.textFont,
+                                // legendFillColor: '',
+                                // legendBorderColor: '',
+                                legendTitle: tempMap.graphics.legend.legendTitle,
+                                // legendBorderWidth: '',
+                                legendFields: tempMap.graphics.legend.legendFields,
+                                chloroData: tempMap.graphics.typeSpecific.chloroLegend,
+                                dotColor: tempMap.graphics.typeSpecific.dotColor,
+                                spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
+                            }
+                           mapEdit.loadStyles(styles);
+
                             storeReducer({
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
                                 payload: {
@@ -288,19 +339,19 @@ function GlobalStoreContextProvider(props) {
                     setCurrentMapToEdit();
                 }
                 catch(err){
-                    console.log("error: ", err)
+                    //console.log("error: ", err)
                 }
             }
             getMap()
         }
         else{
-            console.log("set page map: ", store.currentMap, currentPage)
+            //console.log("set page map: ", store.currentMap, currentPage)
             storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,
                     payload: {
                         currentPage: currentPage,
                         currentMaps: store.currentMaps,
-                        currentMap: store.currentMap
+                        currentMap: null
                     }
                 }
             );
@@ -315,7 +366,7 @@ function GlobalStoreContextProvider(props) {
                 try{
                     let response = await maps.getMapById(id);
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         if(response.data.map.isPublic){
                             storeReducer({
                                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -334,7 +385,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -343,9 +394,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getUserMapIdPairs()
-                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    //console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -358,7 +409,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -379,7 +430,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
             }
             getMapPairs();
@@ -389,8 +440,34 @@ function GlobalStoreContextProvider(props) {
                 try{
                     async function setCurrentMapToEdit(){
                         let response = await maps.getMapById(id);
-                        console.log("map: ",response.data.map);
+                        //console.log("map: ",response.data.map);
                         if(response.data.success){
+                            let tempMap = response.data.map;
+                            let styles = {
+                                id: tempMap._id,
+                                title: tempMap.title,
+                                hasStroke: tempMap.graphics.stroke.hasStroke,
+                                strokeColor: tempMap.graphics.stroke.strokeColor,
+                                strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                                strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                                hasFill: tempMap.graphics.fill.hasFill,
+                                fillColor: tempMap.graphics.fill.fillColor,
+                                fillOpacity: tempMap.graphics.fill.fillOpacity,
+                                textColor: tempMap.graphics.text.textColor,
+                                textSize: tempMap.graphics.text.textSize,
+                                textFont: tempMap.graphics.text.textFont,
+                                // legendFillColor: '',
+                                // legendBorderColor: '',
+                                legendTitle: tempMap.graphics.legend.legendTitle,
+                                // legendBorderWidth: '',
+                                legendFields: tempMap.graphics.legend.legendFields,
+                                chloroData: tempMap.graphics.typeSpecific.chloroLegend,
+                                dotColor: tempMap.graphics.typeSpecific.dotColor,
+                                spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                                voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
+                            }
+                            mapEdit.loadStyles(styles);
                             storeReducer({
                                 type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
                                 payload: {
@@ -404,7 +481,7 @@ function GlobalStoreContextProvider(props) {
                     await setCurrentMapToEdit();
                 }
                 catch(err){
-                    console.log("error: ", err)
+                    //console.log("error: ", err)
                 }
             }
             getMap()
@@ -415,7 +492,7 @@ function GlobalStoreContextProvider(props) {
                 payload: {
                     currentPage: dict[pageURL],
                     currentMaps: store.currentMaps,
-                    currentMap: store.currentMap
+                    currentMap: null
 
                 }
             });
@@ -442,13 +519,39 @@ function GlobalStoreContextProvider(props) {
           window.removeEventListener('DOMContentLoaded', updateCurrentPage);
         };
       }, [storeRef]);
+    //   useEffect(() => {
+    //     if(store.currentPage === store.currentPageType.editAccScreen){
+    //         let tempMap = store.currentMap;
+    //         let styles = {
+    //             title: tempMap.title,
+    //             hasStroke: tempMap.graphics.stroke.hasStroke,
+    //             strokeColor: tempMap.graphics.stroke.strokeColor,
+    //             strokeWeight: tempMap.graphics.stroke.strokeWeight,
+    //             strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+    //             hasFill: tempMap.graphics.fill.hasFill,
+    //             fillColor: tempMap.graphics.fill.fillColor,
+    //             fillOpacity: tempMap.graphics.fill.fillOpacity,
+    //             textColor: tempMap.graphics.text.textColor,
+    //             textSize: tempMap.graphics.text.textSize,
+    //             textFont: tempMap.graphics.text.textFont,
+    //             // legendFillColor: '',
+    //             // legendBorderColor: '',
+    //             legendTitle: tempMap.graphics.legend.legendTitle,
+    //             // legendBorderWidth: '',
+    //             legendFields: []
+    //         }
+    //         //console.log(styles)
+    //         mapEdit.loadStyles(styles);
+    //     }
+        
+    //     }, [store.currentMap]);
 
     store.setCurrentEditMap = (currentPage) =>{
-        console.log("current Page: ", currentPage);
+        //console.log("current Page: ", currentPage);
         try{
             async function setCurrentMapToEdit(){
                 let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
-                console.log("map: ",response.data.map);
+                //console.log("map: ",response.data.map);
                 if(response.data.success){
                     storeReducer({
                         type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
@@ -462,7 +565,7 @@ function GlobalStoreContextProvider(props) {
             setCurrentMapToEdit();
         }
         catch(err){
-            console.log("error: ", err)
+            //console.log("error: ", err)
         }
     }
 
@@ -491,7 +594,7 @@ function GlobalStoreContextProvider(props) {
         // No need to create graphics create map takes care of this
         let property = null;
         let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
-        console.log(response.data)
+        //console.log(response.data)
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
@@ -552,14 +655,15 @@ function GlobalStoreContextProvider(props) {
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,
                     payload: {
                         currentPage: store.currentPageType.mapFeed,
-                        currentMaps: filteredMaps
+                        currentMaps: filteredMaps,
+                        currentMap: null
                     },
                 });
                 navigate('/feed');
             }
         }
         catch (err){
-            console.log(err)
+            //console.log(err)
         }
     }
 
@@ -600,6 +704,32 @@ function GlobalStoreContextProvider(props) {
             let response = await maps.forkMap(id);
             if(response.data.success)
             {
+                let tempMap = response.data.map;
+                let styles = {
+                    id: tempMap._id,
+                    title: tempMap.title,
+                    hasStroke: tempMap.graphics.stroke.hasStroke,
+                    strokeColor: tempMap.graphics.stroke.strokeColor,
+                    strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                    strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                    hasFill: tempMap.graphics.fill.hasFill,
+                    fillColor: tempMap.graphics.fill.fillColor,
+                    fillOpacity: tempMap.graphics.fill.fillOpacity,
+                    textColor: tempMap.graphics.text.textColor,
+                    textSize: tempMap.graphics.text.textSize,
+                    textFont: tempMap.graphics.text.textFont,
+                    // legendFillColor: '',
+                    // legendBorderColor: '',
+                    legendTitle: tempMap.graphics.legend.legendTitle,
+                    // legendBorderWidth: '',
+                    legendFields: tempMap.graphics.legend.legendFields,
+                    chloroData: tempMap.graphics.typeSpecific.chloroLegend,
+                    dotColor: tempMap.graphics.typeSpecific.dotColor,
+                    spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
+                }
+                mapEdit.loadStyles(styles);
                 await storeReducer({
                     type: GlobalStoreActionType.FORK_MAP,
                     payload: {
@@ -611,7 +741,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err){
-            console.log(err)
+            //console.log(err)
         }
     }
 
@@ -636,9 +766,9 @@ function GlobalStoreContextProvider(props) {
       //let userId = currentMap.author;
       async function processDelete(){
         let response = await maps.deleteMap(id);
-        console.log(response)
+        //console.log(response)
         if(response.data.success){
-            console.log("we are making it in delete")
+            //console.log("we are making it in delete")
             // the return will be different depending on page
             if(store.currentPage === "ProfileScreen"){
                 // let mapList = await maps.getUserMapIdPairs(userId);
@@ -661,7 +791,8 @@ function GlobalStoreContextProvider(props) {
                                 type: GlobalStoreActionType.DELETE_MAP,
                                 payload: {
                                     currentPage: currentPage,
-                                    currentMaps: mapList
+                                    currentMaps: mapList,
+                                    currentMap: null
                                 },
                             });
             }
@@ -679,7 +810,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
                 
             }
@@ -690,8 +821,8 @@ function GlobalStoreContextProvider(props) {
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
         let currentMap = map._id;
-        console.log("this is map were updating: ",map)
-        console.log("this is likes: ",like)
+        //console.log("this is map were updating: ",map)
+        //console.log("this is likes: ",like)
         let author = auth.user.username;
         async function reactToMap(){
             // get all the maps based on page
@@ -716,18 +847,16 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             catch(err){
-                console.log("update reactions failed: ",err)
+                //console.log("update reactions failed: ",err)
             }
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
-            
         }
-
         let graphics = currentMap.graphics;
         if(dotPoints !== null){
             graphics['typeSpecific']['dotPoints'] = dotPoints;
@@ -747,10 +876,42 @@ function GlobalStoreContextProvider(props) {
         if(chloroLegend !== null){
             currentMap.graphics.typeSpecific.chloroLegend = chloroLegend;
         }
+        if(voronoi !== null){
+            graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
+            graphics['geojson'] = voronoi.geojson;
+        }
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
             let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
             if(res.data.success){
+                let tempMap = res.data.map;
+                let styles = {
+                    id: tempMap._id,
+                    title: tempMap.title,
+                    hasStroke: tempMap.graphics.stroke.hasStroke,
+                    strokeColor: tempMap.graphics.stroke.strokeColor,
+                    strokeWeight: tempMap.graphics.stroke.strokeWeight,
+                    strokeOpacity: tempMap.graphics.stroke.strokeOpacity,
+                    hasFill: tempMap.graphics.fill.hasFill,
+                    fillColor: tempMap.graphics.fill.fillColor,
+                    fillOpacity: tempMap.graphics.fill.fillOpacity,
+                    textColor: tempMap.graphics.text.textColor,
+                    textSize: tempMap.graphics.text.textSize,
+                    textFont: tempMap.graphics.text.textFont,
+                    // legendFillColor: '',
+                    // legendBorderColor: '',
+                    legendTitle: tempMap.graphics.legend.legendTitle,
+                    // legendBorderWidth: '',
+                    legendFields: tempMap.graphics.legend.legendFields,
+                    chloroData: tempMap.graphics.typeSpecific.chloroLegend,
+                    dotColor: tempMap.graphics.typeSpecific.dotColor,
+                    spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
+                    voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
+                }
+
+                mapEdit.loadStyles(styles);
+
                 storeReducer({
                     type: GlobalStoreActionType.UPDATE_MAP_GRAPHICS,
                     payload: {
@@ -759,21 +920,49 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err) {
-            console.log(err)
+            //console.log(err)
         }
             
     }
-    store.publishMap = async (map) =>{
-        console.log(map)
 
+    store.publishMap = async (map, isPublish) =>{
         if(!map){
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
         try {
-            map.isPublic = true;
+            let styles = mapEdit;
+
+            // map.imageBuffer = styles.screenShot;
+
+            map.graphics.typeSpecific.dotColor = styles.dotColor;
+            map.graphics.typeSpecific.spikeColor = styles.spikeColor;
+            map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
+            map.graphics.typeSpecific.chloroLegend = styles.chloroData;
+            map.graphics.typeSpecific.voronoiValue = styles.voronoiValue;
+
+            map.graphics.legend.legendTitle = styles.legendTitle;
+            map.graphics.legend.legendFields = styles.legendFields;
+
+            map.graphics.fill.hasFill = styles.hasFill;
+            map.graphics.fill.fillColor = styles.fillColor;
+            map.graphics.fill.fillOpacity = styles.fillOpacity;
+
+            map.graphics.stroke.hasStroke = styles.hasStroke;
+            map.graphics.stroke.strokeColor = styles.strokeColor;
+            map.graphics.stroke.strokeWeight = styles.strokeWeight;
+            map.graphics.stroke.strokeOpacity = styles.strokeOpacity;
+
+            map.graphics.text.textColor = styles.textColor;
+            map.graphics.text.textFont = styles.textFont;
+            map.graphics.text.textSize = styles.textSize;
+
+            map.title = styles.title;
+
+            map.isPublic = isPublish;
+            map.publishDate = Date.now();
             let res = await maps.updateMapById(map._id, map);
-            if(res.data.success){
+            if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
                     storeReducer({
@@ -790,10 +979,65 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err) {
-            console.log(err)
+            //console.log(err)
         }
             
     }
+
+    store.editProperties = (featureIndex, properties) =>{
+        //console.log("WE IN HERE", featureIndex, properties)
+        let tempMap = JSON.parse(JSON.stringify(store.currentMap))
+        tempMap.graphics.geojson.features[featureIndex].properties = JSON.parse(JSON.stringify(properties))
+        storeReducer({
+            type: GlobalStoreActionType.EDIT_MAP,
+            payload: {
+                currentMap: tempMap
+            }
+        }
+        ); 
+    }
+    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null) => {
+        let map = store.currentMap;
+        if(dotScale !== null && map){
+            map.graphics.typeSpecific.dotScale = dotScale;
+        }
+        if(dotPoints !== null && map){
+            map.graphics.typeSpecific.dotPoints = dotPoints;
+        }
+        if(spikeLegend !== null && map){
+            map.graphics.typeSpecific.spikeLegend = spikeLegend;
+        }
+        if(voronoiMap !== null && map){
+            map = JSON.parse(JSON.stringify(store.currentMap))
+            map.graphics.geojson = voronoiMap
+        }
+        if(spikeData !== null && map){
+            map.graphics.typeSpecific.spikeData = spikeData;
+        }
+        storeReducer({
+            type: GlobalStoreActionType.EDIT_MAP,
+            payload: {
+                currentMap: map
+            }
+        }
+        ); 
+
+    }
+    store.updateScreenShot = (screenShot) => {
+        let map = store.currentMap;
+        //console.log(screenShot)
+        //console.log("MIRA")
+        map.imageBuffer = screenShot
+        storeReducer({
+            type: GlobalStoreActionType.ADD_SCREENSHOT,
+            payload: {
+                currentMap: map
+            }
+            }
+        ); 
+        
+    }
+
    return (
     <GlobalStoreContext.Provider value={{
         store

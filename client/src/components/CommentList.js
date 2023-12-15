@@ -6,7 +6,7 @@ const CommentList = ({ commentsList }) => {
   if (commentsList.length === 0) {
     return null;
   }
-console.log("commentlist: ", commentsList)
+//console.log("commentlist: ", commentsList)
   return (
     <StyledCommentList>
       {commentsList.map(comment => (

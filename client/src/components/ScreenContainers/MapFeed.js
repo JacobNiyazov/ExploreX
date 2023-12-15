@@ -1,12 +1,13 @@
 import React, {useContext, useState, useEffect} from 'react';
 import MapFeedCard from '../MapFeedCard';
-import { Grid } from '@mui/material';
+import { Grid, Box } from '@mui/material';
 import { StyledMapFeed, StyledCreateButton, HeaderBar } from '../StyleSheets/MapFeedStyles';
 import { GlobalStoreContext } from '../../store';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
 import SelectPropModal from '../SelectPropModal';
 import ImportFileModal from '../ImportFileModal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 //import ImportFileModal from '../ImportFileModal';
 //import { StyledButton } from '../StyleSheets/ProfileScreenStyles';
@@ -61,15 +62,20 @@ const MapFeed = () => {
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
   if (store.currentMaps && store.currentMaps.length !== 0) {
     mapValues = Object.values(store.currentMaps);
     mapValues.sort((a, b) => {
-      let dateA = new Date(a.publishDate);
-      let dateB = new Date(b.publishDate);
+      let dateA = new Date(a.publishDate).getTime();
+      let dateB = new Date(b.publishDate).getTime();
     
-      return dateB - dateA;
+      return dateA < dateB ? 1 : -1;
     });
   }
   if (store.currentPage === store.currentPageType.mapFeed){
@@ -90,7 +96,6 @@ const MapFeed = () => {
             <Grid container spacing={4} direction="column">
               {mapValues.map((map, index) => (
                 <Grid item key={index} xs={12}>
-                  {console.log("MAP BEFORE PASS: ",map)}
                   <MapFeedCard id={`map-feed-card-${index}`} map={map} />
                 </Grid>
               ))}

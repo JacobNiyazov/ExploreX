@@ -8,14 +8,16 @@ import 'leaflet/dist/leaflet.css';
 import DeleteIcon from '@mui/icons-material/Delete'
 import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
-import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur }from '../StyleSheets/MapEditStyles.js'
+import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur, LegendContainer }from '../StyleSheets/MapEditStyles.js'
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
-import ChloroplethMap from '../ChloroplethMap.js';
-import VoronoiMap from '../VoronoiMap.js';
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
+import CircularProgress from '@mui/material/CircularProgress';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import * as ReactDOMServer from 'react-dom/server';
+
 
 import {
   StyledCard,
@@ -30,6 +32,10 @@ import CommentList from '../CommentList';
 import CommentForm from '../CommentForm';
 import { AuthContext } from '../../auth'
 import { useNavigate } from 'react-router-dom';
+import SpikeLegend from '../SpikeLegend';
+import DotDistLegend from '../DotDistLegend';
+import VoronoiLegend from '../VoronoiLegend';
+import ChoroLegend from '../ChoroLegend';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -66,7 +72,7 @@ const PublicMapView = () => {
 
   let likes = [];
   let dislikes = [];
-
+  
   let currLiked = false;
   let currDisliked = false;
   /*if(store && store.currentMap && store.currentMap.reactions && auth.user !== null){
@@ -93,9 +99,14 @@ const PublicMapView = () => {
   //   setLiked(likes.includes(auth.user?.username));
   //   setDisliked(dislikes.includes(auth.user?.username));
   // }, [likes, dislikes, auth.user?.username]);
-  console.log(store.currentMap)
+  //console.log(store.currentMap)
   if (!store.currentMap || loading) {
-    return <div>Loading...</div>; // or any loading indicator
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
   let map = store.currentMap;
   likes = store.currentMap.reactions.likes;
@@ -116,7 +127,7 @@ const PublicMapView = () => {
       }
       setLiked(true)
       likes.push(auth.user.username)
-      console.log("this is likes in public map view: ",likes)
+      //console.log("this is likes in public map view: ",likes)
       store.updateMapReaction(map,likes,dislikes,false,null)
     }
     else{
@@ -154,15 +165,20 @@ const PublicMapView = () => {
   }
 
   const handleFork = async () => {
-    console.log("Forking")
+    //console.log("Forking")
     await store.handleFork()
-    console.log(store.currentMap._id)
+    //console.log(store.currentMap._id)
     navigate(`/editMap?id=${store.currentMap._id}`)
   }
-  const DotLayer = ({ typeData, regionData }) => {
+  const DotLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text }) => {
     const leafletMap = useMap();
  
     useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
       leafletMap.invalidateSize();
       let dotLayer;
       if(typeData.features){
@@ -170,7 +186,7 @@ const PublicMapView = () => {
           pointToLayer: function (feature, latlng) {
             return L.circleMarker(latlng, {
                 radius: 3,
-                fillColor: "#ff24bd",
+                fillColor: typeSpecific.dotColor,
                 color: "#000",
                 weight: 1,
                 opacity: 1,
@@ -183,12 +199,24 @@ const PublicMapView = () => {
       const regionLayer = L.geoJSON(regionData, {
         style: function (feature) {
             switch (feature.geometry.type) {
-                case 'Polygon':
+              case 'Polygon':
                 case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: fill.fillOpacity, };
                 case 'LineString':
                 case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: 0.01, };
                 default:
                     return {}; // Point geometries, if any, are already handled in dot density layer
             }
@@ -196,13 +224,42 @@ const PublicMapView = () => {
         // Ensure that no default marker is created for point features
         pointToLayer: function (feature, latlng) {
           return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
+            }).join(""), {maxHeight: 200}
+          )
         }
       }).addTo(leafletMap);
       try{
         leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       if(typeData.features) dotLayer.bringToFront();
   
@@ -210,23 +267,28 @@ const PublicMapView = () => {
         if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, leafletMap]);
+    }, [typeData, regionData, leafletMap, stroke, fill, typeSpecific, text]);
   
     return null;
   };
-  const SpikeLayer = ({ typeData, regionData }) => {
+  const SpikeLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text}) => {
     const leafletMap = useMap();
  
     useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
       leafletMap.invalidateSize();
       let spikeFeatureGroup; 
       if(typeData){
         spikeFeatureGroup = L.featureGroup().addTo(leafletMap);
         typeData.forEach(spike => {
           const spikeLayer = L.polygon(spike.map(point => [point.lat, point.lng]), {
-            color: '#ff24bd',
-            fillColor: '#ff24bd',
-            fillOpacity: 0.1  // Reduced opacity for more transparency
+            color: '#000',
+            fillColor: typeSpecific.spikeColor,
+            fillOpacity: 0.5  // Reduced opacity for more transparency
           });
           spikeLayer.addTo(spikeFeatureGroup);
         });
@@ -236,10 +298,22 @@ const PublicMapView = () => {
             switch (feature.geometry.type) {
                 case 'Polygon':
                 case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: fill.fillOpacity, };
                 case 'LineString':
                 case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
+                    return { stroke: stroke.hasStroke,
+                      color: stroke.strokeColor,
+                      weight: stroke.strokeWeight,
+                      opacity: stroke.strokeOpacity,
+                      fill: true,
+                      fillColor: fill.fillColor,
+                      fillOpacity: 0.01, };
                 default:
                     return {}; // Point geometries, if any, are already handled in dot density layer
             }
@@ -247,13 +321,42 @@ const PublicMapView = () => {
         // Ensure that no default marker is created for point features
         pointToLayer: function (feature, latlng) {
           return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
+            }).join(""), {maxHeight: 200}
+          )
         }
       }).addTo(leafletMap);
       try{
         leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       if(typeData) spikeFeatureGroup.bringToFront();
   
@@ -261,93 +364,307 @@ const PublicMapView = () => {
         if(typeData) spikeFeatureGroup.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, leafletMap]);
+    }, [typeData, regionData, leafletMap, stroke, fill, typeSpecific, text]);
   
     return null;
   };
-  // const ChloroLayer = ({ typeData, regionData }) => {
-  //   const leafletMap = useMap();
+  const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text, typeSpecific }) => {
+    const leafletMap = useMap();
  
-  //   useEffect(() => {
-  //     leafletMap.invalidateSize();
-  //     let dotLayer;
-  //     if(typeData.features){
-  //       dotLayer = L.geoJSON(typeData, {
-  //         pointToLayer: function (feature, latlng) {
-  //           return L.circleMarker(latlng, {
-  //               radius: 3,
-  //               fillColor: "#ff24bd",
-  //               color: "#000",
-  //               weight: 1,
-  //               opacity: 1,
-  //               fillOpacity: 0.8
-  //           })
-  //         },
-  //       }).addTo(leafletMap);
-  //     }
+    useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
+      leafletMap.invalidateSize();
+
+      const getColor = (d, colorObject) => {
+        let temp = {...colorObject}
+        delete temp.isString;
+        const keys = Object.keys(temp).map(Number).sort((a, b) => b - a);
+        for (let i = 0; i < keys.length; i++) {
+            if (d > keys[i]) {
+                return temp[keys[i]];
+            }
+        }
+        return temp[keys[0]];
+      };
+
+      function convertStringToNumber(inputString) {
+        const editedString = inputString.replace(/,/g, '').replace(/%/g, '');
+        let isNegative = false;
+        let numberString = editedString;
+
+        if (editedString.includes('-')) {
+          isNegative = true;
+          numberString = editedString.replace('-', '');
+        }
       
-  //     const regionLayer = L.geoJSON(regionData, {
-  //       style: function (feature) {
-  //           switch (feature.geometry.type) {
-  //               case 'Polygon':
-  //               case 'MultiPolygon':
-  //                   return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-  //               case 'LineString':
-  //               case 'MultiLineString':
-  //                   return { color: "#f55", weight: 2, opacity: 0.8 };
-  //               default:
-  //                   return {}; // Point geometries, if any, are already handled in dot density layer
-  //           }
-  //       },
-  //       // Ensure that no default marker is created for point features
-  //       pointToLayer: function (feature, latlng) {
-  //         return null;
-  //       }
-  //     }).addTo(leafletMap);
-  //     try{
-  //       leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
-  //     }
-  //     catch (err){
-  //       console.log(err)
-  //     }
-  //     if(typeData.features) dotLayer.bringToFront();
+        // Convert string to number
+        let result = parseFloat(numberString);
+      
+        // Multiply by -1 for negative numbers
+        if (isNegative) {
+          result *= -1;
+        }
+      
+        if (!isNaN(result)) {
+          return result;
+        } else {
+          //console.log("ERROR", inputString)
+          return null; 
+        }
+      }
+      
+      let flag = typeData.isString
+      let coloring = typeData;
+      const regionLayer = L.geoJSON(regionData, {
+        style: function (feature) {
+            let fillColor;
+            let propertyValue;
+            if (flag){
+              fillColor = coloring[feature.properties[property]];;
+            }
+            else if(typeof(feature.properties[property]) === 'string'){
+                propertyValue = convertStringToNumber(feature.properties[property]);
+            }
+            else{
+                propertyValue = feature.properties[property];
+            }
+            if (!flag){
+              fillColor = getColor(propertyValue, coloring);
+            }
+
+          
+            return {
+              fillColor,
+              stroke: stroke.hasStroke,
+              weight: stroke.strokeWeight,
+              opacity: stroke.strokeOpacity,
+              color: stroke.strokeColor,
+              fillOpacity: fill.fillOpacity,
+            };
+        },
+        pointToLayer: function (feature, latlng) {
+          return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
+            }).join(""), {maxHeight: 200}
+          )
+        }
+      }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
+      }
+      catch (err){
+        //console.log(err)
+      }
+      // if(typeData.features) dotLayer.bringToFront();
   
-  //     return () => {
-  //       if(typeData.features) dotLayer.remove();
-  //       regionLayer.remove();
-  //     };
-  //   }, [typeData, regionData, leafletMap]);
+      return () => {
+        // if(typeData.features) dotLayer.remove();
+        regionLayer.remove();
+      };
+    }, [typeData, regionData, property, leafletMap, stroke, fill, text, typeSpecific]);
   
-  //   return null;
-  // };
+    return null;
+  };
+
+  const VoronoiLayer = ({ geojson, fill, dot, stroke, text, value }) => {
+    const leafletMap = useMap();
+ 
+    useEffect(() => {
+      leafletMap.invalidateSize();
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
+
+      const regionLayer = L.geoJSON(geojson, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon'){
+            layer.setStyle({
+                stroke: stroke.hasStroke,
+                color: stroke.strokeColor,
+                weight: stroke.strokeWeight,
+                opacity: stroke.strokeOpacity,
+                fill: fill.hasFill,
+                fillColor: fill.fillColor,
+                fillOpacity: fill.fillOpacity,
+              });
+          }
+
+           // // Customize popup content
+           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+              if(feature.geometry.type === 'Point'){
+                return (
+                  ReactDOMServer.renderToString(
+                  <div className="leaflet-popup-content">
+                    <p style={textStyles}>{'Represents: ' + value}</p>
+                  </div>)
+                );
+                // return (
+                //   ReactDOMServer.renderToString(
+                //       <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                //           <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{'Represents: ' + value}</Typography>
+                //       </Box>
+                //   ))
+              }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                  <div className="leaflet-popup-content">
+                    <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                  </div>)
+                );
+                // return (
+                // ReactDOMServer.renderToString(
+                //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
+                //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
+                //     </Box>
+                // ))
+              }
+              
+            
+        }).join(""), {
+            maxHeight: 200
+        });
+        },
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, {
+              radius: 4,
+              fillColor: dot,
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+          });
+      }
+      }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(geojson).getBounds());
+      }
+      catch (err){
+        //console.log(err)
+      }
+      // if(typeData.features) dotLayer.bringToFront();
+  
+      return () => {
+        // if(typeData.features) dotLayer.remove();
+        regionLayer.remove();
+      };
+    }, [geojson, leafletMap, fill, dot, stroke, text, value]);
+  
+    return null;
+  };
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
+      let fill = store.currentMap.graphics.fill;
+      let stroke = store.currentMap.graphics.stroke;
+      let typeSpecific = store.currentMap.graphics.typeSpecific;
+      let text = store.currentMap.graphics.text
       let data = {
         type: 'FeatureCollection',
         features: store.currentMap.graphics.typeSpecific.dotPoints[0],
       };
-      return <DotLayer typeData={data} regionData={map.graphics.geojson}/>;
+      return <DotLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
 
     }
     else if(map.type === "Spike Map"){
         let data = store.currentMap.graphics.typeSpecific.spikeData;
-        return <SpikeLayer typeData={data} regionData={map.graphics.geojson}/>;
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let typeSpecific = store.currentMap.graphics.typeSpecific;
+        let text = store.currentMap.graphics.text
+        return <SpikeLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
     }
     else if(map.type === "Heat Map"){
         if(map.graphics.geojson){
             return <HeatMap geojsonData ={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
         }
     }
-    else if(map.type === "Chloropleth Map"){
-        return <ChloroplethMap/>
+    else if(map.type === "Choropleth Map"){
+        //console.log("SHOWING MAP")
+        let data = store.currentMap.graphics.typeSpecific.chloroLegend;
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let typeSpecific = store.currentMap.graphics.typeSpecific;
+        let text = store.currentMap.graphics.text
+        return <ChloroLayer typeData = {data} regionData={map.graphics.geojson} property = {map.graphics.typeSpecific.property} typeSpecific={typeSpecific} fill={fill} stroke={stroke} text={text}/>
     }
     else if(map.type === "Voronoi Map"){
-      console.log(map)
-        return <VoronoiMap />
+        let dot = store.currentMap.graphics.typeSpecific.voronoiColor
+        let fill = store.currentMap.graphics.fill;
+        let stroke = store.currentMap.graphics.stroke;
+        let text = store.currentMap.graphics.text
+        let geojson = store.currentMap.graphics.geojson;
+        let value = store.currentMap.graphics.typeSpecific.voronoiValue;
+        return <VoronoiLayer geojson={geojson} fill={fill} stroke={stroke} text={text} dot={dot} value={value}/>
     }
     return null;
   }
   
+  let DynamicLegend = null;
+  let graphics = store.currentMap.graphics
+  let colors = {
+    TextColor: graphics.text.textColor,
+    FillColor: graphics.fill.fillColor,
+    StrokeColor: graphics.stroke.strokeColor,
+    DotMap: graphics.typeSpecific.dotColor,
+    SpikeMap: graphics.typeSpecific.spikeColor,
+    VoronoiMap: graphics.typeSpecific.voronoiColor,
+  }
+  let legendFields = graphics.typeSpecific.chloroLegend
+  let voronoiValue =  graphics.typeSpecific.voronoiValue
+  if(store.currentMap.type === "Spike Map"){
+      DynamicLegend = <SpikeLegend colors={colors}/>
+  }
+  else if(store.currentMap.type === "Dot Distribution Map"){
+      DynamicLegend = <DotDistLegend colors={colors}/>
+  }
+  else if(store.currentMap.type === "Voronoi Map"){
+      DynamicLegend = <VoronoiLegend 
+                          colors={colors}
+                          voronoiValue={voronoiValue}
+                          setVoronoiValue={null}/>
+  }
+  else if(store.currentMap.type === "Choropleth Map"){
+      //console.log(legendFields)
+      DynamicLegend = <ChoroLegend
+          legendFields = {legendFields}
+          legendAnchors = {null}
+          handleLegendClick = {null}
+          handleClose = {null}
+          handleNewColor = {null}>
+          </ChoroLegend>
+  }
 
   let forkButton = ""
   let commentSection = ""
@@ -413,6 +730,18 @@ const PublicMapView = () => {
                                 <Typography>Base Map</Typography>
                             </BaseMapBlur>
                         </BaseMapContainer>
+
+                        <LegendContainer id="legendcontainer" sx={store.currentMap.graphics.legend.hideLegend? {zIndex:-100} : {zIndex:1000}} style={{
+                                maxHeight: '500px',
+                                maxWidth: '500px',
+                                overflowY: 'auto',
+                            }}>
+                            <Typography>{store.currentMap.graphics.legend.legendTitle}</Typography>
+                            <div id="legenddiv" style={{ overflow: 'auto' }}>
+                            {DynamicLegend}
+                            </div>
+                            
+                        </LegendContainer>
                       </ControlGrid>
                 </MapContainer>
             </Grid>
@@ -450,7 +779,8 @@ const PublicMapView = () => {
             }} 
             onClick = {handleOpenExport}
             data-testid="export-button" >
-            <StyledTypography variant="h5">
+            <StyledTypography variant="h5" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+              <FileDownloadIcon/>
               Export
             </StyledTypography>
           </StyledForkButton>
@@ -472,7 +802,12 @@ const PublicMapView = () => {
     );
   }
   else{
-    return <div>Loading...</div>
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
 };
 

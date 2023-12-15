@@ -6,14 +6,11 @@ const GraphicsSchema = new Schema(
         geojson: {type:Buffer, required: true},
         legend:{
             hideLegend: {type: Boolean, required: true},
-            fillColor: {type: String, required: true},
-            borderColor: {type: String, required:true},
-            borderWidth: {type: Number, required:true},
-            title: {type: String, required: true},
-            fields:[{
-                fieldColor:{type: String, required: true},
-                fieldText:{type: String, required: true}
-            }]
+            // legendFillColor: {type: String, required: true},
+            // legendBorderColor: {type: String, required:true},
+            // legendBorderWidth: {type: Number, required:true},
+            legendTitle: {type: String, required: true},
+            legendFields:{type: Object, required:false}
         },
         typeSpecific:{
             selectAll: {type: Boolean, required: true},
@@ -28,17 +25,25 @@ const GraphicsSchema = new Schema(
             spikeData: {type: [[Object]], required:false},
             spikeLegend: {type: [Number], required:false},
             chloroLegend: {type: Object, required:false},
+            voronoiBound: {type: Object, required: false},
+            voronoiColor:{type: String, required: true},
+            voronoiValue:{type: String, required: true},
         },
-        region:{
-            fillColor: {type: String, required: true},
-            borderColor: {type: String, required:true},
-            borderWidth: {type: Number, required:true},
-            size: {type: Number, required: true},
+        stroke:{
+            hasStroke: {type: Boolean, required: true},
+            strokeColor:  {type: String, required: true},
+            strokeWeight:  {type: Number, required: true},
+            strokeOpacity: {type: Number, required: true},            
+        },
+        fill:{
+            hasFill: {type: Boolean, required: true},
+            fillColor:  {type: String, required: true},
+            fillOpacity:  {type: Number, required: true},
         },
         text:{
-            color: {type: String, required: true},
-            size: {type: Number, required: true},
-            font: {type: String, required: true}
+            textColor: {type: String, required: true},
+            textSize: {type: Number, required: true},
+            textFont: {type: String, required: true}
         },
         ownerUsername:{type: String, required: true},
     }

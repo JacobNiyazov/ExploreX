@@ -4,11 +4,128 @@ import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
 
-const DotDistMap = () => {
+const DotDistMap = ({
+  colors,
+  sizes,
+  opacities,
+  hasStroke,
+  hasFill,
+  handlePropertyDataLoad,
+  propertyData
+}) => {
 
   const { store } = useContext(GlobalStoreContext);
   const storeRef = useRef(store);
   const map = useMap();
+
+  useEffect(() => {
+    const regionLayerGroup = L.featureGroup().addTo(map);
+    const updateLayers = (geojsonData) => {
+      // Clear existing layers
+      regionLayerGroup.clearLayers();
+      let i = 0;
+      L.geoJSON(geojsonData, {
+        onEachFeature: function (feature, layer) {
+          if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+            if(hasFill){
+              layer.setStyle({
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: opacities.FillOpacity,
+              });
+            }
+            else{
+              layer.setStyle({
+                stroke: hasStroke,
+                color: colors.StrokeColor,
+                weight: sizes.StrokeWeight,
+                opacity: opacities.StrokeOpacity,
+                fill: true,
+                fillColor: colors.FillColor,
+                fillOpacity: 0.01,
+              });
+            }
+            
+
+            let tempi = i
+            layer.on({
+                click: (e) => {
+                    if(feature.geometry.type !== 'Point'){
+                        L.DomEvent.stopPropagation(e);
+                        // Here we set the index to tempi
+                        handlePropertyDataLoad(tempi)
+                    }
+                },
+              })
+            }
+            i+=1
+          },
+          pointToLayer: function (feature, latlng) {
+            return null;
+          }
+      }).addTo(regionLayerGroup);
+      regionLayerGroup.bringToBack();
+      //try{
+      //  map.fitBounds(L.geoJSON(geojsonData).getBounds());
+      //}
+      //catch (err){
+      //  //console.log(err)
+      //}
+    }
+    
+    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    updateLayers(geojsonData);
+    map.on('click',function(e) {
+      L.DomEvent.stopPropagation(e);
+      //console.log('clicked on map', e);
+      // Here we set the index to null
+      handlePropertyDataLoad(null)
+    });
+    return () => {
+      
+      // dotsLayerGroup.remove();
+      regionLayerGroup.remove();
+      //map.eachLayer(function (layer) {map.removeLayer(layer);});
+      map.off('click')
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, store.currentMap.graphics.geojson]);
+  
+  useEffect(() =>{
+    const propertyLayerGroup = L.featureGroup().addTo(map);
+    if(store.currentMap && propertyData.featureIndex !== null){
+      let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
+      L.geoJSON(selected, {
+        onEachFeature: function (feature, layer) {
+          //console.log(":(")
+          if(colors.StrokeColor === '#000000'){
+            layer.setStyle({
+              color: "#FFFFFF",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+          else{
+            layer.setStyle({
+              color: "#000000",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+        }
+      }).addTo(propertyLayerGroup);
+    }
+    propertyLayerGroup.bringToFront();
+    return () => {
+      propertyLayerGroup.remove();
+    };
+    
+  }, [propertyData, store, map, colors.StrokeColor])
 
   useEffect(() => {
     function calculateMedian(values) {
@@ -48,7 +165,9 @@ const DotDistMap = () => {
               if (!isNaN(numericValue) && numericValue > 0) {
                   count = Math.ceil(numericValue / scale); // Use dynamic scale
               }
-  
+              if (isNaN(numericValue) || numericValue <= 0) {
+                count = 0;
+              }
               if (feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon') {
                   if (count === 1) {
                       // Place a single point at the centroid for polygons
@@ -100,6 +219,7 @@ const DotDistMap = () => {
       if(isNaN(scale)){
         scale = 0;
       }
+
   
       return {
           type: 'FeatureCollection',
@@ -112,48 +232,27 @@ const DotDistMap = () => {
     const updateLayers = (geojsonData, dotDensityData) => {
       // Clear existing layers
       dotsLayerGroup.clearLayers();
+      // regionLayerGroup.clearLayers();
       L.geoJSON(dotDensityData, {
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, {
               radius: 3,
-              fillColor: "#ff24bd",
+              fillColor: colors.DotMap,
               color: "#000",
               weight: 1,
               opacity: 1,
               fillOpacity: 0.8
-          })
+          }).bringToFront();
         },
       }).addTo(dotsLayerGroup);
-      L.geoJSON(geojsonData, {
-        style: function (feature) {
-            switch (feature.geometry.type) {
-                case 'Polygon':
-                case 'MultiPolygon':
-                    return { color: "#555", weight: 2, opacity: 0.6, fillOpacity: 0.1 };
-                case 'LineString':
-                case 'MultiLineString':
-                    return { color: "#f55", weight: 2, opacity: 0.8 };
-                default:
-                    return {}; // Point geometries, if any, are already handled in dot density layer
-            }
-        },
-        // Ensure that no default marker is created for point features
-        pointToLayer: function (feature, latlng) {
-          return null;
-        }
-      }).addTo(map);
-      try{
-        map.fitBounds(L.geoJSON(geojsonData).getBounds());
-      }
-      catch (err){
-        console.log(err)
-      }
+      dotsLayerGroup.bringToFront();
     }
-    var geojsonData = storeRef.current.currentMap.graphics.geojson;
+    var geojsonData = store.currentMap.graphics.geojson;
     var propertyKey = storeRef.current.currentMap.graphics.typeSpecific.property;
     var dotDensityData = convertToDotDensity(geojsonData, propertyKey);
     var scale = dotDensityData.scale;
     delete dotDensityData['scale'];
+    store.updateLocalMap(dotDensityData['features'], scale);
     if(storeRef.current.currentMap.graphics.typeSpecific.dotPoints === null || storeRef.current.currentMap.graphics.typeSpecific.dotScale === null){
       storeRef.current.updateMapGraphics(null, null, dotDensityData['features'], scale, null, null);
     }
@@ -161,9 +260,17 @@ const DotDistMap = () => {
 
     return () => {
       dotsLayerGroup.remove();
+      // regionLayerGroup.remove();
     };
-  }, [map, storeRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, store.currentMap.graphics.geojson, colors.DotMap]);
 
+  
+
+  useEffect(()=>{
+    map.fitBounds(L.geoJSON(storeRef.current.currentMap.graphics.geojson).getBounds());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map])
   return null;
 }
 

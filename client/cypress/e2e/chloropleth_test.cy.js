@@ -1,9 +1,9 @@
-describe('Chloropleth Map Tests', () => {
+describe('Choropleth Map Tests', () => {
     beforeEach(() => {
       cy.visit('http://localhost:3000');
     });
   
-    it('should create Chloropleth map', () => {
+    it('should create Choropleth map', () => {
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();
@@ -46,19 +46,20 @@ describe('Chloropleth Map Tests', () => {
       /* ==== End Cypress Studio ==== */
     });
 
-    it('should delete created Chloropleth map', () =>{
+    it('should delete created Choropleth map', () =>{
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();
       /* ==== Generated with Cypress Studio ==== */
       cy.get('[data-testid="AccountCircleIcon"]').click();
       cy.get('[data-testid="My Profile"]').click();
+      cy.wait(200);
       cy.get('[data-testid="drafts-tab"]').click();
       cy.get('.MuiCardActions-root > [data-testid="delete-button"] > [data-testid="DeleteIcon"]').last().click();
       cy.get('[data-testid="confirm-delete-button"]').click();
       /* ==== End Cypress Studio ==== */
     })
-    it('should fail to create Chloropleth map', () => {
+    it('should fail to create Choropleth map', () => {
       cy.get('[data-testid="username-field"]').type('cypress');
       cy.get('[data-testid="password-field"]').type('abcd1234');
       cy.get('[data-testid="login-button"]').click();
@@ -96,7 +97,7 @@ describe('Chloropleth Map Tests', () => {
 
       /* ==== Generated with Cypress Studio ==== */
       cy.get('body').click();
-      cy.get('[data-value="Start with empty map"]').click();
+      cy.get('[data-value="WD21CD"]').click();
       cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root > .MuiButtonBase-root').click();
       /* ==== End Cypress Studio ==== */
       /* ==== Generated with Cypress Studio ==== */

@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
 import { useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from '@mui/material/Box';
 
 
 import {
@@ -19,8 +21,24 @@ const LoginScreen = () => {
   const { store } = useContext(GlobalStoreContext);
   const { auth } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
+
+
+  const handleLogin = useCallback((e) => {
+    e.preventDefault();
+    auth.loginUser(username, password)
+      .then((val) => {
+        store.setCurrentPage(store.currentPageType.mapFeed);
+        navigate("/feed");
+      })
+      .catch((error) => store.displayModal(
+        <div>
+          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem', width: '120%' }}>{error.response.data.errorMessage}</p>
+        </div>, false
+      ));
+  }, [auth, username, password, store, navigate]);
+
 
   useEffect(() => {
     const waitForAuthCheck = async () => {
@@ -41,25 +59,30 @@ const LoginScreen = () => {
     waitForAuthCheck();
   }, [auth, navigate, store]);
 
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter') {
+       e.preventDefault();
+        handleLogin(e);
+      }
+    };
+  
+    document.body.addEventListener('keypress', handleKeyPress);
+    
+    return () => {
+      document.body.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [handleLogin]);
+
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    auth.loginUser(username,password)
-    .then( 
-      (val) => {
-        store.setCurrentPage(store.currentPageType.mapFeed)
-        navigate("/feed")
-      })
-    .catch(
-      (error) => store.displayModal(<div>
-        <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-        <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
-      </div>, false));
-
-  };
 
   const handleForgot = (e) => {
     store.setCurrentPage(store.currentPageType.forgotPassScreen);
@@ -73,6 +96,7 @@ const LoginScreen = () => {
     auth.guestLogin();
   };
   
+
   return (
     <div style = {launchStyle.container}>
       <div style = {launchStyle.leftSide}>

@@ -46,7 +46,7 @@ export const BaseMapSwitch = styled(Switch)({
 
 export const BaseMapContainer = styled(Box)({
     gridColumnStart: '4',
-    gridRowStart:'1',
+    gridRowStart:'1.5',
     marginTop: '10px',
     marginLeft: '33%',
     zIndex:'1000',
@@ -62,7 +62,7 @@ export const BaseMapBlur = styled(Box)({
 
 export const LegendContainer = styled(Box)({
     gridColumnStart: '4',
-    gridRowStart:'3',
+    gridRowStart:'2',
     display: 'flex',
     flexDirection: 'column',
     gap: "10px",
@@ -73,7 +73,8 @@ export const LegendContainer = styled(Box)({
     borderRadius: "10px",
     marginRight: "10px",
     alignItems: 'center',
-    overflow: 'auto'
+    overflow: 'auto',
+    justifyContent: 'center'
 })
 
 export const LegendTextField = styled(TextField)({
@@ -91,7 +92,27 @@ export const LegendTextField = styled(TextField)({
     },
     input:{
         textAlign: 'center'
-    }
+    },
+
+});
+
+export const LegendBox = styled(Box)({
+    '& label.Mui-focused': {
+      color: "#ff24bd"
+    },
+    '& label': {
+      color: "#ff24bd"
+    },
+    '& .MuiInputBase-root':{
+      color: "#ff24bd",
+    },
+    '& .css-v4u5dn-MuiInputBase-root-MuiInput-root:after':{
+      borderBottom: "2px solid #ff24bd"
+    },
+    input:{
+        textAlign: 'center'
+    },
+    padding: '10px'
 
 });
 

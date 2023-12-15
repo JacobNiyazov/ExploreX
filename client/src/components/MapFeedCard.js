@@ -3,7 +3,7 @@ import React, { useState, useContext } from 'react';
 import { Card, CardContent, CardMedia } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { StyledCard, TitleTypography, AuthorTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
+import { StyledCard, TitleTypography, AuthorTypography, PublishedDateTypography, StyledCardMedia, StyledCardContent, ReactionButton, ReactionCount, ContentContainer, TextContainer } from './StyleSheets/MapFeedStyles';
 import { StyledBox } from './StyleSheets/PublicMapStyles';
 import { GlobalStoreContext } from '../store'
 import { useNavigate } from 'react-router-dom';
@@ -94,6 +94,9 @@ const MapFeedCard = ({ map, id }) => {
             <AuthorTypography variant="body2" component="div">
               by {map.ownerUsername}
             </AuthorTypography>
+            <PublishedDateTypography variant="body2" component="div">
+              {(new Date(map.publishDate)).toLocaleDateString()}
+            </PublishedDateTypography>
           </TextContainer>
           <StyledBox>
             <ReactionButton disabled={auth.isGuest} data-testid="feed-like-button" selected={liked} onClick={handleLikeToggle}>

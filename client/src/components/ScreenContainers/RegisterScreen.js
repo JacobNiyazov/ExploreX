@@ -1,8 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import launchStyle from '../StyleSheets/launchStyle'; 
 import image from '../images/splashImage.png';
 import { GlobalStoreContext } from '../../store';
 import AuthContext from '../../auth'; 
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import {
   Typography,
@@ -24,6 +26,29 @@ const RegisterScreen = () => {
 
   const navigate = useNavigate();
 
+  const handleRegister = useCallback((e) => {
+    e.preventDefault();
+    //alert(email + " " + username  + " " + password + " " + confirmPassword)
+    auth.registerUser(email, username,password,confirmPassword)
+    .then((val) => {
+      navigate("/feed");
+
+      store.setModal(<div>
+        <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
+        <p style={{ margin: '5px 0', fontSize: '1rem' }}>Not sure where to get started? Check out the FAQ found in the profile menu!</p>
+      </div>, store.currentPageType.mapFeed, false);
+    })
+    .catch(
+      (error) => {
+        store.displayModal(<div>
+          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
+          <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
+        </div>, false);
+      } 
+    )
+  }, [auth, email, confirmPassword, username, password, store, navigate]);
+  
+
   useEffect(() => {
     const waitForAuthCheck = async () => {
         if (auth.loggedIn === undefined) {
@@ -43,31 +68,29 @@ const RegisterScreen = () => {
     waitForAuthCheck();
   }, [auth, navigate, store]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  const handleRegister = (e) => {
-    e.preventDefault();
-    //alert(email + " " + username  + " " + password + " " + confirmPassword)
-    auth.registerUser(email, username,password,confirmPassword)
-    .then((val) => {
-      navigate("/feed");
+  useEffect(() => {
+    const handleKeyPress = (e) => {
 
-      store.setModal(<div>
-        <h4 style={{ color: 'green', margin: '0', fontSize: '1.1rem' }}>Welcome to ExploreX!</h4>
-        <p style={{ margin: '5px 0', fontSize: '1rem' }}>Not sure where to get started? Check out the FAQ found in the profile menu!</p>
-      </div>, store.currentPageType.mapFeed, false);
-    })
-    .catch(
-      (error) => {
-        store.displayModal(<div>
-          <h4 style={{ color: '#f44336', margin: '0', fontSize: '1.1rem' }}>Try Again</h4>
-          <p style={{ margin: '5px 0', fontSize: '1rem', width:'120%' }}>{error.response.data.errorMessage}</p>
-        </div>, false);
+      if (e.key === 'Enter') {
+       e.preventDefault();
+        handleRegister(e);
       }
-      
-  )
+    };
+    document.body.addEventListener('keypress', handleKeyPress);
+    
+    return () => {
+      document.body.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [handleRegister]);
 
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
+        <CircularProgress style={{'color':'#ff24bd'}}/>
+        Loading...
+      </Box>
+    );
   }
 
   

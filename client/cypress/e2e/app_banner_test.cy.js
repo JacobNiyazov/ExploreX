@@ -20,6 +20,8 @@ describe('App Banner Tests', () => {
     cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' MAP eXample ').type('{enter}');
     
     cy.get('[data-testid="search-bar"] > .MuiInputBase-input').clear().type(' Wrong ').type('{enter}');
+    cy.wait(2000)
+
     cy.get('.css-platyw').should('be.visible');
     cy.get('[data-testid="user-icon"]').should('be.visible');
     cy.get('[data-testid="user-icon"]').click();
@@ -38,7 +40,7 @@ describe('App Banner Tests', () => {
     cy.get('.MuiGrid-container > :nth-child(1)').should('be.visible');
     cy.get('[data-testid="user-icon"]').click();
     cy.get('[data-testid="FAQ"]').click();
-    cy.get(':nth-child(2) > :nth-child(3) > #faq4-header > .MuiAccordionSummary-content > .MuiTypography-root').should('have.text', 'More questions?');
+    cy.get(':nth-child(2) > :nth-child(3) > #faq4-header > .MuiAccordionSummary-content > .MuiTypography-root').should('have.text', 'Can I change the property of my map?');
 
     // cy.get('form > .MuiTypography-h5').should('have.text', 'Welcome, Map Lovers!');
     /* ==== End Cypress Studio ==== */

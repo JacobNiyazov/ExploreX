@@ -8,6 +8,8 @@ import ListItem from '@mui/material/ListItem';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import { Switch } from '@mui/material';
 
 
 export const SidePanelGrid = styled(Grid)({
@@ -67,7 +69,43 @@ export const Buttons = styled(Button)({
   color: "#ff24bd",
   fontSize: "25px",
   textTransform: 'none',
-  fontStyle: 'inherit'
+  fontStyle: 'inherit',
+});
+
+export const DeleteButton = styled(Button)({
+  backgroundColor: "#000000",
+  border: "1px solid #ff24bd",
+  borderRadius: "10px",
+  textAlign: "center",
+  color: "#ff24bd",
+  fontSize: "15px",
+  textTransform: 'none',
+  fontStyle: 'inherit',
+  padding: "0px",
+  marginLeft: "8px",
+  maxWidth: '30px', 
+  maxHeight: '30px', 
+  minWidth: '30px', 
+  minHeight: '30px',
+  '&:hover': {
+    backgroundColor: '#404040',
+  },
+});
+
+export const CreateButton = styled(Button)({
+  backgroundColor: "#000000",
+  border: "1px solid #ff24bd",
+  borderRadius: "10px",
+  textAlign: "center",
+  color: "#ff24bd",
+  fontSize: "15px",
+  textTransform: 'none',
+  fontStyle: 'inherit',
+  padding: "0px",
+  marginLeft: "8px",
+  '&:hover': {
+    backgroundColor: '#404040',
+  },
 });
 
 export const ExpandMore = styled(ExpandMoreIcon)({
@@ -178,3 +216,42 @@ export const SelectAllCheck = styled(Checkbox)({
     color: "#ff24bd",
   },
 });
+
+export const PropertyDetails = styled(AccordionDetails)({
+  maxHeight: '250px',
+  overflow: 'auto',
+  '&::-webkit-scrollbar': {
+    width: '6px',
+  },
+  '&::-webkit-scrollbar-track': {
+    boxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#FF76D6',
+    borderRadius: '10px',
+    '&:hover': {
+      backgroundColor: '#FF76D6',
+    },
+  },
+  // Styles for Firefox
+  scrollbarWidth: 'thin',
+  scrollbarColor: '#FF76D6 rgba(0,0,0,0.3)',
+});
+
+export const VoronoiSwitch = styled(Switch)({
+  '& .MuiSwitch-colorPrimary':{
+      color: '#404040',
+
+      "&.Mui-checked": {
+          color:'#ff24bd',
+      }
+  },
+  '& .css-5ryogn-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track':{
+      backgroundColor:"#FFFFFF",
+  },
+  '& .MuiSwitch-track':{
+    backgroundColor:"#ff24bd",
+  },
+  marginLeft: 'auto'
+})

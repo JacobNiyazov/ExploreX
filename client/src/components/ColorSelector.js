@@ -4,12 +4,8 @@ import Box from '@mui/material/Box';
 import { ChromePicker } from "react-color";
 import Popover from '@mui/material/Popover';
 
-const ColorSelector = ({colors, setColors, colorPicker, setColorPicker, anchors, setAnchors, label}) =>{
+const ColorSelector = ({colors, setColors, anchors, setAnchors, label}) =>{
     const handleClick = (event) => {
-        setColorPicker({
-            ...colorPicker,
-            [label]: !colorPicker[label]
-        });
         setAnchors({
             ...anchors,
             [label]: event.currentTarget
@@ -53,7 +49,7 @@ const ColorSelector = ({colors, setColors, colorPicker, setColorPicker, anchors,
                 }}>
                 <ChromePicker
                     color={colors !== null && colors[label]}
-                    onChange={handleNewColor}
+                    onChangeComplete={handleNewColor}
                     disableAlpha
                     renderers={false}
                 />

@@ -46,7 +46,11 @@ export const AuthorTypography = styled('div')({
   fontSize: '0.9rem',
   color: '#FF76D6',
 });
-
+export const PublishedDateTypography = styled('div')({
+  marginTop:'0.5vh',
+  fontSize: '0.7rem',
+  color: 'grey',
+});
 export const StyledCardMedia = styled('div')({
   height: '200px',  // Adjusted height for image section
   

@@ -8,6 +8,7 @@ import {Grid} from '@mui/material';
 import { StyledButton, StyledFormLabel, StyledRadio} from './StyleSheets/ImportFileModalStyles';
 import styled from '@emotion/styled';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import GlobalStoreContext from '../store';
 import { useNavigate } from 'react-router-dom';
 
@@ -94,11 +95,11 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
         else if(mapType === ""){
             alertModal("Try Again", "There were no map type set.");
         }
-        else if(mapType === "Voronoi Map"){
+        else if(mapType === "Voronoi Map" || mapType === "Native File"){
             store.createMap(files, mapType, fileType)
                 .then((map)=>{
                     onClose();
-                    console.log(map)
+                    //console.log(map)
                     navigate(`/editMap?id=${map._id}`)
                 })
                 .catch((err) => alertModal("Try Again!", err.response.data.errorMessage)); 
@@ -116,7 +117,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
 
     function handleSetMapType(mapType){
         setMapType(mapType)
-        if(mapType === "Voronoi Map"){
+        if(mapType === "Voronoi Map" || mapType === "Native File"){
             setButtonName('Create Map');
         }
         else{
@@ -185,6 +186,16 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
             alertModal("Try Again","Invalid file format! Please select one of the accepted types.")
         }
     }
+    const handleDeleteFile = (index) => {
+        const updatedFiles = [...files];
+        updatedFiles.splice(index, 1);
+        setFiles(updatedFiles);
+    
+        // Remove the corresponding file name from the state
+        const updatedFileNames = [...fileNames];
+        updatedFileNames.splice(index, 1);
+        setFileNames(updatedFileNames);
+      };
     return (     
         <Modal
             data-testid="import-modal"
@@ -213,9 +224,10 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                         {fileNames.length > 0 && (
                         <Box sx={{ color: 'white' }}>
                             {fileNames.map((file, index) => (
-                            <Typography key={index}>
-                                {file}
-                            </Typography>
+                            <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography style={{ marginRight: '10px' }}>{file}</Typography>
+                                <HighlightOffIcon onClick={() => handleDeleteFile(index)} style={{ cursor: 'pointer', color: 'white' }} />
+                            </div>
                             ))}
                         </Box>
                         )}
@@ -234,9 +246,10 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
                             >
                                 <FormControlLabel sx = {{color:"white"}} value = "Heat Map" control={<StyledRadio/>} label="Heat Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Dot Distribution Map"control={<StyledRadio/>} label="Dot Distribution Map" />
-                                <FormControlLabel sx = {{color:"white"}} value = "Chloropleth Map"control={<StyledRadio/>} label="Chloropleth Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Choropleth Map"control={<StyledRadio/>} label="Choropleth Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Voronoi Map" control={<StyledRadio/>} label="Voronoi Map" />
                                 <FormControlLabel sx = {{color:"white"}} value = "Spike Map" control={<StyledRadio/>} label="Spike Map" />
+                                <FormControlLabel sx = {{color:"white"}} value = "Native File" control={<StyledRadio/>} label="Native File" />
                             </RadioGroup>
                         </FormControl>
                     </Grid>

@@ -22,6 +22,9 @@ export const ColorTextField = styled(TextField)({
     '& .css-v4u5dn-MuiInputBase-root-MuiInput-root:after':{
       borderBottom: "2px solid #ff24bd"
     },
+    '& .MuiInputBase-input':{
+      borderBottom: "2px solid #404040"
+    },
     width: "65px",
     input:{
         textAlign: 'right'
