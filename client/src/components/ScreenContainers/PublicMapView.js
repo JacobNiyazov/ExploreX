@@ -625,7 +625,7 @@ const PublicMapView = () => {
           }
           // have to do the store update local map here
           console.log("what the f man PMV: ", heatPoints)
-          store.updateLocalMap(null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
+          
           console.log("updated local map me thinks PMV: ", store.currentMap)
           if(low === null|| med === null|| high === null){
               store.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
@@ -700,7 +700,7 @@ const PublicMapView = () => {
       return () => {
         regionLayer.remove();
       };
-    }, [data, leafletMap, stroke, fill, typeSpecific, text]);
+    }, [data, leafletMap, stroke, fill, typeSpecific, text, colors.lowGradient, colors.mediumGradient, colors.highGradient]);
 
     const extractCoordsFromPolygon = (polygonCoords, intensity) => {
       if (!Array.isArray(polygonCoords)) {
@@ -743,12 +743,12 @@ const PublicMapView = () => {
     }
     else if(map.type === "Heat Map"){
       console.log("HELLUR FROM INSIDE HEAT: ", store.currentMap)
+      let graphics = store.currentMap.graphics
       let data = store.currentMap.graphics.geojson;
       let fill = store.currentMap.graphics.fill;
       let stroke = store.currentMap.graphics.stroke;
       let typeSpecific = store.currentMap.graphics.typeSpecific
       let text = store.currentMap.graphics.text
-
       return <HeatLayer data = {data}
         fill = {fill}
         stroke = {stroke}
