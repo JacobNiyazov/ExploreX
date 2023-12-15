@@ -134,17 +134,27 @@ logoutUser = async (req, res) => {
 resetUserPassword = async (req, res) => {
     try{
         const { userId, token, password } = req.body;
-        console.log(userId + token + password)
+        console.log(userId, " ", token , " ", password)
         let passwordResetToken = await Token.findOne({ userId });
         if (!passwordResetToken) {
-            throw new Error("Invalid or expired password reset token");
+            return res
+            .status(401)
+            .json({
+                success: false,
+                errorMessage: "Invalid or expired password reset token."
+            })
         }
 
         console.log(token)
         console.log(passwordResetToken.token)
         const isValid = await bcrypt.compare(token, passwordResetToken.token);
         if (!isValid) {
-            throw new Error("Invalid or expired password reset token");
+            return res
+            .status(401)
+            .json({
+                success: false,
+                errorMessage: "Invalid or expired password reset token."
+            })
         }
 
         const saltRounds = 10;
@@ -156,10 +166,11 @@ resetUserPassword = async (req, res) => {
             { $set: { passwordHash: hash } },
             { new: true }
         );
+
         await passwordResetToken.deleteOne();
         return res.status(200).json({
             success: true,
-            message: "Password Reset Successfully."
+            message: "Password Reset Successfully.",
         });
     }
     catch (err){
@@ -210,7 +221,7 @@ recoverPassword = async(req,res) => {
         sendEmail(existingUser.email, link);
         return res.status(200).json({
             success: true,
-            message: "An email has been sent successfully."
+            message: "An email has been sent successfully.",
         });
 
     }catch (err) {

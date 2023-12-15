@@ -10,6 +10,7 @@ export const AuthActionType = {
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
     REGISTER_USER: "REGISTER_USER",
+    RECOVER_PASSWORD: "RECOVER_PASSWORD",
     SET_LOGGED_IN: "SET_LOGGED_IN",
     GUEST_LOGIN: "GUEST_LOGIN"
 }
@@ -39,6 +40,13 @@ function AuthContextProvider(props) {
                 });
             }
             case AuthActionType.LOGIN_USER: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: true,
+                    isGuest: false,
+                })
+            }
+            case AuthActionType.RECOVER_PASSWORD: {
                 return setAuth({
                     user: payload.user,
                     loggedIn: true,
@@ -174,18 +182,18 @@ function AuthContextProvider(props) {
     }
 
     auth.resetUserPassword = async function(userId, token, password) {
-        async function asyncResetUserPassword(userId, token, password) {
-            try {
-                const response = await api.resetUserPassword(userId, token, password);
-                if (response.status === 200) {
-                    console.log("SUCCESS");
-                }
-            } catch (error) {
-                console.error("An error occurred while resetting user password:", error);
+        try {
+            const response = await api.resetUserPassword(userId, token, password);
+            if (response.status === 200) {
+                console.log(response)
+                authReducer({
+                    type: AuthActionType.LOGOUT_USER,
+                    payload: null
+                })
             }
+        } catch (error) {
+            throw(error)
         }
-        asyncResetUserPassword()
-
     }
 
     auth.getUserInitials = function() {
