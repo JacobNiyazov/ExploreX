@@ -114,10 +114,22 @@ const VoronoiMap = ({
                                 let geoPoints = geojson.features.filter(feature=>{
                                     return feature.geometry.type === "Point"
                                 })
+
+                                let properties = []
+                                let currFeatures = store.currentMap.graphics.geojson.features;
                                 if(feature.geometry.type !== 'Point'){
                                     geoPoints.push(voronoiPoint)
+                                    for(i = 0; i < currFeatures.length; i++){
+                                        properties.push({...currFeatures[i].properties})
+                                    }
+                                    properties.push({})
                                 }
                                 else{
+                                    for(i = 0; i < geoPoints.length; i++){
+                                        if(JSON.stringify(geoPoints[i].geometry.coordinates) !== JSON.stringify(voronoiPoint.geometry.coordinates) && geoPoints[i].geometry.type === "Point"){
+                                            properties.push({...currFeatures[i].properties})
+                                        }
+                                    }
                                     geoPoints = geojson.features.filter(feature=>{
                                         return JSON.stringify(feature.geometry.coordinates) !== JSON.stringify(voronoiPoint.geometry.coordinates) && feature.geometry.type === "Point"
                                     })
@@ -128,23 +140,29 @@ const VoronoiMap = ({
                                     }
                                 }
 
+                                console.log(properties)
+
                                 let points = {"type": "FeatureCollection", "features": geoPoints}
                 
                                 let options = {bbox: turf.bbox(store.currentMap.graphics.typeSpecific.voronoiBound)}
                                 let voronoiPolygons = turf.voronoi(points, options);
 
+                                
+                                for(i = 0; i < voronoiPolygons.features.length; i++){
+                                    voronoiPolygons.features[i].properties = {...properties[i]}
+                                }
+
                                 geojson = {"type":"FeatureCollection", "features": []}
                                 // Only get intersection within the polygon
                                 voronoiPolygons.features.forEach(feature=>{
                                     let clipped = turf.intersect(store.currentMap.graphics.typeSpecific.voronoiBound.features[0], feature)
-                
+                                    
                                     // returns null if no intersection exists, so ignore
                                     if(clipped != null){
+                                        clipped.properties = {...feature.properties}
                                         geojson.features.push(clipped);
                                     }
                                 })
-                
-                                console.log(voronoiPolygons)
                 
                                 
                                 points.features.forEach(feature=>{
@@ -169,16 +187,29 @@ const VoronoiMap = ({
                     }
                     
                     i+=1
-                    if(feature.geometry.type === 'Polygon'){
-                        layer.setStyle({
-                            stroke: hasStroke,
-                            color: colors.StrokeColor,
-                            weight: sizes.StrokeWeight,
-                            opacity: opacities.StrokeOpacity,
-                            fill: hasFill,
-                            fillColor: colors.FillColor,
-                            fillOpacity: opacities.FillOpacity,
-                          });
+                    if(feature.geometry.type === 'Polygon'|| feature.geometry.type === 'MultiPolygon'){
+                        if(hasFill){
+                            layer.setStyle({
+                              stroke: hasStroke,
+                              color: colors.StrokeColor,
+                              weight: sizes.StrokeWeight,
+                              opacity: opacities.StrokeOpacity,
+                              fill: true,
+                              fillColor: colors.FillColor,
+                              fillOpacity: opacities.FillOpacity,
+                            });
+                        }
+                        else{
+                            layer.setStyle({
+                              stroke: hasStroke,
+                              color: colors.StrokeColor,
+                              weight: sizes.StrokeWeight,
+                              opacity: opacities.StrokeOpacity,
+                              fill: true,
+                              fillColor: colors.FillColor,
+                              fillOpacity: 0.01,
+                            })
+                        }
                     }
                     /*if(feature.geometry.type === 'Point'){
                         layer.setStyle({
