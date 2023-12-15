@@ -80,8 +80,8 @@ const HeatMap = ({
       map.off('click')
     };
 
-
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, propertyData, handlePropertyDataLoad]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill]);
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
@@ -98,8 +98,6 @@ const HeatMap = ({
         allProps.push(props[i].properties[property])
       }
       //console.log("ALL PROPS" , allProps)
-      let min = Math.min(...allProps)
-      let max = Math.max(...allProps)
       const intensity = parseFloat(propertyValue);
       
       // Handle MultiPolygon geometries
@@ -129,16 +127,17 @@ const HeatMap = ({
           1: colors.highGradient
         }
       }
-    if(low !== colors.lowGradient||
-      med !==colors.mediumGradient ||
-      high !== colors.highGradient){
-        store.updateMapGraphics(null, null, null, null, null, null, null, null, low, med, high)
-    }
+
+    /*if(storeRef.current.currentMap.graphics.typeSpecific.heatPoints === null){
+      storeRef.current.updateMapGraphics(null, null, null, null, null, null, null, null, heatPoints)
+    }*/
   };
 
+  const heatLayerGroup = L.featureGroup().addTo(map);
   const heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
-  heatLayer.addTo(map)
-
+  heatLayer.addTo(heatLayerGroup)
+  heatLayerGroup.bringToFront()
+  console.log("heat map points: ", heatPoints)
     return () => {
       map.eachLayer(function (layer) {
         if(!layer._url){
@@ -147,7 +146,7 @@ const HeatMap = ({
       });
       map.off('click')
     };
-  }, [geojsonData, map, property, propertyData, handlePropertyDataLoad]);
+  }, [geojsonData, map, property, colors.lowGradient, colors.mediumGradient, colors.highGradient]);
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {

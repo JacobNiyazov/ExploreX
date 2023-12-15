@@ -233,6 +233,7 @@ createMap = async (req,res) =>{
                 highGradient: "#FF0000",
                 voronoiColor: "#ff24bd",
                 voronoiValue: "Site",
+                //heatPoints: null
         }
         graphic.fill = {
                 hasFill: true,

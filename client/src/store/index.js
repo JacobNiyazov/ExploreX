@@ -894,7 +894,7 @@ function GlobalStoreContextProvider(props) {
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null, lowGradient=null, mediumGradient=null, highGradient=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
@@ -922,15 +922,9 @@ function GlobalStoreContextProvider(props) {
             graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
             graphics['geojson'] = voronoi.geojson;
         }
-        if(lowGradient !== null){
-            graphics['typeSpecific']['lowGradient'] = lowGradient;
-        }
-        if(mediumGradient !== null){
-            graphics['typeSpecific']['mediumGradient'] = mediumGradient;
-        }
-        if(highGradient !== null){
-            graphics['typeSpecific']['hgihGradient'] = highGradient;
-        }
+        /*if(heatPoints !== null){
+            graphics["typeSpecfic"]["heatPoints"] = heatPoints
+        }*/
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
             let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
@@ -1071,6 +1065,9 @@ function GlobalStoreContextProvider(props) {
         if(spikeData !== null && map){
             map.graphics.typeSpecific.spikeData = spikeData;
         }
+        /*if(heatPoints!==null && map){
+            map.graphics.typeSpecific.heatPoints = heatPoints
+        }*/
         storeReducer({
             type: GlobalStoreActionType.EDIT_MAP,
             payload: {

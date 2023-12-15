@@ -31,7 +31,7 @@ const GraphicsSchema = new Schema(
             lowGradient: {type:String, required: true},
             mediumGradient: {type:String, required: true},
             highGradient: {type:String, required: true},
-
+            //heatPoints: {type: [[Object]], required: true}
         },
         stroke:{
             hasStroke: {type: Boolean, required: true},

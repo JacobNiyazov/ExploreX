@@ -113,7 +113,7 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
             }
             return prevLegend
         })
-        this.setLegendTitle(prevLegendTitle=>{
+        /*this.setLegendTitle(prevLegendTitle=>{
             if(prevLegendTitle !== this.newMapData.legendTitle){
                 return {...prevLegendTitle, ...this.newMapData.legendTitle}
             }
@@ -124,7 +124,7 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
                 return {...prevLegendFields, ...this.newMapData.legendFields}
             }
             return prevLegendFields
-        })
+        })*/
     }
     
     undoTransaction() {
@@ -207,7 +207,7 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
             }
             return prevLegend
         })
-        this.setLegendTitle(prevLegendTitle=>{
+        /*this.setLegendTitle(prevLegendTitle=>{
             if(prevLegendTitle !== this.oldMapData.legendTitle){
                 return {...prevLegendTitle, ...this.oldMapData.legendTitle}
             }
@@ -218,6 +218,6 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
                 return {...prevLegendFields, ...this.oldMapData.legendFields}
             }
             return prevLegendFields
-        })
+        })*/
     }
 }
