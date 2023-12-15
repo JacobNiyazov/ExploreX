@@ -24,12 +24,12 @@ const HeatMap = ({
   
   console.log("this is inside on top heat map: ", store.currentMap)
   console.log("and this is storeref heat map: ", storeRef.current.currentMap)
+  console.log("INSIDE HEAT MAP: ", store.currentMap)
   const geojsonData = storeRef.current.currentMap.graphics.geojson;
   const property = storeRef.current.currentMap.graphics.typeSpecific.property;
   const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
   const med = storeRef.current.currentMap.graphics.typeSpecific.mediumGradient;
   const high = storeRef.current.currentMap.graphics.typeSpecific.highGradient;
-  
   useEffect(() => {
     const regionLayerGroup = L.featureGroup().addTo(map);
     const updateLayers = (geojsonData) => {
@@ -176,8 +176,10 @@ const HeatMap = ({
 };
 
   useEffect(()=>{
+    console.log("HAIIIII")
     map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
-  }, [map, store.currentMap.graphics.geojson])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map])
 
   return null;
 }
