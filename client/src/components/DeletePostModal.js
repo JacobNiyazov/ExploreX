@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 function DeletePostModal({map,open,onClose,screen}){
     const { store } = useContext(GlobalStoreContext);
     async function handleDeleteClick () {
-        console.log("delete map from list: ", map)
+        //console.log("delete map from list: ", map)
         await store.deleteMap(map, screen)
         onClose()
       }

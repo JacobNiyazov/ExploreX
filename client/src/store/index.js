@@ -228,9 +228,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getMapById(map._id)
-                    console.log("ATTEMPTING GET MAP")
+                    //console.log("ATTEMPTING GET MAP")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -243,7 +243,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -252,9 +252,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getUserMapIdPairs()
-                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    //console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -267,7 +267,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -288,7 +288,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
             }
             getMapPairs();
@@ -339,13 +339,13 @@ function GlobalStoreContextProvider(props) {
                     setCurrentMapToEdit();
                 }
                 catch(err){
-                    console.log("error: ", err)
+                    //console.log("error: ", err)
                 }
             }
             getMap()
         }
         else{
-            console.log("set page map: ", store.currentMap, currentPage)
+            //console.log("set page map: ", store.currentMap, currentPage)
             storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,
                     payload: {
@@ -366,7 +366,7 @@ function GlobalStoreContextProvider(props) {
                 try{
                     let response = await maps.getMapById(id);
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         if(response.data.map.isPublic){
                             storeReducer({
                                 type: GlobalStoreActionType.SET_CURRENT_PAGE,
@@ -385,7 +385,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -394,9 +394,9 @@ function GlobalStoreContextProvider(props) {
             async function getMap(){
                 try{
                     let response = await maps.getUserMapIdPairs()
-                    console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
+                    //console.log("ATTEMPTING GET MAP PUBLIC PAIRS")
                     if(response.data.success){
-                        console.log("response: ", response.data)
+                        //console.log("response: ", response.data)
                         storeReducer({
                             type: GlobalStoreActionType.SET_CURRENT_PAGE,
                             payload: {
@@ -409,7 +409,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch(error){
-                    console.log("error: ", error )
+                    //console.log("error: ", error )
                 }
             }
             getMap()
@@ -430,7 +430,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
             }
             getMapPairs();
@@ -440,7 +440,7 @@ function GlobalStoreContextProvider(props) {
                 try{
                     async function setCurrentMapToEdit(){
                         let response = await maps.getMapById(id);
-                        console.log("map: ",response.data.map);
+                        //console.log("map: ",response.data.map);
                         if(response.data.success){
                             let tempMap = response.data.map;
                             let styles = {
@@ -481,7 +481,7 @@ function GlobalStoreContextProvider(props) {
                     await setCurrentMapToEdit();
                 }
                 catch(err){
-                    console.log("error: ", err)
+                    //console.log("error: ", err)
                 }
             }
             getMap()
@@ -540,18 +540,18 @@ function GlobalStoreContextProvider(props) {
     //             // legendBorderWidth: '',
     //             legendFields: []
     //         }
-    //         console.log(styles)
+    //         //console.log(styles)
     //         mapEdit.loadStyles(styles);
     //     }
         
     //     }, [store.currentMap]);
 
     store.setCurrentEditMap = (currentPage) =>{
-        console.log("current Page: ", currentPage);
+        //console.log("current Page: ", currentPage);
         try{
             async function setCurrentMapToEdit(){
                 let response = await maps.getMapById("6563af3209aa5b8bd7ed0806");
-                console.log("map: ",response.data.map);
+                //console.log("map: ",response.data.map);
                 if(response.data.success){
                     storeReducer({
                         type: GlobalStoreActionType.SET_EDIT_SCREEN_MAP,
@@ -565,7 +565,7 @@ function GlobalStoreContextProvider(props) {
             setCurrentMapToEdit();
         }
         catch(err){
-            console.log("error: ", err)
+            //console.log("error: ", err)
         }
     }
 
@@ -594,7 +594,7 @@ function GlobalStoreContextProvider(props) {
         // No need to create graphics create map takes care of this
         let property = null;
         let response = await maps.createMap(ownerUsername, files, mapType, publishDate, fileType, property);
-        console.log(response.data)
+        //console.log(response.data)
         if(response.data.success){
             storeReducer({
                 type: GlobalStoreActionType.CREATE_MAP,
@@ -663,7 +663,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err){
-            console.log(err)
+            //console.log(err)
         }
     }
 
@@ -741,7 +741,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err){
-            console.log(err)
+            //console.log(err)
         }
     }
 
@@ -766,9 +766,9 @@ function GlobalStoreContextProvider(props) {
       //let userId = currentMap.author;
       async function processDelete(){
         let response = await maps.deleteMap(id);
-        console.log(response)
+        //console.log(response)
         if(response.data.success){
-            console.log("we are making it in delete")
+            //console.log("we are making it in delete")
             // the return will be different depending on page
             if(store.currentPage === "ProfileScreen"){
                 // let mapList = await maps.getUserMapIdPairs(userId);
@@ -810,7 +810,7 @@ function GlobalStoreContextProvider(props) {
                     }
                 }
                 catch (err){
-                    console.log(err)
+                    //console.log(err)
                 }
                 
             }
@@ -821,8 +821,8 @@ function GlobalStoreContextProvider(props) {
 
     store.updateMapReaction = (map, like, dislike, comment, data) =>{
         let currentMap = map._id;
-        console.log("this is map were updating: ",map)
-        console.log("this is likes: ",like)
+        //console.log("this is map were updating: ",map)
+        //console.log("this is likes: ",like)
         let author = auth.user.username;
         async function reactToMap(){
             // get all the maps based on page
@@ -847,7 +847,7 @@ function GlobalStoreContextProvider(props) {
                 }
             }
             catch(err){
-                console.log("update reactions failed: ",err)
+                //console.log("update reactions failed: ",err)
             }
         }
         reactToMap()
@@ -920,7 +920,7 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err) {
-            console.log(err)
+            //console.log(err)
         }
             
     }
@@ -979,13 +979,13 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch (err) {
-            console.log(err)
+            //console.log(err)
         }
             
     }
 
     store.editProperties = (featureIndex, properties) =>{
-        console.log("WE IN HERE", featureIndex, properties)
+        //console.log("WE IN HERE", featureIndex, properties)
         let tempMap = JSON.parse(JSON.stringify(store.currentMap))
         tempMap.graphics.geojson.features[featureIndex].properties = JSON.parse(JSON.stringify(properties))
         storeReducer({
@@ -1025,8 +1025,8 @@ function GlobalStoreContextProvider(props) {
     }
     store.updateScreenShot = (screenShot) => {
         let map = store.currentMap;
-        console.log(screenShot)
-        console.log("MIRA")
+        //console.log(screenShot)
+        //console.log("MIRA")
         map.imageBuffer = screenShot
         storeReducer({
             type: GlobalStoreActionType.ADD_SCREENSHOT,

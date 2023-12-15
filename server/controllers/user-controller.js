@@ -40,7 +40,7 @@ async function editUserAccount(req, res) {
 			data,
 			{ new: true }
 		);
-		console.log(updatedUser)
+		//console.log(updatedUser)
 
 		if (updatedUser){
 			return res.status(200).json({

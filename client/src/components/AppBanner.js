@@ -30,7 +30,7 @@ function AppBanner() {
   };
   const handleSearchSubmit = (event) => {
     event.preventDefault();
-    console.log(searchInput, searchType);
+    //console.log(searchInput, searchType);
     store.searchSubmit(searchInput, searchType);
   };
   const handleKeyDown = (event) => {

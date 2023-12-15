@@ -47,7 +47,7 @@ function EditAccountScreen(){
     // }   
 
     let user = auth.user
-    console.log(user)
+    //console.log(user)
 
     const [username, setUsername] = useState(user !== null && auth.loggedIn === true ? user.username : "");
     const [bio, setBio] = useState(user !== null && auth.loggedIn === true ? user.bio : "");

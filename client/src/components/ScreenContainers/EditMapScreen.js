@@ -203,7 +203,7 @@ const EditScreen = () => {
 
     const handlePropertyDataLoad = (featureIndex) =>{
         setPropertyData(propertyData =>{
-            console.log(featureIndex, propertyData)
+            //console.log(featureIndex, propertyData)
             if(propertyData.featureIndex !== featureIndex && ((propertyData.featureIndex !== null && featureIndex !== null) || (propertyData.featureIndex !== null && featureIndex === null))){
                 store.editProperties(propertyData.featureIndex, propertyData.properties)
             }
@@ -238,7 +238,7 @@ const EditScreen = () => {
 
     const captureMapAsImage = async () => {        
         const mapContainer = document.getElementById('map-container'); // Replace 'map-container' with the actual ID or use another method to get the element
-            console.log("map container: ",mapContainer)
+            //console.log("map container: ",mapContainer)
             if (mapContainer) {
             // Use dom-to-image to convert the MapContainer element to an image
             await domtoimage.toPng(mapContainer, {
@@ -263,7 +263,7 @@ const EditScreen = () => {
             } else {
             console.error('MapContainer element not found');
             }
-            //console.log("set photo")
+            ////console.log("set photo")
             setPhoto(true);
 
         }

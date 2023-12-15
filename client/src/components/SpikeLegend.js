@@ -5,7 +5,7 @@ import GlobalStoreContext from '../store/index.js';
 const SpikeLegend = ({colors}) => {
     const { store } = useContext(GlobalStoreContext);
     let values = store.currentMap.graphics.typeSpecific.spikeLegend;
-    console.log(colors.SpikeMap)
+    //console.log(colors.SpikeMap)
     const computeHeight = (value) => {
         // Convert value to spike height
         if(value > 200){

@@ -85,7 +85,7 @@ const MapEditInner = ({
                     fillOpacity: opacities.FillOpacity,
                     });
                 }
-                console.log(feature, layer)
+                //console.log(feature, layer)
             }
         }).addTo(map);
         map.fitBounds(L.geoJSON(geojson).getBounds());
@@ -134,7 +134,7 @@ const MapEditInner = ({
         setChloroProperty = {handleNewColors}/>
     }
     else if(store.currentMap.type === "Voronoi Map"){
-        console.log(colors)
+        //console.log(colors)
         return <VoronoiMap 
         handlePropertyDataLoad = {handlePropertyDataLoad} 
         propertyData={propertyData}
@@ -225,7 +225,7 @@ const MapEdit = ({
     };
 
     const handleBaseMap = (e) =>{
-        console.log(e)
+        //console.log(e)
         e.stopPropagation();
         setBaseMap(!baseMap)
     }
@@ -298,8 +298,8 @@ const MapEdit = ({
                             setVoronoiValue={setVoronoiValue}/>
     }
     else if(store.currentMap.type === "Choropleth Map"){
-        console.log("legendfields")
-        console.log(legendFields)
+        //console.log("legendfields")
+        //console.log(legendFields)
         DynamicLegend = <ChoroLegend
             legendFields = {legendFields}
             legendAnchors = {legendAnchors}

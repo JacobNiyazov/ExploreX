@@ -101,7 +101,7 @@ const PublicMapView = () => {
   //   setLiked(likes.includes(auth.user?.username));
   //   setDisliked(dislikes.includes(auth.user?.username));
   // }, [likes, dislikes, auth.user?.username]);
-  console.log(store.currentMap)
+  //console.log(store.currentMap)
   if (!store.currentMap || loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height:'100%' }}>
@@ -129,7 +129,7 @@ const PublicMapView = () => {
       }
       setLiked(true)
       likes.push(auth.user.username)
-      console.log("this is likes in public map view: ",likes)
+      //console.log("this is likes in public map view: ",likes)
       store.updateMapReaction(map,likes,dislikes,false,null)
     }
     else{
@@ -167,9 +167,9 @@ const PublicMapView = () => {
   }
 
   const handleFork = async () => {
-    console.log("Forking")
+    //console.log("Forking")
     await store.handleFork()
-    console.log(store.currentMap._id)
+    //console.log(store.currentMap._id)
     navigate(`/editMap?id=${store.currentMap._id}`)
   }
   const DotLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text }) => {
@@ -253,7 +253,7 @@ const PublicMapView = () => {
         leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       if(typeData.features) dotLayer.bringToFront();
   
@@ -342,7 +342,7 @@ const PublicMapView = () => {
         leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       if(typeData) spikeFeatureGroup.bringToFront();
   
@@ -398,7 +398,7 @@ const PublicMapView = () => {
         if (!isNaN(result)) {
           return result;
         } else {
-          console.log("ERROR", inputString)
+          //console.log("ERROR", inputString)
           return null; 
         }
       }
@@ -461,7 +461,7 @@ const PublicMapView = () => {
         leafletMap.fitBounds(L.geoJSON(regionData).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       // if(typeData.features) dotLayer.bringToFront();
   
@@ -550,7 +550,7 @@ const PublicMapView = () => {
         leafletMap.fitBounds(L.geoJSON(geojson).getBounds());
       }
       catch (err){
-        console.log(err)
+        //console.log(err)
       }
       // if(typeData.features) dotLayer.bringToFront();
   
@@ -589,7 +589,7 @@ const PublicMapView = () => {
         }
     }
     else if(map.type === "Choropleth Map"){
-        console.log("SHOWING MAP")
+        //console.log("SHOWING MAP")
         let data = store.currentMap.graphics.typeSpecific.chloroLegend;
         let fill = store.currentMap.graphics.fill;
         let stroke = store.currentMap.graphics.stroke;
@@ -634,7 +634,7 @@ const PublicMapView = () => {
                           setVoronoiValue={null}/>
   }
   else if(store.currentMap.type === "Choropleth Map"){
-      console.log(legendFields)
+      //console.log(legendFields)
       DynamicLegend = <ChoroLegend
           legendFields = {legendFields}
           legendAnchors = {null}

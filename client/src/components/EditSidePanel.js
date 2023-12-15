@@ -361,7 +361,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Fill Options */}
-                {console.log(store.currentMap)}{
+                {
                     store.currentMap.type !== "Choropleth Map" ?
                     <EditAccordion disableGutters data-testid="edit-accordion region" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>

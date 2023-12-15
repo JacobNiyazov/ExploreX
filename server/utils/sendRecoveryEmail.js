@@ -17,7 +17,7 @@ const createTransporter = async () => {
   const accessToken = await new Promise((resolve, reject) => {
     oauth2Client.getAccessToken((err, token) => {
       if (err) {
-        console.log(err)
+        //console.log(err)
         reject("Failed to create access token :(");
       }
       resolve(token);
@@ -46,7 +46,7 @@ const sendEmail = async (email, link) => {
     } catch (error) {
         console.error('Error sending email:', error);
     }
-    console.log("SENDING EMAIL")
+    //console.log("SENDING EMAIL")
     try {
     await emailTransporter.sendMail({
         subject: "Password Reset Request from Explore X",

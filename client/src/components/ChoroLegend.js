@@ -109,7 +109,7 @@ const ChoroLegend = ({
                     >{legendFields[i].fieldText}</LegendBox>
                 </Box>
             );
-            console.log("box made")
+            //console.log("box made")
         }
         return boxes;
     };

@@ -51,7 +51,7 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
           </div>, false);
     }*/
     async function handleCreateNewMap(){
-        console.log("HERE!!! ",selectedProperty)
+        //console.log("HERE!!! ",selectedProperty)
         await store.updateMapGraphics(selectedProperty);
         onClose(selectedProperty);
         store.setCurrentPage(store.currentPageType.editMapScreen, store.currentMap);
