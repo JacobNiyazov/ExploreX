@@ -14,6 +14,7 @@ describe('Profile Screen Test', () => {
   });
 
   it('can switch between Posts and Drafts tabs', () => {
+    cy.wait(200);
     cy.get('[data-testid=drafts-tab]').click();
     cy.get('[data-testid=drafts-tab]').should('have.css', 'color', 'rgb(255, 118, 214)');
     cy.get('[data-testid=posts-tab]').should('have.css', 'color', 'rgb(255, 255, 255)');
@@ -29,6 +30,7 @@ describe('Profile Screen Test', () => {
   });
 
   it('deletes a draft post when confirm is pressed in the delete modal', () => {
+    cy.wait(200);
     cy.get('[data-testid=drafts-tab]').click();
     cy.get('[data-testid=map-draft-1]').first().within(() => {
       cy.get('[data-testid=delete-button]').click();
@@ -37,6 +39,7 @@ describe('Profile Screen Test', () => {
   });
 
   it('navigates to the edit screen when edit button is pressed on a draft post', () => {
+    cy.wait(200);
     cy.get('[data-testid=drafts-tab]').click();
     cy.get('[data-testid=map-draft-0]').first().within(() => {
       cy.get('[data-testid=edit-button]').click();

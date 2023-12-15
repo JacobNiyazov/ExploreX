@@ -68,7 +68,6 @@ function SelectPropModal({ open, onClose, files, fileType, mapType }) {
         if(features.length > 0 && Object.keys(features[0].properties.length > 0)){
             properties = Object.keys(features[0].properties);
         }
-        properties.push('Start with empty map');
     }
 
 

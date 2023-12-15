@@ -50,6 +50,7 @@ describe('Spike Map Tests', () => {
     /* ==== Generated with Cypress Studio ==== */
     cy.get('[data-testid="AccountCircleIcon"]').click();
     cy.get('[data-testid="My Profile"]').click();
+    cy.wait(200);
     cy.get('[data-testid="drafts-tab"]').click();
     cy.get('.MuiCardActions-root > [data-testid="delete-button"] > [data-testid="DeleteIcon"]').last().click();
     cy.get('[data-testid="confirm-delete-button"]').click();
@@ -94,7 +95,7 @@ describe('Spike Map Tests', () => {
     cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root').should('have.text', 'Create Map');
     cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root').click();
     cy.get('body').click();
-    cy.get('[data-value="Start with empty map"]').click();
+    cy.get('[data-value="id"]').click();
     cy.get('.MuiBox-root > .MuiGrid-container > .MuiGrid-root > .MuiButtonBase-root').click();
     /* ==== End Cypress Studio ==== */
     /* ==== Generated with Cypress Studio ==== */
