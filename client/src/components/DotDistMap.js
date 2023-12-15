@@ -74,7 +74,7 @@ const DotDistMap = ({
       //  map.fitBounds(L.geoJSON(geojsonData).getBounds());
       //}
       //catch (err){
-      //  console.log(err)
+      //  //console.log(err)
       //}
     }
     
@@ -82,7 +82,7 @@ const DotDistMap = ({
     updateLayers(geojsonData);
     map.on('click',function(e) {
       L.DomEvent.stopPropagation(e);
-      console.log('clicked on map', e);
+      //console.log('clicked on map', e);
       // Here we set the index to null
       handlePropertyDataLoad(null)
     });
@@ -103,7 +103,7 @@ const DotDistMap = ({
       let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
       L.geoJSON(selected, {
         onEachFeature: function (feature, layer) {
-          console.log(":(")
+          //console.log(":(")
           if(colors.StrokeColor === '#000000'){
             layer.setStyle({
               color: "#FFFFFF",

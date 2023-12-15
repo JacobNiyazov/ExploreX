@@ -39,13 +39,13 @@ function GlobalMapEditContextProvider(props) {
         voronoiValue:'',
         screenShot: '',
     });
-    console.log("NEW ", mapEdit)
+    //console.log("NEW ", mapEdit)
 
     const { auth } = useContext(AuthContext);
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;
-        console.log("CALLIGN REDUCCER WITH ", payload)
+        //console.log("CALLIGN REDUCCER WITH ", payload)
         switch (type) {
             // GETS ALL THE LISTINGS FROM DATABASE
             case GlobalMapEditActionType.EDIT: {

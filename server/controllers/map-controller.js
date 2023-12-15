@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 
 createMap = async (req,res) =>{
     const body = req.query;
-    console.log("user id: " + req.userId)
+    //console.log("user id: " + req.userId)
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -187,7 +187,7 @@ createMap = async (req,res) =>{
     const graphics = new Graphics(graphic)
     
     User.findOne({ _id: req.userId }).then( (user) => {
-        console.log("user found: " + JSON.stringify(user));
+        //console.log("user found: " + JSON.stringify(user));
         if(user.username !== body.ownerUsername){
             return res.status(400).json({
                 success:false,
@@ -239,7 +239,7 @@ createMap = async (req,res) =>{
                         map
                             .save()
                             .then(() => {
-                                console.log("map id: " + map._id)
+                                //console.log("map id: " + map._id)
                                 //Show actual geojson data not ID or zipped
                                 graphic.geojson = geojsonData
                                 tempMap.graphics = graphic
@@ -260,14 +260,14 @@ createMap = async (req,res) =>{
                     })
                 
             }).catch((err) => {
-                console.log(err)
+                //console.log(err)
                 return res.status(400).json({
                     success:false,
                     errorMessage: 'Map Not Created. File Size too big.'
                 })
             });
     }).catch(error => {
-        console.log(error)
+        //console.log(error)
         return res.status(400).json({
             success:false,
             errorMessage: 'Authentication Error, please log in again!'
@@ -275,12 +275,12 @@ createMap = async (req,res) =>{
     })
 }
 forkMap = async (req, res) =>{
-    console.log("Forking Map with id: " + JSON.stringify(req.params.id))
+    //console.log("Forking Map with id: " + JSON.stringify(req.params.id))
 
     User.findOne({ _id: req.userId }).then((user) => {
-        console.log("User found");
+        //console.log("User found");
         Map.findById({ _id: req.params.id }).then((map) => {
-            console.log("Map found");
+            //console.log("Map found");
             Graphics.findOne({ _id: map.graphics }).then((graphics) => {
                 if (graphics) {
                     const copiedGraphics = new Graphics({
@@ -294,7 +294,7 @@ forkMap = async (req, res) =>{
                     });
                     copiedGraphics.save()
                     .then((newGraphics) => {
-                        console.log('New graphics created and saved:', newGraphics);
+                        //console.log('New graphics created and saved:', newGraphics);
                         // You can perform further actions here if needed
                         const copiedMap = new Map({
                             title: "Copy of " + map.title,
@@ -312,9 +312,9 @@ forkMap = async (req, res) =>{
                         })
                         copiedMap.save()
                             .then((newMap) => {
-                                console.log("New Map Created!!!");
+                                //console.log("New Map Created!!!");
                                 user.mapsOwned.push(map._id);
-                                console.log("Pushed to", user.username)
+                                //console.log("Pushed to", user.username)
                                 user.save().then(() => {
                                     let tempMap = {...newMap}._doc
                                     tempMap.graphics = {...newGraphics}._doc
@@ -325,8 +325,8 @@ forkMap = async (req, res) =>{
                                         decompressedImage = decompressedImage.toString('utf8');
                                         tempMap.imageBuffer = decompressedImage;
                                     }
-                                    console.log(tempMap.reactions)
-                                    console.log("SUCCESSFUL")
+                                    //console.log(tempMap.reactions)
+                                    //console.log("SUCCESSFUL")
                                     return res.status(200).json({ success: true, map: tempMap })
 
                                 })
@@ -351,22 +351,22 @@ forkMap = async (req, res) =>{
 
 
 deleteMap = async (req, res) =>{
-    console.log("delete Map with id: " + JSON.stringify(req.params.id));
-    console.log("delete " + req.params.id);
+    //console.log("delete Map with id: " + JSON.stringify(req.params.id));
+    //console.log("delete " + req.params.id);
     Map.findById({ _id: req.params.id }).then((map) => {
-        console.log("Map found: " + JSON.stringify(map));
+        //console.log("Map found: " + JSON.stringify(map));
 
         // DOES THIS MAP BELONG TO THIS USER?
         async function asyncFindUser(map) {
             User.findOne({ username: map.ownerUsername }).then((user) => {
-                console.log("user._id: " + user._id);
-                console.log("req.userId: " + req.userId);
+                //console.log("user._id: " + user._id);
+                //console.log("req.userId: " + req.userId);
                 if (user._id == req.userId) {
-                    console.log("correct user!");
+                    //console.log("correct user!");
                     Map.findOneAndDelete({ _id: req.params.id }).then(() => {
-                        console.log("map deleted");
+                        //console.log("map deleted");
                         Graphics.findOneAndDelete({ _id: map.graphics }).then(() => {
-                            console.log("graphics deleted");
+                            //console.log("graphics deleted");
                             user.mapsOwned.pull(new mongoose.Types.ObjectId(req.params.id));
                             user.save().then(() => {
                                 return res.status(200).json({ success: true });
@@ -376,7 +376,7 @@ deleteMap = async (req, res) =>{
                     }).catch(err => console.log(err))
                 }
                 else {
-                    console.log("incorrect user!");
+                    //console.log("incorrect user!");
                     return res.status(400).json({ 
                         errorMessage: "Authentication Error"
                     });
@@ -392,11 +392,11 @@ deleteMap = async (req, res) =>{
 }
 
 getMapById = async (req, res) => {
-    console.log("Find Map with id: " + JSON.stringify(req.params.id));
+    //console.log("Find Map with id: " + JSON.stringify(req.params.id));
 
     
     Map.findById({ _id: req.params.id }).then((map) => {
-        console.log("Found map: " + JSON.stringify(map));
+        //console.log("Found map: " + JSON.stringify(map));
         Graphics.findOne({ _id: map.graphics }).then((graphics) => {
             tempMap = {...map}._doc;
             tempMap.graphics = {...graphics}._doc
@@ -408,10 +408,10 @@ getMapById = async (req, res) => {
                 tempMap.imageBuffer = decompressedImage;
             }
 
-            console.log("correct user!");
+            //console.log("correct user!");
             return res.status(200).json({ success: true, map: tempMap })
         }).catch((err) => {
-            console.log(err)
+            //console.log(err)
             return res.status(400).json({ success: false, error: err });
         })
     }).catch((err) => {
@@ -420,22 +420,22 @@ getMapById = async (req, res) => {
 }
 
 getUserMapIdPairs = async (req, res) => {
-    console.log("getMapPairs");
+    //console.log("getMapPairs");
     User.findOne({ _id: req.userId }).then((user) => {
-        console.log("find user with id " + req.userId);
+        //console.log("find user with id " + req.userId);
         async function asyncFindMap(username) {
-            console.log("find all maps owned by " + username);
-            //console.log("Title parameter: " + req.query.title);
+            //console.log("find all maps owned by " + username);
+            ////console.log("Title parameter: " + req.query.title);
             Map.find({ ownerUsername: username}).then((maps) => {
-                // console.log("found Maps: " + JSON.stringify(maps));
+                // //console.log("found Maps: " + JSON.stringify(maps));
                 if (!maps) {
-                    console.log("!maps.length");
+                    //console.log("!maps.length");
                     return res
                         .status(404)
                         .json({ success: false, error: 'Maps not found' })
                 }
                 else {
-                    console.log("Send the Maps pairs");
+                    //console.log("Send the Maps pairs");
                     // PUT ALL THE LISTS INTO ID, NAME PAIRS
                     
                     let pairs = [];
@@ -472,16 +472,16 @@ getUserMapIdPairs = async (req, res) => {
 }
 
 getPublicMapIdPairs = async (req, res) => {
-    console.log("getPublicMapIdPairs:");
+    //console.log("getPublicMapIdPairs:");
     Map.find({ isPublic : true }).then((maps) => {
         if (!maps) {
-            console.log("!maps.length");
+            //console.log("!maps.length");
             return res
                 .status(404)
                 .json({ success: false, error: 'Maps not found' })
         }
         else {
-            console.log("Send the map pairs");
+            //console.log("Send the map pairs");
             // PUT ALL THE MAPS INTO ID, NAME PAIRS
             let pairs = [];
             for (let key in maps) {
@@ -524,9 +524,9 @@ function arraysAreEqual(arr1, arr2) {
 }
 updateMapById = async (req, res) => {
     const body = req.body
-    console.log("BODY")
-    // console.log("updateMapById: " + JSON.stringify(body.map));
-    //console.log("req.body.title: " + req.body.title);
+    //console.log("BODY")
+    // //console.log("updateMapById: " + JSON.stringify(body.map));
+    ////console.log("req.body.title: " + req.body.title);
 
     if (!body) {
         return res.status(400).json({
@@ -536,32 +536,32 @@ updateMapById = async (req, res) => {
     }
 
     Map.findOne({ _id: req.params.id }).then((map) => {
-        //console.log("map found: " + JSON.stringify(map));
+        ////console.log("map found: " + JSON.stringify(map));
         // DOES THIS MAP BELONG TO THIS USER?
         User.findOne({ username: map.ownerUsername }).then((user) => {
-            // console.log("user._id: " + user._id);
-            // console.log("username: " + user.username);
-            // console.log("req.userId: " + req.userId);
+            // //console.log("user._id: " + user._id);
+            // //console.log("username: " + user.username);
+            // //console.log("req.userId: " + req.userId);
             if (user._id == req.userId) {
 
-                // console.log(map)
+                // //console.log(map)
 
                 map.title = body.map.title;
-                // console.log(body.map.title)
+                // //console.log(body.map.title)
                 let temp1 = map.reactions;
                 let temp2 = body.map.reactions;
 
                 if (!arraysAreEqual(temp1.comments, temp2.comments) || 
                     !arraysAreEqual(temp1.likes, temp2.likes) || 
                     !arraysAreEqual(temp1.dislikes, temp2.dislikes)) {
-                    console.log(temp1)
-                    console.log(temp2)
+                    //console.log(temp1)
+                    //console.log(temp2)
                     // Update map.reactions with body.map.reactions
                     map.reactions = {...body.map.reactions};
                 }
-                // console.log(map.reactions)
-                // console.log(body.map.reactions)
-                // console.log(map.reactions == body.map.reactions)
+                // //console.log(map.reactions)
+                // //console.log(body.map.reactions)
+                // //console.log(map.reactions == body.map.reactions)
 
                 // let temp = map.imageBuffer;
                 map.imageBuffer =  zlib.deflateSync(body.map.imageBuffer).toString('base64');
@@ -569,7 +569,7 @@ updateMapById = async (req, res) => {
                 
                 // let temp2 = zlib.inflateSync(Buffer.from(graphics.geojson)).toString("base64")
 
-                // console.log(temp == temp2)
+                // //console.log(temp == temp2)
                 // map.imageBuffer = body.map.imageBuffer
                 if(body.map.publishDate)
                     map.publishDate = body.map.publishDate;
@@ -581,9 +581,9 @@ updateMapById = async (req, res) => {
                     .save()
                     .then(() => {
                         var tempGraphics = {...body.map.graphics};
-                        // console.log("------")
-                        // console.log(body.map.graphics)
-                        // console.log("GRAPHICS") 
+                        // //console.log("------")
+                        // //console.log(body.map.graphics)
+                        // //console.log("GRAPHICS") 
 
                         var input = new Buffer.from(JSON.stringify(body.map.graphics.geojson), 'utf8')
                         var deflated= zlib.deflateSync(input);
@@ -594,7 +594,7 @@ updateMapById = async (req, res) => {
                             // { new: true }
                         ).then((graphics) => {
                             let tempMap = {...map}._doc
-                            console.log(graphics)
+                            //console.log(graphics)
                             tempMap.graphics = tempGraphics;
                             tempMap.imageBuffer = body.map.imageBuffer
                             return res.status(200).json({
@@ -603,7 +603,7 @@ updateMapById = async (req, res) => {
                                 message: 'Map updated!',
                             })
                         }).catch(error => {
-                            console.log("Graphics FAILURE: " + JSON.stringify(error));
+                            //console.log("Graphics FAILURE: " + JSON.stringify(error));
                             return res.status(404).json({
                                 error,
                                 message: 'Map not updated!',
@@ -611,7 +611,7 @@ updateMapById = async (req, res) => {
                         })
                     })
                     .catch(error => {
-                        console.log("FAILURE1: " + JSON.stringify(error));
+                        //console.log("FAILURE1: " + JSON.stringify(error));
                         return res.status(404).json({
                             error,
                             message: 'Map not updated!',
@@ -624,7 +624,7 @@ updateMapById = async (req, res) => {
                 map
                     .save()
                     .then(() => {
-                        console.log("SUCCESS!!!");
+                        //console.log("SUCCESS!!!");
                         return res.status(200).json({
                             success: true,
                             id: map._id,
@@ -632,7 +632,7 @@ updateMapById = async (req, res) => {
                         })
                     })
                     .catch(error => {
-                        console.log("FAILURE2: " + JSON.stringify(error));
+                        //console.log("FAILURE2: " + JSON.stringify(error));
                         return res.status(404).json({
                             error,
                             message: 'Map not updated!',
@@ -640,7 +640,7 @@ updateMapById = async (req, res) => {
                     })
             }
         }).catch((err) => {
-            console.log("FAILURE3: " + JSON.stringify(err));
+            //console.log("FAILURE3: " + JSON.stringify(err));
             return res.status(404).json({
                 err,
                 message: 'Map not updated!',

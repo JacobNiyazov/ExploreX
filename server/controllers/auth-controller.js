@@ -6,7 +6,7 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/sendRecoveryEmail");
 const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    console.log(emailRegex.test(email))
+    //console.log(emailRegex.test(email))
     return emailRegex.test(email);
 };
 
@@ -23,7 +23,7 @@ getLoggedIn = async (req, res) => {
         }
 
         const loggedInUser = await User.findOne({ _id: userId });
-        // console.log("loggedInUser: " + loggedInUser);
+        // //console.log("loggedInUser: " + loggedInUser);
 
         return res.status(200).json({
             loggedIn: true,
@@ -31,7 +31,7 @@ getLoggedIn = async (req, res) => {
 
         })
     } catch (err) {
-        console.log("err: " + err);
+        //console.log("err: " + err);
         res.json(false);
     }
 }
@@ -39,8 +39,8 @@ getLoggedIn = async (req, res) => {
 loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log("LOGGING IN")
-        console.log("fields: " + username + password)
+        //console.log("LOGGING IN")
+        //console.log("fields: " + username + password)
 
         if (!username || !password) {
             return res
@@ -51,7 +51,7 @@ loginUser = async (req, res) => {
         }
 
         const existingUser = await User.findOne({ username: username });
-        console.log("existingUser: " + existingUser);
+        //console.log("existingUser: " + existingUser);
         if (!existingUser) {
             return res
                 .status(401)
@@ -61,10 +61,10 @@ loginUser = async (req, res) => {
                 })
         }
 
-        console.log("provided password: " + password);
+        //console.log("provided password: " + password);
         const passwordCorrect = await bcrypt.compare(password, existingUser.passwordHash);
         if (!passwordCorrect) {
-            console.log("Incorrect password");
+            //console.log("Incorrect password");
             return res
                 .status(401)
                 .json({
@@ -73,10 +73,10 @@ loginUser = async (req, res) => {
                 })
         }
 
-        console.log("id: " + existingUser._id)
+        //console.log("id: " + existingUser._id)
         // LOGIN THE USER
         const token = auth.signToken(existingUser._id);
-        console.log(token);
+        //console.log(token);
 
         res.cookie("token", token, {
             httpOnly: true,
@@ -97,12 +97,12 @@ loginUser = async (req, res) => {
 deleteUserAccount = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log("Deleting an account")
-        console.log("fields: " + email)
+        //console.log("Deleting an account")
+        //console.log("fields: " + email)
 
 
         const existingUser = await User.findOneAndDelete({ email: email });
-        console.log("existingUser: " + existingUser);
+        //console.log("existingUser: " + existingUser);
         if (!existingUser) {
             return res
                 .status(401)
@@ -134,7 +134,7 @@ logoutUser = async (req, res) => {
 resetUserPassword = async (req, res) => {
     try{
         const { userId, token, password } = req.body;
-        console.log(userId, " ", token , " ", password)
+        //console.log(userId, " ", token , " ", password)
         let passwordResetToken = await Token.findOne({ userId });
         if (!passwordResetToken) {
             return res
@@ -145,8 +145,8 @@ resetUserPassword = async (req, res) => {
             })
         }
 
-        console.log(token)
-        console.log(passwordResetToken.token)
+        //console.log(token)
+        //console.log(passwordResetToken.token)
         const isValid = await bcrypt.compare(token, passwordResetToken.token);
         if (!isValid) {
             return res
@@ -183,7 +183,7 @@ resetUserPassword = async (req, res) => {
 recoverPassword = async(req,res) => {
     try {
         const {email} = req.body;
-        console.log(email + " Requesting email");
+        //console.log(email + " Requesting email");
         if (!email) {
             return res.status(400)
             .json({ 
@@ -192,7 +192,7 @@ recoverPassword = async(req,res) => {
         }
 
         let existingUser = await User.findOne({ email: email });
-        console.log("existingUser: " + existingUser); 
+        //console.log("existingUser: " + existingUser); 
         if (!existingUser) {
             return res
                 .status(401)
@@ -214,8 +214,8 @@ recoverPassword = async(req,res) => {
             token: hash,
             createdAt: Date.now(),
         }).save();
-        console.log(existingUser._id)
-        console.log(resetToken)
+        //console.log(existingUser._id)
+        //console.log(resetToken)
         let link = `${process.env.CLIENT_URL}/passwordReset?token=${resetToken}&id=${existingUser._id}`;
 
         sendEmail(existingUser.email, link);
@@ -265,9 +265,9 @@ registerUser = async (req, res) => {
                     errorMessage: "Please enter the same password twice."
                 })
         }
-        console.log("password and password verify match");
+        //console.log("password and password verify match");
         let existingUser = await User.findOne({ email: email });
-        console.log("existingUser: " + existingUser);
+        //console.log("existingUser: " + existingUser);
         if (existingUser) {
             return res
                 .status(400)
@@ -277,7 +277,7 @@ registerUser = async (req, res) => {
                 })
         }
         existingUser = await User.findOne({ username: username });
-        console.log("existingUser: " + existingUser);
+        //console.log("existingUser: " + existingUser);
         if (existingUser) {
             return res
                 .status(400)
@@ -291,18 +291,18 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
         const bio = "I'm a new user!";
-        console.log("passwordHash: " + passwordHash);
+        //console.log("passwordHash: " + passwordHash);
 
         const newUser = new User({
             email, username, passwordHash, bio
         });
         const savedUser = await newUser.save();
-        console.log("new user saved: " + savedUser._id);
+        //console.log("new user saved: " + savedUser._id);
 
         // LOGIN THE USER
         const token = auth.signToken(savedUser._id);
-        console.log("token:" + token);
-        console.log(newUser)
+        //console.log("token:" + token);
+        //console.log(newUser)
 
         await res.cookie("token", token, {
             httpOnly: true,
@@ -313,7 +313,7 @@ registerUser = async (req, res) => {
             user: newUser
         })
 
-        console.log("token sent");
+        //console.log("token sent");
 
     } catch (err) {
         console.error("ERROR " + err);

@@ -131,7 +131,6 @@ function AuthContextProvider(props) {
         try {
             const response = await api.loginUser(username, password);
             if (response.status === 200) {
-                console.log(response.data.user);
                 authReducer({
                     type: AuthActionType.LOGIN_USER,
                     payload: {
@@ -152,7 +151,6 @@ function AuthContextProvider(props) {
         try {
             const response = await api.logoutUser();
             if (response.status === 200) {
-                console.log("LOGGED");
                 authReducer({
                     type: AuthActionType.LOGOUT_USER,
                     payload: null
@@ -185,7 +183,6 @@ function AuthContextProvider(props) {
         try {
             const response = await api.resetUserPassword(userId, token, password);
             if (response.status === 200) {
-                console.log(response)
                 authReducer({
                     type: AuthActionType.LOGOUT_USER,
                     payload: null
@@ -202,7 +199,7 @@ function AuthContextProvider(props) {
             initials += auth.user.firstName.charAt(0);
             initials += auth.user.lastName.charAt(0);
         }
-        console.log("user initials: " + initials);
+        //console.log("user initials: " + initials);
         return initials;
     }
 

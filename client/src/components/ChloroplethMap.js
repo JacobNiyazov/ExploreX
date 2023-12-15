@@ -50,7 +50,7 @@ const ChloroplethMap = ({
             if (!isNaN(result)) {
               return result;
             } else {
-              console.log("ERROR", inputString)
+              //console.log("ERROR", inputString)
               return null; 
             }
           }
@@ -271,7 +271,7 @@ const ChloroplethMap = ({
               }).addTo(chloroLayerGroup);
 
               map.on('click',function(e) {
-                console.log('clicked on map', e);
+                //console.log('clicked on map', e);
                 // Here we set the index to null
                 handlePropertyDataLoad(null)
               });
@@ -308,7 +308,7 @@ const ChloroplethMap = ({
         var geojsonData = store.currentMap.graphics.geojson;
         var chloroInfo = storeRef.current.currentMap.graphics.typeSpecific.chloroLegend
 
-        // console.log(geojsonData) 
+        // //console.log(geojsonData) 
 
         if (chloroProperty){
           chloroInfo = chloroProperty
@@ -321,7 +321,7 @@ const ChloroplethMap = ({
         else{
           if(result.changedFlag){
             setChloroProperty(result.colors)
-            console.log("NEW", result.colors)
+            //console.log("NEW", result.colors)
           }
         }
         return () => {
@@ -342,7 +342,7 @@ const ChloroplethMap = ({
         let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
         L.geoJSON(selected, {
           onEachFeature: function (feature, layer) {
-            console.log(":(")
+            //console.log(":(")
             if(colors.StrokeColor === '#000000'){
               layer.setStyle({
                 color: "#FFFFFF",
