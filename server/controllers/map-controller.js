@@ -159,8 +159,12 @@ createMap = async (req,res) =>{
                 spikeLegend: null,
                 chloroLegend: null,
                 voronoiBound: null,
+                lowGradient: "#0000FF",
+                mediumGradient:"#FFEA00",
+                highGradient: "#FF0000",
                 voronoiColor: "#ff24bd",
                 voronoiValue: "Site",
+                //heatPoints: null
         }
         graphic.fill = {
                 hasFill: true,

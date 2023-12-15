@@ -14,7 +14,7 @@ const GraphicsSchema = new Schema(
         },
         typeSpecific:{
             selectAll: {type: Boolean, required: true},
-            size: {type: Number, required: true},
+            size: {type: Number, required: true}, 
             dotColor: {type: String, required: true},
             color: {type:String, required: true},
             range:{type: Number, required: true},
@@ -28,6 +28,10 @@ const GraphicsSchema = new Schema(
             voronoiBound: {type: Object, required: false},
             voronoiColor:{type: String, required: true},
             voronoiValue:{type: String, required: true},
+            lowGradient: {type:String, required: true},
+            mediumGradient: {type:String, required: true},
+            highGradient: {type:String, required: true},
+            //heatPoints: {type: [[Object]], required: true}
         },
         stroke:{
             hasStroke: {type: Boolean, required: true},

@@ -251,7 +251,7 @@ const VoronoiMap = ({
           };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle])
+    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle, store, store.currentMap.graphics.geojson])
     
     useEffect(()=>{
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
