@@ -3,7 +3,6 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
-import { color } from "@mui/system";
 
 const DotDistMap = ({
   colors,
