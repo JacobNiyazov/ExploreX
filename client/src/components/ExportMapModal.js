@@ -25,9 +25,12 @@ function ExportMapModal({map,open,onClose}){
             delete tempMap.graphics._id
             delete tempMap.graphics.publishDate
             delete tempMap.graphics.ownerUsername
-            tempMap.graphics.legend.fields.forEach((elem)=>{
-                delete elem._id
-            })
+            if(tempMap.graphics.legend && tempMap.graphics.legend.fields){
+                tempMap.graphics.legend.fields.forEach((elem)=>{
+                    delete elem._id
+                })
+            }
+            
             var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tempMap));
             link.download = title + "_native_file.json";
             link.href = dataStr;
