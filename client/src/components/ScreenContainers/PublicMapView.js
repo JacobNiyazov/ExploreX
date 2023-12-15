@@ -12,7 +12,6 @@ import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur, LegendContai
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
 import HeatMap from "../HeatMap.js";
-import VoronoiMap from '../VoronoiMap.js';
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -174,13 +173,13 @@ const PublicMapView = () => {
   }
   const DotLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text }) => {
     const leafletMap = useMap();
-    const textStyles = {
-      color: text.textColor,
-      fontSize: text.textSize,
-      fontFamily: text.textFont
-    };
  
     useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
       leafletMap.invalidateSize();
       let dotLayer;
       if(typeData.features){
@@ -245,6 +244,14 @@ const PublicMapView = () => {
                       )
                   );
               }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
             }).join(""), {maxHeight: 200}
           )
         }
@@ -267,13 +274,13 @@ const PublicMapView = () => {
   };
   const SpikeLayer = ({ typeData, regionData, stroke, fill, typeSpecific, text}) => {
     const leafletMap = useMap();
-    const textStyles = {
-      color: text.textColor,
-      fontSize: text.textSize,
-      fontFamily: text.textFont
-    };
  
     useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
       leafletMap.invalidateSize();
       let spikeFeatureGroup; 
       if(typeData){
@@ -334,6 +341,14 @@ const PublicMapView = () => {
                       )
                   );
               }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
             }).join(""), {maxHeight: 200}
           )
         }
@@ -356,13 +371,13 @@ const PublicMapView = () => {
   };
   const ChloroLayer = ({ typeData, regionData, property, stroke, fill, text, typeSpecific }) => {
     const leafletMap = useMap();
-    const textStyles = {
-      color: text.textColor,
-      fontSize: text.textSize,
-      fontFamily: text.textFont
-    };
  
     useEffect(() => {
+      const textStyles = {
+        color: text.textColor,
+        fontSize: text.textSize,
+        fontFamily: text.textFont
+      };
       leafletMap.invalidateSize();
 
       const getColor = (d, colorObject) => {
@@ -453,6 +468,14 @@ const PublicMapView = () => {
                       )
                   );
               }
+              else{
+                return (
+                  ReactDOMServer.renderToString(
+                      <div className="leaflet-popup-content">
+                      </div>
+                  )
+                );
+              }
             }).join(""), {maxHeight: 200}
           )
         }
@@ -469,7 +492,7 @@ const PublicMapView = () => {
         // if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [typeData, regionData, property, leafletMap, stroke, fill, text]);
+    }, [typeData, regionData, property, leafletMap, stroke, fill, text, typeSpecific]);
   
     return null;
   };
@@ -558,7 +581,7 @@ const PublicMapView = () => {
         // if(typeData.features) dotLayer.remove();
         regionLayer.remove();
       };
-    }, [geojson, leafletMap, fill, dot, stroke, text]);
+    }, [geojson, leafletMap, fill, dot, stroke, text, value]);
   
     return null;
   };

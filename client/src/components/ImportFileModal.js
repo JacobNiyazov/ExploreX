@@ -117,7 +117,7 @@ function ImportFileModal({open,onClose,openSelectPropModal,files,setFiles,fileTy
 
     function handleSetMapType(mapType){
         setMapType(mapType)
-        if(mapType === "Voronoi Map" || mapType == "Native File"){
+        if(mapType === "Voronoi Map" || mapType === "Native File"){
             setButtonName('Create Map');
         }
         else{

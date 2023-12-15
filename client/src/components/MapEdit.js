@@ -1,14 +1,13 @@
-import { useState, React, useContext, useEffect, useRef, useCallback} from "react";
-import { MapContainer, TileLayer, ZoomControl, useMap} from "react-leaflet";
+import { useState, React, useContext, useEffect, useRef} from "react";
+import { MapContainer, TileLayer, ZoomControl} from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
-import L from "leaflet";
-import domtoimage from 'dom-to-image';
+// import L from "leaflet";
 import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, RedoContainer, UndoContainer, UndoRedoContainer, BaseMapContainer, BaseMapBlur, LegendContainer, LegendTextField }from './StyleSheets/MapEditStyles.js'
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import IconButton from '@mui/material/IconButton';
-import * as ReactDOMServer from 'react-dom/server';
+// import * as ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
 import DotDistMap from './DotDistMap.js';
 import SpikeMap from './SpikeMap.js';
@@ -54,43 +53,43 @@ const MapEditInner = ({
     //     };
     // }, [store, colors, sizes, opacities, hasStroke, hasFill]);
 
-    function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
+    // function loadMap(geojson, map, colors, sizes, opacities, hasStroke, hasFill){
         
-        const regionLayer = L.geoJSON(geojson, {
-            onEachFeature: function (feature, layer) {
+    //     const regionLayer = L.geoJSON(geojson, {
+    //         onEachFeature: function (feature, layer) {
                 
-                // Customize popup content
-                layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+    //             // Customize popup content
+    //             layer.bindPopup(Object.keys(feature.properties).map(function(k) {
                 
-                    return (
-                    ReactDOMServer.renderToString(
-                        <Box sx={{display:'flex', alignItems:'center'}}>
-                            <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                            <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                        </Box>
-                    )
-                    )
-                }).join(""), {
-                    maxHeight: 200
-                });
-                if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
-                    // var shade = getRandomShade();
-                    layer.setStyle({
-                    stroke: hasStroke,
-                    color: colors.StrokeColor,
-                    weight: sizes.StrokeWeight,
-                    opacity: opacities.StrokeOpacity,
-                    fill: hasFill,
-                    fillColor: colors.FillColor,
-                    fillOpacity: opacities.FillOpacity,
-                    });
-                }
-                //console.log(feature, layer)
-            }
-        }).addTo(map);
-        map.fitBounds(L.geoJSON(geojson).getBounds());
-        return regionLayer;
-    }
+    //                 return (
+    //                 ReactDOMServer.renderToString(
+    //                     <Box sx={{display:'flex', alignItems:'center'}}>
+    //                         <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
+    //                         <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
+    //                     </Box>
+    //                 )
+    //                 )
+    //             }).join(""), {
+    //                 maxHeight: 200
+    //             });
+    //             if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+    //                 // var shade = getRandomShade();
+    //                 layer.setStyle({
+    //                 stroke: hasStroke,
+    //                 color: colors.StrokeColor,
+    //                 weight: sizes.StrokeWeight,
+    //                 opacity: opacities.StrokeOpacity,
+    //                 fill: hasFill,
+    //                 fillColor: colors.FillColor,
+    //                 fillOpacity: opacities.FillOpacity,
+    //                 });
+    //             }
+    //             //console.log(feature, layer)
+    //         }
+    //     }).addTo(map);
+    //     map.fitBounds(L.geoJSON(geojson).getBounds());
+    //     return regionLayer;
+    // }
 
     if(store.currentMap.type === "Dot Distribution Map"){
         return <DotDistMap 
@@ -181,7 +180,7 @@ const MapEdit = ({
     //const { store } = useContext(GlobalStoreContext);
     const [baseMap, setBaseMap] = useState(false)
     const { store } = useContext(GlobalStoreContext);
-    const storeRef = useRef(store);
+    // const storeRef = useRef(store);
 
     
     

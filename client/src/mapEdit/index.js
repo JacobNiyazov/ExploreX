@@ -1,7 +1,5 @@
-import { createContext, useState, useContext, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState } from 'react'
 import React from 'react';
-import { AuthContext } from '../auth'
 
 export const GlobalMapEditContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -41,7 +39,6 @@ function GlobalMapEditContextProvider(props) {
     });
     //console.log("NEW ", mapEdit)
 
-    const { auth } = useContext(AuthContext);
 
     const mapEditReducer = (action) => {
         const { type, payload } = action;

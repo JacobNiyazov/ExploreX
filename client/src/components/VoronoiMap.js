@@ -3,8 +3,6 @@ import { useMap} from "react-leaflet";
 import L from "leaflet";
 import GlobalStoreContext from '../store/index.js';
 import * as turf from '@turf/turf'
-import * as ReactDOMServer from 'react-dom/server';
-import { Box, Typography } from '@mui/material';
 // eslint-disable-next-line react-hooks/exhaustive-deps
 
 const VoronoiMap = ({

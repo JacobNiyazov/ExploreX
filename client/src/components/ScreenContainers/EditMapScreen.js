@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import domtoimage from 'dom-to-image';
 
@@ -129,7 +129,7 @@ const EditScreen = () => {
             }
             else if(store.currentMap.isPublic){
                 store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
-                navigate('/map?id=${store.currentMap._id}');
+                navigate(`/map?id=${store.currentMap._id}`);
             }
             
             if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
@@ -185,6 +185,7 @@ const EditScreen = () => {
       };
   
       waitForAuthCheck();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth, navigate, store]);
     useEffect(() => {
         const waitForCurrentMap = async () => {
