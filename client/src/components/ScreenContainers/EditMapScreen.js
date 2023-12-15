@@ -157,122 +157,125 @@ const EditScreen = () => {
 
     const navigate = useNavigate();
     useEffect(() => {
-      const waitForAuthCheck = async () => {
-        if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap._id !== mapEdit.id)) {
-          // Wait until authentication check is completed
-          await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
-          waitForAuthCheck(); // Re-check status
-        } else {
-            if (!auth.loggedIn) {
-                store.setCurrentPage(store.currentPageType.login);
-                navigate('/login');
-            }
-            if(store.currentMap.ownerUsername !== auth.user.username){
-                store.setCurrentPage(store.currentPageType.profileScreen);
-                navigate('/profile');
-            }
-            else if(store.currentMap.isPublic){
-                store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
-                navigate('/map?id=${store.currentMap._id}');
-            }
-            
-            if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
-                setTitle(mapEdit.title);
-                setColors({
-                    TextColor: mapEdit.textColor,
-                    HeatMap: '#FFFFFF',
-                    // LegendFill: mapEdit.legendFillColor,
-                    // LegendBorder: mapEdit.legendBorderColor,
-                    FillColor: mapEdit.fillColor,
-                    StrokeColor: mapEdit.strokeColor,
-                    DotMap: mapEdit.dotColor,
-                    SpikeMap: mapEdit.spikeColor,
-                    VoronoiMap: mapEdit.voronoiColor,
-                    lowGradient: mapEdit.lowGradient,
+        const waitForAuthCheck = async () => {
+          if (auth.loggedIn === undefined || store.currentMap === null || (store.currentMap && store.currentMap._id !== mapEdit.id)) {
+            // Wait until authentication check is completed
+            await new Promise((resolve) => setTimeout(resolve, 100)); // Adjust time as needed
+            waitForAuthCheck(); // Re-check status
+          } else {
+              if (!auth.loggedIn) {
+                  store.setCurrentPage(store.currentPageType.login);
+                  navigate('/login');
+              }
+              if(store.currentMap.ownerUsername !== auth.user.username){
+                  store.setCurrentPage(store.currentPageType.profileScreen);
+                  navigate('/profile');
+              }
+              else if(store.currentMap.isPublic){
+                  store.setCurrentPage(store.currentPageType.publicMapView, store.currentMap);
+                  navigate('/map?id=${store.currentMap._id}');
+              }
+              
+              if(loading === true && (store.currentMap.graphics.typeSpecific.dotPoints!==null || store.currentMap.graphics.typeSpecific.dotScale!==null || store.currentMap.graphics.typeSpecific.spikeData!==null || store.currentMap.graphics.typeSpecific.spikeLegend!==null || (store.currentMap.graphics.typeSpecific.chloroLegend!==null && mapEdit.legendFields !== null && mapEdit.legendFields.length !== 0) || store.currentMap.graphics.typeSpecific.voronoiBound!==null)){
+                  setTitle(mapEdit.title);
+                  setColors({
+                      TextColor: mapEdit.textColor,
+                      HeatMap: '#FFFFFF',
+                      // LegendFill: mapEdit.legendFillColor,
+                      // LegendBorder: mapEdit.legendBorderColor,
+                      FillColor: mapEdit.fillColor,
+                      StrokeColor: mapEdit.strokeColor,
+                      DotMap: mapEdit.dotColor,
+                      SpikeMap: mapEdit.spikeColor,
+                      VoronoiMap: mapEdit.voronoiColor,
+                      lowGradient: mapEdit.lowGradient,
                     mediumGradient: mapEdit.mediumGradient,
                     highGradient: mapEdit.highGradient
-                });
-                setSizes({
-                    TextSize: mapEdit.textSize,
-                    StrokeWeight: mapEdit.strokeWeight,
-                });
-                setOpacities({
-                    StrokeOpacity: mapEdit.strokeOpacity,
-                    FillOpacity: mapEdit.fillOpacity,
-                });
-                setAnchors({
-                    Text: null,
-                    HeatMap: null,
-                    // LegendFill: null,
-                    // LegendBorder: null,
-                    RegionFill: null,
-                    RegionBorder: null,
-                    DotMap: null,
-                    SpikeMap: null,
-                    VoronoiMap: null
-                });
-                setTextFont(mapEdit.textFont);
-                setHasStroke(mapEdit.hasStroke);
-                setHasFill(mapEdit.hasFill);
-                setLegendTitle(mapEdit.legendTitle);
-                setVoronoiValue(mapEdit.voronoiValue);
 
-                if(!legendFields && mapEdit.legendFields){
-                    setLegendFields([...mapEdit.legendFields])
-                }
-                if(!chloroData && mapEdit.chloroData){
-                    handleNewColors(mapEdit.chloroData)
-                }
-                setLoading(false);
-                originalStatesRef.current = {
-                    title: mapEdit.title,
-                    colors: {
-                        TextColor: mapEdit.textColor,
-                        HeatMap: '#FFFFFF',
-                        // LegendFill: mapEdit.legendFillColor,
-                        // LegendBorder: mapEdit.legendBorderColor,
-                        FillColor: mapEdit.fillColor,
-                        StrokeColor: mapEdit.strokeColor,
-                        DotMap: mapEdit.dotColor,
-                        SpikeMap: mapEdit.spikeColor,
-                        VoronoiMap: '#FFFFFF',
-                        lowGradient: mapEdit.lowGradient,
-                        mediumGradient: mapEdit.mediumGradient,
-                        highGradient: mapEdit.highGradient
-                    },
-                    sizes: {
-                        TextSize: mapEdit.textSize,
-                        StrokeWeight: mapEdit.strokeWeight,
-                    },
-                    opacities: {
-                        StrokeOpacity: mapEdit.strokeOpacity,
-                        FillOpacity: mapEdit.fillOpacity,
-                    },
-                    anchors: {
-                        Text: null,
-                        HeatMap: null,
-                        // LegendFill: null,
-                        // LegendBorder: null,
-                        RegionFill: null,
-                        RegionBorder: null,
-                        DotMap: null,
-                        SpikeMap: null,
-                        VoronoiMap: null
-                    },
-                    textFont: mapEdit.textFont,
-                    hasStroke: mapEdit.hasStroke,
-                    hasFill: mapEdit.hasFill,
-                    hideLegend: false, // Set to the default value
-                    range: 5, // Set to the default value
-                    legendTitle: mapEdit.legendTitle,
-                    legendFields: [], // Set to the default value
-                }
-            }
-        }
-      };
+                  });
+                  setSizes({
+                      TextSize: mapEdit.textSize,
+                      StrokeWeight: mapEdit.strokeWeight,
+                  });
+                  setOpacities({
+                      StrokeOpacity: mapEdit.strokeOpacity,
+                      FillOpacity: mapEdit.fillOpacity,
+                  });
+                  setAnchors({
+                      Text: null,
+                      HeatMap: null,
+                      // LegendFill: null,
+                      // LegendBorder: null,
+                      RegionFill: null,
+                      RegionBorder: null,
+                      DotMap: null,
+                      SpikeMap: null,
+                      VoronoiMap: null
+                  });
+                  setTextFont(mapEdit.textFont);
+                  setHasStroke(mapEdit.hasStroke);
+                  setHasFill(mapEdit.hasFill);
+                  setLegendTitle(mapEdit.legendTitle);
+                  setVoronoiValue(mapEdit.voronoiValue);
+                  originalStatesRef.current = {
+                        title: mapEdit.title,
+                        colors: {
+                            TextColor: mapEdit.textColor,
+                            HeatMap: '#FFFFFF',
+                            // LegendFill: mapEdit.legendFillColor,
+                            // LegendBorder: mapEdit.legendBorderColor,
+                            FillColor: mapEdit.fillColor,
+                            StrokeColor: mapEdit.strokeColor,
+                            DotMap: mapEdit.dotColor,
+                            SpikeMap: mapEdit.spikeColor,
+                            VoronoiMap: '#FFFFFF',
+                            lowGradient: mapEdit.lowGradient,
+                            mediumGradient: mapEdit.mediumGradient,
+                            highGradient: mapEdit.highGradient
+                        },
+                        sizes: {
+                            TextSize: mapEdit.textSize,
+                            StrokeWeight: mapEdit.strokeWeight,
+                        },
+                        opacities: {
+                            StrokeOpacity: mapEdit.strokeOpacity,
+                            FillOpacity: mapEdit.fillOpacity,
+                        },
+                        anchors: {
+                            Text: null,
+                            HeatMap: null,
+                            // LegendFill: null,
+                            // LegendBorder: null,
+                            RegionFill: null,
+                            RegionBorder: null,
+                            DotMap: null,
+                            SpikeMap: null,
+                            VoronoiMap: null
+                        },
+                        textFont: mapEdit.textFont,
+                        hasStroke: mapEdit.hasStroke,
+                        hasFill: mapEdit.hasFill,
+                        hideLegend: false, // Set to the default value
+                        range: 5, // Set to the default value
+                        legendTitle: mapEdit.legendTitle,
+                        legendFields: [], // Set to the default value
+                    }
+                  if(!legendFields && mapEdit.legendFields){
+                      setLegendFields([...mapEdit.legendFields])
+                  }
+                  if(!chloroData && mapEdit.chloroData){
+                      handleNewColors(mapEdit.chloroData)
+                  }
+                  setLoading(false);
+              }
+              
   
-      waitForAuthCheck();
-    }, [auth, navigate, store]);
+             
+          }
+        };
+    
+        waitForAuthCheck();
+      }, [auth, navigate, store]);
     useEffect(() => {
         const waitForCurrentMap = async () => {
             while (loading) {
