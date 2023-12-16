@@ -81,6 +81,10 @@ const VoronoiMap = ({
                 clippedPolygons.features.push(feature)
             })
 
+            if(geojson.features.length === 0){
+                geojson = {...store.currentMap.graphics.typeSpecific.voronoiBound}
+            }
+
             store.updateMapGraphics(null, null, null, null, null, null, null, {voronoiBound: polygonGeo, geojson: clippedPolygons});
         }
         else{
@@ -133,10 +137,10 @@ const VoronoiMap = ({
                                         return JSON.stringify(feature.geometry.coordinates) !== JSON.stringify(voronoiPoint.geometry.coordinates) && feature.geometry.type === "Point"
                                     })
 
-                                    if(geoPoints.length <= 0){
-                                        alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
-                                        return
-                                    }
+                                    // if(geoPoints.length <= 0){
+                                    //     alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
+                                    //     return
+                                    // }
                                 }
 
                                 //console.log(properties)
@@ -145,7 +149,6 @@ const VoronoiMap = ({
                 
                                 let options = {bbox: turf.bbox(store.currentMap.graphics.typeSpecific.voronoiBound)}
                                 let voronoiPolygons = turf.voronoi(points, options);
-
                                 
                                 for(i = 0; i < voronoiPolygons.features.length; i++){
                                     voronoiPolygons.features[i].properties = {...properties[i]}
@@ -162,11 +165,17 @@ const VoronoiMap = ({
                                         geojson.features.push(clipped);
                                     }
                                 })
+
+                                
                 
                                 
                                 points.features.forEach(feature=>{
                                     geojson.features.push(feature)
                                 })
+                                
+                                if(geojson.features.length === 0){
+                                    geojson = {...store.currentMap.graphics.typeSpecific.voronoiBound}
+                                }
                 
                                 store.updateLocalMap(null, null, null, null, geojson)
                             },
