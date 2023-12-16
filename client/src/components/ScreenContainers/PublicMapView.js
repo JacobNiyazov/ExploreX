@@ -426,7 +426,7 @@ const PublicMapView = () => {
             let fillColor;
             let propertyValue;
             if (flag){
-              fillColor = coloring[feature.properties[property]];;
+              fillColor = coloring[feature.properties[property].toLowerCase().trim()];
             }
             else if(typeof(feature.properties[property]) === 'string'){
                 propertyValue = convertStringToNumber(feature.properties[property]);
@@ -437,7 +437,9 @@ const PublicMapView = () => {
             if (!flag){
               fillColor = getColor(propertyValue, coloring);
             }
-
+            console.log(propertyValue)
+            console.log(feature.properties[property])
+            console.log(fillColor)
           
             return {
               fillColor,
