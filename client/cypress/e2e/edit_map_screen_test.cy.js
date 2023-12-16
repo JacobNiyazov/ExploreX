@@ -58,8 +58,7 @@ describe('Edit Map Screen Test', () => {
         if (body.find('[data-testid~=region]').length > 0) {
             //cy.get('[data-testid=accordian]').scrollTo('bottom');
             cy.get('[data-testid~=region]').click();
-            cy.get('[data-testid~=fill-opacity]').clear();
-            cy.get('[data-testid~=fill-opacity]').type('0.5');
+            cy.get('[data-testid~=fill-opacity]').find('input').invoke('val', '0.5')
             cy.get('[data-testid~=fill-opacity]').find('input').should('have.value', '0.5');
         }
       });
