@@ -116,10 +116,11 @@ const VoronoiMap = ({
                                 let properties = []
                                 let currFeatures = store.currentMap.graphics.geojson.features;
                                 if(feature.geometry.type !== 'Point'){
-                                    geoPoints.push(voronoiPoint)
-                                    for(i = 0; i < currFeatures.length; i++){
+                                    
+                                    for(i = 0; i < geoPoints.length; i++){
                                         properties.push({...currFeatures[i].properties})
                                     }
+                                    geoPoints.push(voronoiPoint)
                                     properties.push({})
                                 }
                                 else{
