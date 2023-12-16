@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
@@ -11,7 +11,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur, LegendContainer }from '../StyleSheets/MapEditStyles.js'
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
-import HeatMap from "../HeatMap.js";
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -589,11 +588,11 @@ const PublicMapView = () => {
   };
   const HeatLayer = ({ data, stroke, fill, typeSpecific, text}) => {
     const leafletMap = useMap();
-    const textStyles = {
+    const textStyles = useMemo(() => ({
       color: text.textColor,
       fontSize: text.textSize,
       fontFamily: text.textFont
-    };
+    }), [text.textColor, text.textSize, text.textFont]);
     const low = store.currentMap.graphics.typeSpecific.lowGradient;
     const med = store.currentMap.graphics.typeSpecific.mediumGradient;
     const high = store.currentMap.graphics.typeSpecific.highGradient;
@@ -710,6 +709,7 @@ const PublicMapView = () => {
                       )
                   );
               }
+              return null;
             }).join(""), {maxHeight: 200}
           )
         }
@@ -724,7 +724,7 @@ const PublicMapView = () => {
       return () => {
         regionLayer.remove();
       };
-    }, [data, leafletMap, stroke, fill, typeSpecific, text, colors.lowGradient, colors.mediumGradient, colors.highGradient]);
+    }, [data, leafletMap, stroke, fill, typeSpecific, text, low, med, high, textStyles]);
 
     const extractCoordsFromPolygon = (polygonCoords, intensity) => {
       if (!Array.isArray(polygonCoords)) {
@@ -767,7 +767,6 @@ const PublicMapView = () => {
     }
     else if(map.type === "Heat Map"){
       console.log("HELLUR FROM INSIDE HEAT: ", store.currentMap)
-      let graphics = store.currentMap.graphics
       let data = store.currentMap.graphics.geojson;
       let fill = store.currentMap.graphics.fill;
       let stroke = store.currentMap.graphics.stroke;

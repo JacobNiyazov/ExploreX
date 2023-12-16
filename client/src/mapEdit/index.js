@@ -31,7 +31,6 @@ function GlobalMapEditContextProvider(props) {
         legendFields: [],
         dotColor: "#ff24bd",
         spikeColor: "#ff24bd",
-        voronoiColor:'',
         chloroData: {},
         lowGradient:'#0000FF',
         mediumGradient: '#FEEA00',
