@@ -18,8 +18,8 @@ import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
 import HeatMapLegend from "./HeatMapLegend.js";
-import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
-import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
+//import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
+//import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
 import VoronoiLegend from "./VoronoiLegend.js";
 
 const MapEditInner = ({

@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
-import ReactDOMServer from 'react-dom/server';
+//import ReactDOMServer from 'react-dom/server';
 import GlobalStoreContext from '../store/index.js';
-import { Box } from "@mui/material";
-import { Typography } from "@mui/material";
+//import { Box } from "@mui/material";
+//import { Typography } from "@mui/material";
 import "leaflet.heat";
 
 const HeatMap = ({
@@ -135,9 +135,7 @@ const HeatMap = ({
         }
       }
       // have to do the store update local map here
-      console.log("what the f man: ", heatPoints)
       store.updateLocalMap(null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
-      console.log("updated local map me thinks: ", store.currentMap)
       if(low === null|| med === null|| high === null){
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
       }
@@ -156,7 +154,8 @@ const HeatMap = ({
       });
       map.off('click')
     };
-  }, [geojsonData, map, property, colors.lowGradient, colors.mediumGradient, colors.highGradient]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [geojsonData, map, property, colors.lowGradient, colors.mediumGradient, colors.highGradient, colors, low, med, high]);
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {

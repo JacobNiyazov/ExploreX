@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState } from 'react';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -13,7 +13,7 @@ import GlobalStoreContext from '../store/index.js';
 import { ColorTextField } from './StyleSheets/ColorSelectorStyles';
 import { GlobalMapEditContext } from '../mapEdit'
 import EditMap_Transaction from '../transactions/EditMap_Transaction.js';
-import { BaseMapSwitch } from './StyleSheets/MapEditStyles';
+//import { BaseMapSwitch } from './StyleSheets/MapEditStyles';
 
 const EditSidePanel = ({
     title,
@@ -136,10 +136,6 @@ const EditSidePanel = ({
         }
     };
     
-    const handleRange = (event) => {
-        setRange(event.target.value)
-    }
-
     const handleHideLegend = () => {
         // need to figure out what to do for this transaction
         setHideLegend(!hideLegend)
