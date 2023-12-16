@@ -7,13 +7,16 @@ import Modal from '@mui/material/Modal';
 import {DescriptionText, StyledError, StyledButton} from './StyleSheets/DeletePostModalStyles';
 import { Grid, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router-dom';
 
 function DeletePostModal({map,open,onClose,screen}){
+    const navigate = useNavigate();
     const { store } = useContext(GlobalStoreContext);
     async function handleDeleteClick () {
         //console.log("delete map from list: ", map)
         await store.deleteMap(map, screen)
         onClose()
+        navigate("/feed")
       }
     const style = {
         position: 'absolute',
