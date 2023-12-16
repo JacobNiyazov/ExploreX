@@ -1,8 +1,8 @@
 describe('Edit Map Screen Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000');
-    cy.get('[data-testid="username-field"]').type('cypress');
-    cy.get('[data-testid="password-field"]').type('abcd1234');
+    cy.get('[data-testid="username-field"]').type('mapTest');
+    cy.get('[data-testid="password-field"]').type('Test12345');
     cy.get('[data-testid="login-button"]').click();
     cy.get('[data-testid=user-icon]').click();
     cy.get('[data-testid="My Profile"]').click();
@@ -56,14 +56,10 @@ describe('Edit Map Screen Test', () => {
       cy.wait(500);
       if (body.find('[data-testid~=region]').length > 0) {
           cy.get('[data-testid~=region]').click();
-          //cy.get('[data-testid~=fill-opacity]').find('input').clear('0');
-          //cy.get('[data-testid~=fill-opacity]').find('input').type('.5');
-          //cy.get('[data-testid~=fill-opacity]').find('input').should('have.value', '0.5');
+          cy.get('[data-testid~=fill-opacity]').find('input').clear('0');
+          cy.get('[data-testid~=fill-opacity]').find('input').type('0.5');
+          cy.get('[data-testid~=fill-opacity]').find('input').should('have.value', '0.5');
       }
     });
-    /* ==== Generated with Cypress Studio ==== */
-    cy.get('#\\:rj\\:').clear('0');
-    cy.get('#\\:rj\\:').type('0.5');
-    /* ==== End Cypress Studio ==== */
   })
 });

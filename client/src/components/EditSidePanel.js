@@ -381,7 +381,7 @@ const EditSidePanel = ({
                                 <CustomListItem>
                                     <Typography>Fill Opacity</Typography>
                                     <NumberSelector
-                                        data-testid="region-selector1"
+                                        data-testid="fill-opacity"
                                         type="number"
                                         inputProps={{step: "0.1"}}
                                         InputLabelProps={{
