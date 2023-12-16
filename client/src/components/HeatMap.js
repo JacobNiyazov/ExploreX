@@ -145,6 +145,7 @@ const HeatMap = ({
   const heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
   heatLayer.addTo(heatLayerGroup)
   heatLayerGroup.bringToFront()
+ // map.invalidateSize()
   console.log("heat map points: ", heatPoints)
     return () => {
       map.eachLayer(function (layer) {
