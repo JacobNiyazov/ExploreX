@@ -81,9 +81,10 @@ const VoronoiMap = ({
                 clippedPolygons.features.push(feature)
             })
 
-            if(geojson.features.length === 0){
-                geojson = {...store.currentMap.graphics.typeSpecific.voronoiBound}
+            if(clippedPolygons.features.length === 0){
+                clippedPolygons = polygonGeo
             }
+            console.log(clippedPolygons)
 
             store.updateMapGraphics(null, null, null, null, null, null, null, {voronoiBound: polygonGeo, geojson: clippedPolygons});
         }
@@ -264,6 +265,7 @@ const VoronoiMap = ({
     }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle])
     
     useEffect(()=>{
+        console.log(store.currentMap.graphics.geojson);
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [map])
