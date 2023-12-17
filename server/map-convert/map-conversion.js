@@ -1,3 +1,4 @@
+const turf = require('@turf/turf')
 const togeojson = require("@tmcw/togeojson");
 var shapefile = require("shapefile");
 const Map = require('../models/map-model')
@@ -54,28 +55,33 @@ function checkGeoJSON(json){
 
 function checkVoronoiMap(json){
     let polyCount = 0
-    let pointCount = 0
+    let poly = ''
 
     json.features.forEach(feature=>{
         let type = feature.geometry.type
         if(type === "Polygon" || type === "MultiPolygon"){
             polyCount += 1
+            poly = {...feature}
         }
-        else if(type === "Point"){
-            pointCount+=1
-        }
+        else if(type === "Point"){}
         else{
             return "Voronoi Map only allows one Polygon/MultiPolygon and Point features in geojson file."
         }
     })
-
+    
     if(polyCount != 1){
-        return "Voronoi Map requires only one Polygon feature."
-    }
-    if(pointCount <= 0){
-        return "Voronoi Map requires atleast one Point"
+        return "Voronoi Map requires only one Polygon or MultiPolygon feature."
     }
 
+    json.features.forEach(feature=>{
+        let type = feature.geometry.type
+        if(type === "Point"){
+            if(!turf.booleanPointInPolygon(feature.geometry.coordinates, poly)){
+                return "Point at coordinate:" + feature.geometry.coordinates + " are outside provided Polygon or MultiPolygon"
+            }
+        }
+    })
+    
     return ""
 }
 

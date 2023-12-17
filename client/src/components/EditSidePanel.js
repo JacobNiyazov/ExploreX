@@ -340,7 +340,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Properties Options */}
-                <EditAccordion disableGutters data-testid="properties" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
+                <EditAccordion disableGutters disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
                     <EditAccordionSummary >
                         <Typography variant="inherit">Properties</Typography>
                     </EditAccordionSummary>
@@ -427,7 +427,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters data-testid="legend">
+                <EditAccordion disableGutters>
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -498,7 +498,7 @@ const EditSidePanel = ({
                 {/* Edit Stroke Options */}
                 {
                     
-                    <EditAccordion disableGutters data-testid="edit-accordion borders" data->
+                    <EditAccordion disableGutters data-testid="edit-accordion" data->
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Borders</Typography>
                         </EditAccordionSummary>
