@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useMemo } from 'react';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import CallSplitIcon from '@mui/icons-material/CallSplit';
@@ -11,7 +11,6 @@ import { Box, Grid, Typography } from '@mui/material';
 import { BaseMapSwitch, ControlGrid, BaseMapContainer, BaseMapBlur, LegendContainer }from '../StyleSheets/MapEditStyles.js'
 //import DotDistMap from '../DotDistMap.js';
 //import SpikeMap from '../SpikeMap.js';
-import HeatMap from "../HeatMap.js";
 import DeletePostModal from '../DeletePostModal';
 import ExportMapModal from '../ExportMapModal';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -36,6 +35,7 @@ import SpikeLegend from '../SpikeLegend';
 import DotDistLegend from '../DotDistLegend';
 import VoronoiLegend from '../VoronoiLegend';
 import ChoroLegend from '../ChoroLegend';
+import HeatMapLegend from '../HeatMapLegend.js';
 
 const PublicMapView = () => {
   const { store } = useContext(GlobalStoreContext);
@@ -424,7 +424,7 @@ const PublicMapView = () => {
             let fillColor;
             let propertyValue;
             if (flag){
-              fillColor = coloring[feature.properties[property]];;
+              fillColor = coloring[feature.properties[property].toLowerCase().trim()];
             }
             else if(typeof(feature.properties[property]) === 'string'){
                 propertyValue = convertStringToNumber(feature.properties[property]);
@@ -435,7 +435,9 @@ const PublicMapView = () => {
             if (!flag){
               fillColor = getColor(propertyValue, coloring);
             }
-
+            console.log(propertyValue)
+            console.log(feature.properties[property])
+            console.log(fillColor)
           
             return {
               fillColor,
@@ -584,6 +586,164 @@ const PublicMapView = () => {
   
     return null;
   };
+  const HeatLayer = ({ data, stroke, fill, typeSpecific, text}) => {
+    const leafletMap = useMap();
+    const textStyles = useMemo(() => ({
+      color: text.textColor,
+      fontSize: text.textSize,
+      fontFamily: text.textFont
+    }), [text.textColor, text.textSize, text.textFont]);
+    const low = store.currentMap.graphics.typeSpecific.lowGradient;
+    const med = store.currentMap.graphics.typeSpecific.mediumGradient;
+    const high = store.currentMap.graphics.typeSpecific.highGradient;
+    console.log("beofre the use effect", data, stroke, fill, typeSpecific, text)
+    useEffect(() => {
+      console.log("first line of the use effect")
+      leafletMap.invalidateSize();
+      let heatLayer;
+      // we have to recalculate the heat map here
+      // 1. this is where we call the extract coords
+        const extractCoordsFromFeature = (feature, property, props) => {
+          const propertyValue = feature.properties[property];
+    
+          // Skip features without the selected property or with non-numeric property values
+          if (propertyValue === undefined || propertyValue === null || isNaN(propertyValue)) {
+            console.log("is this property a number?")
+            return [];
+          }
+          let allProps = []
+          for(let i = 0; i < props.length; i++){
+            allProps.push(props[i].properties[property])
+          }
+          //console.log("ALL PROPS" , allProps)
+          const intensity = parseFloat(propertyValue);
+          
+          // Handle MultiPolygon geometries
+          if (feature.geometry.type === "MultiPolygon") {
+            return feature.geometry.coordinates.flatMap((polygonCoords) =>
+              extractCoordsFromPolygon(polygonCoords, intensity)
+            );
+          }
+    
+          // Handle Polygon geometries
+          return extractCoordsFromPolygon(feature.geometry.coordinates, intensity);
+        };
+        let allProps = data.features
+        let property = store.currentMap.graphics.typeSpecific.property
+        const heatPoints = data?.features?.flatMap((feature) => {
+          return extractCoordsFromFeature(feature, property, allProps);
+        });
+    
+        console.log("colors: ", colors)
+        let heatLayerOptions = {}
+        if(heatPoints && heatPoints.length > 0){
+          heatLayerOptions = {
+            blur: 25,
+            radius: 15,
+            gradient:{
+              0.25: colors.lowGradient,
+              0.75: colors.mediumGradient,
+              1: colors.highGradient
+            }
+          }
+          // have to do the store update local map here
+          console.log("what the f man PMV: ", heatPoints)
+          
+          console.log("updated local map me thinks PMV: ", store.currentMap)
+          if(low === null|| med === null|| high === null){
+              store.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
+          }
+    };
+  
+    const heatLayerGroup = L.featureGroup().addTo(leafletMap);
+    heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
+    console.log("I HAVE A FEAR THAT THE ISSUE IS WITH ADD TO")
+    heatLayer.addTo(heatLayerGroup)
+    heatLayerGroup.bringToFront()
+    console.log("heat map points 3: ", heatPoints)
+
+    const regionLayer = L.geoJSON(data, {
+      style: function (feature) {
+          switch (feature.geometry.type) {
+              case 'Polygon':
+              case 'MultiPolygon':
+                  return { stroke: stroke.hasStroke,
+                    color: stroke.strokeColor,
+                    weight: stroke.strokeWeight,
+                    opacity: stroke.strokeOpacity,
+                    fill: true,
+                    fillColor: fill.fillColor,
+                    fillOpacity: fill.fillOpacity, };
+              case 'LineString':
+              case 'MultiLineString':
+                  return { stroke: stroke.hasStroke,
+                    color: stroke.strokeColor,
+                    weight: stroke.strokeWeight,
+                    opacity: stroke.strokeOpacity,
+                    fill: true,
+                    fillColor: fill.fillColor,
+                    fillOpacity: 0.01, };
+              default:
+                  return {}; // Point geometries, if any, are already handled in dot density layer
+            }
+        },
+        // Ensure that no default marker is created for point features
+        pointToLayer: function (feature, latlng) {
+          return null;
+        },
+        onEachFeature: function (feature, layer) {
+          // // Customize popup content
+          layer.bindPopup(          
+            ReactDOMServer.renderToString(
+                <div className="leaflet-popup-content">
+                    <p style={textStyles}><u><b>{typeSpecific.property}</b></u>{': ' + feature.properties[typeSpecific.property]}</p>
+                </div>
+            )
+             + Object.keys(feature.properties).map(function (k) {
+              if (k !== typeSpecific.property) {
+                  return (
+                      ReactDOMServer.renderToString(
+                          <div className="leaflet-popup-content">
+                              <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
+                          </div>
+                      )
+                  );
+              }
+              return null;
+            }).join(""), {maxHeight: 200}
+          )
+        }
+      }).addTo(leafletMap);
+      try{
+        leafletMap.fitBounds(L.geoJSON(data).getBounds());
+      }
+      catch (err){
+        console.log(err)
+      }
+  
+      return () => {
+        regionLayer.remove();
+      };
+    }, [data, leafletMap, stroke, fill, typeSpecific, text, low, med, high, textStyles]);
+
+    const extractCoordsFromPolygon = (polygonCoords, intensity) => {
+      if (!Array.isArray(polygonCoords)) {
+        console.error('Invalid polygon coordinates:', polygonCoords);
+        return [];
+      }
+      if(polygonCoords.length === 2){
+        const [longitude, latitude] = polygonCoords;
+        return [[latitude, longitude, intensity]]; // [Latitude, Longitude, Intensity]
+      }
+      else{
+        return polygonCoords[0].map((coord) => {
+          return [coord[1], coord[0], intensity]; // [Latitude, Longitude, Intensity]
+        });
+      }
+    };
+  
+    return null;
+  };
   const MapEditInner = () =>{
     if(map.type === "Dot Distribution Map"){
       let fill = store.currentMap.graphics.fill;
@@ -606,9 +766,50 @@ const PublicMapView = () => {
         return <SpikeLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
     }
     else if(map.type === "Heat Map"){
-        if(map.graphics.geojson){
-            return <HeatMap geojsonData ={map.graphics.geojson} property = {map.graphics.typeSpecific.property}/>
-        }
+      console.log("HELLUR FROM INSIDE HEAT: ", store.currentMap)
+      let data = store.currentMap.graphics.geojson;
+      let fill = store.currentMap.graphics.fill;
+      let stroke = store.currentMap.graphics.stroke;
+      let typeSpecific = store.currentMap.graphics.typeSpecific
+      let text = store.currentMap.graphics.text
+      return <HeatLayer data = {data}
+        fill = {fill}
+        stroke = {stroke}
+        typeSpecific={typeSpecific}
+        text = {text}
+      />
+      /*let graphics = store.currentMap.graphics
+      let colors = {
+        TextColor: graphics.text.textColor,
+        FillColor: graphics.fill.fillColor,
+        StrokeColor: graphics.stroke.strokeColor,
+        DotMap: graphics.typeSpecific.dotColor,
+        SpikeMap: graphics.typeSpecific.spikeColor,
+        VoronoiMap: graphics.typeSpecific.voronoiColor,
+        lowGradient: graphics.typeSpecific.lowGradient,
+        mediumGradient: graphics.typeSpecific.mediumGradient,
+        highGradient: graphics.typeSpecific.highGradient
+      }
+      let sizes = {
+        StrokeWeight: graphics.stroke.strokeWeight,
+        TextSize: graphics.text.textSize
+      }
+      let opacities = {
+        FillOpacity: graphics.fill.fillOpacity,
+        StrokeOpacity: graphics.stroke.strokeOpacity
+      }
+      let hasStroke = graphics.stroke.hasStroke
+      let hasFill = graphics.fill.hasFill
+        return <HeatMap geojsonData ={map.graphics.geojson} 
+        property = {map.graphics.typeSpecific.property}
+        colors = {colors}
+        sizes = {sizes}
+        opacities = {opacities}
+        hasStroke = {hasStroke}
+        hasFill = {hasFill}
+        screenFlag = "pmv"
+        textFont = {store.currentMap.graphics.text.textFont}
+        />*/
     }
     else if(map.type === "Choropleth Map"){
         //console.log("SHOWING MAP")
@@ -640,6 +841,9 @@ const PublicMapView = () => {
     DotMap: graphics.typeSpecific.dotColor,
     SpikeMap: graphics.typeSpecific.spikeColor,
     VoronoiMap: graphics.typeSpecific.voronoiColor,
+    lowGradient: graphics.typeSpecific.lowGradient,
+    mediumGradient: graphics.typeSpecific.mediumGradient,
+    highGradient: graphics.typeSpecific.highGradient
   }
   let legendFields = graphics.typeSpecific.chloroLegend
   let voronoiValue =  graphics.typeSpecific.voronoiValue
@@ -654,6 +858,9 @@ const PublicMapView = () => {
                           colors={colors}
                           voronoiValue={voronoiValue}
                           setVoronoiValue={null}/>
+  }
+  else if(store.currentMap.type === "Heat Map"){
+      DynamicLegend = <HeatMapLegend colors = {colors}/>
   }
   else if(store.currentMap.type === "Choropleth Map"){
       //console.log(legendFields)

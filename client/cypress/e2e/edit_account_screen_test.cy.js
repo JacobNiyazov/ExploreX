@@ -63,8 +63,8 @@ describe('Edit Account Screen Test', () => {
     });
     it('email/username not unique error', () => {
       /* ==== Generated with Cypress Studio ==== */
-      cy.get('[data-testid="username-input"] > #basic-input').clear().type('explorer');
-      cy.get('[data-testid="email-input"] > #basic-input').clear().type('apple@gmail.com');
+      cy.get('[data-testid="username-input"] > #basic-input').clear().type('jessewang20');
+      cy.get('[data-testid="email-input"] > #basic-input').clear().type('cypress@gmail.com');
       cy.get(':nth-child(2) > .MuiInputBase-root > #basic-input').clear().type('abcd1234');
       cy.get(':nth-child(3) > .MuiInputBase-root > #basic-input').clear().type('abcd1234');
       cy.get('.css-1osj8n2-MuiGrid-root > .MuiButtonBase-root').click();
@@ -74,7 +74,7 @@ describe('Edit Account Screen Test', () => {
       /* ==== Generated with Cypress Studio ==== */
       cy.get('[data-testid="CloseIcon"] > path').click();
       cy.get('[data-testid="email-input"] > #basic-input').click();
-      cy.get('[data-testid="email-input"] > #basic-input').clear().type('explorer@gmail.com');
+      cy.get('[data-testid="email-input"] > #basic-input').clear().type('jessewang20@gmail.com');
       cy.get('[data-testid="username-input"] > #basic-input').type('1');
       cy.get('.css-1osj8n2-MuiGrid-root > .MuiButtonBase-root').click();
       cy.get('#modal-modal-description > div > p').should('have.text', 'An account with this email address already exists.');

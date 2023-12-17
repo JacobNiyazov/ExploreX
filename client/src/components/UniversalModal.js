@@ -11,7 +11,6 @@ import { GlobalStoreContext } from '../store'
 
 function UniversalModal(){
     const { store } = useContext(GlobalStoreContext);
-  
     const handleConfirm = () => {
         if(store.modalAction === store.modalActionTypes.publish){
             store.publishMap(store.currentMap, true);

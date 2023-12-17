@@ -10,7 +10,7 @@ const PublishMapModal = ({open, setOpen}) =>{
     const { store } = useContext(GlobalStoreContext);
     const handleClose = () => setOpen(false);
     const useNavigate = useNavigate();
-
+    
     // Here we should reroute to home feed and publishing the map
     const handlePublish = () =>{
         setOpen(false);
