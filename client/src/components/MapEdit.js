@@ -17,6 +17,9 @@ import VoronoiMap from './VoronoiMap.js';
 import ChoroLegend from "./ChoroLegend";
 import SpikeLegend from "./SpikeLegend.js";
 import DotDistLegend from "./DotDistLegend.js";
+import HeatMapLegend from "./HeatMapLegend.js";
+//import GlobalMapEditContext, { GlobalMapEditContextProvider } from "../mapEdit/index.js";
+//import EditMap_Transaction from "../transactions/EditMap_Transaction.js";
 import VoronoiLegend from "./VoronoiLegend.js";
 
 const MapEditInner = ({
@@ -30,6 +33,7 @@ const MapEditInner = ({
     chloroData,
     handleNewColors,
     voronoiPointToggle,
+    textFont
     }) =>{
     const { store } = useContext(GlobalStoreContext);
 
@@ -112,13 +116,18 @@ const MapEditInner = ({
         propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Heat Map"){
-        if(store.currentMap.graphics.geojson){
+        console.log("colors inside current map type: ", store.currentMap)
             return <HeatMap 
-            geojsonData ={store.currentMap.graphics.geojson} 
-            property = {store.currentMap.graphics.typeSpecific.property} 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
-            propertyData={propertyData}/>
-        }
+            propertyData={propertyData}
+            colors={colors}
+            sizes={sizes}
+            opacities={opacities}
+            hasStroke={hasStroke}
+            hasFill={hasFill} 
+            textFont = {textFont}
+            screenFlag = "edit"
+            />
     }
     else if(store.currentMap.type === "Choropleth Map"){
         return <ChloroplethMap 
@@ -173,7 +182,18 @@ const MapEdit = ({
     voronoiValue,
     setVoronoiValue,
     photo,
-    captureMapAsImage
+    captureMapAsImage,
+    originalStatesRef,
+    setTitle,
+    setColors,
+    setSizes,
+    setOpacities,
+    setAnchors,
+    setTextFont,
+    setHasStroke,
+    setHasFill,
+    setHideLegend,
+    textFont
   }) =>{
 
     
@@ -181,8 +201,29 @@ const MapEdit = ({
     const [baseMap, setBaseMap] = useState(false)
     const { store } = useContext(GlobalStoreContext);
     // const storeRef = useRef(store);
+    const tps = store.currentTps;
 
+    /*const DynamicLegend = ({colors, legendFields, legendAnchors, handleLegendClick, handleTextChange, handleClose, handleNewColor}) => {
+        const { store } = useContext(GlobalStoreContext);
     
+        if(store.currentMap.type === "Spike Map"){
+            return <SpikeLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Dot Distribution Map"){
+            return <DotDistLegend colors={colors}/>
+        }
+        else if(store.currentMap.type === "Choropleth Map"){
+            console.log("LEGEND")
+            return <ChoroLegend
+                legendFields = {legendFields}
+                legendAnchors = {legendAnchors}
+                handleLegendClick = {handleLegendClick}
+                handleTextChange = {handleTextChange}
+                handleClose = {handleClose}
+                handleNewColor = {handleNewColor}>
+                </ChoroLegend>
+        }
+    }*/
     
     const [legendAnchors, setLegendAnchors] = useState(() => {
         if(legendFields){
@@ -282,6 +323,15 @@ const MapEdit = ({
       }, [captureMapAsImage, photo ]);
     
 
+      function handleUndo(){
+        console.log("undo happening rn")
+        tps.undoTransaction()
+    }
+    function handleRedo(){
+        console.log("redo happening rn")
+        tps.doTransaction()
+    }
+
     let DynamicLegend = null;
 
     if(store.currentMap.type === "Spike Map"){
@@ -295,6 +345,11 @@ const MapEdit = ({
                             colors={colors}
                             voronoiValue={voronoiValue}
                             setVoronoiValue={setVoronoiValue}/>
+    }
+    else if(store.currentMap.type === "Heat Map"){
+        DynamicLegend = <HeatMapLegend
+            colors = {colors}
+        />
     }
     else if(store.currentMap.type === "Choropleth Map"){
         //console.log("legendfields")
@@ -332,7 +387,9 @@ const MapEdit = ({
                 propertyData={propertyData}
                 chloroData={chloroData}
                 handleNewColors = {handleNewColors}
-                voronoiPointToggle={voronoiPointToggle}/>
+                voronoiPointToggle={voronoiPointToggle}
+                textFont = {textFont}
+                />
                 {/*<GeoJSON data={geojson} onEachFeature={onEachFeature} />*/}
                 {
                     photo ?
@@ -346,14 +403,14 @@ const MapEdit = ({
                             <Box sx={{backdropFilter: 'blur(10px)', display: 'flex',gap: "10px",height:"min-content"}}>
                                 <UndoContainer>
                                     {/*please leave id i need for voronoi*/}
-                                    <IconButton id="undobutton" sx={{color: "#000000"}}>
+                                    <IconButton id="undobutton" sx={{color: "#000000"}} onClick={handleUndo}>
                                         <UndoIcon fontSize='large'/>
                                     </IconButton>
                                     <Typography>Undo</Typography>
                                 </UndoContainer>
                                 <RedoContainer>
                                     {/*please leave id i need for voronoi*/}
-                                    <IconButton id={"redobutton"} sx={{color: "#000000"}}>
+                                    <IconButton id={"redobutton"} sx={{color: "#000000"}} onClick = {handleRedo}>
                                     <RedoIcon fontSize='large' /> 
                                     </IconButton>
                                     <Typography>Redo</Typography>

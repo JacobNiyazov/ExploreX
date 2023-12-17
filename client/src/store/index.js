@@ -5,6 +5,7 @@ import api from './store-request-api'
 import { AuthContext } from '../auth'
 import { GlobalMapEditContext } from '../mapEdit'
 import maps from '../store/map-request-api';
+import jsTPS from '../transactions/jsTPS';
 
 export const GlobalStoreContext = createContext({});
 // TO USE STORE IN A COMPONENT CALL THIS -> const { store } = useContext(GlobalStoreContext);
@@ -24,7 +25,7 @@ export const GlobalStoreActionType = {
    EDIT_MAP: "EDIT_MAP",
    ADD_SCREENSHOT: "ADD_SCREENSHOT"
 }
-
+const tps = new jsTPS();
 
 function GlobalStoreContextProvider(props) {
    const [store, setStore] = useState({
@@ -35,6 +36,7 @@ function GlobalStoreContextProvider(props) {
        modalAction: "",
        currentMap: null,
        currentMaps: [],
+       currentTps: tps
    });
    const dict = {
     "/login": "Login",
@@ -85,6 +87,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: payload.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.SET_EDIT_SCREEN_MAP:{
@@ -96,6 +99,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });  
             }
             case GlobalStoreActionType.DISPLAY_MODAL: {
@@ -107,6 +111,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.SET_MODAL: {
@@ -118,6 +123,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: payload.modalAction,
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.CLOSE_MODAL: {
@@ -129,6 +135,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.DELETE_MAP: {       
@@ -140,6 +147,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: null,
                     currentMaps: payload.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_REACTION: {       
@@ -151,6 +159,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.UPDATE_MAP_GRAPHICS: {       
@@ -162,6 +171,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.CREATE_MAP:{
@@ -173,6 +183,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.FORK_MAP:{
@@ -184,6 +195,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.EDIT_MAP:{
@@ -195,6 +207,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: payload.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
             case GlobalStoreActionType.ADD_SCREENSHOT:{
@@ -217,6 +230,7 @@ function GlobalStoreContextProvider(props) {
                     modalAction: "",
                     currentMap: store.currentMap,
                     currentMaps: store.currentMaps,
+                    currentTps: tps
                 });
             }
 
@@ -224,6 +238,10 @@ function GlobalStoreContextProvider(props) {
     }
 
    store.setCurrentPage = (currentPage, map=null) => {
+        if(store.currentPage === "EditMapScreen"){
+            console.log("tps is cleared!")
+            tps.clearAllTransactions()
+        }
         if(currentPage === "PublicMapView"){
             async function getMap(){
                 try{
@@ -300,6 +318,7 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         if(response.data.success){
                             let tempMap = response.data.map;
+                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
@@ -321,6 +340,9 @@ function GlobalStoreContextProvider(props) {
                                 chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                                mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                                highGradient: tempMap.graphics.typeSpecific.highGradient,
                                 voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                                 voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
@@ -443,6 +465,7 @@ function GlobalStoreContextProvider(props) {
                         //console.log("map: ",response.data.map);
                         if(response.data.success){
                             let tempMap = response.data.map;
+                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
@@ -464,6 +487,9 @@ function GlobalStoreContextProvider(props) {
                                 chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                                 dotColor: tempMap.graphics.typeSpecific.dotColor,
                                 spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                                lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                                mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                                highGradient: tempMap.graphics.typeSpecific.highGradient,
                                 voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                                 voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                             }
@@ -571,6 +597,7 @@ function GlobalStoreContextProvider(props) {
 
     store.createMap = async (files, mapType, fileType, property) =>{
         // We will instantiate data in the backend, so only fields that already have values are sent through
+        tps.clearAllTransactions()
         let ownerUsername = auth.user.username;
         let publishDate = Date.now();
         // No need to create graphics create map takes care of this
@@ -699,6 +726,7 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.handleFork = async () => {
+        tps.clearAllTransactions()
         let id = store.currentMap._id;
         try{
             let response = await maps.forkMap(id);
@@ -726,6 +754,9 @@ function GlobalStoreContextProvider(props) {
                     chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                    mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                    highGradient: tempMap.graphics.typeSpecific.highGradient,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                     voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
@@ -852,7 +883,7 @@ function GlobalStoreContextProvider(props) {
         }
         reactToMap()
     }
-    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null) =>{
+    store.updateMapGraphics = async (property=null, imageBuffer = null, dotPoints=null, dotScale=null, spikeData=null, spikeLegend=null, chloroLegend = null, voronoi=null, lowGradient = null, mediumGradient = null, highGradient = null) =>{
         let currentMap = store.currentMap;
         if(imageBuffer !== null){
             store.currentMap.imageBuffer = imageBuffer;
@@ -880,6 +911,18 @@ function GlobalStoreContextProvider(props) {
             graphics['typeSpecific']['voronoiBound'] = voronoi.voronoiBound;
             graphics['geojson'] = voronoi.geojson;
         }
+        if(lowGradient !== null){
+            graphics['typeSpecific']['lowGradient'] = lowGradient
+        }
+        if(mediumGradient !== null){
+            graphics['typeSpecific']['mediumGradient'] = mediumGradient
+        }
+        if(highGradient !== null){
+            graphics['typeSpecific']['highGradient'] = highGradient
+        }
+        /*if(heatPoints !== null){
+            graphics["typeSpecfic"]["heatPoints"] = heatPoints
+        }*/
         try {
             chloroLegend = currentMap.graphics.typeSpecific.chloroLegend
             let res = await maps.updateMapById(currentMap._id, currentMap, chloroLegend);
@@ -906,6 +949,9 @@ function GlobalStoreContextProvider(props) {
                     chloroData: tempMap.graphics.typeSpecific.chloroLegend,
                     dotColor: tempMap.graphics.typeSpecific.dotColor,
                     spikeColor: tempMap.graphics.typeSpecific.spikeColor,
+                    lowGradient:tempMap.graphics.typeSpecific.lowGradient,
+                    mediumGradient: tempMap.graphics.typeSpecific.mediumGradient,
+                    highGradient: tempMap.graphics.typeSpecific.highGradient,
                     voronoiColor: tempMap.graphics.typeSpecific.voronoiColor,
                     voronoiValue: tempMap.graphics.typeSpecific.voronoiValue,
                 }
@@ -930,16 +976,21 @@ function GlobalStoreContextProvider(props) {
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
+        console.log("what the hell guys: ", map)
+        console.log("legit wha t is the hhell: ", isPublish)
         try {
             let styles = mapEdit;
-
+            console.log("STYLES BRUH: ",styles)
             // map.imageBuffer = styles.screenShot;
-
+            
             map.graphics.typeSpecific.dotColor = styles.dotColor;
             map.graphics.typeSpecific.spikeColor = styles.spikeColor;
             map.graphics.typeSpecific.voronoiColor = styles.voronoiColor;
             map.graphics.typeSpecific.chloroLegend = styles.chloroData;
             map.graphics.typeSpecific.voronoiValue = styles.voronoiValue;
+            map.graphics.typeSpecific.lowGradient = styles.lowGradient
+            map.graphics.typeSpecific.mediumGradient = styles.mediumGradient;
+            map.graphics.typeSpecific.highGradient = styles.highGradient;
 
             map.graphics.legend.legendTitle = styles.legendTitle;
             map.graphics.legend.legendFields = styles.legendFields;
@@ -961,10 +1012,12 @@ function GlobalStoreContextProvider(props) {
 
             map.isPublic = isPublish;
             map.publishDate = Date.now();
+            console.log("IM RIPPINGMY HAIR OUT: ", map.graphics.typeSpecific.lowGradient)
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
+                    console.log("what the poop : ", mapList.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_CURRENT_PAGE,
                         payload: {
@@ -974,6 +1027,7 @@ function GlobalStoreContextProvider(props) {
                         }
                     }
                     ); 
+                    console.log("after passing it to the reducer: ", res.data.map)
                     navigate(`/map?id=${res.data.map._id}`);
                 }
             }
@@ -996,7 +1050,7 @@ function GlobalStoreContextProvider(props) {
         }
         ); 
     }
-    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null) => {
+    store.updateLocalMap = (dotPoints=null, dotScale=null, spikeData=null,spikeLegend=null, voronoiMap=null, lowGradient = null, mediumGradient = null, highGradient = null) => {
         let map = store.currentMap;
         if(dotScale !== null && map){
             map.graphics.typeSpecific.dotScale = dotScale;
@@ -1014,6 +1068,18 @@ function GlobalStoreContextProvider(props) {
         if(spikeData !== null && map){
             map.graphics.typeSpecific.spikeData = spikeData;
         }
+        if(lowGradient !== null && map){
+            map.graphics.typeSpecific.lowGradient = lowGradient;
+        }
+        if(mediumGradient !== null && map){
+            map.graphics.typeSpecific.mediumGradient = mediumGradient;
+        }
+        if(highGradient !==null && map){
+            map.graphics.typeSpecific.highGradient = highGradient
+        }
+        /*if(heatPoints!==null && map){
+            map.graphics.typeSpecific.heatPoints = heatPoints
+        }*/
         storeReducer({
             type: GlobalStoreActionType.EDIT_MAP,
             payload: {
