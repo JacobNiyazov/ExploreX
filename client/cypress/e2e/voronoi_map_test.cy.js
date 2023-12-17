@@ -92,7 +92,7 @@ describe('Voronoi Map Tests', () => {
       cy.get('.MuiGrid-grid-xs-12 > .MuiButtonBase-root').click()
       cy.get('body').click();
     
-      cy.get('#modal-modal-description > div > p').should('have.text', 'Voronoi Map requires only one Polygon feature.');
+      cy.get('#modal-modal-description > div > p').should('have.text', 'Voronoi Map requires only one Polygon or MultiPolygon feature.');
     });
 });
   
