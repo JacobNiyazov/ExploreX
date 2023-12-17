@@ -89,6 +89,7 @@ const HeatMap = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, storeRef, store.currentMap.graphics.geojson, colors, sizes, opacities, hasStroke, hasFill, textFont]);
+  
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
