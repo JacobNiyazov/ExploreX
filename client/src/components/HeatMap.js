@@ -22,11 +22,11 @@ const HeatMap = ({
   const storeRef = useRef(store);
   const map = useMap();
   
-  const geojsonData = storeRef.current.currentMap.graphics.geojson;
+  //const geojsonData = storeRef.current.currentMap.graphics.geojson;
   const property = storeRef.current.currentMap.graphics.typeSpecific.property;
-  const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
-  const med = storeRef.current.currentMap.graphics.typeSpecific.mediumGradient;
-  const high = storeRef.current.currentMap.graphics.typeSpecific.highGradient;
+  //const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
+  //const med = storeRef.current.currentMap.graphics.typeSpecific.mediumGradient;
+  //const high = storeRef.current.currentMap.graphics.typeSpecific.highGradient;
   useEffect(() => {
     const regionLayerGroup = L.featureGroup().addTo(map);
     const updateLayers = (geojsonData) => {
@@ -36,6 +36,7 @@ const HeatMap = ({
       L.geoJSON(geojsonData, {
         onEachFeature: function (feature, layer) {
           if(feature.geometry.type === 'Polygon' || feature.geometry.type === 'MultiPolygon'){
+              console.log("what in the world is stroke and fill", hasStroke, hasFill)
               layer.setStyle({
                 stroke: hasStroke,
                 color: colors.StrokeColor,
@@ -87,11 +88,12 @@ const HeatMap = ({
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, textFont]);
+  }, [map, storeRef, store.currentMap.graphics.geojson, colors, sizes, opacities, hasStroke, hasFill, textFont]);
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
-    const extractCoordsFromFeature = (feature, property,props) => {
+     const geojsonData = store.currentMap.graphics.geojson;
+     const extractCoordsFromFeature = (feature, property,props) => {
       const propertyValue = feature.properties[property];
 
       // Skip features without the selected property or with non-numeric property values
@@ -134,7 +136,9 @@ const HeatMap = ({
       }
       // have to do the store update local map here
       store.updateLocalMap(null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
-      if(low === null|| med === null|| high === null){
+      if(storeRef.current.currentMap.graphics.typeSpecific.lowGradient === null|| 
+        storeRef.current.currentMap.graphics.typeSpecific.mediumGradient === null|| 
+        storeRef.current.currentMap.graphics.typeSpecific.highGradient === null){
           storeRef.current.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
       }
   };
@@ -153,7 +157,7 @@ const HeatMap = ({
       map.off('click')
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geojsonData, map, property, colors.lowGradient, colors.mediumGradient, colors.highGradient, colors, low, med, high]);
+  }, [map, store.currentMap.graphics.geojson, colors.lowGradient, colors.mediumGradient, colors.highGradient]);
 
   // Helper function to extract coordinates from a Polygon
   const extractCoordsFromPolygon = (polygonCoords, intensity) => {
