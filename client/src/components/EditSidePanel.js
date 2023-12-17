@@ -774,7 +774,6 @@ const EditSidePanel = ({
                                     <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
                                 </CustomListItem>
                             </CustomList>
-                            
                         </AccordionDetails>
                     </EditAccordion>
                     : null
