@@ -434,11 +434,7 @@ const PublicMapView = () => {
             }
             if (!flag){
               fillColor = getColor(propertyValue, coloring);
-            }
-            console.log(propertyValue)
-            console.log(feature.properties[property])
-            console.log(fillColor)
-          
+            }          
             return {
               fillColor,
               stroke: stroke.hasStroke,
@@ -582,9 +578,8 @@ const PublicMapView = () => {
     const low = store.currentMap.graphics.typeSpecific.lowGradient;
     const med = store.currentMap.graphics.typeSpecific.mediumGradient;
     const high = store.currentMap.graphics.typeSpecific.highGradient;
-    console.log("beofre the use effect", data, stroke, fill, typeSpecific, text)
+    //console.log("beofre the use effect", data, stroke, fill, typeSpecific, text)
     useEffect(() => {
-      console.log("first line of the use effect")
       leafletMap.invalidateSize();
       let heatLayer;
       // we have to recalculate the heat map here
@@ -594,7 +589,7 @@ const PublicMapView = () => {
     
           // Skip features without the selected property or with non-numeric property values
           if (propertyValue === undefined || propertyValue === null || isNaN(propertyValue)) {
-            console.log("is this property a number?")
+            //console.log("is this property a number?")
             return [];
           }
           let allProps = []
@@ -619,8 +614,6 @@ const PublicMapView = () => {
         const heatPoints = data?.features?.flatMap((feature) => {
           return extractCoordsFromFeature(feature, property, allProps);
         });
-    
-        console.log("colors: ", colors)
         let heatLayerOptions = {}
         if(heatPoints && heatPoints.length > 0){
           heatLayerOptions = {
@@ -633,9 +626,7 @@ const PublicMapView = () => {
             }
           }
           // have to do the store update local map here
-          console.log("what the f man PMV: ", heatPoints)
-          
-          console.log("updated local map me thinks PMV: ", store.currentMap)
+      
           if(low === null|| med === null|| high === null){
               store.updateMapGraphics(null, null, null, null, null, null, null, null, colors.lowGradient, colors.mediumGradient, colors.highGradient)
           }
@@ -643,10 +634,8 @@ const PublicMapView = () => {
   
     const heatLayerGroup = L.featureGroup().addTo(leafletMap);
     heatLayer = L.heatLayer(heatPoints, heatLayerOptions);
-    console.log("I HAVE A FEAR THAT THE ISSUE IS WITH ADD TO")
     heatLayer.addTo(heatLayerGroup)
     heatLayerGroup.bringToFront()
-    console.log("heat map points 3: ", heatPoints)
 
     const regionLayer = L.geoJSON(data, {
       style: function (feature) {
@@ -752,7 +741,6 @@ const PublicMapView = () => {
         return <SpikeLayer typeData={data} regionData={map.graphics.geojson} fill={fill} stroke={stroke} typeSpecific={typeSpecific} text={text}/>;
     }
     else if(map.type === "Heat Map"){
-      console.log("HELLUR FROM INSIDE HEAT: ", store.currentMap)
       let data = store.currentMap.graphics.geojson;
       let fill = store.currentMap.graphics.fill;
       let stroke = store.currentMap.graphics.stroke;

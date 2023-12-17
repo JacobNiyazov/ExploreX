@@ -317,7 +317,6 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         if(response.data.success){
                             let tempMap = response.data.map;
-                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
