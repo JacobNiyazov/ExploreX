@@ -87,7 +87,7 @@ const VoronoiMap = ({
                                 let currFeatures = store.currentMap.graphics.geojson.features;
                                 if(feature.geometry.type !== 'Point'){
                                     
-                                    for(i = 0; i < geoPoints.length; i++){
+                                    for(i = 0; i < currFeatures.length; i++){
                                         properties.push({...currFeatures[i].properties})
                                     }
                                     geoPoints.push(voronoiPoint)
@@ -103,13 +103,11 @@ const VoronoiMap = ({
                                         return JSON.stringify(feature.geometry.coordinates) !== JSON.stringify(voronoiPoint.geometry.coordinates) && feature.geometry.type === "Point"
                                     })
 
-                                    // if(geoPoints.length <= 0){
-                                    //     alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
-                                    //     return
-                                    // }
+                                    if(geoPoints.length <= 0){
+                                        alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
+                                        return
+                                    }
                                 }
-
-                                //console.log(properties)
 
                                 let points = {"type": "FeatureCollection", "features": geoPoints}
                 
