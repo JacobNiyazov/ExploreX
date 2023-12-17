@@ -88,6 +88,38 @@ const HeatMap = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, storeRef, colors, sizes, opacities, hasStroke, hasFill, textFont]);
+  
+  useEffect(() =>{
+    const propertyLayerGroup = L.featureGroup().addTo(map);
+    if(store.currentMap && propertyData.featureIndex !== null){
+      let selected = {"type":"FeatureCollection", "features": [store.currentMap.graphics.geojson.features[propertyData.featureIndex]]};
+      L.geoJSON(selected, {
+        onEachFeature: function (feature, layer) {
+          //console.log(":(")
+          if(colors.StrokeColor === '#000000'){
+            layer.setStyle({
+              color: "#FFFFFF",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+          else{
+            layer.setStyle({
+              color: "#000000",
+              weight: '6',
+              opacity: '1',
+            });
+          }
+        }
+      }).addTo(propertyLayerGroup);
+    }
+    propertyLayerGroup.bringToFront();
+    return () => {
+      propertyLayerGroup.remove();
+    };
+    
+  }, [propertyData, store, map, colors.StrokeColor])
+  
   useEffect(() => {
     // Extract coordinates and create a heat map layer
      // Helper function to extract coordinates from a Polygon based on a property
