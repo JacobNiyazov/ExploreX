@@ -50,7 +50,7 @@ const EditSidePanel = ({
     function newTransaction(field, value){
         // instead of the mapEdit replace that with originalStatesRef.current
         let newMapData = {
-            title: field === "title"? value:title,
+            //title: field === "title"? value:title,
             colors: {
                 TextColor: originalStatesRef.current.colors.TextColor,
                 FillColor: originalStatesRef.current.colors.FillColor,
@@ -80,7 +80,7 @@ const EditSidePanel = ({
         }
         let transaction = new EditMap_Transaction(originalStatesRef.current, 
             newMapData,
-            setTitle, 
+            //setTitle, 
             setLegendTitle, 
             setLegendFields, 
             setColors, 
@@ -90,12 +90,15 @@ const EditSidePanel = ({
             setTextFont,
             setHasStroke, 
             setHasFill,
-            setHideLegend,)
+            setHideLegend,
+            //originalStatesRef
+            )
         // add this transaction to the jsTPS stack
     
         tps.addTransaction(transaction)
         // change the originalStatesRef to the newMapData
         originalStatesRef.current = {...newMapData}
+        //console.log("title in edit side panel: ", originalStatesRef.current.title)
     }
     const handleFont = (event) => {
         //get the map before the setFont is done
@@ -105,7 +108,7 @@ const EditSidePanel = ({
     
     const handleTitle = (event) => {
         setTitle(event.target.value)
-        newTransaction("title", event.target.value)
+        //newTransaction("title", event.target.value)
     }
     
     const handleSize = (event, label) => {
