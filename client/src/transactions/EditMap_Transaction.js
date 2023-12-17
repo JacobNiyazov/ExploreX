@@ -1,9 +1,10 @@
 import { jsTPS_Transaction } from "./jsTPS";
+import { isEqual } from 'lodash';
 
 export default class EditMap_Transaction extends jsTPS_Transaction{
     constructor(oldMapData, 
         newMapData,
-         setTitle, 
+         //setTitle, 
          setLegendTitle, 
          setLegendFields, 
          setColors, 
@@ -13,11 +14,13 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
          setTextFont, 
          setHasStroke,
          setHasFill, 
-         setHideLegend) {
+         setHideLegend,
+         //originalStatesRef
+         ) {
         super();
         this.oldMapData = oldMapData;
         this.newMapData = newMapData;
-        this.setTitle = setTitle;
+        //this.setTitle = setTitle;
         this.setLegendTitle = setLegendTitle;
         this.setLegendFields = setLegendFields;
         this.setColors = setColors;
@@ -28,17 +31,18 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
         this.setHasFill = setHasFill;
         this.setHasStroke = setHasStroke;
         this.setHideLegend = setHideLegend;
+        //this.originalStatesRef = originalStatesRef;
     }
     // need to add a edit map transaction every time a onChange or smth
     // is triggered in edit side panel
     doTransaction() {
         // add if statements to check if the props are equal so that theyre not repeating
-        this.setTitle(prevTitle =>{
-            if(prevTitle === this.newMapData.title){
-                return prevTitle
+        /*this.setTitle(prevTitle => {
+            if (!isEqual(prevTitle, this.newMapData.title)) {
+              return this.newMapData.title;
             }
-            return {...prevTitle, ...this.newMapData.title}
-        })
+            return prevTitle;
+          });*/
         this.setColors(prevColors=>{
             if(prevColors.TextColor !==this.newMapData.colors.TextColor){
                 return {...prevColors, ...this.newMapData.colors}
@@ -129,12 +133,12 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
     }
     
     undoTransaction() {
-        this.setTitle(prevTitle =>{
-            if(prevTitle === this.oldMapData.title){
-                return prevTitle
+        /*this.setTitle(prevTitle => {
+            if (!isEqual(prevTitle, this.oldMapData.title)) {
+                return this.oldMapData.title;
             }
-            return {...prevTitle, ...this.oldMapData.title}
-        })
+            return prevTitle;
+          });*/
         this.setColors(prevColors=>{
             if(prevColors.TextColor !==this.oldMapData.colors.TextColor){
                 return {...prevColors, ...this.oldMapData.colors}

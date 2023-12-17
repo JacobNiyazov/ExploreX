@@ -49,7 +49,7 @@ const HeatMapLegend = ({colors}) => {
           backgroundColor: high, // Circle color
           marginRight: '10px', // Space between the circle and the label
         }}></Box>
-        <Typography variant="body2">{""}{sortedData[positions.k3]}{", "}{max}{"]"}</Typography>
+        <Typography variant="body2">{"("}{sortedData[positions.k3]}{", "}{max}{"]"}</Typography>
       </Box>
     );
 };

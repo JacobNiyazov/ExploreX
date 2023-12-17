@@ -317,7 +317,6 @@ function GlobalStoreContextProvider(props) {
                         let response = await maps.getMapById(map._id);
                         if(response.data.success){
                             let tempMap = response.data.map;
-                            console.log("temp map radius: ", tempMap.graphics.typeSpecific.radius)
                             let styles = {
                                 id: tempMap._id,
                                 title: tempMap.title,
@@ -675,7 +674,7 @@ function GlobalStoreContextProvider(props) {
                     let field = 'ownerUsername';
                     if(searchType === 'map') field = 'title';
                     if(searchType === 'type') field = 'type';
-                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase() === searchInput.trim().toLowerCase());
+                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase().includes(searchInput.trim().toLowerCase()));
                 }
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,

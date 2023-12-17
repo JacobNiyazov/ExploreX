@@ -45,7 +45,7 @@ const ChoroLegend = ({
                     >
                         <ChromePicker
                             color={legendFields[i] !== null && legendFields[i].fieldColor}
-                            onChange={(e) => handleNewColor(e, i)}
+                            onChangeComplete={(e) => handleNewColor(e, i)}
                             disableAlpha
                             renderers={false}
                         />
