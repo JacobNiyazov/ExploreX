@@ -74,7 +74,6 @@ const ColorSelector = ({originalStatesRef,
         tps.addTransaction(transaction)
         // set the originalStatesRef to the newMapData
         originalStatesRef.current = {...newMapData}
-        console.log("transaction in color: ", tps)
     }
     const handleClick = (event) => {
         setAnchors({
