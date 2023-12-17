@@ -174,7 +174,7 @@ const EditSidePanel = ({
 
     function isNumeric(str) {
         if (typeof str != "string") return false 
-        if (str === "" || str.charCodeAt(0) === 8) return true;
+        if (str === "" || str === "-" || str === "." || str.charCodeAt(0) === 8) return true;
 
         return !isNaN(str) && 
                !isNaN(parseFloat(str)) 
