@@ -675,7 +675,7 @@ function GlobalStoreContextProvider(props) {
                     let field = 'ownerUsername';
                     if(searchType === 'map') field = 'title';
                     if(searchType === 'type') field = 'type';
-                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase() === searchInput.trim().toLowerCase());
+                    filteredMaps = mapList.data.idNamePairs.filter(map => map[field].trim().toLowerCase().includes(searchInput.trim().toLowerCase()));
                 }
                 storeReducer({
                     type: GlobalStoreActionType.SET_CURRENT_PAGE,
