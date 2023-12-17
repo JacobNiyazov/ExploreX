@@ -59,7 +59,12 @@ createMap = async (req,res) =>{
             })
         }  
     }
-
+    if(Buffer.byteLength(JSON.stringify(geojsonData)) > 15000000){
+        return res.status(400).json({
+            success:false,
+            errorMessage: 'Map Not Created. File Size too big.'
+        })
+    }
     let nativeFile = {}
     if(body.mapType === "Native File"){
         nativeFile = JSON.parse(JSON.stringify(geojsonData));
