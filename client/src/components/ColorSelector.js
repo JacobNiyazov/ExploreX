@@ -27,8 +27,9 @@ const ColorSelector = ({originalStatesRef,
     const { store } = useContext(GlobalStoreContext);
     let tps = store.currentTps
     function newTransaction(hex){
+        console.log("title in new map: ", originalStatesRef.current.title)
         let newMapData = {
-            title: originalStatesRef.current.title,
+            //title: originalStatesRef.current.title,
             colors:{
                 StrokeColor: label === "StrokeColor"? hex:colors.StrokeColor,
                 FillColor: label === "FillColor" ? hex:colors.FillColor,
@@ -57,7 +58,7 @@ const ColorSelector = ({originalStatesRef,
         }
         let transaction = new EditMap_Transaction(originalStatesRef.current, 
             newMapData,
-            setTitle, 
+            //setTitle, 
             setLegendTitle, 
             setLegendFields, 
             setColors, 
@@ -68,6 +69,7 @@ const ColorSelector = ({originalStatesRef,
             setHasStroke, 
             setHasFill,
             setHideLegend,
+            //originalStatesRef
             )
             
         // get tps from the store
