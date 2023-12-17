@@ -13,7 +13,6 @@ const PublishMapModal = ({open, setOpen}) =>{
     
     // Here we should reroute to home feed and publishing the map
     const handlePublish = () =>{
-        console.log("are we inside handle publish?")
         setOpen(false);
         store.setCurrentPage("PublicMapView")
         navigate("/map");

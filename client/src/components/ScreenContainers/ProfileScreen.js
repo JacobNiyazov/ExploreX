@@ -1,6 +1,6 @@
 import React, {useState,useContext, useEffect} from 'react';
 import Grid from '@mui/material/Grid';
-import { StyledButton, StyledTypography,StyledTypography2, StyledTypography3 } from '../StyleSheets/ProfileScreenStyles';
+import { StyledButton, StyledTypography,StyledTypography2 } from '../StyleSheets/ProfileScreenStyles';
 import ImportFileModal from '../ImportFileModal';
 //import UploadFileModal from '../UploadFilesModal';
 import PersonalMapCard from '../PersonalMapCard';
@@ -127,18 +127,6 @@ function ProfileScreen(){
         </Box>
       );
     }
-    drafts.sort((a,b)=>{
-      let dateA = new Date(a.publishDate);
-      let dateB = new Date(b.publishDate);
-    
-      return dateB - dateA;
-    })
-    posted.sort((a,b)=>{
-      let dateA = new Date(a.publishDate);
-      let dateB = new Date(b.publishDate);
-    
-      return dateB - dateA;
-    })
     if (store.currentPage === store.currentPageType.profileScreen){
       return (
         <Grid container spacing = {2}>
@@ -181,27 +169,25 @@ function ProfileScreen(){
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={value} index={0}>
-                      {posted.length === 0 ? (
-                        <StyledTypography3>No current posts!</StyledTypography3>
-                      ) : (
-                        <Grid id="map-cards" container spacing={1}>
-                          {posted.map((map, index) => (
-                            <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                              <PersonalMapCard
-                                id={`map-posted-${index}`}
-                                map={map}
-                                likes={map.reactions.likes}
-                                dislikes={map.reactions.dislikes}
-                              />
-                            </Grid>
-                          ))}
-                        </Grid>
-                      )}
+                      <Grid id="map-cards" container spacing={1}>
+                        {posted.length === 0 ? (
+                          <Typography color="grey" variant='h6' display="flex"
+                          flexDirection="column"
+                          justifyContent="center"
+                          alignItems="center"
+                          height="50vh"
+                          width="90vw">
+                            Nothing to see here. Publish your very first map!
+                          </Typography>
+                        )
+                        : (posted.map((map, index) => (
+                          <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                            <PersonalMapCard id={`map-posted-${index}`} map={map} likes = {map.reactions.likes} dislikes={map.reactions.dislikes}/>
+                          </Grid>
+                        )))}
+                      </Grid>
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                    {drafts.length === 0 ? (
-                      <StyledTypography3>No current drafts</StyledTypography3>
-                    ) : (
                       <Grid id="map-cards" container spacing={1}>
                         {drafts.length === 0 ? (
                           <Typography color="grey" variant='h6' display="flex"
@@ -215,16 +201,11 @@ function ProfileScreen(){
                         )
                         : (drafts.map((map, index) => (
                           <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                            <PersonalMapCard
-                              data-testid={`map-draft-${index}`}
-                              id={`map-draft-${index}`}
-                              map={map}
-                            />
+                            <PersonalMapCard data-testid = {`map-draft-${index}`} id={`map-draft-${index}`} map={map}/>
                           </Grid>
                         )))}
                       </Grid>
-                    )}
-                  </CustomTabPanel>
+                    </CustomTabPanel>
                 </Box>
             </Grid> 
         </Grid>

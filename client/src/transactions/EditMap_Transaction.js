@@ -32,9 +32,7 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
     // need to add a edit map transaction every time a onChange or smth
     // is triggered in edit side panel
     doTransaction() {
-        console.log("we redoing")
         // add if statements to check if the props are equal so that theyre not repeating
-        console.log("this is the colors inside do transaction: ",this.newMapData.colors)
         this.setTitle(prevTitle =>{
             if(prevTitle === this.newMapData.title){
                 return prevTitle
@@ -131,7 +129,6 @@ export default class EditMap_Transaction extends jsTPS_Transaction{
     }
     
     undoTransaction() {
-        console.log("we are making it to undo, this is old map: ", this.oldMapData)
         this.setTitle(prevTitle =>{
             if(prevTitle === this.oldMapData.title){
                 return prevTitle

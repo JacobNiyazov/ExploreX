@@ -22,9 +22,6 @@ const HeatMap = ({
   const storeRef = useRef(store);
   const map = useMap();
   
-  console.log("this is inside on top heat map: ", store.currentMap)
-  console.log("and this is storeref heat map: ", storeRef.current.currentMap)
-  console.log("INSIDE HEAT MAP: ", store.currentMap)
   const geojsonData = storeRef.current.currentMap.graphics.geojson;
   const property = storeRef.current.currentMap.graphics.typeSpecific.property;
   const low = storeRef.current.currentMap.graphics.typeSpecific.lowGradient;
@@ -80,7 +77,6 @@ const HeatMap = ({
     map.on('click',function(e) {
       if(screenFlag === "edit"){
         L.DomEvent.stopPropagation(e);
-        console.log('clicked on map', e);
         // Here we set the index to null
         handlePropertyDataLoad(null)
       }
@@ -125,7 +121,6 @@ const HeatMap = ({
       return extractCoordsFromFeature(feature, property, allProps);
     });
 
-    console.log("colors: ", colors)
     let heatLayerOptions = {}
     if(heatPoints && heatPoints.length > 0){
       heatLayerOptions = {
@@ -149,7 +144,6 @@ const HeatMap = ({
   heatLayer.addTo(heatLayerGroup)
   heatLayerGroup.bringToFront()
  // map.invalidateSize()
-  console.log("heat map points: ", heatPoints)
     return () => {
       map.eachLayer(function (layer) {
         if(!layer._url){
@@ -179,7 +173,6 @@ const HeatMap = ({
 };
 
   useEffect(()=>{
-    console.log("HAIIIII")
     map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map])

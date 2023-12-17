@@ -144,8 +144,7 @@
         "dotColor": "#000000",
         "color": "#FFFFFF",
         "range":3,
-        "spikeColor": "#FFFFFF",
-        "blue": "0"
+        "spikeColor": "#FFFFFF"
       },
       "region": {
         "fillColor": "#FFFFFF",

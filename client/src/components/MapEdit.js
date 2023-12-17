@@ -116,7 +116,6 @@ const MapEditInner = ({
         propertyData={propertyData}/>
     }
     else if(store.currentMap.type === "Heat Map"){
-        console.log("colors inside current map type: ", store.currentMap)
             return <HeatMap 
             handlePropertyDataLoad = {handlePropertyDataLoad} 
             propertyData={propertyData}
@@ -324,11 +323,9 @@ const MapEdit = ({
     
 
       function handleUndo(){
-        console.log("undo happening rn")
         tps.undoTransaction()
     }
     function handleRedo(){
-        console.log("redo happening rn")
         tps.doTransaction()
     }
 

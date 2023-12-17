@@ -27,8 +27,6 @@ const HeatMapLegend = ({colors}) => {
       return { k1, k3 };
     }
     let positions = findQuartilePositions(sortedData)
-    console.log("HIII: ",sortedData)
-    console.log("POSITIONS: ", positions.k1)
     return (
       <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
         <Box className="circle" style={{

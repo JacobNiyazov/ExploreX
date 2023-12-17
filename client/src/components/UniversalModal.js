@@ -11,12 +11,8 @@ import { GlobalStoreContext } from '../store'
 
 function UniversalModal(){
     const { store } = useContext(GlobalStoreContext);
-    console.log("what is the map outside of the confirm: ", store.currentMap)
     const handleConfirm = () => {
-        console.log("modal action: ", store.modalAction)
-        console.log("WHAT IS THE DAMN MAP: ", store.currentMap)
         if(store.modalAction === store.modalActionTypes.publish){
-            console.log("ajskdhajkshdjkashdkjhadjkk", store.currentMap)
             store.publishMap(store.currentMap, true);
         }
         else if(store.modalAction === store.modalActionTypes.save){

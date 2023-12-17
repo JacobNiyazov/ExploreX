@@ -27,7 +27,6 @@ const ColorSelector = ({originalStatesRef,
     const { store } = useContext(GlobalStoreContext);
     let tps = store.currentTps
     function newTransaction(hex){
-        console.log("HELLO INSIDE COLOR SELECTOR: ", originalStatesRef.current)
         let newMapData = {
             title: originalStatesRef.current.title,
             colors:{
@@ -56,8 +55,6 @@ const ColorSelector = ({originalStatesRef,
             legendFields: originalStatesRef.current.legendFields,
             chloroData: mapEdit.chloroData,
         }
-        console.log("old data: ", originalStatesRef.current)
-        console.log("new data: ", newMapData)
         let transaction = new EditMap_Transaction(originalStatesRef.current, 
             newMapData,
             setTitle, 
@@ -75,10 +72,8 @@ const ColorSelector = ({originalStatesRef,
             
         // get tps from the store
         tps.addTransaction(transaction)
-        console.log("tps in side panel: ", tps)
         // set the originalStatesRef to the newMapData
         originalStatesRef.current = {...newMapData}
-        console.log("original state after the changes: ",originalStatesRef.current)
     }
     const handleClick = (event) => {
         setAnchors({
@@ -99,7 +94,6 @@ const ColorSelector = ({originalStatesRef,
             ...colors,
             [label] : event.hex
         })
-        console.log("event.hex: ", event.hex)
         newTransaction(event.hex)
     }
 

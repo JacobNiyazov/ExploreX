@@ -81,6 +81,10 @@ const VoronoiMap = ({
                 clippedPolygons.features.push(feature)
             })
 
+            if(clippedPolygons.features.length === 0){
+                clippedPolygons = polygonGeo
+            }
+
             store.updateMapGraphics(null, null, null, null, null, null, null, {voronoiBound: polygonGeo, geojson: clippedPolygons});
         }
         else{
@@ -116,10 +120,11 @@ const VoronoiMap = ({
                                 let properties = []
                                 let currFeatures = store.currentMap.graphics.geojson.features;
                                 if(feature.geometry.type !== 'Point'){
-                                    geoPoints.push(voronoiPoint)
-                                    for(i = 0; i < currFeatures.length; i++){
+                                    
+                                    for(i = 0; i < geoPoints.length; i++){
                                         properties.push({...currFeatures[i].properties})
                                     }
+                                    geoPoints.push(voronoiPoint)
                                     properties.push({})
                                 }
                                 else{
@@ -132,10 +137,10 @@ const VoronoiMap = ({
                                         return JSON.stringify(feature.geometry.coordinates) !== JSON.stringify(voronoiPoint.geometry.coordinates) && feature.geometry.type === "Point"
                                     })
 
-                                    if(geoPoints.length <= 0){
-                                        alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
-                                        return
-                                    }
+                                    // if(geoPoints.length <= 0){
+                                    //     alertModal("Removing Last Point", "Voronoi Maps require atleast one point!")
+                                    //     return
+                                    // }
                                 }
 
                                 //console.log(properties)
@@ -144,7 +149,6 @@ const VoronoiMap = ({
                 
                                 let options = {bbox: turf.bbox(store.currentMap.graphics.typeSpecific.voronoiBound)}
                                 let voronoiPolygons = turf.voronoi(points, options);
-
                                 
                                 for(i = 0; i < voronoiPolygons.features.length; i++){
                                     voronoiPolygons.features[i].properties = {...properties[i]}
@@ -161,11 +165,17 @@ const VoronoiMap = ({
                                         geojson.features.push(clipped);
                                     }
                                 })
+
+                                
                 
                                 
                                 points.features.forEach(feature=>{
                                     geojson.features.push(feature)
                                 })
+                                
+                                if(geojson.features.length === 0){
+                                    geojson = {...store.currentMap.graphics.typeSpecific.voronoiBound}
+                                }
                 
                                 store.updateLocalMap(null, null, null, null, geojson)
                             },
@@ -251,7 +261,7 @@ const VoronoiMap = ({
           };
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle, store, store.currentMap.graphics.geojson])
+    }, [map, store.currentMap, colors, sizes, opacities, hasStroke, hasFill, voronoiPointToggle])
     
     useEffect(()=>{
         map.fitBounds(L.geoJSON(store.currentMap.graphics.geojson).getBounds());

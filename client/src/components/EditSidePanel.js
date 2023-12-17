@@ -78,8 +78,6 @@ const EditSidePanel = ({
             // focusing on the non-typespefic stuff first
             chloroData: mapEdit.chloroData, // not sure what to set this to rn
         }
-        console.log("old data: ", originalStatesRef.current)
-        console.log("new data: ", newMapData)
         let transaction = new EditMap_Transaction(originalStatesRef.current, 
             newMapData,
             setTitle, 
@@ -94,14 +92,10 @@ const EditSidePanel = ({
             setHasFill,
             setHideLegend,)
         // add this transaction to the jsTPS stack
-        console.log("old data: ", originalStatesRef.current)
-        console.log("new data: ", newMapData)
     
         tps.addTransaction(transaction)
-        console.log("tps in side panel: ", tps)
         // change the originalStatesRef to the newMapData
         originalStatesRef.current = {...newMapData}
-        console.log("original state after the changes: ",originalStatesRef.current)
     }
     const handleFont = (event) => {
         //get the map before the setFont is done
@@ -340,7 +334,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Properties Options */}
-                <EditAccordion disableGutters data-testid="properties" disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
+                <EditAccordion disableGutters disabled={propertyData.featureIndex==null} expanded={propertyData.featureIndex!==null}>
                     <EditAccordionSummary >
                         <Typography variant="inherit">Properties</Typography>
                     </EditAccordionSummary>
@@ -427,7 +421,7 @@ const EditSidePanel = ({
                 </EditAccordion>
 
                 {/* Edit Legend Options */}
-                <EditAccordion disableGutters data-testid="legend">
+                <EditAccordion disableGutters>
                     <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                         <Typography variant="inherit">Legend</Typography>
                     </EditAccordionSummary>
@@ -498,7 +492,7 @@ const EditSidePanel = ({
                 {/* Edit Stroke Options */}
                 {
                     
-                    <EditAccordion disableGutters data-testid="edit-accordion borders" data->
+                    <EditAccordion disableGutters data-testid="edit-accordion">
                         <EditAccordionSummary expandIcon={<ExpandMore fontSize="large"/>}>
                             <Typography variant="inherit">Borders</Typography>
                         </EditAccordionSummary>

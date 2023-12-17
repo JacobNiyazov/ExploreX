@@ -16,7 +16,9 @@ function DeletePostModal({map,open,onClose,screen}){
         //console.log("delete map from list: ", map)
         await store.deleteMap(map, screen)
         onClose()
-        navigate("/feed")
+        if(screen === "MapFeed"){
+            navigate('/feed')
+        }
       }
     const style = {
         position: 'absolute',

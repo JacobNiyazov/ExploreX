@@ -239,7 +239,6 @@ function GlobalStoreContextProvider(props) {
 
    store.setCurrentPage = (currentPage, map=null) => {
         if(store.currentPage === "EditMapScreen"){
-            console.log("tps is cleared!")
             tps.clearAllTransactions()
         }
         if(currentPage === "PublicMapView"){
@@ -976,11 +975,8 @@ function GlobalStoreContextProvider(props) {
             if(!store.currentMap) return;
             else map = store.currentMap;
         }
-        console.log("what the hell guys: ", map)
-        console.log("legit wha t is the hhell: ", isPublish)
         try {
             let styles = mapEdit;
-            console.log("STYLES BRUH: ",styles)
             // map.imageBuffer = styles.screenShot;
             
             map.graphics.typeSpecific.dotColor = styles.dotColor;
@@ -1012,12 +1008,10 @@ function GlobalStoreContextProvider(props) {
 
             map.isPublic = isPublish;
             map.publishDate = Date.now();
-            console.log("IM RIPPINGMY HAIR OUT: ", map.graphics.typeSpecific.lowGradient)
             let res = await maps.updateMapById(map._id, map);
             if(res.data.success && isPublish){
                 let mapList = await maps.getPublicMapIdPairs();
                 if(mapList.data.success){
-                    console.log("what the poop : ", mapList.data)
                     storeReducer({
                         type: GlobalStoreActionType.SET_CURRENT_PAGE,
                         payload: {
@@ -1027,7 +1021,6 @@ function GlobalStoreContextProvider(props) {
                         }
                     }
                     ); 
-                    console.log("after passing it to the reducer: ", res.data.map)
                     navigate(`/map?id=${res.data.map._id}`);
                 }
             }

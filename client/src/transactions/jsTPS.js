@@ -133,12 +133,8 @@ export default class jsTPS {
      */
     addTransaction(transaction) {
         // ARE WE BRANCHING?
-        console.log("we should make it into add trans")
-        console.log("what is the most recent trans: ", this.mostRecentTransaction)
-        console.log("num of trans in add trans: ", this.numTransactions)
         if ((this.mostRecentTransaction < 0) 
             || (this.mostRecentTransaction < (this.transactions.length - 1))) {
-                console.log("with this logic i shouldve made it in here")
                 for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {
                     this.transactions.splice(i, 1);
                 }
@@ -177,8 +173,6 @@ export default class jsTPS {
      * TPS stack and undoes it, moving the TPS counter accordingly.
      */
     undoTransaction() {
-        console.log(" we made it into transaction tps", this.numTransactions)
-        console.log("transaction to undo? ", this.numTransactions)
         if (this.hasTransactionToUndo()) {
             this.performingUndo = true;
             let transaction = this.transactions[this.mostRecentTransaction];
