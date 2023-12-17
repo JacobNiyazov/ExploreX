@@ -286,7 +286,7 @@ describe('Edit Account details tests', function(){
   //   token = response.headers['set-cookie']
   // })
   it('should test successful PUT /user/editAccount/${id}', async() =>{
-    let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
+    let reqURL = '/user/editAccount/' + '657e460a048a4f668d483055'
     let response = await request(app)
       .put(reqURL).set("Cookie", token)
       .send({ username: 'backtest', email: 'bt1@yahoo.com', bio:'', password:'password'});
@@ -298,7 +298,7 @@ describe('Edit Account details tests', function(){
         message: 'User details updated successfully!',
         user: {
           "__v": expect.any(Number),
-          "_id": '65579dea673cb2142388bd46',
+          "_id": '657e460a048a4f668d483055',
           "bio": "",
           "createdAt": expect.any(String),
           "email": "bt1@yahoo.com",
@@ -318,7 +318,7 @@ describe('Edit Account details tests', function(){
         message: 'User details updated successfully!',
         user: {
           "__v": expect.any(Number),
-          "_id": '65579dea673cb2142388bd46',
+          "_id": '657e460a048a4f668d483055',
           "bio": "",
           "createdAt": expect.any(String),
           "email": "bt2@yahoo.com",
@@ -330,10 +330,10 @@ describe('Edit Account details tests', function(){
   });
 
   it('should test PUT /user/editAccount/${id} with non-unique email', async() =>{
-    let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
+    let reqURL = '/user/editAccount/' + '657e460a048a4f668d483055'
     const response = await request(app)
       .put(reqURL).set("Cookie", token)
-      .send({ username: 'cascacdd', email: 'explorer@gmail.com', bio:'', password:'password'});
+      .send({ username: 'cascacdd', email: 'cypress@gmail.com', bio:'', password:'password'});
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
         success: false,
@@ -343,10 +343,10 @@ describe('Edit Account details tests', function(){
   });
 
   it('should test PUT /user/editAccount/${id} with non-unique username', async() =>{
-    let reqURL = '/user/editAccount/' + '65579dea673cb2142388bd46'
+    let reqURL = '/user/editAccount/' + '657e460a048a4f668d483055'
     const response = await request(app)
       .put(reqURL).set("Cookie", token)
-      .send({ username: 'explorer', email: 'dsfsdvsd@yahoo.com', bio:'', password:'password'});
+      .send({ username: 'cypress', email: 'dsfsdvsd@yahoo.com', bio:'', password:'password'});
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual({
         success: false,
