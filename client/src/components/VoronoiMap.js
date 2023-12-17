@@ -15,25 +15,6 @@ const VoronoiMap = ({
     sizes,
     voronoiPointToggle,
 }) => {
-
-    
-
-    /*function getRandomShade(){
-        // Generate random values for the red and green components
-        const red = Math.floor(Math.random() * 256); // Random red value (0-255)
-        const green = Math.floor(Math.random() * 128); // Random green value (0-127)
-      
-        // Create a random shade of orange-red by combining red and green
-        const blue = 0; // Set blue to 0 for shades of orange
-        const alpha = 1; // Alpha (opacity) value
-      
-        // Construct the RGB color string
-        const color = `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-      
-        return color;
-    }*/
-    // Format geojson: 1 Polygon/Multipolygon and points
-    // Polygon will be used as the bounding of the voronoi map
     const { store } = useContext(GlobalStoreContext);
     const map = useMap();
     
@@ -92,21 +73,6 @@ const VoronoiMap = ({
             let i = 0
             L.geoJSON(geojson, {
                 onEachFeature: function (feature, layer) {
-                    // // Customize popup content
-                    // layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-                
-                    //     return (
-                    //     ReactDOMServer.renderToString(
-                    //         <Box sx={{display:'flex', alignItems:'center'}}>
-                    //             <Typography sx={{marginRight:'auto'}}>{k + ':'}</Typography>
-                    //             <input style={{width: "80px", marginLeft:'auto'}} defaultValue={feature.properties[k]}></input>
-                    //         </Box>
-                    //     )
-                    //     )
-                    // }).join(""), {
-                    //     maxHeight: 200
-                    // });
-
                     let tempi = i
                     if(voronoiPointToggle){  
                         layer.on({

@@ -773,34 +773,7 @@ const EditSidePanel = ({
                                     <Typography>Edit Points</Typography>
                                     <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
                                 </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem sx={{display:'flex', justifyContent:'center'}}>
-                                    <Typography sx={{fontSize:"0.6em", fontStyle:'italic', textAlign:'center'}}>*Click On Points To Delete Or On Map To Add Points*</Typography>
-                                </CustomListItem>
-                                <Divider sx={{borderColor:"white"}} />
-                                <CustomListItem>
-                                    <Typography>Edit Points</Typography>
-                                    <ColorSelector originalStatesRef = {originalStatesRef} 
-                                    label="VoronoiMap"
-                                    colors={colors} 
-                                    setColors={setColors} 
-                                    anchors={anchors} 
-                                    setAnchors={setAnchors} 
-                                    setTitle={setTitle}
-                                    setSizes={setSizes}
-                                    setOpacities={setOpacities}
-                                    setTextFont={setTextFont}
-                                    setHasStroke={setHasStroke}
-                                    setHasFill={setHasFill}
-                                    setHideLegend={setHideLegend}
-                                    setLegendTitle = {setLegendTitle}
-                                    setLegendFields = {setLegendFields}
-                                    />
-                                    
-                                    <VoronoiSwitch onChange={handleVoronoiToggle}></VoronoiSwitch>
-                                </CustomListItem>
                             </CustomList>
-                            
                         </AccordionDetails>
                     </EditAccordion>
                     : null
