@@ -523,41 +523,27 @@ const PublicMapView = () => {
               });
           }
 
-           // // Customize popup content
-           layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-              if(feature.geometry.type === 'Point'){
-                return (
-                  ReactDOMServer.renderToString(
-                  <div className="leaflet-popup-content">
-                    <p style={textStyles}>{'Represents: ' + value}</p>
-                  </div>)
-                );
-                // return (
-                //   ReactDOMServer.renderToString(
-                //       <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                //           <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{'Represents: ' + value}</Typography>
-                //       </Box>
-                //   ))
-              }
-              else{
+          if(feature.geometry.type === 'Point'){
+            layer.bindPopup(
+              ReactDOMServer.renderToString(
+              <div className="leaflet-popup-content">
+                <p style={textStyles}>{'Represents: ' + value}</p>
+              </div>)
+            )
+          }
+          else{
+            // // Customize popup content
+            layer.bindPopup(Object.keys(feature.properties).map(function(k) {
                 return (
                   ReactDOMServer.renderToString(
                   <div className="leaflet-popup-content">
                     <p style={textStyles}>{k + ': ' + feature.properties[k]}</p>
                   </div>)
-                );
-                // return (
-                // ReactDOMServer.renderToString(
-                //     <Box sx={{display:'flex', alignItems:'center', flexDirection: "column"}}>
-                //         <Typography sx={{margin: '0px', color: text.textColor, fontSize: text.textSize, fontFamily: text.textFont}}>{k + ': ' + feature.properties[k]}</Typography>
-                //     </Box>
-                // ))
-              }
-              
-            
-        }).join(""), {
-            maxHeight: 200
-        });
+                );        
+            }).join(""), {
+                maxHeight: 200
+            });
+          }
         },
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, {
