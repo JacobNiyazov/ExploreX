@@ -1,4 +1,4 @@
-describe('Edit Account Screen Test', () => {
+describe('Login Screen Test', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000'); 
   });
