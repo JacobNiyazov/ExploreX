@@ -1,5 +1,5 @@
 import { jsTPS_Transaction } from "./jsTPS";
-import { isEqual } from 'lodash';
+//import { isEqual } from 'lodash';
 
 export default class EditMap_Transaction extends jsTPS_Transaction{
     constructor(oldMapData, 
