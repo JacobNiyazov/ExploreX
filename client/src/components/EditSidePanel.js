@@ -272,7 +272,7 @@ const EditSidePanel = ({
                     <AccordionDetails sx={{padding:0}}>
                         <CustomList>
                             <CustomListItem>
-                                <Typography color='grey'>These changes will only be relected/visible on published maps</Typography>
+                                <Typography color='grey'>These changes will only be reflected/visible on published maps</Typography>
                             </CustomListItem>
                             <Divider sx={{borderColor:"white"}} />
                             <CustomListItem>
