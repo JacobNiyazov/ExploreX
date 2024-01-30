@@ -6,7 +6,7 @@ Welcome to ExploreX, a state-of-the-art web application revolutionizing the way 
 
 To see ExploreX in action, check out our video demo:
 
-<iframe src="https://clipchamp.com/watch/v7rH3D68rfL" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+https://clipchamp.com/watch/v7rH3D68rfL
 
 ## Features
 
