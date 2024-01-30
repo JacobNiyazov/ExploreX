@@ -6,9 +6,7 @@ Welcome to ExploreX, a state-of-the-art web application revolutionizing the way 
 
 To see ExploreX in action, check out our video demo:
 
-```html
 <iframe src="https://clipchamp.com/watch/v7rH3D68rfL" width="560" height="315" frameborder="0" allowfullscreen></iframe>
-```
 
 ## Features
 
@@ -19,9 +17,7 @@ Our interactive map feed is a standout feature, showcasing public maps in an eng
 The user account portal is tailored for personalization and security. Users can update their profiles, including username, email, bio, and password. This central hub for personalization ensures a secure and customized user experience, enhancing user engagement and trust in the platform.
 
 ### Versatile Map Creation and Editing Tools
-ExploreX provides a suite of tools for creating and editing maps. Users can start from scratch or fork existing maps, adding their unique touch. Our tools support the creation of general maps with legends, as well as specialized
-
-formats like dot distribution, spike, heat, voronoi, and choropleth maps, catering to diverse user needs and preferences. The editing capabilities allow users to name regions, attach custom data properties, and modify map features, enabling a high level of customization and precision.
+ExploreX provides a suite of tools for creating and editing maps. Users can start from scratch or fork existing maps, adding their unique touch. Our tools support the creation of general maps with legends, as well as specialized formats like dot distribution, spike, heat, voronoi, and choropleth maps, catering to diverse user needs and preferences. The editing capabilities allow users to name regions, attach custom data properties, and modify map features, enabling a high level of customization and precision.
 
 ### Dynamic Publishing and Community Sharing
 A key aspect of ExploreX is the ability to publish and share maps. Users can move their creations from drafts to the public map feed, allowing the entire community to view, comment on, and fork their maps. This feature not only fosters a collaborative environment but also promotes the sharing of knowledge and ideas
