@@ -6,7 +6,11 @@ Welcome to ExploreX, a state-of-the-art web application revolutionizing the way 
 
 To see ExploreX in action, check out our video demo:
 
-https://clipchamp.com/watch/v7rH3D68rfL
+
+
+https://github.com/JacobNiyazov/ExploreX/assets/42481648/df13b827-9b4b-4c2a-a106-624baf416f76
+
+
 
 ## Features
 
